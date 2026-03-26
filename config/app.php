@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Togethernet'),
 
     /*
     |--------------------------------------------------------------------------
@@ -121,6 +121,12 @@ return [
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
+    ],
+
+    'dev_info' => [
+        'repo' => env('REPOSITORY_URL'),
+        'openshift_url' => env('OPENSHIFT_URL', 'https://console-openshift-console.apps.okd.ssis.nu/'),
+        'maintainer_email' => env('MAINTAINER_EMAIL'),
     ],
 
 ];

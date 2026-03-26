@@ -1,0 +1,20 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+    - vendor/pestphp/pest/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - tests/
+
+    scanDirectories:
+        - tests/
+
+    level: 5
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - identifier: missingType.generics
+        - identifier: trait.unused
+        - message: '#Call to an undefined method PHPUnit\\Framework\\TestCase::(get|post|put|patch|delete|actingAs|actingAsGuest|visit|fill|click|press|assertSee|assertOk|assertRedirect|assertStatus|browse)\(\)#'
+        - message: '#Access to an undefined property PHPUnit\\Framework\\TestCase::\$app#'

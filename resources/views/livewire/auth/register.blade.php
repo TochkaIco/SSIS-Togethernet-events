@@ -59,6 +59,12 @@
             </div>
         </form>
 
+        <div class="flex items-center justify-end">
+            <flux:button :href="route('auth.google')" class="w-full" data-test="google-login-button">
+                {{ __('Log in via Google') }}
+            </flux:button>
+        </div>
+
         <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
             <span>{{ __('Already have an account?') }}</span>
             <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>

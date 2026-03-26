@@ -49,6 +49,12 @@
             </div>
         </form>
 
+        <div class="flex items-center justify-end">
+            <flux:button type="button" href="{{ route('auth.google') }}" class="w-full" data-test="google-login-button">
+                {{ __('Log in via Google') }}
+            </flux:button>
+        </div>
+
         @if (Route::has('register'))
             <div class="space-x-1 text-sm text-center rtl:space-x-reverse text-zinc-600 dark:text-zinc-400">
                 <span>{{ __('Don\'t have an account?') }}</span>
