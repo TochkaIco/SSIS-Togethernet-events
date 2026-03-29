@@ -20,6 +20,7 @@ return new class extends Migration
             'create articles',
             'edit articles',
             'manage users',
+            'delete users',
             'view articles',
             'configure pages',
             'dev',
@@ -45,6 +46,7 @@ return new class extends Migration
             'create articles',
             'edit articles',
             'manage users',
+            'delete users',
             'view articles',
             'configure pages',
         ]);
@@ -68,6 +70,7 @@ return new class extends Migration
             'create articles',
             'edit articles',
             'manage users',
+            'delete users',
             'view articles',
             'configure pages',
             'dev',

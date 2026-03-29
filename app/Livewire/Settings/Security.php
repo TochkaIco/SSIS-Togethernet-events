@@ -51,12 +51,19 @@ class Security extends Component
     #[Validate('required|string|size:6', onUpdate: false)]
     public string $code = '';
 
+    public string $google_id = '';
+
     /**
      * Mount the component.
      */
     public function mount(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
     {
         $this->canManageTwoFactor = Features::canManageTwoFactorAuthentication();
+        if (Auth::user()->google_id) {
+            $this->google_id = Auth::user()->google_id;
+        } else {
+            $this->google_id = '';
+        }
 
         if ($this->canManageTwoFactor) {
             if (Fortify::confirmsTwoFactorAuthentication() && is_null(auth()->user()->two_factor_confirmed_at)) {

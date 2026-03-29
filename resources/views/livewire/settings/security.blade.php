@@ -3,46 +3,9 @@
 
     <flux:heading class="sr-only">{{ __('Security settings') }}</flux:heading>
 
-    <x-settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
-        <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
-            <flux:input
-                wire:model="current_password"
-                :label="__('Current password')"
-                type="password"
-                required
-                autocomplete="current-password"
-                viewable
-            />
-            <flux:input
-                wire:model="password"
-                :label="__('New password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                viewable
-            />
-            <flux:input
-                wire:model="password_confirmation"
-                :label="__('Confirm password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                viewable
-            />
-
-            <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full" data-test="update-password-button">{{ __('Save') }}</flux:button>
-                </div>
-
-                <x-action-message class="me-3" on="password-updated">
-                    {{ __('Saved.') }}
-                </x-action-message>
-            </div>
-        </form>
-
+    <x-settings.layout>
         @if ($canManageTwoFactor)
-            <section class="mt-12">
+            <section>
                 <flux:heading>{{ __('Two-factor authentication') }}</flux:heading>
                 <flux:subheading>{{ __('Manage your two-factor authentication settings') }}</flux:subheading>
 
@@ -72,6 +35,7 @@
 
                             <flux:button
                                 variant="primary"
+                                class="cursor-pointer"
                                 wire:click="enable"
                             >
                                 {{ __('Enable 2FA') }}
@@ -235,5 +199,47 @@
                 </div>
             </flux:modal>
         @endif
+        <flux:card class="mt-6">
+            <div class="mb-6">
+                <flux:heading size="lg">Active Sessions</flux:heading>
+                <flux:subheading>Devices currently logged into your account.</flux:subheading>
+            </div>
+
+            <div class="space-y-4">
+                @foreach (auth()->user()->sessions as $session)
+                    <div class="flex items-center p-3 rounded-lg border border-accent-foreground">
+                        <div class="p-2 bg-accent-foreground rounded-md">
+                            @if ($session->agent->isDesktop())
+                                <flux:icon.computer-desktop class="size-6 text-zinc-500" />
+                            @else
+                                <flux:icon.device-phone-mobile class="size-6 text-zinc-500" />
+                            @endif
+                        </div>
+
+                        <div class="ms-4 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-semibold">
+                                    {{ $session->agent->platform() ?: 'Unknown OS' }}
+                                    ({{ $session->agent->browser() ?: 'Unknown Browser' }})
+                                </span>
+
+                                @if ($session->is_current_device)
+                                    <flux:badge color="green" size="sm">This Device</flux:badge>
+                                @endif
+                            </div>
+
+                            <div class="text-xs text-zinc-500 mt-0.5">
+                                {{ $session->ip_address }} •
+                                @if($session->is_current_device)
+                                    Active now
+                                @else
+                                    Last seen {{ $session->last_active }}
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </flux:card>
     </x-settings.layout>
 </section>

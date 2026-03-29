@@ -12,8 +12,7 @@
                         @auth
                             <flux:button variant="primary" href="{{ route('events') }}" icon="layout-grid">Browse Events</flux:button>
                         @else
-                            <flux:button variant="primary" href="{{ route('register') }}" icon="user-plus">Join Us</flux:button>
-                            <flux:button variant="ghost" href="{{ route('login') }}">Member Login</flux:button>
+                            <flux:button variant="primary" href="{{ route('login') }}" icon="user-plus">Join Us</flux:button>
                         @endauth
                     </div>
                 </div>
@@ -27,7 +26,6 @@
                     <flux:text class="mt-2 grow">
                         {{ __('Sing your heart out at our weekly karaoke sessions. No talent required, just enthusiasm!') }}
                     </flux:text>
-                    <flux:button variant="ghost" size="sm" class="mt-4 self-start">Learn more</flux:button>
                 </flux:card>
 
                 <flux:card class="flex flex-col">
@@ -35,7 +33,6 @@
                     <flux:text class="mt-2 grow">
                         {{ __('Relax and enjoy classic films and latest blockbusters on our big screen with fresh popcorn.') }}
                     </flux:text>
-                    <flux:button variant="ghost" size="sm" class="mt-4 self-start">Learn more</flux:button>
                 </flux:card>
 
                 <flux:card class="flex flex-col">
@@ -43,7 +40,7 @@
                     <flux:text class="mt-2 grow">
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}
                     </flux:text>
-                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start">Learn more</flux:button>
+                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">Learn more</flux:button>
                 </flux:card>
             </div>
         </div>

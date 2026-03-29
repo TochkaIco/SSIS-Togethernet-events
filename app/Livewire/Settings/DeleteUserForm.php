@@ -15,16 +15,28 @@ class DeleteUserForm extends Component
 
     public string $password = '';
 
+    public string $confirmation = '';
+
     /**
      * Delete the currently authenticated user.
      */
     public function deleteUser(Logout $logout): void
     {
-        $this->validate([
-            'password' => $this->currentPasswordRules(),
-        ]);
+        $user = Auth::user();
 
-        tap(Auth::user(), $logout(...))->delete();
+        if ($user->google_id) {
+            $this->validate([
+                'confirmation' => ['required', 'string', 'in:DELETE'],
+            ], [
+                'confirmation.in' => __('Please enter "DELETE" to confirm your account deletion.'),
+            ]);
+        } else {
+            $this->validate([
+                'password' => $this->currentPasswordRules(),
+            ]);
+        }
+
+        tap($user, $logout(...))->delete();
 
         $this->redirect('/', navigate: true);
     }

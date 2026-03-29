@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Concerns;
 
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 
 trait PasswordValidationRules
@@ -26,6 +27,8 @@ trait PasswordValidationRules
      */
     protected function currentPasswordRules(): array
     {
-        return ['required', 'string', 'current_password'];
+        return Auth::user()?->password
+            ? ['required', 'string', 'current_password']
+            : ['nullable', 'string'];
     }
 }

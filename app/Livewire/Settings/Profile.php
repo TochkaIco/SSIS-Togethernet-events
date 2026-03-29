@@ -6,6 +6,7 @@ namespace App\Livewire\Settings;
 
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Computed;
@@ -21,6 +22,8 @@ class Profile extends Component
 
     public string $email = '';
 
+    public string $google_id = '';
+
     /**
      * Mount the component.
      */
@@ -28,6 +31,11 @@ class Profile extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        if (Auth::user()->google_id) {
+            $this->google_id = Auth::user()->google_id;
+        } else {
+            $this->google_id = '';
+        }
     }
 
     /**
@@ -48,6 +56,20 @@ class Profile extends Component
         $user->save();
 
         $this->dispatch('profile-updated', name: $user->name);
+    }
+
+    public function pullPictureFromGoogle()
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+        $user = Auth::user();
+        $user->update([
+            'profile_picture' => null,
+        ]);
+        Auth::logout($user);
+
+        return redirect()->route('login');
     }
 
     /**

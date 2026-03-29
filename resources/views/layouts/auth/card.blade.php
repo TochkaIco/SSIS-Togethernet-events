@@ -11,7 +11,7 @@
                         <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
                     </span>
 
-                    <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
+                    <span class="sr-only">{{ config('app.name', 'Togethernet') }}</span>
                 </a>
 
                 <div class="flex flex-col gap-6">
@@ -21,6 +21,11 @@
                 </div>
             </div>
         </div>
+
+        @persist('toast')
+            <flux:toast />
+        @endpersist
+
         @fluxScripts
-    </body>
+        </body>
 </html>

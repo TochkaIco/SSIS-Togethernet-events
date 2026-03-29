@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Livewire\Events;
+
+use App\Models\Event;
+use App\Models\EventUser;
+use Flux\Flux;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
+
+class Index extends Component
+{
+    #[Computed]
+    public function events(): Collection
+    {
+        return Event::where('display_starts_at', '<=', now())
+            ->latest()
+            ->get();
+    }
+
+    public function eventIsActive($event): bool
+    {
+        return $event->display_starts_at <= now() && $event->event_ends_at >= now();
+    }
+
+    public function userIsRegistered($eventId): bool
+    {
+        return EventUser::where('event_id', $eventId)->where('user_id', auth()->id())->exists();
+    }
+
+    public function unregisterUser($eventId)
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if ($this->userIsRegistered($eventId)) {
+            EventUser::where('event_id', $eventId)->where('user_id', Auth::id())->delete();
+            Flux::toast(text: 'You have been unregistered from this event.', heading: 'Success', variant: 'success');
+        } else {
+            Flux::toast(text: 'Failed to remove your registration.', heading: 'Error', variant: 'danger');
+        }
+    }
+
+    public function registerUser($eventId)
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+        $alreadyRegistered = EventUser::where('event_id', $eventId)
+            ->where('user_id', Auth::id())
+            ->exists();
+        if ($alreadyRegistered) {
+            Flux::toast(text: 'You are already registered for this event.', heading: 'Error', variant: 'danger');
+
+            return;
+        }
+
+        EventUser::create([
+            'event_id' => $eventId,
+            'user_id' => Auth::id(),
+        ]);
+
+        Flux::toast(text: 'You have been registered for this event.', heading: 'Success', variant: 'success');
+    }
+
+    public function render(): Factory|\Illuminate\Contracts\View\View|View
+    {
+        return view('livewire.events.index', [
+            'events' => $this->events]);
+    }
+}

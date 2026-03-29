@@ -1,19 +1,38 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventImageController;
 use App\Http\Controllers\OAuthController;
-use App\Http\Controllers\UserController;
+use App\Livewire\Admin\UserManagement;
+use App\Livewire\Admin\UserProfile;
+use App\Livewire\Events\Index as PublicEvents;
+use App\Livewire\Events\EventShow as PublicEventShow;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::view('/', 'homepage')->name('home');
-Route::view('/events', 'events')->name('events');
+Route::get('/events', PublicEvents::class)->name('events');
+Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
 Route::view('/faq', 'faq')->name('faq');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('/dashboard', 'livewire.admin.dashboard')->name('admin.dashboard');
-    Route::get('/admin/events', [EventController::class, 'index'])->name('admin.events');
-    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
+    Route::middleware(['auth', 'can:view articles'])->group(function () {
+        Route::view('/admin/dashboard', 'livewire.admin.dashboard')->name('admin.dashboard');
+        Route::get('/admin/events', [EventController::class, 'admin_index'])->name('admin.events');
+        Route::get('/admin/events/{event}', [EventController::class, 'admin_show'])->name('admin.event.show');
+    });
+    Route::middleware(['auth', 'can:create articles'])->group(function () {
+        Route::post('/admin/events/create', [EventController::class, 'store'])->name('admin.event.store');
+    });
+    Route::middleware(['auth', 'can:edit articles'])->group(function () {
+        Route::patch('admin/events/{event}/update', [EventController::class, 'update'])->name('admin.event.update');
+        Route::delete('admin/events/{event}/destroy', [EventController::class, 'destroy'])->name('admin.event.destroy');
+        Route::delete('admin/events/{event}/image/destroy', [EventImageController::class, 'destroy'])->name('admin.event.image.destroy');
+    });
+    Route::middleware(['auth', 'can:manage users'])->group(function () {
+        Route::get('/admin/users', UserManagement::class)->name('admin.users');
+        Route::get('/admin/users/{user}', UserProfile::class)->name('admin.user.profile');
+    });
 });
 
 Route::middleware(['guest'])->group(function () {

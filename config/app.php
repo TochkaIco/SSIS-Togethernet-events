@@ -1,5 +1,8 @@
 <?php
 
+use Jenssegers\Agent\AgentServiceProvider;
+use Jenssegers\Agent\Facades\Agent;
+
 return [
 
     /*
@@ -128,5 +131,8 @@ return [
         'openshift_url' => env('OPENSHIFT_URL', 'https://console-openshift-console.apps.okd.ssis.nu/'),
         'maintainer_email' => env('MAINTAINER_EMAIL'),
     ],
+
+    AgentServiceProvider::class,
+    'Agent' => Agent::class,
 
 ];

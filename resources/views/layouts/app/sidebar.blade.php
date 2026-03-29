@@ -6,49 +6,49 @@
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('admin.dashboard') }}" wire:navigate />
+                <x-app-logo :sidebar="true" :href="route('home')" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
                 <flux:sidebar.group class="grid">
-                    <flux:sidebar.item icon="home" :href="route('home')" :current="request()->routeIs('home')">
+                    <flux:sidebar.item icon="home" :href="route('home')" :current="request()->routeIs('home*')">
                         {{ __('Home') }}
                     </flux:sidebar.item>
 
-                    <flux:sidebar.item icon="layout-grid" :href="route('events')" :current="request()->routeIs('events')">
+                    <flux:sidebar.item icon="layout-grid" :href="route('events')" :current="request()->routeIs('event*')">
                         {{ __('Events') }}
                     </flux:sidebar.item>
 
-                    <flux:sidebar.item icon="home" :href="route('faq')" :current="request()->routeIs('faq')">
+                    <flux:sidebar.item icon="question-mark-circle" :href="route('faq')" :current="request()->routeIs('faq*')">
                         {{ __('FAQ') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
-            @can('tog-member')
+            @hasanyrole('tog-member|admin|super-admin|maintainer')
                 <flux:navmenu.separator />
 
                 <flux:sidebar.nav>
                     <flux:sidebar.group :heading="__('Admin Panel')" class="grid">
-                        <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
+                        <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard*')" wire:navigate>
                             {{ __('Dashboard') }}
                         </flux:sidebar.item>
 
                         @can('view articles')
-                            <flux:sidebar.item icon="layout-grid" :href="route('admin.events')" :current="request()->routeIs('admin.events')" wire:navigate>
+                            <flux:sidebar.item icon="layout-grid" :href="route('admin.events')" :current="request()->routeIs('admin.event*')" wire:navigate>
                                 {{ __('Events') }}
                             </flux:sidebar.item>
                         @endcan
 
                         @can('manage users')
-                            <flux:sidebar.item icon="book-open-text" :href="route('admin.users')" :current="request()->routeIs('admin.users')" wire:navigate>
+                            <flux:sidebar.item icon="user-circle" :href="route('admin.users')" :current="request()->routeIs('admin.users*')" wire:navigate>
                                 {{ __('Users') }}
                             </flux:sidebar.item>
                         @endcan
                     </flux:sidebar.group>
                 </flux:sidebar.nav>
-            @endcan
+            @endhasanyrole
 
             @can('dev')
                 <flux:navmenu.separator />
@@ -75,11 +75,6 @@
             @auth
                 <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
             @endauth
-            @guest
-                <flux:sidebar.item href="/login">
-                    {{ __('Log in') }}
-                </flux:sidebar.item>
-            @endguest
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
@@ -91,6 +86,7 @@
             @auth
                 <flux:dropdown position="top" align="end">
                     <flux:profile
+                        :avatar="auth()->user()->profile_picture"
                         :initials="auth()->user()->initials()"
                         icon-trailing="chevron-down"
                     />
@@ -100,6 +96,7 @@
                             <div class="p-0 text-sm font-normal">
                                 <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                     <flux:avatar
+                                        :src="auth()->user()->profile_picture"
                                         :name="auth()->user()->name"
                                         :initials="auth()->user()->initials()"
                                     />
@@ -140,6 +137,10 @@
         </flux:header>
 
         {{ $slot }}
+
+        @persist('toast')
+            <flux:toast />
+        @endpersist
 
         @fluxScripts
     </body>

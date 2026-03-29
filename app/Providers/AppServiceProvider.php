@@ -38,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
             return null;
         });
 
+        Gate::define('admin', function ($user) {
+            return $user->hasRole('admin');
+        });
+
         Event::listen(Authenticated::class, function ($event) {
             $maintainerEmail = config('app.dev_info.maintainer_email', '');
 

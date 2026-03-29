@@ -24,6 +24,7 @@
     --color-zinc-950: #0a0a0a;
 
     --color-accent: var(--color-neutral-800);
+    --color-muted-foreground: oklch(0.6 0.02 240);
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
 }
@@ -31,12 +32,28 @@
 @layer theme {
     .dark {
         --color-accent: var(--color-white);
+        --color-muted-foreground: var(--color-neutral-400);
         --color-accent-content: var(--color-white);
         --color-accent-foreground: var(--color-neutral-800);
     }
 }
 
 @layer base {
+    h1 {
+        @apply text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3;
+    }
+
+    h2 {
+        @apply text-2xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 mt-3 mb-3;
+    }
+
+    h3 {
+        @apply text-lg font-semibold text-zinc-700 dark:text-zinc-300 mt-2 mb-2;
+    }
+
+    ul {
+        @apply list-disc list-inside space-y-2 text-zinc-600 dark:text-zinc-400 my-2 ml-2;
+    }
 
     *,
     ::after,

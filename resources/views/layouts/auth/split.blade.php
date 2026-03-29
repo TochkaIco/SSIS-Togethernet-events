@@ -37,7 +37,12 @@
                     {{ $slot }}
                 </div>
             </div>
-        </div>
-        @fluxScripts
-    </body>
+            </div>
+
+            @persist('toast')
+            <flux:toast />
+            @endpersist
+
+            @fluxScripts
+            </body>
 </html>

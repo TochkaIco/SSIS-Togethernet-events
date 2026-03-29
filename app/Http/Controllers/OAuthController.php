@@ -20,12 +20,22 @@ class OAuthController extends Controller
         } catch (\Exception $e) {
             return redirect('/login')->with('error', 'failed to connect to fetch your data from Google');
         }
-        $user = User::updateOrCreate([
-            'email' => $googleUser->email,
-        ], [
-            'name' => $googleUser->name,
-            'email' => $googleUser->email,
+        $user = User::firstOrCreate(
+            ['email' => $googleUser->email],
+            [
+                'name' => $googleUser->name,
+                'google_id' => $googleUser->id,
+                'profile_picture' => $googleUser->getAvatar(),
+            ]
+        );
+
+        $user->update([
+            'google_token' => $googleUser->token,
+            'google_refresh_token' => $googleUser->refreshToken,
         ]);
+        if (! $user->profile_picture) {
+            $user->update(['profile_picture' => $googleUser->getAvatar()]);
+        }
 
         Auth::login($user);
 
