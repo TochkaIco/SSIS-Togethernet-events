@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Admin;
 
 use App\Models\User;
@@ -23,11 +25,11 @@ class UserManagement extends Component
     #[Url]
     public $filterRole = '';
 
-    public $editingUserId = null;
+    public $editingUserId;
 
     public $editingUserName = '';
 
-    public $userToDelete = null;
+    public $userToDelete;
 
     public $userRoles = [];
 

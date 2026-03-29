@@ -6,7 +6,6 @@ namespace App\Livewire\Settings;
 
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Computed;
@@ -67,7 +66,7 @@ class Profile extends Component
         $user->update([
             'profile_picture' => null,
         ]);
-        Auth::logout($user);
+        Auth::logout();
 
         return redirect()->route('login');
     }

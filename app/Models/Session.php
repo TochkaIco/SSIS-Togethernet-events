@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -33,7 +35,7 @@ class Session extends Model
     /**
      * Format the last activity timestamp.
      */
-    public function getLastActiveAttribute()
+    public function getLastActiveAttribute(): string
     {
         return Carbon::createFromTimestamp($this->last_activity)->diffForHumans();
     }

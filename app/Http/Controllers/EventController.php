@@ -11,7 +11,6 @@ use App\Models\Event;
 
 class EventController extends Controller
 {
-
     public function admin_index()
     {
         $events = Event::all();

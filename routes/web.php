@@ -5,8 +5,8 @@ use App\Http\Controllers\EventImageController;
 use App\Http\Controllers\OAuthController;
 use App\Livewire\Admin\UserManagement;
 use App\Livewire\Admin\UserProfile;
-use App\Livewire\Events\Index as PublicEvents;
 use App\Livewire\Events\EventShow as PublicEventShow;
+use App\Livewire\Events\Index as PublicEvents;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
