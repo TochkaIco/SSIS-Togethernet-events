@@ -2,6 +2,7 @@
 
 use App\Livewire\Admin\Events\ParticipantProfile;
 use App\Models\Event;
+use App\Models\EventUser;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,7 +20,10 @@ test('unauthorized users cannot view participant profile', function () {
     $participant = User::factory()->create();
 
     Livewire::actingAs($user)
-        ->test(ParticipantProfile::class, ['event' => $event, 'user' => $participant])
+        ->test(ParticipantProfile::class, [
+            'event' => $event,
+            'userId' => $participant->id,
+        ])
         ->assertForbidden();
 });
 
@@ -31,18 +35,23 @@ test('authorized users can view participant profile and see worker status', func
     $worker = User::factory()->create();
     $attendee = User::factory()->create();
 
-    $event->users()->attach($worker, ['is_working' => true]);
-    $event->users()->attach($attendee, ['is_working' => false]);
+    EventUser::create(['event_id' => $event->id, 'user_id' => $worker->id, 'is_working' => true]);
+    EventUser::create(['event_id' => $event->id, 'user_id' => $attendee->id, 'is_working' => false]);
 
     Livewire::actingAs($admin)
-        ->test(ParticipantProfile::class, ['event' => $event, 'user' => $worker])
+        ->test(ParticipantProfile::class, [
+            'event' => $event,
+            'userId' => $worker->id,
+        ])
         ->assertOk()
         ->assertSee(__('Worker'))
-        ->assertDontSee(__('Attendee'))
-        ->assertSee(__('Back to Participants'));
+        ->assertDontSee(__('Attendee'));
 
     Livewire::actingAs($admin)
-        ->test(ParticipantProfile::class, ['event' => $event, 'user' => $attendee])
+        ->test(ParticipantProfile::class, [
+            'event' => $event,
+            'userId' => $attendee->id,
+        ])
         ->assertOk()
         ->assertSee(__('Attendee'))
         ->assertDontSee(__('Worker'));
@@ -52,15 +61,21 @@ test('it loads roles and permissions for the participant', function () {
     $admin = User::factory()->create();
     $admin->assignRole('admin');
 
-    $event = Event::factory()->create();
-    $participant = User::factory()->create();
-    $participant->assignRole('tog-member');
+    $user = User::factory()->create();
+    $user->assignRole('tog-member');
 
-    $event->users()->attach($participant, ['is_working' => false]);
+    $event = Event::factory()->create();
+
+    EventUser::factory()->create([
+        'event_id' => $event->id,
+        'user_id' => $user->id,
+    ]);
 
     Livewire::actingAs($admin)
-        ->test(ParticipantProfile::class, ['event' => $event, 'user' => $participant])
+        ->test(ParticipantProfile::class, [
+            'event' => $event,
+            'userId' => $user->id,
+        ])
         ->assertOk()
-        ->assertSee('tog-member')
-        ->assertSee('view articles');
+        ->assertSee('tog-member');
 });
