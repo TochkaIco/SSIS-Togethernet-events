@@ -17,6 +17,8 @@ class EventShow extends Component
 {
     public Event $event;
 
+    public ?int $eventIdToUnregister = null;
+
     #[Url]
     public string $tab = 'view';
 
@@ -64,15 +66,22 @@ class EventShow extends Component
         return $this->event->display_starts_at <= now() && $this->event->event_ends_at >= now();
     }
 
+    public function confirmUnregister($eventId): void
+    {
+        $this->eventIdToUnregister = $eventId;
+    }
+
     public function unregisterUser($eventId)
     {
         if (! Auth::check()) {
             return redirect()->route('login');
         }
 
-        if ($this->userIsRegistered($eventId)) {
-            EventUser::where('event_id', $eventId)->where('user_id', Auth::id())->delete();
+        if ($this->eventIdToUnregister && $this->userIsRegistered($this->eventIdToUnregister)) {
+            EventUser::where('event_id', $this->eventIdToUnregister)->where('user_id', Auth::id())->delete();
             Flux::toast(text: 'You have been unregistered from this event.', heading: 'Success', variant: 'success');
+            $this->eventIdToUnregister = null;
+            $this->modal('unregister-confirmation')->close();
         } else {
             Flux::toast(text: 'Failed to remove your registration.', heading: 'Error', variant: 'danger');
         }

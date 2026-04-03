@@ -111,7 +111,7 @@ class Participants extends Component
 
         $user = $this->event->users()->findOrFail($participantId);
 
-        return redirect()->route('admin.event.participant.profile', [$this->event, $user]);
+        return redirect()->route('admin.event.participant.profile', [$this->event, $user->id]);
     }
 
     public function updateParticipantWorkingStatus(int $participantId): void

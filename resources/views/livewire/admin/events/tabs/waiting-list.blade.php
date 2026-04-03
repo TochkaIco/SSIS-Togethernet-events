@@ -11,13 +11,9 @@
             @forelse($waitingList as $waiting)
                 <flux:table.row :key="$waiting->id">
                     <flux:table.cell>
-                        <button wire:click="viewUserProfile({{ $waiting->id }})" class="group flex items-center hover:underline hover:text-orange-300 cursor-pointer gap-x-3 text-left">
+                        <button wire:click="viewUserProfile({{ $waiting->id }})" class="flex items-center cursor-pointer gap-x-3 text-left">
                             <flux:avatar class="size-10" :initials="$waiting->initials()" :src="$waiting->profile_picture" />
-                            <span class="font-medium group-hover:text-orange-300 group-hover:underline">{{ $waiting->name }}</span>
-                        </button>
-                        <button wire:click="viewUserProfile({{ $waiting->id }})" class="flex items-center hover:underline hover:text-orange-300 cursor-pointer gap-x-3 text-left">
-                            <flux:avatar class="size-10" :initials="$waiting->initials()" :src="$waiting->profile_picture" />
-                            <span class="font-medium">{{ $waiting->name }}</span>
+                            <span class="font-medium hover:underline hover:text-orange-300">{{ $waiting->name }}</span>
                         </button>
                     </flux:table.cell>
 
@@ -42,8 +38,6 @@
                             <flux:icon.users class="size-12 mb-4" />
                             <flux:heading>{{ __('No users on waiting list') }}</flux:heading>
                             <flux:subheading>{{ __('Users will appear here when the event is full.') }}</flux:subheading>
-                        </div>
-                    </flux:table.cell>
                         </div>
                     </flux:table.cell>
                 </flux:table.row>

@@ -93,4 +93,3 @@ php artisan test
 ## License
 
 ### GPL-3.0 license
-Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.

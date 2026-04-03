@@ -3,12 +3,6 @@
         <div class="rounded-lg overflow-hidden mb-6 group relative">
             <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-128 object-cover">
         </div>
-    @else
-        <flux:field class="mb-6">
-            <flux:label>{{ __('Event Image') }}</flux:label>
-            <flux:input type="file" wire:model="newImage" />
-            <flux:error name="newImage" />
-        </flux:field>
     @endif
 
     <div class="mt-2 flex gap-x-3 items-center text-sm text-zinc-500 dark:text-zinc-400">

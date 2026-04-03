@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'can:manage users'])->group(function () {
         Route::get('/admin/users', UserManagement::class)->name('admin.users');
         Route::get('/admin/users/{user}', UserProfile::class)->name('admin.user.profile');
-        Route::get('/admin/events/{event}/participants/{user}', ParticipantProfile::class)->name('admin.event.participant.profile');
+        Route::get('/admin/events/{event}/participants/{userId}', ParticipantProfile::class)->name('admin.event.participant.profile');
     });
 });
 

@@ -16,6 +16,8 @@ use Livewire\Component;
 
 class Index extends Component
 {
+    public ?int $eventIdToUnregister = null;
+
     #[Computed]
     public function events(): Collection
     {
@@ -34,15 +36,22 @@ class Index extends Component
         return EventUser::where('event_id', $eventId)->where('user_id', auth()->id())->exists();
     }
 
-    public function unregisterUser($eventId)
+    public function confirmUnregister($eventId): void
+    {
+        $this->eventIdToUnregister = $eventId;
+    }
+
+    public function unregisterUser()
     {
         if (! Auth::check()) {
             return redirect()->route('login');
         }
 
-        if ($this->userIsRegistered($eventId)) {
-            EventUser::where('event_id', $eventId)->where('user_id', Auth::id())->delete();
+        if ($this->eventIdToUnregister && $this->userIsRegistered($this->eventIdToUnregister)) {
+            EventUser::where('event_id', $this->eventIdToUnregister)->where('user_id', Auth::id())->delete();
             Flux::toast(text: 'You have been unregistered from this event.', heading: 'Success', variant: 'success');
+            $this->eventIdToUnregister = null;
+            $this->modal('unregister-confirmation')->close();
         } else {
             Flux::toast(text: 'Failed to remove your registration.', heading: 'Error', variant: 'danger');
         }

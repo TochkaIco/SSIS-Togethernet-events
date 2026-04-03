@@ -72,16 +72,16 @@
                     {{-- Payment Toggle --}}
                     <flux:table.cell>
                         <flux:checkbox
-                            wire:click="togglePaid({{ $participant->id }})"
-                            :checked="$participant->pivot->has_paid"
+                            wire:change="togglePaid({{ $participant->id }})"
+                            :checked="(bool) $participant->pivot->has_paid"
                         />
                     </flux:table.cell>
 
                     {{-- Arrival Toggle --}}
                     <flux:table.cell>
                         <flux:checkbox
-                            wire:click="toggleArrived({{ $participant->id }})"
-                            :checked="$participant->pivot->has_arrived"
+                            wire:change="toggleArrived({{ $participant->id }})"
+                            :checked="(bool) $participant->pivot->has_arrived"
                         />
                     </flux:table.cell>
 

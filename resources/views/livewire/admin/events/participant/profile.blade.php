@@ -46,7 +46,7 @@
             <flux:heading size="xl">Access Control</flux:heading>
 
             <div>
-                <flux:label class="mb-2 text-xl">Roles</flux:label>
+                <flux:label class="mb-2">Roles</flux:label>
                 <div class="flex flex-wrap gap-2">
                     @forelse ($user->roles as $role)
                         <flux:badge variant="primary" size="sm">{{ $role->name }}</flux:badge>

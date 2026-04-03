@@ -8,7 +8,9 @@
                         @if(! $this->userIsRegistered($event->id))
                             <flux:button class="absolute z-10 w-min cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">Register</flux:button>
                         @else
-                            <flux:button icon="x-mark" wire:click="unregisterUser({{ $event->id }})" class="absolute z-10 w-min cursor-pointer" variant="primary">You are registered for this event</flux:button>
+                            <flux:modal.trigger name="unregister-confirmation">
+                                <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" class="absolute z-10 w-min cursor-pointer" variant="primary">You are registered for this event</flux:button>
+                            </flux:modal.trigger>
                         @endif
                     @else
                         <flux:button href="{{ route('login') }}" icon="user-plus" class="absolute z-10 w-min cursor-pointer" variant="primary">Login to register for the event</flux:button>
@@ -49,4 +51,21 @@
             </div>
         @endforelse
     </div>
+
+    <flux:modal name="unregister-confirmation" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Unregister from event?</flux:heading>
+                <flux:subheading>Are you sure you want to unregister from this event? You can always register again later if there are spots available.</flux:subheading>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="cursor-pointer">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button type="submit" variant="danger" class="cursor-pointer" wire:click="unregisterUser">Unregister</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>
