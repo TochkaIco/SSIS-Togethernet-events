@@ -24,15 +24,15 @@
 
         <flux:table.rows>
             @foreach ($users as $user)
-                <flux:table.row :key="'user-'.$user->id">
+                <flux:table.row :key="'user-'.$user->id" class="hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors group">
                     {{-- Pagination-aware Index --}}
-                    <flux:table.cell class="text-zinc-500">
-                        {{ $users->firstItem() + $loop->iteration - 1 }}
+                    <flux:table.cell class="group-hover:text-zinc-800 dark:group-hover:text-zinc-200 transition-colors text-center">
+                        {{ $users->firstItem() + $loop->index }}
                     </flux:table.cell>
 
                     {{-- Avatar & Name --}}
                     <flux:table.cell>
-                        <button wire:click="viewUserProfile({{ $user->id }})" class="flex items-center cursor-pointer gap-x-3 group text-left">
+                        <button wire:click="viewUserProfile({{ $user->id }})" class="flex items-center cursor-pointer gap-x-3 text-left">
                             <flux:avatar class="size-10" :initials="$user->initials()" :src="$user->profile_picture" />
                             <span class="font-medium group-hover:text-orange-300 group-hover:underline">{{ $user->name }}</span>
                         </button>
@@ -76,7 +76,7 @@
 
                     {{-- Actions --}}
                     <flux:table.cell align="end">
-                        <div class="flex justify-end gap-2">
+                        <div class="flex justify-end mr-2 gap-2">
                             <flux:button size="sm" wire:click="editRoles({{ $user->id }})" class="cursor-pointer" icon="shield-check" variant="ghost">Manage</flux:button>
 
                             @can('delete users')
@@ -109,8 +109,8 @@
 
             {{-- Tabs --}}
             <div class="flex p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                <button @click="tab = 'roles'" :class="tab === 'roles' ? 'bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500'" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all">Roles</button>
-                <button @click="tab = 'permissions'" :class="tab === 'permissions' ? 'bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500'" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all">Permissions</button>
+                <button @click="tab = 'roles'" :class="tab === 'roles' ? 'shadow-sm text-orange-300' : 'cursor-pointer'" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all">Roles</button>
+                <button @click="tab = 'permissions'" :class="tab === 'permissions' ? 'shadow-sm text-orange-300' : 'cursor-pointer'" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all">Permissions</button>
             </div>
 
             {{-- Roles Content --}}
@@ -135,9 +135,9 @@
                 </flux:checkbox.group>
             </div>
 
-            <div class="flex justify-end gap-2 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                <flux:modal.close><flux:button variant="ghost">Cancel</flux:button></flux:modal.close>
-                <flux:button wire:click="savePermissions" variant="primary">Save Changes</flux:button>
+            <div class="flex justify-end gap-2 pt-4 border-t border-accent-foreground">
+                <flux:modal.close><flux:button variant="ghost" class="cursor-pointer">Cancel</flux:button></flux:modal.close>
+                <flux:button wire:click="savePermissions" variant="primary" class="cursor-pointer">Save Changes</flux:button>
             </div>
         </div>
     </flux:modal>

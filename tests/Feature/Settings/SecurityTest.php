@@ -24,16 +24,16 @@ test('security settings page can be rendered', function () {
         ->assertSee('Enable 2FA');
 });
 
-//test('security settings page requires password confirmation when enabled', function () {
+// test('security settings page requires password confirmation when enabled', function () {
 //    $user = User::factory()->create();
 //
 //    $response = $this->actingAs($user)
 //        ->get(route('security.edit'));
 //
 //    $response->assertRedirect(route('password.confirm'));
-//});
+// });
 
-//test('security settings page renders without two factor when feature is disabled', function () {
+// test('security settings page renders without two factor when feature is disabled', function () {
 //    config(['fortify.features' => []]);
 //
 //    $user = User::factory()->create();
@@ -44,7 +44,7 @@ test('security settings page can be rendered', function () {
 //        ->assertOk()
 //        ->assertSee('Update password')
 //        ->assertDontSee('Two-factor authentication');
-//});
+// });
 
 test('two factor authentication disabled when confirmation abandoned between requests', function () {
     $user = User::factory()->create();
@@ -68,7 +68,7 @@ test('two factor authentication disabled when confirmation abandoned between req
     ]);
 });
 
-//test('password can be updated', function () {
+// test('password can be updated', function () {
 //    $user = User::factory()->create([
 //        'password' => Hash::make('password'),
 //    ]);
@@ -84,9 +84,9 @@ test('two factor authentication disabled when confirmation abandoned between req
 //    $response->assertHasNoErrors();
 //
 //    expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
-//});
+// });
 //
-//test('correct password must be provided to update password', function () {
+// test('correct password must be provided to update password', function () {
 //    $user = User::factory()->create([
 //        'password' => Hash::make('password'),
 //    ]);
@@ -100,4 +100,4 @@ test('two factor authentication disabled when confirmation abandoned between req
 //        ->call('updatePassword');
 //
 //    $response->assertHasErrors(['current_password']);
-//});
+// });

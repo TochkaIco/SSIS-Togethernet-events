@@ -20,7 +20,7 @@
 
             <flux:separator class="my-12 w-full" />
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <flux:card class="flex flex-col">
                     <flux:heading size="lg" icon="musical-note">Karaoke</flux:heading>
                     <flux:text class="mt-2 grow">
@@ -41,6 +41,14 @@
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}
                     </flux:text>
                     <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">Learn more</flux:button>
+                </flux:card>
+
+                <flux:card class="flex flex-col">
+                    <flux:heading size="lg" icon="sparkles">QR-Tag</flux:heading>
+                    <flux:text class="mt-2 grow">
+                        {{ __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.') }}
+                    </flux:text>
+                    <flux:button href="https://qrtag.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">Learn more</flux:button>
                 </flux:card>
             </div>
         </div>

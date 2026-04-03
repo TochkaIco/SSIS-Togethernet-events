@@ -9,15 +9,49 @@ use App\Models\EventUser;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class EventShow extends Component
 {
     public Event $event;
 
+    #[Url]
+    public string $tab = 'view';
+
+    protected $queryString = ['tab'];
+
     public function mount(Event $event): void
     {
         $this->event = $event;
+    }
+
+    public function eventEdit(): void
+    {
+        $this->authorize('edit articles');
+        $this->dispatch('modal-show', name: 'edit-event-modal');
+    }
+
+    #[Computed]
+    public function attendees()
+    {
+        return $this->event->participants()->get();
+    }
+
+    #[Computed]
+    public function waitingList()
+    {
+        return $this->event->waitingList()->get();
+    }
+
+    public function moveToAttendees(int $userId): void
+    {
+        $this->event->users()->updateExistingPivot($userId, [
+            'in_waitinglist' => false,
+        ]);
+
+        Flux::toast(text: 'User moved to attendees.', variant: 'success');
     }
 
     public function userIsRegistered($eventId): bool

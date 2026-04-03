@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['in_waitinglist', 'has_payed', 'has_arrived', 'event_id', 'user_id'])]
+#[Fillable(['in_waitinglist', 'has_paid', 'has_arrived', 'event_id', 'user_id'])]
 class EventUser extends Model
 {
     /** @use HasFactory<EventUserFactory> */
@@ -19,10 +19,11 @@ class EventUser extends Model
     {
         return [
             'in_waitinglist' => 'boolean',
-            'has_payed' => 'boolean',
+            'has_paid' => 'boolean',
             'has_arrived' => 'boolean',
             'event_id' => 'integer',
             'user_id' => 'integer',
+            'is_working' => 'boolean',
         ];
     }
 }

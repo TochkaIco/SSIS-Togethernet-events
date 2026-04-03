@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @method static create(mixed[] $data)
@@ -41,5 +42,25 @@ class Event extends Model
     protected function formattedDescription(): Attribute
     {
         return Attribute::get(fn (mixed $value, array $attributes) => str($attributes['description'])->markdown());
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'event_users')
+            ->withPivot(['is_working', 'in_waitinglist', 'has_paid', 'has_arrived'])
+            ->withTimestamps();
+    }
+
+    public function participants()
+    {
+        return $this->users()->where(function ($query) {
+            $query->where('event_users.in_waitinglist', false)
+                ->orWhereNull('event_users.in_waitinglist');
+        });
+    }
+
+    public function waitingList()
+    {
+        return $this->users()->wherePivot('in_waitinglist', true);
     }
 }

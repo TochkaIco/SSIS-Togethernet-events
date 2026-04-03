@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('event_id')->constrained()->cascadeOnDelete();
-            $table->boolean('in_waitinglist')->nullable();
-            $table->boolean('has_payed')->nullable();
-            $table->boolean('has_arrived')->nullable();
+            $table->boolean('is_working')->default(false);
+            $table->boolean('in_waitinglist')->default(false);
+            $table->boolean('has_paid')->default(false);
+            $table->boolean('has_arrived')->default(false);
+            $table->unique(['user_id', 'event_id']);
             $table->timestamps();
         });
     }

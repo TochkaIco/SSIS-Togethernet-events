@@ -42,7 +42,7 @@
                         @endcan
 
                         @can('manage users')
-                            <flux:sidebar.item icon="user-circle" :href="route('admin.users')" :current="request()->routeIs('admin.users*')" wire:navigate>
+                            <flux:sidebar.item icon="user-circle" :href="route('admin.users')" :current="request()->routeIs('admin.user*')" wire:navigate>
                                 {{ __('Users') }}
                             </flux:sidebar.item>
                         @endcan
@@ -63,8 +63,8 @@
                             {{ __('Openshift') }}
                         </flux:sidebar.item>
 
-                        <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs" target="_blank">
-                            {{ __('Documentation') }}
+                        <flux:sidebar.item icon="chart-bar-square" href="{{ config('app.dev_info.jira_url') }}" target="_blank">
+                            {{ __('Jira') }}
                         </flux:sidebar.item>
                     </flux:sidebar.group>
                 </flux:sidebar.nav>

@@ -1,11 +1,11 @@
-<x-layouts::app title="Events" class="flex items-center justify-center max-w-7xl mx-auto px-6 py-10">
+<div>
     <div class="flex items-center justify-center mb-10">
         <flux:button
             variant="primary"
             x-data
             data-test="create-event-button"
             class="cursor-pointer w-xl text-xl"
-            @click="$dispatch('open-modal', 'create-event')"
+            x-on:click="$flux.modal('create-event').show()"
         >Create Event</flux:button>
     </div>
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
@@ -48,4 +48,4 @@
     </div>
 
     <x-admin.event.modal />
-</x-layouts::app>
+</div>

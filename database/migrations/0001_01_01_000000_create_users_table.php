@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->rememberToken();
             $table->string('google_id')->nullable();
-            $table->string('google_token')->nullable();
-            $table->string('google_refresh_token')->nullable();
+            $table->text('google_token')->nullable();
+            $table->text('google_refresh_token')->nullable();
             $table->string('profile_picture')->nullable();
             $table->timestamps();
         });

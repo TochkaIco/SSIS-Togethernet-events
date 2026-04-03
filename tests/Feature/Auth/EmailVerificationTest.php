@@ -1,24 +1,25 @@
 <?php
+
 //
-//use App\Models\User;
-//use Illuminate\Auth\Events\Verified;
-//use Illuminate\Support\Facades\Event;
-//use Illuminate\Support\Facades\URL;
-//use Laravel\Fortify\Features;
+// use App\Models\User;
+// use Illuminate\Auth\Events\Verified;
+// use Illuminate\Support\Facades\Event;
+// use Illuminate\Support\Facades\URL;
+// use Laravel\Fortify\Features;
 //
-//beforeEach(function () {
+// beforeEach(function () {
 //    $this->skipUnlessFortifyFeature(Features::emailVerification());
-//});
+// });
 //
-//test('email verification screen can be rendered', function () {
+// test('email verification screen can be rendered', function () {
 //    $user = User::factory()->unverified()->create();
 //
 //    $response = $this->actingAs($user)->get(route('verification.notice'));
 //
 //    $response->assertOk();
-//});
+// });
 //
-//test('email can be verified', function () {
+// test('email can be verified', function () {
 //    $user = User::factory()->unverified()->create();
 //
 //    Event::fake();
@@ -35,9 +36,9 @@
 //
 //    expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
 //    $response->assertRedirect(route('home', absolute: false).'?verified=1');
-//});
+// });
 //
-//test('email is not verified with invalid hash', function () {
+// test('email is not verified with invalid hash', function () {
 //    $user = User::factory()->unverified()->create();
 //
 //    $verificationUrl = URL::temporarySignedRoute(
@@ -49,9 +50,9 @@
 //    $this->actingAs($user)->get($verificationUrl);
 //
 //    expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
-//});
+// });
 //
-//test('already verified user visiting verification link is redirected without firing event again', function () {
+// test('already verified user visiting verification link is redirected without firing event again', function () {
 //    $user = User::factory()->create([
 //        'email_verified_at' => now(),
 //    ]);
@@ -69,4 +70,4 @@
 //
 //    expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
 //    Event::assertNotDispatched(Verified::class);
-//});
+// });
