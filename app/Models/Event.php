@@ -47,13 +47,20 @@ class Event extends Model
         return Attribute::get(fn (mixed $value, array $attributes) => str($attributes['description'])->markdown());
     }
 
+    /**
+     * @return BelongsToMany<User, $this, EventUser>
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'event_users')
+            ->using(EventUser::class)
             ->withPivot(['is_working', 'in_waitinglist', 'has_paid', 'has_arrived'])
             ->withTimestamps();
     }
 
+    /**
+     * @return BelongsToMany<User, $this, EventUser>
+     */
     public function participants(): BelongsToMany
     {
         return $this->users()->where(function ($query) {
@@ -62,6 +69,9 @@ class Event extends Model
         });
     }
 
+    /**
+     * @return BelongsToMany<User, $this, EventUser>
+     */
     public function waitingList(): BelongsToMany
     {
         return $this->users()->wherePivot('in_waitinglist', true);

@@ -16,6 +16,9 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @property-read EventUser $pivot
+ */
 #[Fillable(['name', 'email', 'class', 'password', 'profile_picture', 'google_id', 'google_token', 'google_refresh_token'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
@@ -56,6 +59,7 @@ class User extends Authenticatable
     public function events(): BelongsToMany
     {
         return $this->belongsToMany(Event::class, 'event_users')
+            ->using(EventUser::class)
             ->withPivot(['is_working', 'in_waitinglist', 'has_paid', 'has_arrived'])
             ->withTimestamps();
     }

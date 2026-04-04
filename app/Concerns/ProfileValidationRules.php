@@ -35,7 +35,7 @@ trait ProfileValidationRules
     /**
      * Get the validation rules used to validate user emails.
      *
-     * @return array<int, \Illuminate\Contracts\Validation\Rule|array<mixed>|string>
+     * @return array<int, mixed>
      */
     protected function emailRules(?int $userId = null): array
     {

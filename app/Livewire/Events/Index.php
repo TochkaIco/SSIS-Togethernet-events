@@ -15,6 +15,9 @@ use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read Collection $events
+ */
 class Index extends Component
 {
     public ?int $eventIdToUnregister = null;

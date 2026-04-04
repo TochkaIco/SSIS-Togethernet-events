@@ -7,13 +7,27 @@ namespace App\Models;
 use Database\Factories\EventUserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-#[Fillable(['in_waitinglist', 'has_paid', 'has_arrived', 'event_id', 'user_id', 'is_working'])]
-class EventUser extends Model
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $event_id
+ * @property bool $in_waitinglist
+ * @property bool $has_paid
+ * @property bool $has_arrived
+ * @property bool $is_working
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
+class EventUser extends Pivot
 {
     /** @use HasFactory<EventUserFactory> */
     use HasFactory;
+
+    protected $table = 'event_users';
+
+    public $incrementing = true;
 
     protected function casts(): array
     {

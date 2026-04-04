@@ -59,6 +59,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
+        /** @var \App\Models\User $user */
         $user = $this->event->users()->findOrFail($userId);
 
         $this->event->users()->updateExistingPivot($userId, [
@@ -75,6 +76,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
+        /** @var \App\Models\User $user */
         $user = $this->event->users()->findOrFail($userId);
 
         $this->event->users()->updateExistingPivot($userId, [
@@ -100,6 +102,7 @@ class Participants extends Component
 
     public function participantIsWorking(int $participantId): bool
     {
+        /** @var \App\Models\User $participant */
         $participant = $this->event->users()->findOrFail($participantId);
 
         return (bool) $participant->pivot->is_working;
@@ -109,6 +112,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
+        /** @var \App\Models\User $user */
         $user = $this->event->users()->findOrFail($participantId);
 
         return redirect()->route('admin.event.participant.profile', [$this->event, $user->id]);
@@ -118,6 +122,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
+        /** @var \App\Models\User $participant */
         $participant = $this->event->users()->findOrFail($participantId);
         $this->event->users()->updateExistingPivot($participantId, [
             'is_working' => ! $participant->pivot->is_working,
