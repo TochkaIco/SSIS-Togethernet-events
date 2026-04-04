@@ -24,7 +24,7 @@
                             @if($registration->in_waitinglist)
                                 <flux:badge color="yellow" icon="clock">On Waiting List</flux:badge>
                             @else
-                                <flux:badge color="green" icon="check">Registered as Participant</flux:badge>
+                                <flux:badge color="green" icon="check" class="cursor-default">Registered as Participant</flux:badge>
                             @endif
 
                             <flux:modal.trigger name="unregister-confirmation">
@@ -68,12 +68,8 @@
         @endif
 
         <div class="mt-2 flex gap-x-3 items-center text-sm text-zinc-500 dark:text-zinc-400">
-            <span>{{ __('Created') }} {{ $event->created_at->diffForHumans() }}</span>
-            @can('create articles')
-                @if($event->created_at != $event->updated_at)
-                    <span>{{ __('Updated') }} {{ $event->updated_at->diffForHumans() }}</span>
-                @endif
-            @endcan
+            <flux:badge>{{ __('Starts at ') . $event->event_starts_at }}</flux:badge>
+            <flux:badge>{{ __('Ends at ') . $event->event_ends_at }}</flux:badge>
         </div>
 
         @if($event->description)

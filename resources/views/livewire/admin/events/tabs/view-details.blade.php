@@ -28,6 +28,11 @@
     @endif
 
     <div class="mt-2 flex gap-x-3 items-center text-sm text-zinc-500 dark:text-zinc-400">
+        <flux:badge>{{ __('Starts at ') . $event->event_starts_at }}</flux:badge>
+        <flux:badge>{{ __('Ends at ') . $event->event_ends_at }}</flux:badge>
+    </div>
+
+    <div class="mt-2 flex gap-x-3 items-center text-sm text-zinc-500 dark:text-zinc-400">
         <span>{{ __('Created') }} {{ $event->created_at->diffForHumans() }}</span>
         @if($event->created_at != $event->updated_at)
             <span>{{ __('Updated') }} {{ $event->updated_at->diffForHumans() }}</span>

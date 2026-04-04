@@ -8,7 +8,7 @@
                         @if(! $this->userIsRegistered($event->id))
                             <flux:button class="absolute z-10 w-min cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">Register</flux:button>
                         @else
-                            <div class="absolute z-10 flex flex-col items-start gap-2">
+                            <div class="flex flex-col items-start gap-2">
                                 @php
                                     $registration = auth()->user()->events()->where('event_id', $event->id)->first()->pivot;
                                 @endphp
@@ -20,7 +20,7 @@
                                 @endif
 
                                 <flux:modal.trigger name="unregister-confirmation">
-                                    <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer">Unregister</flux:button>
+                                    <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer absolute z-10">Unregister</flux:button>
                                 </flux:modal.trigger>
                             </div>
                         @endif
@@ -36,7 +36,7 @@
                     @else
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                             <x-placeholder-pattern class="stroke-gray-900/20 dark:stroke-neutral-100/20 w-full h-60 object-cover mb-2">
-                                <flux:text class="text-4xl ml-3 text-center">No Image Specified</flux:text>
+                                <flux:text class="text-4xl ml-3 text-center cursor-default">No Image Specified</flux:text>
                             </x-placeholder-pattern>
                         </div>
                     @endif
@@ -65,11 +65,11 @@
                 </div>
                 <div class="mt-auto">
                     <flux:separator class="mt-2" />
-                    <div class="mt-2 flex gap-x-3 items-center justify-between text-sm">
+                    <div class="mt-5 flex gap-x-3 items-center justify-between text-sm">
                         <flux:label class="inline-block rounded-full border px-2 py-1 text-xs font-medium bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
                             {{ $event->event_type->label() }}
                         </flux:label>
-                        <span>{{ __('Created') }} {{ $event->created_at->diffForHumans() }}</span>
+                        <span>{{ __('Starts at ') . $event->event_starts_at }}</span>
                     </div>
                 </div>
             </flux:card>
@@ -77,7 +77,7 @@
             <div class="flex mx-auto my-auto relative h-120 w-240 flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
                 <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
                     <flux:icon.calendar />
-                    <flux:text class="text-4xl ml-3">No Events Found</flux:text>
+                    <flux:text class="text-4xl ml-3 cursor-default">No Events Found</flux:text>
                 </x-placeholder-pattern>
             </div>
         @endforelse
