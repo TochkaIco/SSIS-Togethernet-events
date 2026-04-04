@@ -28,7 +28,7 @@
                         <flux:button href="{{ route('login') }}" icon="user-plus" class="absolute z-10 w-min cursor-pointer" variant="primary">Login to register for the event</flux:button>
                     @endif
                 @endif
-                <div class="mb-auto relative inset-0 -mt-10">
+                <div @if($this->eventIsActive($event)) class="mb-auto relative inset-0 -mt-15" @else class="mb-auto relative inset-0" @endif>
                     @if($event->image_path)
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                             <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-60 object-cover mb-2">
