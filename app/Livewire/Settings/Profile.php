@@ -70,30 +70,6 @@ class Profile extends Component
         return redirect()->route('login');
     }
 
-    /**
-     * Send an email verification notification to the current user.
-     */
-    public function resendVerificationNotification(): void
-    {
-        $user = Auth::user();
-
-        if ($user->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('home', absolute: false));
-
-            return;
-        }
-
-        $user->sendEmailVerificationNotification();
-
-        Session::flash('status', 'verification-link-sent');
-    }
-
-    #[Computed]
-    public function hasUnverifiedEmail(): bool
-    {
-        return ! Auth::user()->hasVerifiedEmail();
-    }
-
     #[Computed]
     public function showDeleteUser(): bool
     {
