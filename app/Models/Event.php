@@ -21,6 +21,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
     'description',
     'event_type',
     'image_path',
+    'num_of_seats',
+    'paid_entry',
+    'entry_fee',
     'display_starts_at',
     'event_starts_at',
     'event_ends_at',
@@ -51,7 +54,7 @@ class Event extends Model
             ->withTimestamps();
     }
 
-    public function participants()
+    public function participants(): BelongsToMany
     {
         return $this->users()->where(function ($query) {
             $query->where('event_users.in_waitinglist', false)
@@ -59,8 +62,30 @@ class Event extends Model
         });
     }
 
-    public function waitingList()
+    public function waitingList(): BelongsToMany
     {
         return $this->users()->wherePivot('in_waitinglist', true);
+    }
+
+    public function previous(): ?Event
+    {
+        return self::where('event_starts_at', '<', $this->event_starts_at)
+            ->orderBy('event_starts_at', 'desc')
+            ->first();
+    }
+
+    public function seatsTaken(): int
+    {
+        return $this->participants()->count();
+    }
+
+    public function seatsLeft(): int
+    {
+        return max(0, $this->num_of_seats - $this->seatsTaken());
+    }
+
+    public function hasSeatsLeft(): bool
+    {
+        return $this->seatsLeft() > 0;
     }
 }

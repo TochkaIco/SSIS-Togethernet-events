@@ -77,6 +77,20 @@
                 rows="4"
             >{{ old('description', $event->description) }}</flux:textarea>
 
+            {{-- Number of Seats --}}
+            <flux:input
+                label="{{ __('Number of Seats') }}"
+                name="num_of_seats"
+                data-test="num_of_seats-field"
+                type="number"
+                min="1"
+                placeholder="{{ __('Enter the number of seats available for this event') }}"
+                required
+                :value="old('num_of_seats', $event->num_of_seats)"
+            />
+
+            <flux:separator />
+
             {{-- Dates --}}
             <flux:field>
                 <flux:label>{{ __('Registration Starts At') }}</flux:label>
@@ -89,7 +103,30 @@
                 <flux:error name="display_starts_at" />
             </flux:field>
 
-            <flux:separator />
+            <div x-data="{ isPaid: {{ old('paid_entry', $event->paid_entry) ? 'true' : 'false' }} }"
+                 class="flex flex-col md:flex-row md:items-center gap-4 w-full">
+
+                <flux:checkbox
+                    label="{{ __('Paid Entry') }}"
+                    name="paid_entry"
+                    class="whitespace-nowrap"
+                    ::checked="isPaid"
+                    x-on:change="isPaid = $el.checked"
+                />
+
+                <div x-show="isPaid" x-cloak class="w-full md:w-64">
+                    <flux:input
+                        name="entry_fee"
+                        label="{{ __('Entry Fee') }}"
+                        placeholder="{{ __('Enter amount in kr') }}"
+                        value="{{ old('entry_fee', $event->entry_fee) }}"
+                        type="number"
+                        min="1"
+                        x-bind:required="isPaid"
+                    />
+                    <flux:error name="entry_fee" />
+                </div>
+            </div>
 
             <div class="grid grid-col gap-y-4 md:flex md:items-center md:justify-between md:gap-x-4">
                 <flux:field>

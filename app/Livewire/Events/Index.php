@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Events;
 
+use App\Actions\RegisterUserToEvent;
 use App\Models\Event;
 use App\Models\EventUser;
 use Flux\Flux;
@@ -36,7 +37,7 @@ class Index extends Component
         return EventUser::where('event_id', $eventId)->where('user_id', auth()->id())->exists();
     }
 
-    public function confirmUnregister($eventId): void
+    public function confirmUnregister(?int $eventId): void
     {
         $this->eventIdToUnregister = $eventId;
     }
@@ -57,26 +58,31 @@ class Index extends Component
         }
     }
 
-    public function registerUser($eventId)
+    public function registerUser($eventId, RegisterUserToEvent $action)
     {
         if (! Auth::check()) {
             return redirect()->route('login');
         }
+
+        $event = Event::findOrFail($eventId);
+
         $alreadyRegistered = EventUser::where('event_id', $eventId)
             ->where('user_id', Auth::id())
             ->exists();
+
         if ($alreadyRegistered) {
             Flux::toast(text: 'You are already registered for this event.', heading: 'Error', variant: 'danger');
 
             return;
         }
 
-        EventUser::create([
-            'event_id' => $eventId,
-            'user_id' => Auth::id(),
-        ]);
+        $registration = $action->handle(Auth::user(), $event);
 
-        Flux::toast(text: 'You have been registered for this event.', heading: 'Success', variant: 'success');
+        if ($registration?->in_waitinglist) {
+            Flux::toast(text: 'You have been added to the waiting list.', heading: 'Success', variant: 'success');
+        } else {
+            Flux::toast(text: 'You have been registered for this event.', heading: 'Success', variant: 'success');
+        }
     }
 
     public function render(): Factory|\Illuminate\Contracts\View\View|View

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->text('description');
             $table->string('event_type');
             $table->string('image_path')->nullable();
+            $table->integer('num_of_seats')->default(0);
+            $table->boolean('paid_entry')->default(true);
+            $table->integer('entry_fee')->nullable();
             $table->json('links')->nullable();
             $table->timestamp('display_starts_at');
             $table->timestamp('event_starts_at');

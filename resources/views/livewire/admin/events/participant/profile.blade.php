@@ -18,6 +18,12 @@
             @else
                 <flux:badge size="sm">{{ __('Attendee') }}</flux:badge>
             @endif
+
+            @if($this->user->pivot->in_waitinglist)
+                <flux:badge size="sm" color="yellow">{{ __('On Waiting List') }}</flux:badge>
+            @else
+                <flux:badge size="sm" color="green">{{ __('Registered Participant') }}</flux:badge>
+            @endif
         </div>
     </div>
 

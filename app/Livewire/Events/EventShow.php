@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Events;
 
+use App\Actions\RegisterUserToEvent;
 use App\Models\Event;
 use App\Models\EventUser;
 use Flux\Flux;
@@ -66,12 +67,12 @@ class EventShow extends Component
         return $this->event->display_starts_at <= now() && $this->event->event_ends_at >= now();
     }
 
-    public function confirmUnregister($eventId): void
+    public function confirmUnregister(?int $eventId): void
     {
         $this->eventIdToUnregister = $eventId;
     }
 
-    public function unregisterUser($eventId)
+    public function unregisterUser()
     {
         if (! Auth::check()) {
             return redirect()->route('login');
@@ -87,26 +88,41 @@ class EventShow extends Component
         }
     }
 
-    public function registerUser($eventId)
+    public function registerUser($eventId, RegisterUserToEvent $action)
     {
         if (! Auth::check()) {
             return redirect()->route('login');
         }
+
+        $event = Event::findOrFail($eventId);
+
         $alreadyRegistered = EventUser::where('event_id', $eventId)
             ->where('user_id', Auth::id())
             ->exists();
+
         if ($alreadyRegistered) {
             Flux::toast(text: 'You are already registered for this event.', heading: 'Error', variant: 'danger');
 
             return;
         }
 
-        EventUser::create([
-            'event_id' => $eventId,
-            'user_id' => Auth::id(),
-        ]);
+        $action->handle(Auth::user(), $event);
 
-        Flux::toast(text: 'You have been registered for this event.', heading: 'Success', variant: 'success');
+        $registration = EventUser::where('event_id', $eventId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($registration === null) {
+            Flux::toast(text: 'Registration failed. Please try again.', heading: 'Error', variant: 'danger');
+
+            return;
+        }
+
+        if ($registration->in_waitinglist) {
+            Flux::toast(text: 'You have been added to the waiting list.', heading: 'Success', variant: 'success');
+        } else {
+            Flux::toast(text: 'You have been registered for this event.', heading: 'Success', variant: 'success');
+        }
     }
 
     public function render(): View

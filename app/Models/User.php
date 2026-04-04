@@ -9,13 +9,14 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'profile_picture', 'google_id', 'google_token', 'google_refresh_token'])]
+#[Fillable(['name', 'email', 'class', 'password', 'profile_picture', 'google_id', 'google_token', 'google_refresh_token'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -50,5 +51,38 @@ class User extends Authenticatable
     public function sessions()
     {
         return $this->hasMany(Session::class)->orderBy('last_activity', 'desc');
+    }
+
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, 'event_users')
+            ->withPivot(['is_working', 'in_waitinglist', 'has_paid', 'has_arrived'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the registration priority score for a given event.
+     * Higher score means higher priority.
+     * 2: Was on the waiting list in the previous event.
+     * 1: Did not register for the previous event.
+     * 0: Was a participant in the previous event.
+     */
+    public function registrationPriorityFor(Event $event): int
+    {
+        $previousEvent = $event->previous();
+
+        if (! $previousEvent instanceof Event) {
+            return 1;
+        }
+
+        $registration = EventUser::where('event_id', $previousEvent->id)
+            ->where('user_id', $this->id)
+            ->first();
+
+        if (! $registration) {
+            return 1;
+        }
+
+        return $registration->in_waitinglist ? 2 : 0;
     }
 }

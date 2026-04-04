@@ -12,7 +12,7 @@
                 <flux:table.row :key="$waiting->id">
                     <flux:table.cell>
                         <button wire:click="viewUserProfile({{ $waiting->id }})" class="flex items-center cursor-pointer gap-x-3 text-left">
-                            <flux:avatar class="size-10" :initials="$waiting->initials()" :src="$waiting->profile_picture" />
+                            <flux:avatar class="size-10" circle :initials="$waiting->initials()" :src="$waiting->profile_picture" />
                             <span class="font-medium hover:underline hover:text-orange-300">{{ $waiting->name }}</span>
                         </button>
                     </flux:table.cell>

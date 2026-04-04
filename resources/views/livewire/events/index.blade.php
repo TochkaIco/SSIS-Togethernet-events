@@ -8,9 +8,21 @@
                         @if(! $this->userIsRegistered($event->id))
                             <flux:button class="absolute z-10 w-min cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">Register</flux:button>
                         @else
-                            <flux:modal.trigger name="unregister-confirmation">
-                                <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" class="absolute z-10 w-min cursor-pointer" variant="primary">You are registered for this event</flux:button>
-                            </flux:modal.trigger>
+                            <div class="absolute z-10 flex flex-col items-start gap-2">
+                                @php
+                                    $registration = auth()->user()->events()->where('event_id', $event->id)->first()->pivot;
+                                @endphp
+
+                                @if($registration->in_waitinglist)
+                                    <flux:badge color="yellow" icon="clock">Waiting List</flux:badge>
+                                @else
+                                    <flux:badge color="green" icon="check">Registered</flux:badge>
+                                @endif
+
+                                <flux:modal.trigger name="unregister-confirmation">
+                                    <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer">Unregister</flux:button>
+                                </flux:modal.trigger>
+                            </div>
                         @endif
                     @else
                         <flux:button href="{{ route('login') }}" icon="user-plus" class="absolute z-10 w-min cursor-pointer" variant="primary">Login to register for the event</flux:button>
@@ -30,6 +42,25 @@
                     @endif
 
                     <a href="{{ route('event.show', $event) }}" class="text-accent-content font-semibold text-xl hover:underline hover:text-orange-300">{{ $event->title }}</a>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="text-xs font-medium text-muted-foreground">{{ __('Seats:') }}</span>
+                        <flux:badge color="orange" size="xs">
+                            {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                        </flux:badge>
+
+                        @if($event->paid_entry===1)
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
+                                <flux:badge color="orange" size="sm">
+                                    {{ $event->entry_fee }} kr
+                                </flux:badge>
+                            </div>
+                        @else
+                            <flux:badge color="orange">
+                                {{ __('This event is free') }}
+                            </flux:badge>
+                        @endif
+                    </div>
                     <p class="mt-5 line-clamp-4 overflow-hidden whitespace-pre-line">{{ strip_tags(Str::markdown($event->description)) }}</p>
                 </div>
                 <div class="mt-auto">
@@ -52,11 +83,11 @@
         @endforelse
     </div>
 
-    <flux:modal name="unregister-confirmation" class="min-w-[22rem]">
+    <flux:modal name="unregister-confirmation" class="min-w-88">
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">Unregister from event?</flux:heading>
-                <flux:subheading>Are you sure you want to unregister from this event? You can always register again later if there are spots available.</flux:subheading>
+                <flux:subheading>Are you sure you want to unregister from this event? You can always register again later if there are spots available, but you will be moved to the <span class="font-bold text-red-500">end of the queue</span>.</flux:subheading>
             </div>
 
             <div class="flex gap-2">

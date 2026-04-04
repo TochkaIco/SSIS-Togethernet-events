@@ -11,24 +11,56 @@
         <div class="flex justify-between items-center">
             <h1 class="font-bold text-3xl">{{ $event->title }}</h1>
 
-            @if($tab === 'view')
-                @if($this->eventIsActive())
-                    @if(auth()->user())
-                        @if(! $this->userIsRegistered($event->id))
-                            <flux:button wire:click="registerUser({{ $event->id }})" variant="primary">Register</flux:button>
-                        @else
-                            <flux:modal.trigger name="unregister-confirmation">
-                                <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" class="absolute z-10 w-min cursor-pointer" variant="primary">You are registered</flux:button>
-                            </flux:modal.trigger>
-                        @endif
+            @if($this->eventIsActive())
+                @if(auth()->user())
+                    @if(! $this->userIsRegistered($event->id))
+                        <flux:button wire:click="registerUser({{ $event->id }})" variant="primary">Register</flux:button>
                     @else
-                        <flux:button href="{{ route('login') }}" icon="user-plus" variant="primary">Login to register</flux:button>
+                        <div class="flex flex-col items-end gap-2">
+                            @php
+                                $registration = auth()->user()->events()->where('event_id', $event->id)->first()->pivot;
+                            @endphp
+
+                            @if($registration->in_waitinglist)
+                                <flux:badge color="yellow" icon="clock">On Waiting List</flux:badge>
+                            @else
+                                <flux:badge color="green" icon="check">Registered as Participant</flux:badge>
+                            @endif
+
+                            <flux:modal.trigger name="unregister-confirmation">
+                                <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="sm" class="cursor-pointer">Unregister</flux:button>
+                            </flux:modal.trigger>
+                        </div>
                     @endif
+                @else
+                    <flux:button href="{{ route('login') }}" icon="user-plus" variant="primary">Login to register</flux:button>
                 @endif
             @endif
         </div>
     </div>
     <div class="mt-6">
+        <div class="flex flex-col md:flex-row md:space-x-3 mb-6">
+            <div class="flex items-center gap-2">
+                <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
+                <flux:badge color="orange" size="sm">
+                    {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                </flux:badge>
+            </div>
+
+            @if($event->paid_entry===1)
+                <div class="flex items-center gap-2">
+                    <span class="font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
+                    <flux:badge color="orange" size="sm">
+                        {{ $event->entry_fee }} kr
+                    </flux:badge>
+                </div>
+            @else
+                <flux:badge color="orange">
+                    {{ __('This event is free') . $event->entry_fee }}
+                </flux:badge>
+            @endif
+        </div>
+
         @if($event->image_path)
             <div class="rounded-lg overflow-hidden mb-6">
                 <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-128 object-cover">
@@ -70,7 +102,7 @@
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">Unregister from event?</flux:heading>
-                <flux:subheading>Are you sure you want to unregister from this event? You can always register again later if there are spots available.</flux:subheading>
+                <flux:subheading>Are you sure you want to unregister from this event? You can always register again later if there are spots available, but you will be moved to the <span class="font-bold text-red-500">end of the queue</span>.</flux:subheading>
             </div>
 
             <div class="flex gap-2">

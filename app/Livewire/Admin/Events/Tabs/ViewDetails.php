@@ -9,7 +9,6 @@ use Livewire\Component;
 
 class ViewDetails extends Component
 {
-
     public Event $event;
 
     public function render()

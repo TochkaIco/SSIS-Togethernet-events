@@ -30,7 +30,9 @@
             <flux:table.column>Index</flux:table.column>
             <flux:table.column>{{ __('Participant') }}</flux:table.column>
             <flux:table.column>{{ __('Type') }}</flux:table.column>
-            <flux:table.column>{{ __('Paid') }}</flux:table.column>
+            @if($event->paid_entry === 1)
+                <flux:table.column>{{ __('Paid') }}</flux:table.column>
+            @endif
             <flux:table.column>{{ __('Arrived') }}</flux:table.column>
             <flux:table.column align="end">{{ __('Actions') }}</flux:table.column>
         </flux:table.columns>
@@ -46,7 +48,7 @@
                     {{-- Avatar & Name --}}
                     <flux:table.cell>
                         <div wire:click="viewUserProfile({{ $participant->id }})" class="flex items-center gap-x-3 cursor-pointer hover:text-orange-300 w-min">
-                            <flux:avatar class="size-10" :initials="$participant->initials()" :src="$participant->profile_picture" />
+                            <flux:avatar class="size-10" circle :initials="$participant->initials()" :src="$participant->profile_picture" />
                             <div class="flex flex-col">
                                 <span class="font-medium">{{ $participant->name }}</span>
                                 <span class="text-xs">{{ $participant->email }}</span>
@@ -70,12 +72,14 @@
                     </flux:table.cell>
 
                     {{-- Payment Toggle --}}
-                    <flux:table.cell>
-                        <flux:checkbox
-                            wire:change="togglePaid({{ $participant->id }})"
-                            :checked="(bool) $participant->pivot->has_paid"
-                        />
-                    </flux:table.cell>
+                    @if($event->paid_entry === 1)
+                        <flux:table.cell>
+                            <flux:checkbox
+                                wire:change="togglePaid({{ $participant->id }})"
+                                :checked="(bool) $participant->pivot->has_paid"
+                            />
+                        </flux:table.cell>
+                    @endif
 
                     {{-- Arrival Toggle --}}
                     <flux:table.cell>

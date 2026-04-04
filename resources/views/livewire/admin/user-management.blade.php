@@ -33,7 +33,7 @@
                     {{-- Avatar & Name --}}
                     <flux:table.cell>
                         <button wire:click="viewUserProfile({{ $user->id }})" class="flex items-center cursor-pointer gap-x-3 text-left">
-                            <flux:avatar class="size-10" :initials="$user->initials()" :src="$user->profile_picture" />
+                            <flux:avatar circle class="size-10" :initials="$user->initials()" :src="$user->profile_picture" />
                             <span class="font-medium group-hover:text-orange-300 group-hover:underline">{{ $user->name }}</span>
                         </button>
                     </flux:table.cell>

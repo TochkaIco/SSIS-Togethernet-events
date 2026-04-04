@@ -1,4 +1,26 @@
 <div>
+    <div class="flex flex-col md:flex-row md:space-x-3 mb-6">
+        <div class="flex items-center gap-2">
+            <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
+            <flux:badge color="orange" size="sm">
+                {{ $event->num_of_seats }}
+            </flux:badge>
+        </div>
+
+        @if($event->paid_entry===1)
+            <div class="flex items-center gap-2">
+                <span class="font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
+                <flux:badge color="orange" size="sm">
+                    {{ $event->entry_fee }} kr
+                </flux:badge>
+            </div>
+        @else
+            <flux:badge color="orange">
+                {{ __('This event is free') . $event->entry_fee }}
+            </flux:badge>
+        @endif
+    </div>
+
     @if($event->image_path)
         <div class="rounded-lg overflow-hidden mb-6 group relative">
             <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-128 object-cover">

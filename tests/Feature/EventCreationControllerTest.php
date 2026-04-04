@@ -14,6 +14,8 @@ test('event can be created through controller', function () {
         'title' => 'Test Title',
         'description' => 'Test Description',
         'event_type' => EventType::KARAOKE->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
         'display_starts_at' => now()->format('Y-m-d H:i:s'),
         'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
         'event_ends_at' => now()->addDay()->addHours(2)->format('Y-m-d H:i:s'),

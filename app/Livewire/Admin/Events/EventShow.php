@@ -7,7 +7,6 @@ namespace App\Livewire\Admin\Events;
 use App\Models\Event;
 use Flux\Flux;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;

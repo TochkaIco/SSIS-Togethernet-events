@@ -11,15 +11,6 @@ use App\Models\Event;
 
 class EventController extends Controller
 {
-    public function admin_index()
-    {
-        $events = Event::all();
-
-        return view('livewire.admin.events.index', [
-            'events' => $events,
-        ]);
-    }
-
     /**
      * @throws \Throwable
      */
@@ -29,13 +20,6 @@ class EventController extends Controller
 
         return to_route('admin.events')
             ->with('success', __('Event created successfully'));
-    }
-
-    public function admin_show(Event $event)
-    {
-        return view('livewire.admin.events.show', [
-            'event' => $event,
-        ]);
     }
 
     /**

@@ -25,7 +25,7 @@ test('user can register for an event', function () {
         ->test(EventShow::class, ['event' => $event])
         ->assertSee('Register')
         ->call('registerUser', $event->id)
-        ->assertSee('You are registered');
+        ->assertSee('Registered');
 
     expect($event->users()->where('user_id', $user->id)->exists())->toBeTrue();
 });
