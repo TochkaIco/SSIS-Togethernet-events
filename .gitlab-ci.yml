@@ -1,0 +1,174 @@
+include:
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+stages:
+  - build
+  - push
+  - prepare
+  - secret-detection
+  - test
+  - analysis
+
+image: docker:dind
+
+services:
+  - name: docker:dind
+    alias: docker
+    command: ["--tls=false"]
+
+variables:
+  BUILDIMAGE: gitregistry.ssis.nu/ssis/php-images:8.5-build
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_TLS_CERTDIR: ""
+  PLAYWRIGHT_BROWSERS_PATH: $CI_PROJECT_DIR/pw-browsers
+
+composer:
+  stage: prepare
+  image: $BUILDIMAGE
+  cache:
+    paths:
+      - vendor/
+  script:
+    - docker-php-ext-install sockets pcntl pdo_mysql ldap
+    - php --version
+    - cp .env.example .env
+    - time composer install --no-progress --no-scripts
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - vendor/
+
+Build:
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  stage: build
+  except:
+    variables:
+      - $DOCKER_NO_CACHE
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+Build without cache:
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  stage: build
+  only:
+    variables:
+      - $DOCKER_NO_CACHE
+  script:
+    - docker build --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+Push latest:
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  variables:
+    GIT_STRATEGY: none
+  stage: push
+  only:
+    - main
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+Push tag:
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  variables:
+    GIT_STRATEGY: none
+  stage: push
+  only:
+    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+secret_detection:
+  stage: secret-detection
+  variables:
+    SECRET_DETECTION_EXCLUDED_PATHS: "vendor/"
+    SECRET_DETECTION_HISTORIC_SCAN: "false"
+    SECRET_DETECTION_REPORT_FILE: "gl-secret-detection-report.json"
+
+
+test:
+  stage: test
+  image: $BUILDIMAGE
+  services:
+    - name: mysql:8.0
+      alias: mysql
+  variables:
+    MYSQL_DATABASE: testing
+    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    DB_CONNECTION: mysql
+    DB_HOST: mysql
+    DB_DATABASE: testing
+    DB_USERNAME: root
+    DB_PASSWORD: ""
+  coverage: '/^\s*Total:\s*\d+.\d+\s*\%/'
+  needs:
+    - composer
+  cache:
+    key: test-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+      - $PLAYWRIGHT_BROWSERS_PATH
+  script:
+    - docker-php-ext-install sockets pcntl pdo_mysql ldap
+    - cp -n .env.example .env
+    - php -r "while(!@fsockopen('mysql', 3306)) { echo 'Waiting for mysql...\n'; sleep(1); }"
+    - npm install
+    - npx playwright install --with-deps
+    - npm run build
+    - php artisan key:generate
+    - XDEBUG_MODE=coverage php artisan test --coverage --coverage-cobertura=coverage.cobertura.xml
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.cobertura.xml
+    when: always
+    expire_in: 1month
+    paths:
+      - build
+
+security-check:
+  image: $BUILDIMAGE
+  stage: analysis
+  needs:
+    - composer
+  variables:
+    GIT_DEPTH: 1
+  script:
+    - COMPOSER_AUDIT_ABANDONED=ignore composer audit
+
+static analysis:
+  image: $BUILDIMAGE
+  stage: analysis
+  needs:
+    - composer
+  variables:
+    GIT_DEPTH: 1
+  script:
+    - docker-php-ext-install sockets pcntl pdo_mysql ldap
+    - ./vendor/bin/phpstan analyse --memory-limit=2G --error-format=gitlab > gl-code-quality-report.json
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+    expire_in: 1 month
+    paths: [gl-code-quality-report.json]
+
+code style:
+  image: $BUILDIMAGE
+  stage: analysis
+  needs:
+    - composer
+  variables:
+    GIT_DEPTH: 1
+  script:
+    - ./vendor/bin/pint --test
