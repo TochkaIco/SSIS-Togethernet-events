@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Database\Factories\EventUserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property bool $has_paid
  * @property bool $has_arrived
  * @property bool $is_working
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class EventUser extends Pivot
 {

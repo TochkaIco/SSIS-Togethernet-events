@@ -7,12 +7,14 @@ namespace App\Actions;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class RegisterUserToEvent
 {
     /**
      * Handle the registration of a user to an event with priority logic.
+     *
      * @throws \Throwable
      */
     public function handle(User $user, Event $event): ?EventUser
@@ -50,7 +52,7 @@ class RegisterUserToEvent
             // Find a participant with a lower score.
             // We pick the one with the lowest score among all participants,
             // and then the one who registered last among those.
-            /** @var \Illuminate\Database\Eloquent\Collection<int, User> $participants */
+            /** @var Collection<int, User> $participants */
             $participants = $event->participants()->get();
 
             $candidateToBump = $participants
@@ -76,14 +78,14 @@ class RegisterUserToEvent
                     'user_id' => $user->id,
                     'in_waitinglist' => false,
                 ]);
-            } else {
-                // No one to bump, join waiting list
-                return EventUser::create([
-                    'event_id' => $event->id,
-                    'user_id' => $user->id,
-                    'in_waitinglist' => true,
-                ]);
             }
+
+            // No one to bump, join waiting list
+            return EventUser::create([
+                'event_id' => $event->id,
+                'user_id' => $user->id,
+                'in_waitinglist' => true,
+            ]);
         });
     }
 }

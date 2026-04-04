@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin\Events\Tabs;
 
 use App\Models\Event;
+use App\Models\User;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
@@ -59,7 +60,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = $this->event->users()->findOrFail($userId);
 
         $this->event->users()->updateExistingPivot($userId, [
@@ -76,7 +77,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = $this->event->users()->findOrFail($userId);
 
         $this->event->users()->updateExistingPivot($userId, [
@@ -102,7 +103,7 @@ class Participants extends Component
 
     public function participantIsWorking(int $participantId): bool
     {
-        /** @var \App\Models\User $participant */
+        /** @var User $participant */
         $participant = $this->event->users()->findOrFail($participantId);
 
         return (bool) $participant->pivot->is_working;
@@ -112,7 +113,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = $this->event->users()->findOrFail($participantId);
 
         return redirect()->route('admin.event.participant.profile', [$this->event, $user->id]);
@@ -122,7 +123,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
-        /** @var \App\Models\User $participant */
+        /** @var User $participant */
         $participant = $this->event->users()->findOrFail($participantId);
         $this->event->users()->updateExistingPivot($participantId, [
             'is_working' => ! $participant->pivot->is_working,
