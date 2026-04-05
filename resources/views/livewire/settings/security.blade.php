@@ -37,9 +37,12 @@
                                 variant="primary"
                                 class="cursor-pointer"
                                 wire:click="enable"
+                                disabled
                             >
                                 {{ __('Enable 2FA') }}
                             </flux:button>
+
+                            <flux:text class="text-xs text-orange-400/80 cursor-default">{{ __('2FA features are currently disabled.') }}</flux:text>
                         </div>
                     @endif
                 </div>

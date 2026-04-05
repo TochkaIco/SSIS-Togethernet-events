@@ -19,8 +19,8 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property-read EventUser $pivot
  */
-#[Fillable(['name', 'email', 'class', 'password', 'profile_picture', 'google_id', 'google_token', 'google_refresh_token'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
+#[Fillable(['name', 'email', 'class', 'profile_picture', 'google_id', 'google_token', 'google_refresh_token'])]
+#[Hidden(['two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -35,7 +35,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            // 'password' => 'hashed',
         ];
     }
 

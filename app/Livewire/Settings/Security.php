@@ -78,27 +78,27 @@ class Security extends Component
     /**
      * Update the password for the currently authenticated user.
      */
-    public function updatePassword(): void
-    {
-        try {
-            $validated = $this->validate([
-                'current_password' => $this->currentPasswordRules(),
-                'password' => $this->passwordRules(),
-            ]);
-        } catch (ValidationException $e) {
-            $this->reset('current_password', 'password', 'password_confirmation');
-
-            throw $e;
-        }
-
-        Auth::user()->update([
-            'password' => $validated['password'],
-        ]);
-
-        $this->reset('current_password', 'password', 'password_confirmation');
-
-        $this->dispatch('password-updated');
-    }
+    //    public function updatePassword(): void
+    //    {
+    //        try {
+    //            $validated = $this->validate([
+    //                'current_password' => $this->currentPasswordRules(),
+    //                'password' => $this->passwordRules(),
+    //            ]);
+    //        } catch (ValidationException $e) {
+    //            $this->reset('current_password', 'password', 'password_confirmation');
+    //
+    //            throw $e;
+    //        }
+    //
+    //        Auth::user()->update([
+    //            'password' => $validated['password'],
+    //        ]);
+    //
+    //        $this->reset('current_password', 'password', 'password_confirmation');
+    //
+    //        $this->dispatch('password-updated');
+    //    }
 
     /**
      * Enable two-factor authentication for the user.
