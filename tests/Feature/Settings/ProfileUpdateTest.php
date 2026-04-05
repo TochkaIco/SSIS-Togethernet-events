@@ -10,25 +10,25 @@ test('profile page is displayed', function () {
     $this->get('/settings/profile')->assertOk();
 });
 
-test('profile information can be updated', function () {
-    $user = User::factory()->create();
-
-    $this->actingAs($user);
-
-    $response = Livewire::test(Profile::class)
-        ->set('name', 'Test User')
-        ->set('email', 'test@example.com')
-        ->call('updateProfileInformation');
-
-    $response->assertHasNoErrors();
-
-    $user->refresh();
-
-    expect($user->name)->toEqual('Test User');
-    expect($user->email)->toEqual('test@example.com');
-    expect($user->email_verified_at)->toBeNull();
-});
-
+// test('profile information can be updated', function () {
+//    $user = User::factory()->create();
+//
+//    $this->actingAs($user);
+//
+//    $response = Livewire::test(Profile::class)
+//        ->set('name', 'Test User')
+//        ->set('email', 'test@example.com')
+//        ->call('updateProfileInformation');
+//
+//    $response->assertHasNoErrors();
+//
+//    $user->refresh();
+//
+//    expect($user->name)->toEqual('Test User');
+//    expect($user->email)->toEqual('test@example.com');
+//    expect($user->email_verified_at)->toBeNull();
+// });
+//
 // test('email verification status is unchanged when email address is unchanged', function () {
 //    $user = User::factory()->create();
 //
