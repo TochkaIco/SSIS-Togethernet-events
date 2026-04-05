@@ -1,4 +1,4 @@
-<x-layouts::app title="Home">
+<x-layouts::app :title="__('Home')">
     <div class="flex mt-12 items-center justify-center w-full">
         <div class="w-full max-w-4xl px-4 lg:px-0">
             <flux:card class="overflow-hidden p-0 mb-8 border-none bg-zinc-50 dark:bg-zinc-900 shadow-lg">
@@ -10,9 +10,9 @@
                     </flux:text>
                     <div class="flex gap-4">
                         @auth
-                            <flux:button variant="primary" href="{{ route('events') }}" icon="layout-grid">Browse Events</flux:button>
+                            <flux:button variant="primary" :href="route('events')" icon="layout-grid">{{ __('Browse Events') }}</flux:button>
                         @else
-                            <flux:button variant="primary" href="{{ route('login') }}" icon="user-plus">Join Us</flux:button>
+                            <flux:button variant="primary" :href="route('login')" icon="user-plus">{{ __('Join Us') }}</flux:button>
                         @endauth
                     </div>
                 </div>
@@ -22,7 +22,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <flux:card class="flex flex-col">
-                    <flux:heading size="lg" icon="musical-note">Karaoke</flux:heading>
+                    <flux:heading size="lg" icon="musical-note">{{ __('Karaoke') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __('Sing your heart out at our weekly karaoke sessions. No talent required, just enthusiasm!') }}
                     </flux:text>
@@ -36,19 +36,19 @@
                 </flux:card>
 
                 <flux:card class="flex flex-col">
-                    <flux:heading size="lg" icon="sparkles">LAN</flux:heading>
+                    <flux:heading size="lg" icon="sparkles">{{ __('LAN') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}
                     </flux:text>
-                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">Learn more</flux:button>
+                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
                 </flux:card>
 
                 <flux:card class="flex flex-col">
-                    <flux:heading size="lg" icon="sparkles">QR-Tag</flux:heading>
+                    <flux:heading size="lg" icon="sparkles">{{ __('QR-Tag') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.') }}
                     </flux:text>
-                    <flux:button href="https://qrtag.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">Learn more</flux:button>
+                    <flux:button href="https://qrtag.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
                 </flux:card>
             </div>
         </div>

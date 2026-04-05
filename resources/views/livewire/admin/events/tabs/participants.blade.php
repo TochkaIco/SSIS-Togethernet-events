@@ -27,7 +27,7 @@
     {{-- Participants Table --}}
     <flux:table>
         <flux:table.columns>
-            <flux:table.column>Index</flux:table.column>
+            <flux:table.column>{{ __('Index') }}</flux:table.column>
             <flux:table.column>{{ __('Participant') }}</flux:table.column>
             <flux:table.column>{{ __('Type') }}</flux:table.column>
             @if($event->paid_entry === 1)

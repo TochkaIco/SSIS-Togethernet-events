@@ -87,7 +87,7 @@
                                     name="code"
                                     wire:model="code"
                                     length="6"
-                                    label="OTP Code"
+                                    label="{{ __('OTP Code') }}"
                                     label:sr-only
                                     class="mx-auto"
                                 />
@@ -204,8 +204,8 @@
         @endif
         <flux:card class="mt-6">
             <div class="mb-6">
-                <flux:heading size="lg">Active Sessions</flux:heading>
-                <flux:subheading>Devices currently logged into your account.</flux:subheading>
+                <flux:heading size="lg">{{ __('Active Sessions') }}</flux:heading>
+                <flux:subheading>{{ __('Devices currently logged into your account.') }}</flux:subheading>
             </div>
 
             <div class="space-y-4">
@@ -222,21 +222,21 @@
                         <div class="ms-4 flex-1">
                             <div class="flex items-center gap-2">
                                 <span class="text-sm font-semibold">
-                                    {{ $session->agent->platform() ?: 'Unknown OS' }}
-                                    ({{ $session->agent->browser() ?: 'Unknown Browser' }})
+                                    {{ $session->agent->platform() ?: __('Unknown OS') }}
+                                    ({{ $session->agent->browser() ?: __('Unknown Browser') }})
                                 </span>
 
                                 @if ($session->is_current_device)
-                                    <flux:badge color="green" size="sm">This Device</flux:badge>
+                                    <flux:badge color="green" size="sm">{{ __('This Device') }}</flux:badge>
                                 @endif
                             </div>
 
                             <div class="text-xs text-zinc-500 mt-0.5">
                                 {{ $session->ip_address }} •
                                 @if($session->is_current_device)
-                                    Active now
+                                    {{ __('Active now') }}
                                 @else
-                                    Last seen {{ $session->last_active }}
+                                    {{ __('Last seen') }} {{ $session->last_active }}
                                 @endif
                             </div>
                         </div>

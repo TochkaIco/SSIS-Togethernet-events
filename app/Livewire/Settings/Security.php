@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\Settings;
 
-use App\Concerns\PasswordValidationRules;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -21,14 +20,6 @@ use Livewire\Component;
 #[Title('Security settings')]
 class Security extends Component
 {
-    use PasswordValidationRules;
-
-    public string $current_password = '';
-
-    public string $password = '';
-
-    public string $password_confirmation = '';
-
     #[Locked]
     public bool $canManageTwoFactor;
 

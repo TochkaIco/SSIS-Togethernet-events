@@ -13,9 +13,9 @@ enum EventType: string
     public function label(): string
     {
         return match ($this) {
-            self::KARAOKE => 'Karaoke',
-            self::FILM_PARTY => 'Film Party',
-            self::CUSTOM => 'Custom',
+            self::KARAOKE => __('Karaoke'),
+            self::FILM_PARTY => __('Film Party'),
+            self::CUSTOM => __('Custom'),
         };
     }
 }

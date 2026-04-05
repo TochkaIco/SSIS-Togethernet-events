@@ -1,84 +1,69 @@
-<x-layouts::app title="FAQ">
+<x-layouts::app :title="__('FAQ')">
     <div class="mx-auto grid max-w-5xl justify-center gap-12 p-6 grid-cols-1">
         <div class="flex flex-wrap items-center justify-center gap-x-2 text-4xl lg:col-span-2">
-            <span>Välkommen till</span>
+            <span>{{ __('Welcome to') }}</span>
             <x-svg.app-logo.text.light class="hidden h-[1em] translate-y-0.75 w-auto dark:block" />
             <x-svg.app-logo.text.dark class="h-[1em] w-auto translate-y-0.75 dark:hidden" />
-            <span>FAQ</span>
+            <span>{{ __('FAQ') }}</span>
         </div>
         <div class="flex flex-col gap-6">
             <x-faq.question>
-                Hur går jag med i Togethernets Discord-server?
+                {{ __('How do I join Togethernet\'s Discord server?') }}
             </x-faq.question>
             <x-faq.answer>
-                Klicka här för att gå med i vår Discord! <a href="https://discord.gg/WDYR8DP9gc" class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground">https://discord.gg/WDYR8DP9gc</a>
+                {!! __('Click here to join our Discord! <a href="https://discord.gg/WDYR8DP9gc" class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground">https://discord.gg/WDYR8DP9gc</a>') !!}
             </x-faq.answer>
 
             <x-faq.question>
-                Webbplatsen fungerar inte som den ska, vad gör jag?
+                {{ __('The website is not working correctly, what do I do?') }}
             </x-faq.question>
             <x-faq.answer>
-                Om du upptäcker några fel – kontakta gärna vår nuvarande maintainer på <a class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground" href="mailto:{{ config('app.dev_info.maintainer_email') }}">{{ config('app.dev_info.maintainer_email') }}</a>
+                {!! __('If you discover any errors – please contact our current maintainer at <a class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground" href="mailto:' . config('app.dev_info.maintainer_email') . '">' . config('app.dev_info.maintainer_email') . '</a>') !!}
             </x-faq.answer>
 
             <flux:separator />
 
             <h1 class="text-center">
-                Regler
+                {{ __('Rules') }}
             </h1>
             <x-faq.answer>
-                <b>1 §</b> Alkohol och droger är strikt förbjudna under Togethernet. Oavsett om de förekommer <i>innan eller
-                    under</i>. <b>Om vi märker av beteende som bryter mot detta, kommer Togethernet be dig lämna lokalen
-                    omedelbart</b>.
+                {!! __('<b>1 §</b> Alcohol and drugs are strictly prohibited during Togethernet. Whether they occur <i>before or during</i>. <b>If we notice behavior that violates this, Togethernet will ask you to leave the premises immediately</b>.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>2 §</b> Om det uppstår bråk eller ovänligheter av bl.a. rasistisk, sexistisk, antisemitisk eller annan
-                kränkande natur <b>kommer Togethernet att be dig lämna lokalen omedelbart.</b> På Togethernet har man kul,
-                det är ingen plats för hat.
+                {!! __('<b>2 §</b> If any fights or unpleasantness of e.g. racist, sexist, antisemitic or other offensive nature occur, <b>Togethernet will ask you to leave the premises immediately.</b> At Togethernet we have fun, it is no place for hate.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>3 §</b> Eftersom Togethernet befinner sig i SSIS lokaler följer vi således också skolans värdegrund. Alla etikettsregler som gäller i
-                skolan, gäller också under Togethernet.
+                {!! __('<b>3 §</b> Since Togethernet is located in SSIS premises, we also follow the school\'s core values. All etiquette rules that apply in school also apply during Togethernet.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>4 §</b> Togethernet liksom SSIS <b>är en nötfri zon</b>. Personer med akut nötallergi kan befinna sig på
-                eventet och med respekt för dem, ber vi er att inte ta med er något med nötter i. Om du bryter detta kommer
-                vi beslagta produkterna som innehåller nötter.
+                {!! __('<b>4 §</b> Togethernet as well as SSIS <b>is a nut-free zone</b>. People with acute nut allergies may be present at the event and with respect for them, we ask you not to bring anything with nuts in it. If you break this, we will confiscate the products containing nuts.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>5 §</b> Vi ber alla som deltar under Togethernets event att behandla varandra med respekt. Dina saker får
-                således inte störa dina grannar, håll dig inom din bordsplats och <b>bete dig</b>.
+                {!! __('<b>5 §</b> We ask everyone participating in Togethernet\'s events to treat each other with respect. Your belongings must therefore not disturb your neighbors, stay within your table space and <b>behave yourself</b>.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>6 §</b> Det är inte tillåtet att släppa in <b>icke SSIS:are</b> under något av våra event. <b>Om du bryter mot detta
-                    blir både du och den insläppta ombedda att lämna lokalen omedelbart.</b>
+                {!! __('<b>6 §</b> It is not allowed to let in <b>non-SSIS students</b> during any of our events. <b>If you violate this, both you and the person let in will be asked to leave the premises immediately.</b>') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>7 §</b> Deltagare på Togethernets får <b>inte under några omständigheter förstöra eller försöka sabotera</b>
-                något av skolan eller andra deltagares materiel. Om någon blir ertappad med att göra det kommer Togethernet
-                be dig att lämna lokalen.
+                {!! __('<b>7 §</b> Participants at Togethernet may <b>under no circumstances destroy or attempt to sabotage</b> any of the school\'s or other participants\' material. If anyone is caught doing so, Togethernet will ask you to leave the premises.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>8 §</b> <b>Inga olagliga aktiviteter</b> är tillåtna via <b>nätverket</b> och om det förekommer blir den
-                ansvariga anmäld av skolan.
+                {!! __('<b>8 §</b> <b>No illegal activities</b> are allowed via the <b>network</b> and if it occurs, the responsible person will be reported by the school.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>9 §</b> Det är inte tillåtet att koppla in <b>elektronik i andra kontakter</b> än givna vid placeringen
-                utan tillstånd av Togethernet.
+                {!! __('<b>9 §</b> It is not allowed to plug <b>electronics into other sockets</b> than those given at the placement without permission from Togethernet.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>10 §</b> Det är inte tillåtet att vara i <b>andra delen av skolan</b> vilket löper från början av
-                lärarrummet och framåt utan tillåtelse.
+                {!! __('<b>10 §</b> It is not allowed to be in the <b>other part of the school</b> which runs from the beginning of the staff room and forward without permission.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>11 §</b> Togethernet och lärare administrerar eventet och deras beslut är <b>slutgiltiga</b>.
+                {!! __('<b>11 §</b> Togethernet and teachers administer the event and their decisions are <b>final</b>.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>12 §</b> Regelbrott emot <b>§1, §2, §7, §8 och §11</b>
-                kommer att rapporteras till rektorn.
+                {!! __('<b>12 §</b> Violations of <b>§1, §2, §7, §8 and §11</b> will be reported to the principal.') !!}
             </x-faq.answer>
             <x-faq.answer>
-                <b>Togethernet reserverar sig att ändra och eventuellt bryta mot reglerna ovan i mån att det är rimligt.</b>
+                {!! __('<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>') !!}
             </x-faq.answer>
         </div>
     </div>

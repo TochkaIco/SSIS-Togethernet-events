@@ -6,7 +6,7 @@
             data-test="create-event-button"
             class="cursor-pointer w-xl text-xl"
             x-on:click="$flux.modal('create-event').show()"
-        >Create Event</flux:button>
+        >{{ __('Create Event') }}</flux:button>
     </div>
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
@@ -19,7 +19,7 @@
                     @else
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                             <x-placeholder-pattern class="stroke-gray-900/20 dark:stroke-neutral-100/20 w-full h-60 object-cover mb-2">
-                                <flux:text class="text-4xl ml-3 text-center cursor-default">No Image Specified</flux:text>
+                                <flux:text class="text-4xl ml-3 text-center cursor-default">{{ __('No Image Specified') }}</flux:text>
                             </x-placeholder-pattern>
                         </div>
                     @endif
@@ -60,7 +60,7 @@
             <div class="flex mx-auto my-auto relative h-120 w-240 flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
                 <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
                     <flux:icon.calendar />
-                    <flux:text class="text-4xl ml-3 cursor-default">No Events Found</flux:text>
+                    <flux:text class="text-4xl ml-3 cursor-default">{{ __('No Events Found') }}</flux:text>
                 </x-placeholder-pattern>
             </div>
         @endforelse

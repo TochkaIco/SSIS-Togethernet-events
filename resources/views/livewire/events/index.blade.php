@@ -1,12 +1,12 @@
 <div>
-    <flux:text class="text-4xl font-bold text-center mb-6">Togethernet's Events</flux:text>
+    <flux:text class="text-4xl font-bold text-center mb-6">{{ __("Togethernet's Events") }}</flux:text>
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
             <flux:card :key="'event-'.$event->id" class="relative w-3xl h-120 flex flex-col">
                 @if($this->eventIsActive($event))
                     @if(auth()->user())
                         @if(! $this->userIsRegistered($event->id))
-                            <flux:button class="absolute z-10 w-min cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">Register</flux:button>
+                            <flux:button class="absolute z-10 w-min cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
                         @else
                             <div class="flex flex-col items-start gap-2">
                                 @php
@@ -14,18 +14,18 @@
                                 @endphp
 
                                 @if($registration->in_waitinglist)
-                                    <flux:badge color="yellow" icon="clock">Waiting List</flux:badge>
+                                    <flux:badge color="yellow" icon="clock">{{ __('Waiting List') }}</flux:badge>
                                 @else
-                                    <flux:badge color="green" icon="check">Registered</flux:badge>
+                                    <flux:badge color="green" icon="check">{{ __('Registered') }}</flux:badge>
                                 @endif
 
                                 <flux:modal.trigger name="unregister-confirmation">
-                                    <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer absolute z-10">Unregister</flux:button>
+                                    <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer absolute z-10">{{ __('Unregister') }}</flux:button>
                                 </flux:modal.trigger>
                             </div>
                         @endif
                     @else
-                        <flux:button href="{{ route('login') }}" icon="user-plus" class="absolute z-10 w-min cursor-pointer" variant="primary">Login to register for the event</flux:button>
+                        <flux:button href="{{ route('login') }}" icon="user-plus" class="absolute z-10 w-min cursor-pointer" variant="primary">{{ __('Login to register for the event') }}</flux:button>
                     @endif
                 @endif
                 <div @if($this->eventIsActive($event)) class="mb-auto relative inset-0 -mt-15" @else class="mb-auto relative inset-0" @endif>
@@ -36,7 +36,7 @@
                     @else
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                             <x-placeholder-pattern class="stroke-gray-900/20 dark:stroke-neutral-100/20 w-full h-60 object-cover mb-2">
-                                <flux:text class="text-4xl ml-3 text-center cursor-default">No Image Specified</flux:text>
+                                <flux:text class="text-4xl ml-3 text-center cursor-default">{{ __('No Image Specified') }}</flux:text>
                             </x-placeholder-pattern>
                         </div>
                     @endif
@@ -77,7 +77,7 @@
             <div class="flex mx-auto my-auto relative h-120 w-240 flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
                 <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
                     <flux:icon.calendar />
-                    <flux:text class="text-4xl ml-3 cursor-default">No Events Found</flux:text>
+                    <flux:text class="text-4xl ml-3 cursor-default">{{ __('No Events Found') }}</flux:text>
                 </x-placeholder-pattern>
             </div>
         @endforelse
@@ -86,16 +86,16 @@
     <flux:modal name="unregister-confirmation" class="min-w-88">
         <div class="space-y-6">
             <div>
-                <flux:heading size="lg">Unregister from event?</flux:heading>
-                <flux:subheading>Are you sure you want to unregister from this event? You can always register again later if there are spots available, but you will be moved to the <span class="font-bold text-red-500">end of the queue</span>.</flux:subheading>
+                <flux:heading size="lg">{{ __('Unregister from event?') }}</flux:heading>
+                <flux:subheading>{!! __('Are you sure you want to unregister from this event? You can always register again later if there are spots available, but you will be moved to the <span class="font-bold text-red-500">end of the queue</span>.') !!}</flux:subheading>
             </div>
 
             <div class="flex gap-2">
                 <flux:spacer />
                 <flux:modal.close>
-                    <flux:button variant="ghost" class="cursor-pointer">Cancel</flux:button>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="danger" class="cursor-pointer" wire:click="unregisterUser">Unregister</flux:button>
+                <flux:button type="submit" variant="danger" class="cursor-pointer" wire:click="unregisterUser">{{ __('Unregister') }}</flux:button>
             </div>
         </div>
     </flux:modal>
