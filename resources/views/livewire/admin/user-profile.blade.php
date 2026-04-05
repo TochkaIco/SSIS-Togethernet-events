@@ -4,7 +4,10 @@
         <div class="flex items-center gap-6">
             <flux:avatar class="h-24 w-24" circle :name="$user->name" :initials="$user->initials()" :src="$user->profile_picture" />
             <div>
-                <flux:heading size="xl">{{ $user->name }}</flux:heading>
+                <div class="flex flex-col md:flex-row space-x-1 space-y-1 md:space-y-0">
+                    <flux:input wire:model="name" class="font-semibold" :value="$user->name"></flux:input>
+                    <flux:button class="cursor-pointer text-lg" wire:click="changeUserName" variant="ghost">{{ __('Save') }}</flux:button>
+                </div>
                 <flux:subheading><a href="mailto:{{ $user->email }}" class="hover:text-orange-300 hover:underline">{{ $user->email }}</a></flux:subheading>
             </div>
         </div>

@@ -38,22 +38,22 @@ class Profile extends Component
     /**
      * Update the profile information for the currently authenticated user.
      */
-    public function updateProfileInformation(): void
-    {
-        $user = Auth::user();
-
-        $validated = $this->validate($this->profileRules($user->id));
-
-        $user->fill($validated);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
-        $user->save();
-
-        $this->dispatch('profile-updated', name: $user->name);
-    }
+    //    public function updateProfileInformation(): void
+    //    {
+    //        $user = Auth::user();
+    //
+    //        $validated = $this->validate($this->profileRules($user->id));
+    //
+    //        $user->fill($validated);
+    //
+    //        if ($user->isDirty('email')) {
+    //            $user->email_verified_at = null;
+    //        }
+    //
+    //        $user->save();
+    //
+    //        $this->dispatch('profile-updated', name: $user->name);
+    //    }
 
     public function pullPictureFromGoogle()
     {

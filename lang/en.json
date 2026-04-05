@@ -19,6 +19,7 @@
     "Name": "Name",
     "Email": "Email",
     "Your email is handled by Google.": "Your email is handled by Google.",
+    "Your name is handled by Google and school LDAP. Contact Togethernet to change your name in the system.": "Your name is handled by Google and school LDAP. Contact Togethernet to change your name in the system.",
     "Save": "Save",
     "Saved.": "Saved.",
     "Security settings": "Security settings",
@@ -210,5 +211,6 @@
     "<b>10 §</b> It is not allowed to be in the <b>other part of the school</b> which runs from the beginning of the staff room and forward without permission.": "<b>10 §</b> It is not allowed to be in the <b>other part of the school</b> which runs from the beginning of the staff room and forward without permission.",
     "<b>11 §</b> Togethernet and teachers administer the event and their decisions are <b>final</b>.": "<b>11 §</b> Togethernet and teachers administer the event and their decisions are <b>final</b>.",
     "<b>12 §</b> Violations of <b>§1, §2, §7, §8 and §11</b> will be reported to the principal.": "<b>12 §</b> Violations of <b>§1, §2, §7, §8 and §11</b> will be reported to the principal.",
-    "<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>": "<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>"
+    "<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>": "<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>",
+    "Name updated.": "Name updated."
 }

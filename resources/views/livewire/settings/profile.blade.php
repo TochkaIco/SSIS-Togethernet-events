@@ -13,7 +13,10 @@
                 <flux:avatar :name="auth()->user()->name" :initials="auth()->user()->initials()" class="h-24 w-24 mb-2" circle />
             @endif
 
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            <div>
+                <flux:input wire:model="name" :label="__('Name')" type="text" disabled required autofocus autocomplete="name" />
+                <flux:text class="mt-1 text-xs text-orange-400/80 cursor-default">{{ __('Your name is handled by Google and school LDAP. Contact Togethernet to change your name in the system.') }}</flux:text>
+            </div>
 
             <div>
                 @if($this->google_id !== '')
@@ -26,7 +29,7 @@
 
             <div class="flex items-center gap-4">
                 <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full cursor-pointer">{{ __('Save') }}</flux:button>
+                    <flux:button variant="primary" type="submit" class="w-full cursor-pointer" disabled>{{ __('Save') }}</flux:button>
                 </div>
 
                 <x-action-message class="me-3" on="profile-updated">

@@ -19,6 +19,7 @@
     "Name": "Namn",
     "Email": "E-post",
     "Your email is handled by Google.": "Din e-post hanteras av Google.",
+    "Your name is handled by Google and school LDAP. Contact Togethernet to change your name in the system.": "Ditt namn hanteras av Google och skolans LDAP. Kontakta Togethernet för att ändra ditt namn i systemet.",
     "Save": "Spara",
     "Saved.": "Sparat.",
     "Security settings": "Säkerhetsinställningar",
@@ -211,5 +212,6 @@
     "<b>10 §</b> It is not allowed to be in the <b>other part of the school</b> which runs from the beginning of the staff room and forward without permission.": "<b>10 §</b> Det är inte tillåtet att vara i <b>andra delen av skolan</b> vilket löper från början av lärarrummet och framåt utan tillåtelse.",
     "<b>11 §</b> Togethernet and teachers administer the event and their decisions are <b>final</b>.": "<b>11 §</b> Togethernet och lärare administrerar eventet och deras beslut är <b>slutgiltiga</b>.",
     "<b>12 §</b> Violations of <b>§1, §2, §7, §8 and §11</b> will be reported to the principal.": "<b>12 §</b> Regelbrott emot <b>§1, §2, §7, §8 och §11</b> kommer att rapporteras till rektorn.",
-    "<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>": "<b>Togethernet reserverar sig att ändra och eventuellt bryta mot reglerna ovan i mån att det är rimligt.</b>"
+    "<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>": "<b>Togethernet reserverar sig att ändra och eventuellt bryta mot reglerna ovan i mån att det är rimligt.</b>",
+    "Name updated.": "Namn uppdaterad."
 }
