@@ -2,7 +2,7 @@
     <div class="flex mt-12 items-center justify-center w-full">
         <div class="w-full max-w-4xl px-4 lg:px-0">
             <flux:card class="overflow-hidden p-0 mb-8 border-none bg-zinc-50 dark:bg-zinc-900 shadow-lg">
-                <img src="{{ asset('/images/togethernet-feature.jpg') }}" alt="Image" class="w-full h-64 object-cover">
+                <img src="{{ asset('/images/togethernet-feature.jpg') }}" alt="Image" class="w-full h-64 object-cover rounded-t-xl">
                 <div class="p-8">
                     <flux:heading size="xl" class="mb-2">{{ __('Welcome to Togethernet') }}</flux:heading>
                     <flux:text size="lg" class="mb-6">
