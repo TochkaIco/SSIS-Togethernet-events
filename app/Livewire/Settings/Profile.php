@@ -6,7 +6,6 @@ namespace App\Livewire\Settings;
 
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
