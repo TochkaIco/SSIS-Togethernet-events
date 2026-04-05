@@ -18,7 +18,9 @@
                 {{ __('The website is not working correctly, what do I do?') }}
             </x-faq.question>
             <x-faq.answer>
-                {!! __('If you discover any errors – please contact our current maintainer at <a class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground" href="mailto:' . config('app.dev_info.maintainer_email') . '">' . config('app.dev_info.maintainer_email') . '</a>') !!}
+                {!! __('If you discover any errors – please contact our current maintainer at :email', [
+                    'email' => '<a class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground" href="mailto:' . config('app.dev_info.maintainer_email') . '">' . config('app.dev_info.maintainer_email') . '</a>'
+                ]) !!}
             </x-faq.answer>
 
             <flux:separator />

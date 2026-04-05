@@ -14,9 +14,9 @@
                                 @endphp
 
                                 @if($registration->in_waitinglist)
-                                    <flux:badge color="yellow" icon="clock">{{ __('Waiting List') }}</flux:badge>
+                                    <flux:badge color="yellow" icon="clock" class="relative z-10">{{ __('Waiting List') }}</flux:badge>
                                 @else
-                                    <flux:badge color="green" icon="check">{{ __('Registered') }}</flux:badge>
+                                    <flux:badge color="green" icon="check" class="relative z-10">{{ __('Registered') }}</flux:badge>
                                 @endif
 
                                 <flux:modal.trigger name="unregister-confirmation">
