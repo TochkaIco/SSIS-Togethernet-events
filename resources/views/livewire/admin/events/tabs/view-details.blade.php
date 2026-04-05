@@ -1,5 +1,5 @@
 <div>
-    <div class="flex flex-col md:flex-row md:space-x-3 mb-6">
+    <div class="flex flex-col min-w-5xl md:flex-row md:space-x-3 mb-6">
         <div class="flex items-center gap-2">
             <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
             <flux:badge color="orange" size="sm">

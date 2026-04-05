@@ -1,4 +1,4 @@
-<div class="py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-6 flex flex-col gap-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('admin.events') }}" icon="layout-grid">{{ __('Events') }}</flux:breadcrumbs.item>

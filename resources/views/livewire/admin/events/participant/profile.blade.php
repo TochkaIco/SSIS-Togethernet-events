@@ -29,19 +29,19 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
         <div class="space-y-6">
-            <flux:heading size="lg">User Details</flux:heading>
+            <flux:heading size="lg">{{ __('User Details') }}</flux:heading>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <flux:label>Created At</flux:label>
+                    <flux:label>{{ __('Created At') }}</flux:label>
                     <flux:text>{{ $user->created_at->format('M d, Y H:i') }}</flux:text>
                 </div>
                 <div>
-                    <flux:label>Last Activity</flux:label>
-                    <flux:text>{{ $lastActivity ? $lastActivity->diffForHumans() : 'Never' }}</flux:text>
+                    <flux:label>{{ __('Last Activity') }}</flux:label>
+                    <flux:text>{{ $lastActivity ? $lastActivity->diffForHumans() : __('Never') }}</flux:text>
                 </div>
                 <div>
-                    <flux:label>Registered For Event At</flux:label>
+                    <flux:label>{{ __('Registered For Event At') }}</flux:label>
                     <flux:text>{{ $this->user->pivot->created_at->format('M d, Y H:i') }}</flux:text>
                 </div>
             </div>
@@ -49,15 +49,15 @@
 
         {{-- Roles and Permissions --}}
         <div class="space-y-6">
-            <flux:heading size="xl">Access Control</flux:heading>
+            <flux:heading size="xl">{{ __('Access Control') }}</flux:heading>
 
             <div>
-                <flux:label class="mb-2">Roles</flux:label>
+                <flux:label class="mb-2">{{ __('Roles') }}</flux:label>
                 <div class="flex flex-wrap gap-2">
                     @forelse ($user->roles as $role)
                         <flux:badge variant="primary" size="sm">{{ $role->name }}</flux:badge>
                     @empty
-                        <flux:text>No roles assigned.</flux:text>
+                        <flux:text>{{ __('No roles assigned.') }}</flux:text>
                     @endforelse
                 </div>
             </div>

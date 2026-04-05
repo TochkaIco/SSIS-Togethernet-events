@@ -1,4 +1,4 @@
-<div>
+<div class="min-w-5xl">
     <flux:table>
         <flux:table.columns>
             <flux:table.column>{{ __('Name') }}</flux:table.column>
