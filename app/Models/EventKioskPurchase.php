@@ -17,16 +17,25 @@ class EventKioskPurchase extends Model
         'cost' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<EventKiosk, $this>
+     */
     public function kiosk(): BelongsTo
     {
         return $this->belongsTo(EventKiosk::class, 'kiosk_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function operator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'operator_id');
     }
 
+    /**
+     * @return HasMany<EventKioskPurchaseItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(EventKioskPurchaseItem::class, 'purchase_id');

@@ -21,13 +21,36 @@
                 >
                     {{ __('Edit') }}
                 </flux:button>
-                <form action="{{ route('admin.event.destroy', $event) }}" method="post" onsubmit="return confirm('{{ __('Are you sure you want to delete this event?') }}')">
-                    @csrf
-                    @method('DELETE')
-                    <flux:button type="submit" variant="danger" class="cursor-pointer">
+                <flux:modal.trigger name="delete-event">
+                    <flux:button variant="danger" class="cursor-pointer">
                         {{ __('Delete') }}
                     </flux:button>
-                </form>
+                </flux:modal.trigger>
+
+                <flux:modal name="delete-event" class="min-w-[22rem]">
+                    <form action="{{ route('admin.event.destroy', $event) }}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <div class="space-y-6">
+                            <div>
+                                <flux:heading size="lg">{{ __('Delete event?') }}</flux:heading>
+                                <flux:text class="mt-2">
+                                    {{ __("You're about to delete this event. This action cannot be reversed.") }}
+                                </flux:text>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <flux:spacer />
+
+                                <flux:modal.close>
+                                    <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                                </flux:modal.close>
+
+                                <flux:button type="submit" variant="danger">{{ __('Delete event') }}</flux:button>
+                            </div>
+                        </div>
+                    </form>
+                </flux:modal>
                 @endhaspermission
             </div>
         </div>

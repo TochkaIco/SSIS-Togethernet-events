@@ -21,11 +21,17 @@ class EventKioskPurchaseItem extends Model
         'cost' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<EventKioskPurchase, $this>
+     */
     public function purchase(): BelongsTo
     {
         return $this->belongsTo(EventKioskPurchase::class, 'purchase_id');
     }
 
+    /**
+     * @return BelongsTo<EventKioskArticle, $this>
+     */
     public function article(): BelongsTo
     {
         return $this->belongsTo(EventKioskArticle::class, 'article_id');

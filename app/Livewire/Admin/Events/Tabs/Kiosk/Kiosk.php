@@ -51,6 +51,12 @@ class Kiosk extends Component
 
     public ?int $selectedPurchaseId = null;
 
+    public ?int $deletingArticleId = null;
+
+    public ?int $deletingCategoryId = null;
+
+    public ?int $deletingPurchaseId = null;
+
     public ?int $selectedSellCategoryId = null;
 
     protected $listeners = [
@@ -146,13 +152,25 @@ class Kiosk extends Component
         $this->dispatch('refreshKiosk');
     }
 
-    public function deleteArticle(int $articleId): void
+    public function confirmDeleteArticle(int $articleId): void
     {
         $this->authorize('manage kiosk');
 
-        $this->event->kiosk?->articles()->findOrFail($articleId)->delete();
-        Flux::toast(__('Article deleted.'));
-        $this->dispatch('refreshKiosk');
+        $this->deletingArticleId = $articleId;
+        $this->modal('delete-article-modal')->show();
+    }
+
+    public function deleteArticle(): void
+    {
+        $this->authorize('manage kiosk');
+
+        if ($this->deletingArticleId) {
+            $this->event->kiosk?->articles()->findOrFail($this->deletingArticleId)->delete();
+            Flux::toast(__('Article deleted.'));
+            $this->deletingArticleId = null;
+            $this->modal('delete-article-modal')->close();
+            $this->dispatch('refreshKiosk');
+        }
     }
 
     public function openCategoryModal(?int $categoryId = null): void
@@ -203,27 +221,39 @@ class Kiosk extends Component
         $this->dispatch('refreshKiosk');
     }
 
-    public function deleteCategory(int $categoryId): void
+    public function confirmDeleteCategory(int $categoryId): void
+    {
+        $this->authorize('manage kiosk');
+
+        $this->deletingCategoryId = $categoryId;
+        $this->modal('delete-category-modal')->show();
+    }
+
+    public function deleteCategory(): void
     {
         $this->authorize('manage kiosk');
 
         $kiosk = $this->event->kiosk;
-        if (! $kiosk) {
-            Flux::toast(__('No kiosk found.'), variant: 'warning');
+        if (! $kiosk || ! $this->deletingCategoryId) {
+            Flux::toast(__('No kiosk found or no category selected.'), variant: 'warning');
 
             return;
         }
 
-        $category = $kiosk->categories()->findOrFail($categoryId);
+        $category = $kiosk->categories()->findOrFail($this->deletingCategoryId);
 
         if ($category->articles()->exists()) {
             Flux::toast(__('Cannot delete category with articles.'), variant: 'warning');
+            $this->deletingCategoryId = null;
+            $this->modal('delete-category-modal')->close();
 
             return;
         }
 
         $category->delete();
         Flux::toast(__('Category deleted.'));
+        $this->deletingCategoryId = null;
+        $this->modal('delete-category-modal')->close();
         $this->dispatch('refreshKiosk');
     }
 
@@ -384,11 +414,44 @@ class Kiosk extends Component
         $this->selectedPurchaseId = $purchaseId;
     }
 
+    public function confirmDeletePurchase(int $purchaseId): void
+    {
+        $this->authorize('manage kiosk');
+
+        $this->deletingPurchaseId = $purchaseId;
+        $this->modal('delete-purchase-modal')->show();
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function deletePurchase(): void
+    {
+        $this->authorize('manage kiosk');
+
+        if ($this->deletingPurchaseId) {
+            $purchase = $this->event->kiosk?->purchases()->findOrFail($this->deletingPurchaseId);
+
+            DB::transaction(function () use ($purchase) {
+                foreach ($purchase->items as $item) {
+                    $item->article?->increment('amount', $item->amount);
+                }
+
+                $purchase->delete();
+            });
+
+            Flux::toast(__('Purchase deleted and stock restored.'));
+            $this->deletingPurchaseId = null;
+            $this->modal('delete-purchase-modal')->close();
+            $this->dispatch('refreshKiosk');
+        }
+    }
+
     public function render()
     {
         $kiosk = $this->event->kiosk;
 
-        $categories = $kiosk?->categories ?? collect();
+        $categories = $kiosk->categories ?? collect();
 
         $sellCategories = $categories->whereIn('id', $kiosk?->articles->pluck('category_id')->filter()->unique() ?? []);
 

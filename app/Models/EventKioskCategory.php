@@ -15,11 +15,17 @@ class EventKioskCategory extends Model
 
     protected $fillable = ['name', 'kiosk_id'];
 
+    /**
+     * @return BelongsTo<EventKiosk, $this>
+     */
     public function kiosk(): BelongsTo
     {
         return $this->belongsTo(EventKiosk::class, 'kiosk_id');
     }
 
+    /**
+     * @return HasMany<EventKioskArticle, $this>
+     */
     public function articles(): HasMany
     {
         return $this->hasMany(EventKioskArticle::class, 'category_id');

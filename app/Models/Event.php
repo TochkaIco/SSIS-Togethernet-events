@@ -100,6 +100,9 @@ class Event extends Model
         return $this->seatsLeft() > 0;
     }
 
+    /**
+     * @return HasOne<EventKiosk, $this>
+     */
     public function kiosk(): HasOne
     {
         return $this->hasOne(EventKiosk::class, 'event_id');

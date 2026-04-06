@@ -26,11 +26,17 @@ class EventKioskArticle extends Model
         'amount' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<EventKiosk, $this>
+     */
     public function kiosk(): BelongsTo
     {
         return $this->belongsTo(EventKiosk::class, 'kiosk_id');
     }
 
+    /**
+     * @return BelongsTo<EventKioskCategory, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(EventKioskCategory::class, 'category_id');

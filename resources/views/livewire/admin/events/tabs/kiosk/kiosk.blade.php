@@ -4,7 +4,7 @@
             <flux:icon.shopping-bag class="size-16 text-muted-foreground" />
             <p class="text-muted-foreground text-lg">No kiosk configured for this event.</p>
             @can('manage kiosk')
-                <flux:button variant="primary" wire:click="createKiosk">
+                <flux:button variant="primary" wire:click="createKiosk" class="cursor-pointer">
                     {{ __('Create Kiosk') }}
                 </flux:button>
             @endcan
@@ -29,7 +29,7 @@
             <div class="flex gap-2">
                 @can('manage kiosk')
                     @if($kiosk->articles->isEmpty() && $kiosk->categories->isEmpty())
-                        <flux:button variant="ghost" wire:click="openImportModal">
+                        <flux:button variant="ghost" wire:click="openImportModal" class="cursor-pointer">
                             <flux:icon.arrow-path class="size-4 mr-1" />
                             {{ __('Import') }}
                         </flux:button>
@@ -42,7 +42,7 @@
             <div class="space-y-4">
                 <div class="flex justify-end">
                     @can('manage kiosk')
-                        <flux:button icon="plus" wire:click="openArticleModal">
+                        <flux:button icon="plus" wire:click="openArticleModal" class="cursor-pointer">
                             {{ __('Add Article') }}
                         </flux:button>
                     @endcan
@@ -79,10 +79,10 @@
                                     </span>
                                     @can('manage kiosk')
                                         <div class="flex gap-1">
-                                            <flux:button size="xs" variant="ghost" wire:click="openArticleModal({{ $article->id }})" class="{{ $article->image_url ? 'text-white hover:bg-white/20' : '' }}">
+                                            <flux:button size="xs" variant="ghost" wire:click="openArticleModal({{ $article->id }})" class="cursor-pointer {{ $article->image_url ? 'text-white hover:bg-white/20' : '' }}">
                                                 <flux:icon.pencil class="size-3" />
                                             </flux:button>
-                                            <flux:button size="xs" variant="ghost" wire:click="deleteArticle({{ $article->id }})" wire:confirm="{{ __('Delete this article?') }}" class="{{ $article->image_url ? 'text-white hover:bg-white/20' : '' }}">
+                                            <flux:button size="xs" variant="ghost" wire:click="confirmDeleteArticle({{ $article->id }})" class="cursor-pointer {{ $article->image_url ? 'text-white hover:bg-white/20' : '' }}">
                                                 <flux:icon.trash class="size-3 {{ $article->image_url ? 'text-red-400' : 'text-red-500' }}" />
                                             </flux:button>
                                         </div>
@@ -97,7 +97,7 @@
             <div class="space-y-4">
                 <div class="flex justify-end">
                     @can('manage kiosk')
-                        <flux:button icon="plus" wire:click="openCategoryModal">
+                        <flux:button icon="plus" wire:click="openCategoryModal" class="cursor-pointer">
                             {{ __('Add Category') }}
                         </flux:button>
                     @endcan
@@ -122,10 +122,10 @@
                                     <flux:table.cell align="end">
                                         @can('manage kiosk')
                                             <div class="flex gap-1 justify-end">
-                                                <flux:button size="xs" variant="ghost" wire:click="openCategoryModal({{ $category->id }})">
+                                                <flux:button size="xs" class="cursor-pointer" variant="ghost" wire:click="openCategoryModal({{ $category->id }})">
                                                     <flux:icon.pencil class="size-3" />
                                                 </flux:button>
-                                                <flux:button size="xs" variant="ghost" wire:click="deleteCategory({{ $category->id }})" wire:confirm="{{ __('Delete this category?') }}">
+                                                <flux:button size="xs" class="cursor-pointer" variant="ghost" wire:click="confirmDeleteCategory({{ $category->id }})">
                                                     <flux:icon.trash class="size-3 text-red-500" />
                                                 </flux:button>
                                             </div>
@@ -165,9 +165,10 @@
                                     <flux:table.cell>{{ $purchase->items->sum('amount') }}</flux:table.cell>
                                     <flux:table.cell>{{ number_format($purchase->cost) }} kr</flux:table.cell>
                                     <flux:table.cell align="end">
-                                        <flux:button size="xs" variant="ghost" wire:click="viewPurchase({{ $purchase->id }})" x-on:click="$flux.modal('purchase-modal').show()">
-                                            {{ __('View') }}
-                                        </flux:button>
+                                        <div class="flex gap-x-1 justify-end">
+                                            <flux:button size="xs" class="cursor-pointer" icon="eye" variant="ghost" wire:click="viewPurchase({{ $purchase->id }})" x-on:click="$flux.modal('purchase-modal').show()" />
+                                            <flux:button size="xs" class="cursor-pointer" icon="trash" variant="ghost" wire:click="confirmDeletePurchase({{ $purchase->id }})" />
+                                        </div>
                                     </flux:table.cell>
                                 </flux:table.row>
                             @endforeach
@@ -220,7 +221,7 @@
                                         </span>
 
                                         @if($article->amount > 0)
-                                            <flux:button icon="plus" size="sm" variant="outline" wire:click="addToCart({{ $article->id }})" :disabled="($cart[$article->id] ?? 0) >= $article->amount" class="{{ $article->image_url ? 'text-white border-white/30 hover:bg-white/20' : '' }}" />
+                                            <flux:button icon="plus" size="sm" variant="outline" wire:click="addToCart({{ $article->id }})" :disabled="($cart[$article->id] ?? 0) >= $article->amount" class="cursor-pointer {{ $article->image_url ? 'text-white border-white/30 hover:bg-white/20' : '' }}" />
                                         @else
                                             <flux:badge variant="danger" size="sm">{{ __('Out of Stock') }}</flux:badge>
                                         @endif
@@ -256,7 +257,7 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <span class="font-medium">{{ number_format(($article?->cost ?? 0) * $quantity) }} kr</span>
-                                        <flux:button size="xs" variant="ghost" wire:click="$set('cart.{{ $articleId }}', 0)">
+                                        <flux:button size="xs" class="cursor-pointer" variant="ghost" wire:click="$set('cart.{{ $articleId }}', 0)">
                                             <flux:icon.x-mark class="size-3" />
                                         </flux:button>
                                     </div>
@@ -272,7 +273,7 @@
                                 <span class="font-semibold">Total</span>
                                 <span class="font-bold text-xl">{{ number_format($cartTotal) }} kr</span>
                             </div>
-                            <flux:button variant="primary" class="w-full" wire:click="recordPurchase">
+                            <flux:button variant="primary" class="w-full cursor-pointer" wire:click="recordPurchase">
                                 {{ __('Complete Purchase') }}
                             </flux:button>
                         @endif
@@ -322,9 +323,9 @@
             <flux:separator class="my-4" />
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
-                    <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                    <flux:button class="cursor-pointer" variant="ghost">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="primary">{{ __('Save') }}</flux:button>
+                <flux:button type="submit" class="cursor-pointer" variant="primary">{{ __('Save') }}</flux:button>
             </div>
         </form>
     </flux:modal>
@@ -341,9 +342,9 @@
             <flux:separator class="my-4" />
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
-                    <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                    <flux:button class="cursor-pointer" variant="ghost">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="primary">{{ __('Save') }}</flux:button>
+                <flux:button type="submit" class="cursor-pointer" variant="primary">{{ __('Save') }}</flux:button>
             </div>
         </form>
     </flux:modal>
@@ -366,9 +367,9 @@
             <flux:separator class="my-4" />
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
-                    <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="primary">{{ __('Import') }}</flux:button>
+                <flux:button type="submit" variant="primary" class="cursor-pointer">{{ __('Import') }}</flux:button>
             </div>
         </form>
     </flux:modal>
@@ -412,9 +413,78 @@
             <flux:separator class="my-4" />
             <div class="flex justify-end">
                 <flux:modal.close>
-                    <flux:button variant="ghost">{{ __('Close') }}</flux:button>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Close') }}</flux:button>
                 </flux:modal.close>
             </div>
         </flux:modal>
     @endif
+
+    <flux:modal name="delete-article-modal" class="min-w-[22rem]">
+        <form wire:submit="deleteArticle">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Delete article?') }}</flux:heading>
+                    <flux:text class="mt-2">
+                        {{ __("You're about to delete this article. This action cannot be reversed.") }}
+                    </flux:text>
+                </div>
+
+                <div class="flex gap-2">
+                    <flux:spacer />
+
+                    <flux:modal.close>
+                        <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button type="submit" variant="danger" class="cursor-pointer">{{ __('Delete article') }}</flux:button>
+                </div>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="delete-category-modal" class="min-w-[22rem]">
+        <form wire:submit="deleteCategory">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Delete category?') }}</flux:heading>
+                    <flux:text class="mt-2">
+                        {{ __("You're about to delete this category. This action cannot be reversed.") }}
+                    </flux:text>
+                </div>
+
+                <div class="flex gap-2">
+                    <flux:spacer />
+
+                    <flux:modal.close>
+                        <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button type="submit" variant="danger" class="cursor-pointer">{{ __('Delete category') }}</flux:button>
+                </div>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="delete-purchase-modal" class="min-w-[22rem]">
+        <form wire:submit="deletePurchase">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Delete purchase?') }}</flux:heading>
+                    <flux:text class="mt-2">
+                        {{ __("You're about to delete this purchase. This will restore the stock of the items in the purchase. This action cannot be reversed.") }}
+                    </flux:text>
+                </div>
+
+                <div class="flex gap-2">
+                    <flux:spacer />
+
+                    <flux:modal.close>
+                        <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button type="submit" variant="danger" class="cursor-pointer">{{ __('Delete purchase') }}</flux:button>
+                </div>
+            </div>
+        </form>
+    </flux:modal>
 </div>
