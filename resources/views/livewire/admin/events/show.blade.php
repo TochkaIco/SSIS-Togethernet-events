@@ -14,11 +14,11 @@
                 @haspermission('edit articles')
                 <flux:button
                     variant="ghost"
+                    icon="pencil-square"
                     class="cursor-pointer"
                     data-test="edit-event-button"
                     wire:click="eventEdit"
                 >
-                    <flux:icon.pencil-square class="mr-2 size-4" />
                     {{ __('Edit') }}
                 </flux:button>
                 <form action="{{ route('admin.event.destroy', $event) }}" method="post" onsubmit="return confirm('{{ __('Are you sure you want to delete this event?') }}')">
@@ -31,13 +31,6 @@
                 @endhaspermission
             </div>
         </div>
-
-        <flux:navbar class="-mb-px overflow-x-auto">
-            <flux:navbar.item wire:click="$set('tab', 'view')" :current="$tab === 'view'" class="cursor-pointer">{{ __('View') }}</flux:navbar.item>
-            <flux:navbar.item wire:click="$set('tab', 'participants')" :current="$tab === 'participants'" class="cursor-pointer">{{ __('Participants') }}</flux:navbar.item>
-            <flux:navbar.item wire:click="$set('tab', 'waiting')" :current="$tab === 'waiting'" class="cursor-pointer">{{ __('Waiting List') }}</flux:navbar.item>
-            <flux:navbar.item wire:click="$set('tab', 'kiosk')" :current="$tab === 'kiosk'" class="cursor-pointer">{{ __('Kiosk') }}</flux:navbar.item>
-        </flux:navbar>
     </div>
 
     <div class="mt-6">
@@ -48,7 +41,9 @@
         @elseif($tab === 'waiting')
             <livewire:admin.events.tabs.waiting-list :event="$event" :key="'wait-'.$event->id" />
         @elseif($tab === 'kiosk')
-            <livewire:admin.events.tabs.kiosk :event="$event" :key="'kiosk-'.$event->id" />
+            <livewire:admin.events.tabs.kiosk.kiosk :event="$event" :key="'kiosk-'.$event->id" />
+        @else
+            <livewire:admin.events.tabs.view-details :event="$event" :key="'view-'.$event->id" />
         @endif
     </div>
 

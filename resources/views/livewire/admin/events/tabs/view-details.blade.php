@@ -1,5 +1,5 @@
 <div>
-    <div class="flex flex-col min-w-5xl md:flex-row md:space-x-3 mb-6">
+    <div class="flex flex-col md:min-w-5xl md:flex-row md:space-x-3 space-y-3 md:space-y-0 mb-6">
         <div class="flex items-center gap-2">
             <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
             <flux:badge color="orange" size="sm">
@@ -27,12 +27,12 @@
         </div>
     @endif
 
-    <div class="mt-2 flex gap-x-3 items-center text-sm text-zinc-500 dark:text-zinc-400">
+    <div class="mt-2 flex flex-col md:flex-row space-y-3 md:gap-x-3 md:space-y-0 md:items-center text-sm">
         <flux:badge>{{ __('Starts at ') . $event->event_starts_at }}</flux:badge>
         <flux:badge>{{ __('Ends at ') . $event->event_ends_at }}</flux:badge>
     </div>
 
-    <div class="mt-2 flex gap-x-3 items-center text-sm text-zinc-500 dark:text-zinc-400">
+    <div class="mt-6 flex flex-col md:flex-row space-y-3 md:gap-x-3 md:space-y-0 md:items-center text-sm">
         <span>{{ __('Created') }} {{ $event->created_at->diffForHumans() }}</span>
         @if($event->created_at != $event->updated_at)
             <span>{{ __('Updated') }} {{ $event->updated_at->diffForHumans() }}</span>

@@ -2,7 +2,7 @@
     <flux:text class="text-4xl font-bold text-center mb-6">{{ __("Togethernet's Events") }}</flux:text>
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
-            <flux:card :key="'event-'.$event->id" class="relative w-3xl h-120 flex flex-col">
+            <flux:card :key="'event-'.$event->id" class="relative w-3xl h-130 flex flex-col">
                 @if($this->eventIsActive($event))
                     @if(auth()->user())
                         @if(! $this->userIsRegistered($event->id))

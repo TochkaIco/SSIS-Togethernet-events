@@ -1,6 +1,6 @@
 <div class="p-6">
     {{-- Header & Search --}}
-    <div class="flex flex-col min-w-5xl md:flex-row gap-4 mb-6 items-end">
+    <div class="flex flex-col md:min-w-5xl md:flex-row gap-4 mb-6 items-end">
         <flux:input
             wire:model.live.debounce.300ms="search"
             icon="magnifying-glass"

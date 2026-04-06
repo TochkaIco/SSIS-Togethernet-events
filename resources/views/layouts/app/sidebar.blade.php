@@ -36,15 +36,35 @@
                         </flux:sidebar.item>
 
                         @can('view articles')
-                            <flux:sidebar.item icon="layout-grid" :href="route('admin.events')" :current="request()->routeIs('admin.event*')" wire:navigate>
+                            <flux:sidebar.item icon="layout-grid" :href="route('admin.events')" :current="request()->routeIs('admin.events')" wire:navigate>
                                 {{ __('Events') }}
                             </flux:sidebar.item>
-                        @endcan
 
-                        @can('manage users')
-                            <flux:sidebar.item icon="user-circle" :href="route('admin.users')" :current="request()->routeIs('admin.user*')" wire:navigate>
-                                {{ __('Users') }}
-                            </flux:sidebar.item>
+                            @if(request()->routeIs('admin.event.show') && $event = request()->route('event'))
+                                <flux:sidebar.group :heading="$event->title" expandable expanded class="ml-4">
+                                    <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'view'])" :current="request('tab', 'view') === 'view'" wire:navigate>
+                                        {{ __('View') }}
+                                    </flux:sidebar.item>
+                                    @can('manage users')
+                                        <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'participants'])" :current="request('tab') === 'participants'" wire:navigate>
+                                            {{ __('Participants') }}
+                                        </flux:sidebar.item>
+                                        <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'waiting'])" :current="request('tab') === 'waiting'" wire:navigate>
+                                            {{ __('Waiting List') }}
+                                        </flux:sidebar.item>
+                                    @endcan
+                                    @can('manage kiosk')
+                                        <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'kiosk'])" :current="request('tab') === 'kiosk'" wire:navigate>
+                                            {{ __('Kiosk') }}
+                                        </flux:sidebar.item>
+                                    @endcan
+                                </flux:sidebar.group>
+                            @endif
+                            @can('manage users')
+                                <flux:sidebar.item icon="user-circle" :href="route('admin.users')" :current="request()->routeIs('admin.user*')" wire:navigate>
+                                    {{ __('Users') }}
+                                </flux:sidebar.item>
+                            @endcan
                         @endcan
                     </flux:sidebar.group>
                 </flux:sidebar.nav>
