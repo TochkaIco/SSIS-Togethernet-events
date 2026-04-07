@@ -34,7 +34,7 @@ class WaitingList extends Component
     {
         return view('livewire.admin.events.tabs.waiting-list', [
             'waitingList' => $this->event->users()
-                ->wherePivot('in_waitinglist', true)
+                ->where('event_users.in_waitinglist', true)
                 ->get(),
         ]);
     }

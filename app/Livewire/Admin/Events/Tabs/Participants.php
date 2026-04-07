@@ -26,6 +26,8 @@ class Participants extends Component
 
     public bool $onlyWorkers = false;
 
+    public array $participantPeriods = [];
+
     /**
      * Keep the UI state in the URL for easy sharing/reloading.
      */
@@ -132,6 +134,23 @@ class Participants extends Component
         Flux::toast(__('Worker status updated.'));
     }
 
+    public function changePeriod(int $userId): void
+    {
+        $this->authorize('manage users');
+
+        $period = $this->participantPeriods[$userId] ?? null;
+
+        if ($period === null) {
+            return;
+        }
+
+        $this->event->users()->updateExistingPivot($userId, [
+            'period' => (int) $period,
+        ]);
+
+        Flux::toast(__('Period updated.'));
+    }
+
     /**
      * Render the component with filtered results.
      */
@@ -149,14 +168,22 @@ class Participants extends Component
                 });
             })
             ->when($this->filterPaid !== '', function (Builder $q) {
-                $q->wherePivot('has_paid', (bool) $this->filterPaid);
+                $q->where('event_users.has_paid', (bool) $this->filterPaid);
             })
             ->when($this->onlyWorkers, function (Builder $q) {
                 $q->where('event_users.is_working', true);
             });
 
+        $participants = $query->paginate(10);
+
+        foreach ($participants as $participant) {
+            if (! isset($this->participantPeriods[$participant->id])) {
+                $this->participantPeriods[$participant->id] = $participant->pivot->period;
+            }
+        }
+
         return view('livewire.admin.events.tabs.participants', [
-            'participants' => $query->paginate(10),
+            'participants' => $participants,
         ]);
     }
 }

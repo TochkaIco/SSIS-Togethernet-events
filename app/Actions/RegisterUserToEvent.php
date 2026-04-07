@@ -17,9 +17,9 @@ class RegisterUserToEvent
      *
      * @throws \Throwable
      */
-    public function handle(User $user, Event $event): ?EventUser
+    public function handle(User $user, Event $event, ?int $period = null): ?EventUser
     {
-        return DB::transaction(function () use ($user, $event) {
+        return DB::transaction(function () use ($user, $event, $period) {
             // Lock the event to prevent concurrent registrations from causing race conditions
             $event = Event::where('id', $event->id)->lockForUpdate()->first();
 
@@ -39,21 +39,24 @@ class RegisterUserToEvent
             // 2. Get user's priority score
             $userScore = $user->registrationPriorityFor($event);
 
-            // 3. Check if there are seats left
-            if ($event->hasSeatsLeft()) {
+            // 3. Check if there are seats left for this period (if applicable)
+            if ($event->hasSeatsLeft($period)) {
                 return EventUser::create([
                     'event_id' => $event->id,
                     'user_id' => $user->id,
                     'in_waitinglist' => false,
+                    'period' => $period,
                 ]);
             }
 
-            // 4. If full, try to bump someone with a lower score
+            // 4. If full, try to bump someone with a lower score in the same period
             // Find a participant with a lower score.
             // We pick the one with the lowest score among all participants,
             // and then the one who registered last among those.
             /** @var Collection<int, User> $participants */
-            $participants = $event->participants()->get();
+            $participants = $event->participants()
+                ->when($period !== null, fn ($query) => $query->where('event_users.period', $period))
+                ->get();
 
             $candidateToBump = $participants
                 ->map(fn (User $u) => [
@@ -77,6 +80,7 @@ class RegisterUserToEvent
                     'event_id' => $event->id,
                     'user_id' => $user->id,
                     'in_waitinglist' => false,
+                    'period' => $period,
                 ]);
             }
 
@@ -85,6 +89,7 @@ class RegisterUserToEvent
                 'event_id' => $event->id,
                 'user_id' => $user->id,
                 'in_waitinglist' => true,
+                'period' => $period,
             ]);
         });
     }

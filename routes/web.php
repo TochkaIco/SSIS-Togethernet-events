@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OAuthController;
+use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Events\EventShow as AdminShow;
 use App\Livewire\Admin\Events\Index as AdminEventsIndex;
 use App\Livewire\Admin\Events\ParticipantProfile;
@@ -19,7 +20,7 @@ Route::view('/faq', 'faq')->name('faq');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'can:view articles'])->group(function () {
-        Route::view('/admin/dashboard', 'livewire.admin.dashboard')->name('admin.dashboard');
+        Route::get('/admin/dashboard', Dashboard::class)->name('admin.dashboard');
         Route::get('/admin/events', AdminEventsIndex::class)->name('admin.events');
         Route::get('/admin/events/{event}', AdminShow::class)->name('admin.event.show');
     });

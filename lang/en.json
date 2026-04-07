@@ -75,7 +75,7 @@
     "LAN": "LAN",
     "QR-Tag": "QR-Tag",
     "Learn more": "Learn more",
-    "We are an organization dedicated to bringing our school community together through karaoke, film nights, and various other social events. Join us for a night to remember!": "We are an organization dedicated to bringing our school community together through karaoke, film nights, and various other social events. Join us for a night to remember!",
+    "Togethernet is a 13-year-old organization founded and run by committed students at Stockholm Science & Innovation School to create fun events for all students.": "Togethernet is a 13-year-old organization founded and run by committed students at Stockholm Science & Innovation School to create fun events for all students.",
     "Sing your heart out at our weekly karaoke sessions. No talent required, just enthusiasm!": "Sing your heart out at our weekly karaoke sessions. No talent required, just enthusiasm!",
     "Film Nights": "Film Nights",
     "Relax and enjoy classic films and latest blockbusters on our big screen with fresh popcorn.": "Relax and enjoy classic films and latest blockbusters on our big screen with fresh popcorn.",
@@ -214,5 +214,7 @@
     "Name updated.": "Name updated.",
     "Event Schedule": "Event Schedule",
     "Break": "Break",
-    "Date": "Date"
+    "Date": "Date",
+    "Your Time": "Your Time",
+    "Your Time (Waiting List)": "Your Time (Waiting List)"
 }

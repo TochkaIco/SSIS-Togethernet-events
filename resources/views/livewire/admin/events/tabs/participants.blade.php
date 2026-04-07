@@ -29,6 +29,9 @@
         <flux:table.columns>
             <flux:table.column>{{ __('Index') }}</flux:table.column>
             <flux:table.column>{{ __('Participant') }}</flux:table.column>
+            @if($event->one_hour_periods)
+                <flux:table.column>{{ __('Period') }}</flux:table.column>
+            @endif
             <flux:table.column>{{ __('Type') }}</flux:table.column>
             @if($event->paid_entry === 1)
                 <flux:table.column>{{ __('Paid') }}</flux:table.column>
@@ -55,6 +58,28 @@
                             </div>
                         </div>
                     </flux:table.cell>
+
+                    {{-- Period Selection --}}
+                    @if($event->one_hour_periods)
+                        <flux:table.cell>
+                            <flux:select
+                                wire:model.live="participantPeriods.{{ $participant->id }}"
+                                wire:change="changePeriod({{ $participant->id }})"
+                                size="sm"
+                                class="w-24"
+                            >
+                                @foreach($event->eventPeriods() as $item)
+                                    @if($item->type === 'period')
+                                        <flux:select.option
+                                            value="{{ $item->number }}"
+                                        >
+                                            {{ $item->label }}
+                                        </flux:select.option>
+                                    @endif
+                                @endforeach
+                            </flux:select>
+                        </flux:table.cell>
+                    @endif
 
                     {{-- Highlight Workers --}}
                     <flux:table.cell>

@@ -80,7 +80,7 @@ class Event extends Model
      */
     public function waitingList(): BelongsToMany
     {
-        return $this->users()->wherePivot('in_waitinglist', true);
+        return $this->users()->where('event_users.in_waitinglist', true);
     }
 
     public function previous(): ?Event
@@ -90,19 +90,36 @@ class Event extends Model
             ->first();
     }
 
-    public function seatsTaken(): int
+    public function seatsTaken(?int $period = null): int
     {
-        return $this->participants()->count();
+        return $this->participants()
+            ->when($period !== null, fn ($query) => $query->where('event_users.period', $period))
+            ->count();
     }
 
-    public function seatsLeft(): int
+    public function seatsLeft(?int $period = null): int
     {
-        return max(0, $this->num_of_seats - $this->seatsTaken());
+        if ($this->one_hour_periods && $period === null) {
+            // For period-based events, showing "total" seats left is ambiguous.
+            // We'll return the total capacity minus total participants,
+            // or maybe just the capacity of one period if that's more intuitive.
+            // Let's stick to total for now if that's what's shown in the UI.
+            return max(0, ($this->num_of_seats * ($this->one_hour_periods_number ?? 1)) - $this->seatsTaken());
+        }
+
+        return max(0, $this->num_of_seats - $this->seatsTaken($period));
     }
 
-    public function hasSeatsLeft(): bool
+    public function hasSeatsLeft(?int $period = null): bool
     {
-        return $this->seatsLeft() > 0;
+        if ($this->one_hour_periods && $period === null) {
+            // If no period specified, check if ANY period has seats left.
+            return $this->eventPeriods()
+                ->where('type', 'period')
+                ->contains(fn ($p) => $this->hasSeatsLeft($p->number));
+        }
+
+        return $this->seatsLeft($period) > 0;
     }
 
     /**

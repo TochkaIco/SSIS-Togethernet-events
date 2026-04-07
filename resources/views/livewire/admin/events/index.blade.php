@@ -10,7 +10,7 @@
     </div>
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
-            <flux:card :key="'card-'.$event->id" class="w-3xl h-130 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <flux:card :key="'card-'.$event->id" class="w-3xl h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 <div class="mb-auto">
                     @if($event->image_path)
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">

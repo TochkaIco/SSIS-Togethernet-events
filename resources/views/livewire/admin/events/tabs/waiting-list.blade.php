@@ -3,6 +3,9 @@
         <flux:table.columns>
             <flux:table.column>{{ __('Name') }}</flux:table.column>
             <flux:table.column>{{ __('Email') }}</flux:table.column>
+            @if($event->one_hour_periods)
+                <flux:table.column>{{ __('Period') }}</flux:table.column>
+            @endif
             <flux:table.column>{{ __('Registered At') }}</flux:table.column>
             <flux:table.column align="end">{{ __('Actions') }}</flux:table.column>
         </flux:table.columns>
@@ -22,6 +25,15 @@
                             {{ $waiting->email }}
                         </a>
                     </flux:table.cell>
+
+                    @if($event->one_hour_periods)
+                        <flux:table.cell>
+                            @php
+                                $periodLabel = $event->eventPeriods()->where('type', 'period')->where('number', $waiting->pivot->period)->first()?->label;
+                            @endphp
+                            {{ $periodLabel ?? __('N/A') }}
+                        </flux:table.cell>
+                    @endif
 
                     <flux:table.cell>{{ $waiting->pivot->created_at->diffForHumans() }}</flux:table.cell>
 

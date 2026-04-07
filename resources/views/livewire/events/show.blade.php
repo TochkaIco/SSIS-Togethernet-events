@@ -10,19 +10,35 @@
 
             @if($this->eventIsActive())
                 @if(auth()->user())
-                    @if(! $this->userIsRegistered($event->id))
-                        <flux:button wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Register') }}</flux:button>
+                    @if(! $this->registration)
+                        <div class="flex items-end gap-4">
+                            @if($event->one_hour_periods)
+                                <flux:select wire:model="period" placeholder="{{ __('Select Period') }}" class="min-w-48">
+                                    @foreach($event->eventPeriods() as $item)
+                                        @if($item->type === 'period')
+                                            <flux:select.option value="{{ $item->number }}">{{ $item->label }} ({{ $event->seatsTaken($item->number) }}/{{ $event->num_of_seats }})</flux:select.option>
+                                        @endif
+                                    @endforeach
+                                </flux:select>
+                            @endif
+                            <flux:button wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Register') }}</flux:button>
+                        </div>
                     @else
                         <div class="flex flex-col items-end gap-2">
-                            @php
-                                $registration = auth()->user()->events()->where('event_id', $event->id)->first()->pivot;
-                            @endphp
+                            <div class="flex gap-2 items-center">
+                                @if($event->one_hour_periods && $this->registration->period)
+                                    @php
+                                        $periodLabel = $event->eventPeriods()->where('type', 'period')->where('number', $this->registration->period)->first()?->label;
+                                    @endphp
+                                    <flux:badge color="orange" icon="clock" inset="top bottom">{{ __('Period') }}: {{ $periodLabel }}</flux:badge>
+                                @endif
 
-                            @if($registration->in_waitinglist)
-                                <flux:badge color="yellow" icon="clock">{{ __('On Waiting List') }}</flux:badge>
-                            @else
-                                <flux:badge color="green" icon="check" class="cursor-default">{{ __('Registered as Participant') }}</flux:badge>
-                            @endif
+                                @if($this->registration->in_waitinglist)
+                                    <flux:badge color="yellow" icon="clock">{{ __('On Waiting List') }}</flux:badge>
+                                @else
+                                    <flux:badge color="green" icon="check" class="cursor-default">{{ __('Registered as Participant') }}</flux:badge>
+                                @endif
+                            </div>
 
                             <flux:modal.trigger name="unregister-confirmation">
                                 <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="sm" class="cursor-pointer">{{ __('Unregister') }}</flux:button>
@@ -40,7 +56,11 @@
             <div class="flex items-center gap-2">
                 <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
                 <flux:badge color="orange" size="sm">
-                    {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                    @if($event->one_hour_periods)
+                        {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
+                    @else
+                        {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                    @endif
                 </flux:badge>
             </div>
 
@@ -89,14 +109,28 @@
         <div class="flex flex-col">
             @foreach($event->eventPeriods() as $item)
                 @if($item->type === 'period')
+                    @php
+                        $isRegisteredForThisPeriod = $this->registration && $this->registration->period === $item->number;
+                    @endphp
                     {{-- Period Row --}}
-                    <flux:badge class="p-1 border flex items-center justify-between">
-                        <span class="font-medium px-2 italic">Period {{ $item->number }}</span>
+                    <div @class([
+                        'p-1 border flex items-center justify-between rounded-lg transition-all duration-300',
+                        'ring-2 ring-orange-400 bg-orange-100/50 dark:bg-orange-950/40 border-orange-400/50' => $isRegisteredForThisPeriod,
+                        'border-accent-content/80' => ! $isRegisteredForThisPeriod,
+                    ])>
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium px-2 italic text-muted-foreground">{{ __('Period') }} {{ $item->number }}</span>
+                            @if($isRegisteredForThisPeriod)
+                                <flux:badge :color="$this->registration->in_waitinglist ? 'yellow' : 'orange'" :icon="$this->registration->in_waitinglist ? 'clock' : 'check'" size="sm" inset="top bottom">
+                                    {{ $this->registration->in_waitinglist ? __('Your Time (Waiting List)') : __('Your Time') }}
+                                </flux:badge>
+                            @endif
+                        </div>
 
                         <span class="border-l-4 border-l-orange-300 border border-orange-300 p-1 font-bold tracking-wider rounded text-sm bg-orange-300/20">
                             {{ $item->label }}
                         </span>
-                    </flux:badge>
+                    </div>
                 @else
                     {{-- Break Row --}}
                     <div class="flex flex-col items-center justify-center">

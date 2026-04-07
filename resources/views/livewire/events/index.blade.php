@@ -2,33 +2,36 @@
     <flux:text class="text-4xl font-bold text-center mb-6">{{ __("Togethernet's Events") }}</flux:text>
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
-            <flux:card :key="'event-'.$event->id" class="relative w-3xl h-130 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <flux:card :key="'event-'.$event->id" class="relative w-3xl h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 @if($this->eventIsActive($event))
-                    @if(auth()->user())
-                        @if(! $this->userIsRegistered($event->id))
-                            <flux:button class="absolute z-10 w-min cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
+                    <div class="absolute top-4 left-4 z-20">
+                        @if(auth()->user())
+                            @if(! $this->userIsRegistered($event->id))
+                                <flux:button class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
+                            @else
+                                <div class="flex flex-col items-start gap-2">
+                                    @php
+                                        $registration = auth()->user()->events()->where('event_id', $event->id)->first()->pivot;
+                                    @endphp
+
+                                    @if($registration->in_waitinglist)
+                                        <flux:badge color="yellow" icon="clock">{{ __('Waiting List') }}</flux:badge>
+                                    @else
+                                        <flux:badge color="green" icon="check">{{ __('Registered') }}</flux:badge>
+                                    @endif
+
+                                    <flux:modal.trigger name="unregister-confirmation">
+                                        <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer">{{ __('Unregister') }}</flux:button>
+                                    </flux:modal.trigger>
+                                </div>
+                            @endif
                         @else
-                            <div class="flex flex-col items-start gap-2">
-                                @php
-                                    $registration = auth()->user()->events()->where('event_id', $event->id)->first()->pivot;
-                                @endphp
-
-                                @if($registration->in_waitinglist)
-                                    <flux:badge color="yellow" icon="clock" class="relative z-10">{{ __('Waiting List') }}</flux:badge>
-                                @else
-                                    <flux:badge color="green" icon="check" class="relative z-10">{{ __('Registered') }}</flux:badge>
-                                @endif
-
-                                <flux:modal.trigger name="unregister-confirmation">
-                                    <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer absolute z-10">{{ __('Unregister') }}</flux:button>
-                                </flux:modal.trigger>
-                            </div>
+                            <flux:button href="{{ route('login') }}" icon="user-plus" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl" variant="primary">{{ __('Login to register for the event') }}</flux:button>
                         @endif
-                    @else
-                        <flux:button href="{{ route('login') }}" icon="user-plus" class="absolute z-10 w-min cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl" variant="primary">{{ __('Login to register for the event') }}</flux:button>
-                    @endif
+                    </div>
                 @endif
-                <div @if($this->eventIsActive($event)) class="mb-auto relative inset-0 -mt-15" @else class="mb-auto relative inset-0" @endif>
+
+                <div class="mb-auto">
                     @if($event->image_path)
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                             <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-60 object-cover mb-2">
@@ -43,7 +46,11 @@
                     <div class="mt-2 flex items-center gap-2">
                         <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
                         <flux:badge color="orange" size="sm">
-                            {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                            @if($event->one_hour_periods)
+                                {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
+                            @else
+                                {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                            @endif
                         </flux:badge>
 
                         @if($event->paid_entry===1)

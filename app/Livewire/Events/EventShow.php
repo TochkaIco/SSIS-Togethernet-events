@@ -18,6 +18,8 @@ class EventShow extends Component
 {
     public Event $event;
 
+    public ?int $period = null;
+
     public ?int $eventIdToUnregister = null;
 
     #[Url]
@@ -28,6 +30,18 @@ class EventShow extends Component
     public function mount(Event $event): void
     {
         $this->event = $event;
+    }
+
+    #[Computed]
+    public function registration()
+    {
+        if (! Auth::check()) {
+            return null;
+        }
+
+        return EventUser::where('event_id', $this->event->id)
+            ->where('user_id', Auth::id())
+            ->first();
     }
 
     public function eventEdit(): void
@@ -80,11 +94,11 @@ class EventShow extends Component
 
         if ($this->eventIdToUnregister && $this->userIsRegistered($this->eventIdToUnregister)) {
             EventUser::where('event_id', $this->eventIdToUnregister)->where('user_id', Auth::id())->delete();
-            Flux::toast(text: 'You have been unregistered from this event.', heading: 'Success', variant: 'success');
+            Flux::toast(text: __('You have been unregistered from this event.'), heading: __('Success'), variant: 'success');
             $this->eventIdToUnregister = null;
             $this->modal('unregister-confirmation')->close();
         } else {
-            Flux::toast(text: 'Failed to remove your registration.', heading: 'Error', variant: 'danger');
+            Flux::toast(text: __('Failed to remove your registration.'), heading: __('Error'), variant: 'danger');
         }
     }
 
@@ -96,32 +110,38 @@ class EventShow extends Component
 
         $event = Event::findOrFail($eventId);
 
+        if ($event->one_hour_periods && $this->period === null) {
+            Flux::toast(text: __('Please select an event period.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
         $alreadyRegistered = EventUser::where('event_id', $eventId)
             ->where('user_id', Auth::id())
             ->exists();
 
         if ($alreadyRegistered) {
-            Flux::toast(text: 'You are already registered for this event.', heading: 'Error', variant: 'danger');
+            Flux::toast(text: __('You are already registered for this event.'), heading: __('Error'), variant: 'danger');
 
             return;
         }
 
-        $action->handle(Auth::user(), $event);
+        $action->handle(Auth::user(), $event, $this->period);
 
         $registration = EventUser::where('event_id', $eventId)
             ->where('user_id', Auth::id())
             ->first();
 
         if ($registration === null) {
-            Flux::toast(text: 'Registration failed. Please try again.', heading: 'Error', variant: 'danger');
+            Flux::toast(text: __('Registration failed. Please try again.'), heading: __('Error'), variant: 'danger');
 
             return;
         }
 
         if ($registration->in_waitinglist) {
-            Flux::toast(text: 'You have been added to the waiting list.', heading: 'Success', variant: 'success');
+            Flux::toast(text: __('You have been added to the waiting list.'), heading: __('Success'), variant: 'success');
         } else {
-            Flux::toast(text: 'You have been registered for this event.', heading: 'Success', variant: 'success');
+            Flux::toast(text: __('You have been registered for this event.'), heading: __('Success'), variant: 'success');
         }
     }
 

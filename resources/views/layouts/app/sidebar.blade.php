@@ -31,7 +31,7 @@
 
                 <flux:sidebar.nav>
                     <flux:sidebar.group :heading="__('Admin Panel')" class="grid">
-                        <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard*')" wire:navigate>
+                        <flux:sidebar.item icon="chart-pie" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard*')" wire:navigate>
                             {{ __('Dashboard') }}
                         </flux:sidebar.item>
 
@@ -95,6 +95,9 @@
             @auth
                 <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
             @endauth
+            @guest
+                <flux:button variant="primary" :href="route('login')" icon="user-plus">{{ __('Sign In') }}</flux:button>
+            @endguest
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
@@ -163,5 +166,6 @@
         @endpersist
 
         @fluxScripts
+        @stack('scripts')
     </body>
 </html>

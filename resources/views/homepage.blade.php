@@ -10,7 +10,7 @@
                         <x-svg.app-logo.text.dark class="h-[1em] w-auto translate-y-0.75 dark:hidden" />
                     </flux:heading>
                     <flux:text size="lg" class="mb-6">
-                        {{ __('We are an organization dedicated to bringing our school community together through karaoke, film nights, and various other social events. Join us for a night to remember!') }}
+                        {{ __('Togethernet is a 13-year-old organization founded and run by committed students at Stockholm Science & Innovation School to create fun events for all students.') }}
                     </flux:text>
                     <div class="flex gap-4">
                         @auth

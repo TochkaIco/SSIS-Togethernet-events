@@ -38,6 +38,7 @@ class EventUser extends Pivot
             'event_id' => 'integer',
             'user_id' => 'integer',
             'is_working' => 'boolean',
+            'period' => 'integer',
         ];
     }
 }
