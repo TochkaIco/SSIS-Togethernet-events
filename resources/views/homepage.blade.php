@@ -14,9 +14,9 @@
                     </flux:text>
                     <div class="flex gap-4">
                         @auth
-                            <flux:button variant="primary" :href="route('events')" icon="layout-grid" class="transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Browse Events') }}</flux:button>
+                            <flux:button variant="primary" :href="route('events')" icon="layout-grid">{{ __('Browse Events') }}</flux:button>
                         @else
-                            <flux:button variant="primary" :href="route('login')" icon="user-plus" class="transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Join Us') }}</flux:button>
+                            <flux:button variant="primary" :href="route('login')" icon="user-plus">{{ __('Join Us') }}</flux:button>
                         @endauth
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                     <flux:text class="mt-2 grow">
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}
                     </flux:text>
-                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl" icon="link">{{ __('Learn more') }}</flux:button>
+                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
                 </flux:card>
 
                 <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
@@ -52,7 +52,7 @@
                     <flux:text class="mt-2 grow">
                         {{ __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.') }}
                     </flux:text>
-                    <flux:button href="https://qrtag.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl" icon="link">{{ __('Learn more') }}</flux:button>
+                    <flux:button href="https://qrtag.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
                 </flux:card>
             </div>
         </div>
