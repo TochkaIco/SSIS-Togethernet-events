@@ -27,10 +27,14 @@
         </div>
     @endif
 
-    <div class="mt-2 flex flex-col md:flex-row space-y-3 md:gap-x-3 md:space-y-0 md:items-center text-sm">
-        <flux:badge>{{ __('Starts at ') . $event->event_starts_at }}</flux:badge>
-        <flux:badge>{{ __('Ends at ') . $event->event_ends_at }}</flux:badge>
-    </div>
+    @if($event->one_hour_periods)
+        <flux:badge>{{ __('Date') }}:<span class="ml-2 text-orange-300">{{ $event->event_starts_at->format('M j, Y') }}</span></flux:badge>
+    @else
+        <div class="mt-2 flex flex-col md:flex-row space-y-3 md:gap-x-3 md:space-y-0 md:items-center text-sm">
+            <flux:badge>{{ __('Starts at ') }}<span class="ml-2 text-orange-300">{{ $event->event_starts_at->format('M j, Y, h:m') }}</span></flux:badge>
+            <flux:badge>{{ __('Ends at ') }}<span class="ml-2 text-orange-300">{{ $event->event_ends_at->format('M j, Y, h:m') }}</span></flux:badge>
+        </div>
+    @endif
 
     <div class="mt-6 flex flex-col md:flex-row space-y-3 md:gap-x-3 md:space-y-0 md:items-center text-sm">
         <span>{{ __('Created') }} {{ $event->created_at->diffForHumans() }}</span>
@@ -52,7 +56,7 @@
             <h3 class="font-bold text-xl mb-4">{{ __('Links') }}</h3>
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($event->links as $link)
-                    <flux:card :href="$link" class="flex items-center gap-3">
+                    <flux:card :href="$link" class="flex items-center gap-3 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl hover:text-orange-300">
                         <flux:icon.link class="size-4 text-zinc-400" />
                         <span class="truncate text-sm font-medium">{{ $link }}</span>
                     </flux:card>

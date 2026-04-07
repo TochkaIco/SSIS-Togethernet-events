@@ -145,8 +145,8 @@
     {{-- Modal: Dangerous Delete --}}
     <flux:modal name="confirm-user-deletion" class="md:w-100">
         <div x-data="{ canDelete: false, timer: 3 }"
-             x-on:modal-show.window="canDelete = false; timer = 3; let interval = setInterval(() => { if(timer > 0) { timer-- } else { canDelete = true; clearInterval(interval) } }, 1000)">
-
+             x-on:modal-show.window="canDelete = false; timer = 3; let interval = setInterval(() => { if(timer > 0) { timer-- } else { canDelete = true; clearInterval(interval) } }, 1000)"
+        >
             <div class="space-y-6">
                 <div>
                     <flux:heading size="lg">{{ __('Confirm Deletion') }}</flux:heading>

@@ -47,7 +47,7 @@
                 {!! __('<b>6 §</b> It is not allowed to let in <b>non-SSIS students</b> during any of our events. <b>If you violate this, both you and the person let in will be asked to leave the premises immediately.</b>') !!}
             </x-faq.answer>
             <x-faq.answer>
-                {!! __('<b>7 §</b> Participants at Togethernet may <b>under no circumstances destroy or attempt to sabotage</b> any of the school\'s or other participants\' material. If anyone is caught doing so, Togethernet will ask you to leave the premises.') !!}
+                {!! __('<b>7 §</b> Participants at Togethernet events may <b>under no circumstances destroy or attempt to sabotage</b> any of the school\'s or other participants\' material. If anyone is caught doing so, Togethernet will ask you to leave the premises.') !!}
             </x-faq.answer>
             <x-faq.answer>
                 {!! __('<b>8 §</b> <b>No illegal activities</b> are allowed via the <b>network</b> and if it occurs, the responsible person will be reported by the school.') !!}

@@ -1,20 +1,17 @@
-<div class="py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-6 flex flex-col gap-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('events') }}" icon="layout-grid">{{ __('Events') }}</flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>{{ $event->title }}</flux:breadcrumbs.item>
-            @if($tab !== 'view')
-                <flux:breadcrumbs.item>{{ str($tab)->headline() }}</flux:breadcrumbs.item>
-            @endif
+            <flux:breadcrumbs.item href="{{ route('event.show', $event) }}">{{ $event->title }}</flux:breadcrumbs.item>
         </flux:breadcrumbs>
 
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between space-x-6">
             <h1 class="font-bold text-3xl">{{ $event->title }}</h1>
 
             @if($this->eventIsActive())
                 @if(auth()->user())
                     @if(! $this->userIsRegistered($event->id))
-                        <flux:button wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
+                        <flux:button wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Register') }}</flux:button>
                     @else
                         <div class="flex flex-col items-end gap-2">
                             @php
@@ -33,13 +30,13 @@
                         </div>
                     @endif
                 @else
-                    <flux:button href="{{ route('login') }}" icon="user-plus" variant="primary">{{ __('Login to register') }}</flux:button>
+                    <flux:button href="{{ route('login') }}" icon="user-plus" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Login to register') }}</flux:button>
                 @endif
             @endif
         </div>
     </div>
-    <div class="mt-6">
-        <div class="flex flex-col md:flex-row md:space-x-3 mb-6">
+    <div class="md:min-w-5xl mt-6">
+        <div class="flex flex-col md:flex-row md:space-x-3 space-y-3 md:space-y-0 mb-6">
             <div class="flex items-center gap-2">
                 <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
                 <flux:badge color="orange" size="sm">
@@ -65,12 +62,20 @@
             <div class="rounded-lg overflow-hidden mb-6">
                 <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-128 object-cover">
             </div>
+        @else
+            <div class="rounded-lg overflow-hidden mb-6">
+                <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-128 object-cover">
+            </div>
         @endif
 
-        <div class="mt-2 flex gap-x-3 items-center text-sm text-zinc-500 dark:text-zinc-400">
-            <flux:badge>{{ __('Starts at ') . $event->event_starts_at }}</flux:badge>
-            <flux:badge>{{ __('Ends at ') . $event->event_ends_at }}</flux:badge>
-        </div>
+        @if($event->one_hour_periods)
+            <flux:badge>{{ __('Date') }}:<span class="ml-2 text-orange-300">{{ $event->event_starts_at->format('M j, Y') }}</span></flux:badge>
+        @else
+            <div class="mt-2 flex flex-col md:flex-row space-y-3 md:gap-x-3 md:space-y-0 md:items-center text-sm">
+                <flux:badge>{{ __('Starts at ') }}<span class="ml-2 text-orange-300">{{ $event->event_starts_at->format('M j, Y, h:m') }}</span></flux:badge>
+                <flux:badge>{{ __('Ends at ') }}<span class="ml-2 text-orange-300">{{ $event->event_ends_at->format('M j, Y, h:m') }}</span></flux:badge>
+            </div>
+        @endif
 
         @if($event->description)
             <flux:card class="mt-6">
@@ -80,12 +85,37 @@
             </flux:card>
         @endif
 
+        <h3 class="font-bold">{{ __('Event Schedule') }}</h3>
+        <div class="flex flex-col">
+            @foreach($event->eventPeriods() as $item)
+                @if($item->type === 'period')
+                    {{-- Period Row --}}
+                    <flux:badge class="p-1 border flex items-center justify-between">
+                        <span class="font-medium px-2 italic">Period {{ $item->number }}</span>
+
+                        <span class="border-l-4 border-l-orange-300 border border-orange-300 p-1 font-bold tracking-wider rounded text-sm bg-orange-300/20">
+                            {{ $item->label }}
+                        </span>
+                    </flux:badge>
+                @else
+                    {{-- Break Row --}}
+                    <div class="flex flex-col items-center justify-center">
+                        <flux:icon icon="arrow-down" />
+                        <div class="bg-accent-foreground px-3 text-[12px] font-bold uppercase tracking-widest text-muted-foreground border border-accent-content rounded-full shadow-sm">
+                            {{ $item->label }}
+                        </div>
+                        <flux:icon icon="arrow-down" />
+                    </div>
+                @endif
+            @endforeach
+        </div>
+
         @if($event->links && $event->links->count())
             <div class="mt-8">
                 <h3 class="font-bold text-xl mb-4">{{ __('Links') }}</h3>
                 <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach($event->links as $link)
-                        <flux:card :href="$link" class="flex items-center gap-3">
+                        <flux:card :href="$link" class="flex items-center gap-3 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl hover:text-orange-300">
                             <flux:icon.link class="size-4 text-zinc-400" />
                             <span class="truncate text-sm font-medium">{{ $link }}</span>
                         </flux:card>

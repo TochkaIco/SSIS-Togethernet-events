@@ -15,14 +15,14 @@
                 <flux:button
                     variant="ghost"
                     icon="pencil-square"
-                    class="cursor-pointer"
+                    class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl"
                     data-test="edit-event-button"
                     wire:click="eventEdit"
                 >
                     {{ __('Edit') }}
                 </flux:button>
                 <flux:modal.trigger name="delete-event">
-                    <flux:button variant="danger" class="cursor-pointer">
+                    <flux:button variant="danger" class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl">
                         {{ __('Delete') }}
                     </flux:button>
                 </flux:modal.trigger>

@@ -11,7 +11,12 @@ return new class extends Migration
         Permission::create(['name' => 'manage kiosk']);
 
         $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $superAdmin = Role::firstOrCreate(['name' => 'super-admin', 'guard_name' => 'web']);
+        $maintainer = Role::firstOrCreate(['name' => 'maintainer', 'guard_name' => 'web']);
+
         $admin->givePermissionTo('manage kiosk');
+        $superAdmin->syncPermissions(Permission::all());
+        $maintainer->syncPermissions(Permission::all());
     }
 
     public function down(): void

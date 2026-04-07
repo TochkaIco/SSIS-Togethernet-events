@@ -2,11 +2,11 @@
     <flux:text class="text-4xl font-bold text-center mb-6">{{ __("Togethernet's Events") }}</flux:text>
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
-            <flux:card :key="'event-'.$event->id" class="relative w-3xl h-130 flex flex-col">
+            <flux:card :key="'event-'.$event->id" class="relative w-3xl h-130 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 @if($this->eventIsActive($event))
                     @if(auth()->user())
                         @if(! $this->userIsRegistered($event->id))
-                            <flux:button class="absolute z-10 w-min cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
+                            <flux:button class="absolute z-10 w-min cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
                         @else
                             <div class="flex flex-col items-start gap-2">
                                 @php
@@ -25,7 +25,7 @@
                             </div>
                         @endif
                     @else
-                        <flux:button href="{{ route('login') }}" icon="user-plus" class="absolute z-10 w-min cursor-pointer" variant="primary">{{ __('Login to register for the event') }}</flux:button>
+                        <flux:button href="{{ route('login') }}" icon="user-plus" class="absolute z-10 w-min cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl" variant="primary">{{ __('Login to register for the event') }}</flux:button>
                     @endif
                 @endif
                 <div @if($this->eventIsActive($event)) class="mb-auto relative inset-0 -mt-15" @else class="mb-auto relative inset-0" @endif>
@@ -35,22 +35,20 @@
                         </div>
                     @else
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                            <x-placeholder-pattern class="stroke-gray-900/20 dark:stroke-neutral-100/20 w-full h-60 object-cover mb-2">
-                                <flux:text class="text-4xl ml-3 text-center cursor-default">{{ __('No Image Specified') }}</flux:text>
-                            </x-placeholder-pattern>
+                            <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-60 object-cover mb-2">
                         </div>
                     @endif
 
                     <a href="{{ route('event.show', $event) }}" class="text-accent-content font-semibold text-xl hover:underline hover:text-orange-300">{{ $event->title }}</a>
                     <div class="mt-2 flex items-center gap-2">
-                        <span class="text-xs font-medium text-muted-foreground">{{ __('Seats:') }}</span>
-                        <flux:badge color="orange" size="xs">
+                        <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
+                        <flux:badge color="orange" size="sm">
                             {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
                         </flux:badge>
 
                         @if($event->paid_entry===1)
                             <div class="flex items-center gap-2">
-                                <span class="font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
+                                <span class="text-sm font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
                                 <flux:badge color="orange" size="sm">
                                     {{ $event->entry_fee }} kr
                                 </flux:badge>
@@ -77,7 +75,7 @@
             <div class="flex mx-auto my-auto relative h-120 w-240 flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
                 <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
                     <flux:icon.calendar />
-                    <flux:text class="text-4xl ml-3 cursor-default">{{ __('No Events Found') }}</flux:text>
+                    <flux:text class="text-2xl md:text-4xl ml-3 cursor-default">{{ __('No Events Found') }}</flux:text>
                 </x-placeholder-pattern>
             </div>
         @endforelse

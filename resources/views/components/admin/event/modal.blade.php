@@ -34,7 +34,7 @@
 
             {{-- Title --}}
             <flux:input
-                label="{{ __('Title') }}"
+                label="{{ __('Title') }} *"
                 name="title"
                 data-test="title-field"
                 placeholder="{{ __('Enter a title for your event') }}"
@@ -45,7 +45,7 @@
 
             {{-- Event Type --}}
             <flux:field>
-                <flux:label>{{ __('Event Type') }}</flux:label>
+                <flux:label>{{ __('Event Type') }} *</flux:label>
 
                 <div class="flex gap-x-3 mt-2">
                     @foreach(App\EventType::cases() as $event_type)
@@ -56,7 +56,7 @@
                             class="flex-1 h-12 px-4 rounded-md font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-300/60 focus:ring-offset-2"
                             :class="event_type === @js($event_type->value)
                                 ? 'bg-orange-300/90 text-accent-content font-bold shadow-sm'
-                                : 'bg-transparent text-gray-600 hover:bg-orange-300/60 hover:text-gray-900'"
+                                : 'bg-transparent text-gray-600 hover:bg-orange-300/60 hover:text-gray-900 transition-all duration-300 shadow-xs hover:-translate-y-1 hover:shadow-2xl'"
                         >
                             {{ $event_type->label() }}
                         </button>
@@ -69,7 +69,7 @@
 
             {{-- Description --}}
             <flux:textarea
-                label="{{ __('Description') }}"
+                label="{{ __('Description') }} *"
                 name="description"
                 data-test="description-field"
                 placeholder="{{ __('Describe your event...') }}"
@@ -79,7 +79,7 @@
 
             {{-- Number of Seats --}}
             <flux:input
-                label="{{ __('Number of Seats') }}"
+                label="{{ __('Number of Seats') }} *"
                 name="num_of_seats"
                 data-test="num_of_seats-field"
                 type="number"
@@ -93,7 +93,7 @@
 
             {{-- Dates --}}
             <flux:field>
-                <flux:label>{{ __('Registration Starts At') }}</flux:label>
+                <flux:label>{{ __('Registration Starts At') }} *</flux:label>
                 <flux:input
                     type="datetime-local"
                     name="display_starts_at"
@@ -114,10 +114,17 @@
                     x-on:change="isPaid = $el.checked"
                 />
 
-                <div x-show="isPaid" x-cloak class="w-full md:w-64">
+                <flux:field
+                    x-show="isPaid"
+                    x-cloak
+                    class="w-full md:w-64"
+                    x-transition:enter="transition ease-out duration-100"
+                    x-transition:enter-start="opacity-0 transform scale-65"
+                    x-transition:enter-end="opacity-100 transform scale-100"
+                >
                     <flux:input
                         name="entry_fee"
-                        label="{{ __('Entry Fee') }}"
+                        label="{{ __('Entry Fee') }} *"
                         placeholder="{{ __('Enter amount in kr') }}"
                         value="{{ old('entry_fee', $event->entry_fee) }}"
                         type="number"
@@ -125,32 +132,114 @@
                         x-bind:required="isPaid"
                     />
                     <flux:error name="entry_fee" />
+                </flux:field>
+            </div>
+
+            <template x-if="event_type === '{{ App\EventType::KARAOKE->value }}'">
+                <div x-data="{ oneHourPeriods: {{ old('one_hour_periods', $event->one_hour_periods) ? 'true' : 'false' }} }">
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 w-full">
+                        <flux:checkbox
+                            label="{{ __('1-hour periods') }}"
+                            name="one_hour_periods"
+                            class="whitespace-nowrap"
+                            ::checked="oneHourPeriods"
+                            x-on:change="oneHourPeriods = $el.checked"
+                        />
+                        <flux:field
+                            x-show="oneHourPeriods"
+                            x-cloak
+                            class="w-full md:w-64"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 transform scale-65"
+                            x-transition:enter-end="opacity-100 transform scale-100"
+                        >
+                            <flux:input
+                                name="interval_length"
+                                label="{{ __('Time between event periods') }} *"
+                                placeholder="{{ __('Enter amount in minutes') }}"
+                                value="{{ old('interval_length', $event->interval_length) }}"
+                                type="number"
+                                min="1"
+                                x-bind:required="oneHourPeriods"
+                            />
+                            <flux:error name="interval_length" />
+                        </flux:field>
+                    </div>
+                    <div class="grid grid-col gap-y-4 md:flex md:items-center md:justify-between md:gap-x-4 mt-6">
+                        <flux:field>
+                            <flux:label>{{ __('Event Starts At') }} *</flux:label>
+                            <flux:input
+                                type="datetime-local"
+                                name="event_starts_at"
+                                data-test="event_starts_at"
+                                :value="old('event_starts_at', $event->event_starts_at?->format('Y-m-d\TH:i'))"
+                            />
+                            <flux:error name="event_starts_at" />
+                        </flux:field>
+
+                        <flux:field
+                            x-show="!oneHourPeriods"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 transform scale-65"
+                            x-transition:enter-end="opacity-100 transform scale-100"
+                        >
+                            <flux:label>{{ __('Event Ends At') }} *</flux:label>
+                            <flux:input
+                                type="datetime-local"
+                                name="event_ends_at"
+                                data-test="event_ends_at"
+                                :value="old('event_ends_at', $event->event_ends_at?->format('Y-m-d\TH:i'))"
+                            />
+                            <flux:error name="event_ends_at" />
+                        </flux:field>
+
+                        <flux:field
+                            x-show="oneHourPeriods"
+                            x-cloak
+                            class="w-full md:w-64"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 transform scale-65"
+                            x-transition:enter-end="opacity-100 transform scale-100"
+                        >
+                            <flux:input
+                                name="one_hour_periods_number"
+                                label="{{ __('Number of periods') }} *"
+                                placeholder="{{ __('Enter the number of periods') }}"
+                                value="{{ old('one_hour_periods_number', $event->one_hour_periods_number) }}"
+                                type="number"
+                                min="1"
+                                x-bind:required="oneHourPeriods"
+                            />
+                            <flux:error name="one_hour_periods_number" />
+                        </flux:field>
+                    </div>
                 </div>
-            </div>
+            </template>
+            <template x-if="event_type !== '{{ App\EventType::KARAOKE->value }}'">
+                <div class="grid grid-col gap-y-4 md:flex md:items-center md:justify-between md:gap-x-4 mt-6">
+                    <flux:field>
+                        <flux:label>{{ __('Event Starts At') }} *</flux:label>
+                        <flux:input
+                            type="datetime-local"
+                            name="event_starts_at"
+                            data-test="event_starts_at"
+                            :value="old('event_starts_at', $event->event_starts_at?->format('Y-m-d\TH:i'))"
+                        />
+                        <flux:error name="event_starts_at" />
+                    </flux:field>
 
-            <div class="grid grid-col gap-y-4 md:flex md:items-center md:justify-between md:gap-x-4">
-                <flux:field>
-                    <flux:label>{{ __('Event Starts At') }}</flux:label>
-                    <flux:input
-                        type="datetime-local"
-                        name="event_starts_at"
-                        data-test="event_starts_at"
-                        :value="old('event_starts_at', $event->event_starts_at?->format('Y-m-d\TH:i'))"
-                    />
-                    <flux:error name="event_starts_at" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label>{{ __('Event Ends At') }}</flux:label>
-                    <flux:input
-                        type="datetime-local"
-                        name="event_ends_at"
-                        data-test="event_ends_at"
-                        :value="old('event_ends_at', $event->event_ends_at?->format('Y-m-d\TH:i'))"
-                    />
-                    <flux:error name="event_ends_at" />
-                </flux:field>
-            </div>
+                    <flux:field>
+                        <flux:label>{{ __('Event Ends At') }} *</flux:label>
+                        <flux:input
+                            type="datetime-local"
+                            name="event_ends_at"
+                            data-test="event_ends_at"
+                            :value="old('event_ends_at', $event->event_ends_at?->format('Y-m-d\TH:i'))"
+                        />
+                        <flux:error name="event_ends_at" />
+                    </flux:field>
+                </div>
+            </template>
 
             <flux:field>
                 <flux:label>{{ __('Featured Image') }}</flux:label>
@@ -189,7 +278,7 @@
             </flux:field>
 
             {{-- Links --}}
-            <flux:field>
+            <flux:field class="mb-1">
                 <flux:label>{{ __('Links') }}</flux:label>
 
                 <div class="flex gap-x-2 items-center">

@@ -55,7 +55,7 @@
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         @foreach($articles as $article)
-                            <div class="relative border rounded-lg p-4 h-44 flex flex-col justify-between overflow-hidden group">
+                            <div class="relative border-2 border-accent-content/60 rounded-lg p-4 h-44 flex flex-col justify-between overflow-hidden group transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                                 @if($article->image_url)
                                     <div class="absolute inset-0 z-0">
                                         <img src="{{ $article->image_url }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
@@ -197,7 +197,7 @@
                     <div class="lg:col-span-2">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @forelse($articles as $article)
-                                <div class="relative border rounded-lg p-4 h-44 flex flex-col justify-between overflow-hidden group {{ $article->amount === 0 ? 'opacity-60' : '' }}">
+                                <div class="relative border-2 border-accent-content/60 rounded-lg p-4 h-44 flex flex-col justify-between overflow-hidden group {{ $article->amount === 0 ? 'opacity-60' : 'transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl' }}">
                                     @if($article->image_url)
                                         <div class="absolute inset-0 z-0">
                                             <img src="{{ $article->image_url }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />

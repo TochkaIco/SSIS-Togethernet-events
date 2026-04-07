@@ -24,6 +24,7 @@ class EventRequest extends FormRequest
         $this->merge([
             // Converts "on" to true, and missing/null to false
             'paid_entry' => $this->boolean('paid_entry'),
+            'one_hour_periods' => $this->boolean('one_hour_periods'),
         ]);
     }
 
@@ -39,11 +40,22 @@ class EventRequest extends FormRequest
             'description' => ['required', 'string'],
             'event_type' => ['required', Rule::enum(EventType::class)],
             'num_of_seats' => ['required', 'integer', 'min:1'],
+
             'paid_entry' => ['boolean'],
             'entry_fee' => ['nullable', 'required_if:paid_entry,true', 'integer', 'min:5'],
+
+            'one_hour_periods' => ['boolean'],
+            'one_hour_periods_number' => ['required_if:one_hour_periods,true', 'integer', 'min:1'],
+            'interval_length' => ['required_if:one_hour_periods,true', 'integer', 'min:0'],
+
             'display_starts_at' => ['required', 'date'],
-            'event_starts_at' => ['required', 'date', 'after:display_starts_at'],
-            'event_ends_at' => ['required', 'date', 'after:event_starts_at'],
+            'event_starts_at' => ['required', 'date'],
+            'event_ends_at' => [
+                'required_if:one_hour_periods,false',
+                'nullable',
+                'date',
+            ],
+
             'links' => ['nullable', 'array'],
             'links.*' => ['url', 'max:255'],
             'image' => ['nullable', 'image', 'max:5120'],

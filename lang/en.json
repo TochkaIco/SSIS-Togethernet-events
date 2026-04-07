@@ -107,7 +107,6 @@
     "Created": "Created",
     "Updated": "Updated",
     "Links": "Links",
-    "Email": "Email",
     "Registered At": "Registered At",
     "Actions": "Actions",
     "Move to Participants": "Move to Participants",
@@ -205,12 +204,15 @@
     "<b>4 §</b> Togethernet as well as SSIS <b>is a nut-free zone</b>. People with acute nut allergies may be present at the event and with respect for them, we ask you not to bring anything with nuts in it. If you break this, we will confiscate the products containing nuts.": "<b>4 §</b> Togethernet as well as SSIS <b>is a nut-free zone</b>. People with acute nut allergies may be present at the event and with respect for them, we ask you not to bring anything with nuts in it. If you break this, we will confiscate the products containing nuts.",
     "<b>5 §</b> We ask everyone participating in Togethernet's events to treat each other with respect. Your belongings must therefore not disturb your neighbors, stay within your table space and <b>behave yourself</b>.": "<b>5 §</b> We ask everyone participating in Togethernet's events to treat each other with respect. Your belongings must therefore not disturb your neighbors, stay within your table space and <b>behave yourself</b>.",
     "<b>6 §</b> It is not allowed to let in <b>non-SSIS students</b> during any of our events. <b>If you violate this, both you and the person let in will be asked to leave the premises immediately.</b>": "<b>6 §</b> It is not allowed to let in <b>non-SSIS students</b> during any of our events. <b>If you violate this, both you and the person let in will be asked to leave the premises immediately.</b>",
-    "<b>7 §</b> Participants at Togethernet may <b>under no circumstances destroy or attempt to sabotage</b> any of the school's or other participants' material. If anyone is caught doing so, Togethernet will ask you to leave the premises.": "<b>7 §</b> Participants at Togethernet may <b>under no circumstances destroy or attempt to sabotage</b> any of the school's or other participants' material. If anyone is caught doing so, Togethernet will ask you to leave the premises.",
+    "<b>7 §</b> Participants at Togethernet events may <b>under no circumstances destroy or attempt to sabotage</b> any of the school's or other participants' material. If anyone is caught doing so, Togethernet will ask you to leave the premises.": "<b>7 §</b> Participants at Togethernet events may <b>under no circumstances destroy or attempt to sabotage</b> any of the school's or other participants' material. If anyone is caught doing so, Togethernet will ask you to leave the premises.",
     "<b>8 §</b> <b>No illegal activities</b> are allowed via the <b>network</b> and if it occurs, the responsible person will be reported by the school.": "<b>8 §</b> <b>No illegal activities</b> are allowed via the <b>network</b> and if it occurs, the responsible person will be reported by the school.",
     "<b>9 §</b> It is not allowed to plug <b>electronics into other sockets</b> than those given at the placement without permission from Togethernet.": "<b>9 §</b> It is not allowed to plug <b>electronics into other sockets</b> than those given at the placement without permission from Togethernet.",
     "<b>10 §</b> It is not allowed to be in the <b>other part of the school</b> which runs from the beginning of the staff room and forward without permission.": "<b>10 §</b> It is not allowed to be in the <b>other part of the school</b> which runs from the beginning of the staff room and forward without permission.",
     "<b>11 §</b> Togethernet and teachers administer the event and their decisions are <b>final</b>.": "<b>11 §</b> Togethernet and teachers administer the event and their decisions are <b>final</b>.",
     "<b>12 §</b> Violations of <b>§1, §2, §7, §8 and §11</b> will be reported to the principal.": "<b>12 §</b> Violations of <b>§1, §2, §7, §8 and §11</b> will be reported to the principal.",
     "<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>": "<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>",
-    "Name updated.": "Name updated."
+    "Name updated.": "Name updated.",
+    "Event Schedule": "Event Schedule",
+    "Break": "Break",
+    "Date": "Date"
 }

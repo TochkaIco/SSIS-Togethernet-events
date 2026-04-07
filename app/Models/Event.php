@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * @method static create(mixed[] $data)
@@ -25,6 +27,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'num_of_seats',
     'paid_entry',
     'entry_fee',
+    'one_hour_periods',
+    'interval_length',
+    'one_hour_periods_number',
     'display_starts_at',
     'event_starts_at',
     'event_ends_at',
@@ -106,5 +111,50 @@ class Event extends Model
     public function kiosk(): HasOne
     {
         return $this->hasOne(EventKiosk::class, 'event_id');
+    }
+
+    public function eventPeriods(): Collection
+    {
+        if (! $this->one_hour_periods || ! $this->one_hour_periods_number) {
+            return collect();
+        }
+
+        $schedule = collect();
+        $currentStart = Carbon::parse($this->event_starts_at);
+        $numPeriods = $this->one_hour_periods_number ?? 1;
+        $interval = $this->interval_length ?? 0;
+
+        for ($i = 1; $i <= $numPeriods; $i++) {
+            $periodEnd = $currentStart->copy()->addHour();
+
+            $schedule->push((object) [
+                'type' => 'period',
+                'number' => $i,
+                'start' => $currentStart->copy(),
+                'end' => $periodEnd,
+                'label' => $currentStart->format('H:i').' - '.$periodEnd->format('H:i'),
+            ]);
+
+            // 2. Create a Break
+            if ($interval > 0 && $i < $numPeriods) {
+                $breakStart = $periodEnd->copy();
+                $breakEnd = $breakStart->copy()->addMinutes($interval);
+
+                $schedule->push((object) [
+                    'type' => 'break',
+                    'start' => $breakStart,
+                    'end' => $breakEnd,
+                    'label' => __('Break')." ({$interval} min)",
+                ]);
+
+                // Set the start of the next period to the end of this break
+                $currentStart = $breakEnd->copy();
+            } else {
+                // No interval, just move to the end of the current period
+                $currentStart = $periodEnd->copy();
+            }
+        }
+
+        return $schedule;
     }
 }
