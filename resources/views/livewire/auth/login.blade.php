@@ -21,4 +21,19 @@
             </flux:button>
         </div>
     </div>
+
+    <flux:toast />
+
+    @if (session('error'))
+        <script>
+            // Flux provides a global 'Flux' object in the browser
+            window.addEventListener('DOMContentLoaded', () => {
+                Flux.toast({
+                    variant: 'danger',
+                    heading: 'Access Denied',
+                    text: "{{ session('error') }}",
+                });
+            });
+        </script>
+    @endif
 </x-layouts::auth>

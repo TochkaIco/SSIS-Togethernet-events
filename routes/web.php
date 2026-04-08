@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OAuthController;
+use App\Livewire\Admin\AppConfigurationPage;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Events\EventShow as AdminShow;
 use App\Livewire\Admin\Events\Index as AdminEventsIndex;
@@ -36,6 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/users/{user}', UserProfile::class)->name('admin.user.profile');
         Route::get('/admin/events/{event}/participants/{userId}', ParticipantProfile::class)->name('admin.event.participant.profile');
     });
+    Route::get('/admin/config', AppConfigurationPage::class)
+        ->middleware('can:role:super-admin')->name('admin.app.config');
 });
 
 Route::middleware(['guest'])->group(function () {

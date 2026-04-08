@@ -313,5 +313,7 @@
     "Timezone": "Tidszon",
     "DEBUG": "DEBUG",
     "Your Time": "Din Tid",
-    "Your Time (Waiting List)": "Din Tid (Väntelista)"
+    "Your Time (Waiting List)": "Din Tid (Väntelista)",
+    "Configuration": "Konfiguration",
+    "App Configuration": "App konfiguration"
 }

@@ -6,7 +6,6 @@ namespace App\Livewire\Settings;
 
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -67,11 +66,5 @@ class Profile extends Component
         Auth::logout();
 
         return redirect()->route('login');
-    }
-
-    #[Computed]
-    public function showDeleteUser(): bool
-    {
-        return Auth::user()->hasVerifiedEmail();
     }
 }

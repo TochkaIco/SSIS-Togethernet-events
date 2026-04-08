@@ -65,6 +65,11 @@
                                     {{ __('Users') }}
                                 </flux:sidebar.item>
                             @endcan
+                            @hasanyrole(['admin', 'super-admin', 'maintainer'])
+                                <flux:sidebar.item icon="wrench-screwdriver" :href="route('admin.app.config')" :current="request()->routeIs('admin.app.config*')" wire:navigate>
+                                    {{ __('Configuration') }}
+                                </flux:sidebar.item>
+                            @endhasanyrole
                         @endcan
                     </flux:sidebar.group>
                 </flux:sidebar.nav>

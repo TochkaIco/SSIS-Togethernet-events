@@ -38,8 +38,8 @@
             </div>
         </form>
 
-        @if ($this->showDeleteUser)
+        @auth
             <livewire:settings.delete-user-form />
-        @endif
+        @endauth
     </x-settings.layout>
 </section>

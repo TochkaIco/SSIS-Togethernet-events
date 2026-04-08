@@ -29,11 +29,7 @@
                 </flux:subheading>
             </div>
 
-            @if ($isGoogleUser)
-                <flux:input wire:model="confirmation" :label="__('Confirmation')" placeholder="DELETE" />
-            @else
-                <flux:input wire:model="password" :label="__('Password')" type="password" viewable />
-            @endif
+            <flux:input wire:model="confirmation" :label="__('Confirmation')" placeholder="DELETE" />
 
             <div class="flex justify-end space-x-2 rtl:space-x-reverse">
                 <flux:modal.close>
