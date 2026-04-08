@@ -328,7 +328,7 @@
 
         {{-- User Growth Chart --}}
         <flux:card>
-            <h2 class="text-lg font-bold mb-4">{{ __('User Registrations (Last 30 days)') }}</h2>
+            <h2 class="text-lg font-bold mb-4">{{ __('User Registrations (Last Year)') }}</h2>
             <div
                 x-data="{
                     init() {

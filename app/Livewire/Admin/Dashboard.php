@@ -108,7 +108,7 @@ class Dashboard extends Component
     public function userGrowth(): array
     {
         $growth = User::selectRaw('COUNT(*) as count, DATE_FORMAT(created_at, "%Y-%m-%d") as date')
-            ->where('created_at', '>=', now()->subDays(30))
+            ->where('created_at', '>=', now()->subYear())
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get();

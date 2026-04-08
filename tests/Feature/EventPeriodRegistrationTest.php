@@ -8,13 +8,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
-beforeEach(function () {
-    $this->user = User::factory()->create();
-    $this->admin = User::factory()->create();
-    $this->admin->assignRole('admin'); // Assuming this role exists based on migrations
-});
-
 test('user can register for a specific period in a karaoke event', function () {
+    $user = User::factory()->create();
     $event = Event::factory()->create([
         'one_hour_periods' => true,
         'one_hour_periods_number' => 3,
@@ -24,14 +19,14 @@ test('user can register for a specific period in a karaoke event', function () {
         'num_of_seats' => 20,
     ]);
 
-    Auth::login($this->user);
+    Auth::login($user);
 
     Livewire::test(EventShow::class, ['event' => $event])
         ->set('period', 2)
         ->call('registerUser', $event->id)
         ->assertStatus(200);
 
-    $registration = EventUser::where('event_id', $event->id)->where('user_id', $this->user->id)->first();
+    $registration = EventUser::where('event_id', $event->id)->where('user_id', $user->id)->first();
     expect($registration->period)->toBe(2);
 });
 
@@ -43,15 +38,19 @@ test('admin can move participant to another period', function () {
         'num_of_seats' => 20,
     ]);
 
-    $event->users()->attach($this->user, ['period' => 1]);
+    $user = User::factory()->create();
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
 
-    Auth::login($this->admin);
+    $event->users()->attach($user, ['period' => 1]);
+
+    Auth::login($admin);
 
     Livewire::test(Participants::class, ['event' => $event])
-        ->set('participantPeriods.'.$this->user->id, 3)
-        ->call('changePeriod', $this->user->id)
+        ->set('participantPeriods.'.$user->id, 3)
+        ->call('changePeriod', $user->id)
         ->assertStatus(200);
 
-    $registration = EventUser::where('event_id', $event->id)->where('user_id', $this->user->id)->first();
+    $registration = EventUser::where('event_id', $event->id)->where('user_id', $user->id)->first();
     expect($registration->period)->toBe(3);
 });
