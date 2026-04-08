@@ -16,7 +16,7 @@ class UpdateEvent
     public function handle(array $attributes, Event $event): void
     {
         $data = collect($attributes)->only([
-            'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'links', 'display_starts_at', 'event_starts_at',
+            'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at',
         ])->toArray();
 
         if ($attributes['one_hour_periods'] ?? false) {

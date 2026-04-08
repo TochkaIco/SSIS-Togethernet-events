@@ -130,6 +130,7 @@
                         type="number"
                         min="1"
                         x-bind:required="isPaid"
+                        x-bind:disabled="!isPaid"
                     />
                     <flux:error name="entry_fee" />
                 </flux:field>
@@ -161,6 +162,7 @@
                                 type="number"
                                 min="1"
                                 x-bind:required="oneHourPeriods"
+                                x-bind:disabled="!oneHourPeriods"
                             />
                             <flux:error name="interval_length" />
                         </flux:field>
@@ -189,6 +191,8 @@
                                 name="event_ends_at"
                                 data-test="event_ends_at"
                                 :value="old('event_ends_at', $event->event_ends_at?->format('Y-m-d\TH:i'))"
+                                x-bind:required="!oneHourPeriods"
+                                x-bind:disabled="oneHourPeriods"
                             />
                             <flux:error name="event_ends_at" />
                         </flux:field>
@@ -209,6 +213,7 @@
                                 type="number"
                                 min="1"
                                 x-bind:required="oneHourPeriods"
+                                x-bind:disabled="!oneHourPeriods"
                             />
                             <flux:error name="one_hour_periods_number" />
                         </flux:field>

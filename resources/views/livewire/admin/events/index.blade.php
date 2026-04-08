@@ -52,7 +52,7 @@
                         <flux:label class="inline-block rounded-full border px-2 py-1 text-xs font-medium bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
                             {{ $event->event_type->label() }}
                         </flux:label>
-                        <span>{{ __('Starts at ') . $event->event_starts_at }}</span>
+                        <span>{{ __('Starts at ') . $event->event_starts_at->format('M j, Y') }}</span>
                     </div>
                 </div>
             </flux:card>
