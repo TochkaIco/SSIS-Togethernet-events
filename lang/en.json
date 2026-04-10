@@ -216,5 +216,6 @@
     "Break": "Break",
     "Date": "Date",
     "Your Time": "Your Time",
-    "Your Time (Waiting List)": "Your Time (Waiting List)"
+    "Your Time (Waiting List)": "Your Time (Waiting List)",
+    "login_restriction": "If unchecked, only accounts from :hd can login."
 }

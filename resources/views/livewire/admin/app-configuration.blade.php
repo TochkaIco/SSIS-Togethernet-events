@@ -4,6 +4,6 @@
     <flux:checkbox
         wire:model.live="allowExternal"
         label="{{ __('Allow external email domains') }}"
-        description="If unchecked, only accounts from {{ config('services.google.hd') }} can login."
+        description="{{ __('login_restriction', ['hd' => config('services.google.hd')]) }}"
     />
 </div>
