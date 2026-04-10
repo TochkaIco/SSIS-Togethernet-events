@@ -22,7 +22,7 @@ class OAuthController extends Controller
                 abort(403);
             }
         } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Failed to connect to fetch your data from Google, likely because you used an email not affiliated with SSIS');
+            return redirect('/login')->with('error', 'Failed to fetch your data from Google, likely because you used an email not affiliated with SSIS');
         }
         $user = User::firstOrCreate(
             ['email' => $googleUser->email],

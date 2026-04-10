@@ -315,5 +315,6 @@
     "Your Time": "Din Tid",
     "Your Time (Waiting List)": "Din Tid (Väntelista)",
     "Configuration": "Konfiguration",
-    "App Configuration": "App konfiguration"
+    "App Configuration": "App konfiguration",
+    "Failed to fetch your data from Google, likely because you used an email not affiliated with SSIS": "Det gick inte att hämta dina data från Google, troligen på grund av att du använde en e-postadress som inte är kopplad till SSIS"
 }
