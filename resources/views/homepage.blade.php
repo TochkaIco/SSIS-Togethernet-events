@@ -28,7 +28,7 @@
                 <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <flux:heading size="lg" icon="musical-note">{{ __('Karaoke') }}</flux:heading>
                     <flux:text class="mt-2 grow">
-                        {{ __('Sing your heart out at our weekly karaoke sessions. No talent required, just enthusiasm!') }}
+                        {{ __('Sing your heart out at our karaoke sessions. No talent required, just enthusiasm!') }}
                     </flux:text>
                 </flux:card>
 
