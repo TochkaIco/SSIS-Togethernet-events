@@ -97,12 +97,15 @@ class User extends Authenticatable
             'TE'.now()->subMonths(6)->format('y').'A',
             'TE'.now()->subMonths(6)->format('y').'B',
             'TE'.now()->subMonths(6)->format('y').'C',
+            'TE'.now()->subMonths(6)->format('y').'D',
             'TE'.now()->subMonths(6)->subYear()->format('y').'A',
             'TE'.now()->subMonths(6)->subYear()->format('y').'B',
             'TE'.now()->subMonths(6)->subYear()->format('y').'C',
+            'TE'.now()->subMonths(6)->subYear()->format('y').'D',
             'TE'.now()->subMonths(6)->subYears(2)->format('y').'A',
             'TE'.now()->subMonths(6)->subYears(2)->format('y').'B',
             'TE'.now()->subMonths(6)->subYears(2)->format('y').'C',
+            'TE'.now()->subMonths(6)->subYears(2)->format('y').'D',
         ];
     }
 }
