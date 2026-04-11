@@ -27,12 +27,12 @@ class OAuthController extends Controller
         }
 
         $ldapName = $googleUser->name;
-        $ldapClass = 'Personal';
+        $ldapClass = 'Unknown';
 
         try {
             $usertag = str($googleUser->email)->before('@')->toString();
             $ldapUser = Container::getDefaultConnection()->query()
-                ->where('samaccountname', '=', $usertag)
+                ->where('sAMAccountName', '=', $usertag)
                 ->first();
 
             if ($ldapUser) {
@@ -53,23 +53,20 @@ class OAuthController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
+            report($e);
         }
 
-        $user = User::firstOrCreate(
+        $user = User::updateOrCreate(
             ['email' => $googleUser->email],
             [
                 'name' => $ldapName,
                 'class' => $ldapClass,
                 'google_id' => $googleUser->id,
-                'profile_picture' => $googleUser->getAvatar(),
+                'google_token' => $googleUser->token,
+                'google_refresh_token' => $googleUser->refreshToken,
             ]
         );
 
-        $user->update([
-            'google_token' => $googleUser->token,
-            'google_refresh_token' => $googleUser->refreshToken,
-        ]);
         if (! $user->profile_picture) {
             $user->update(['profile_picture' => $googleUser->getAvatar()]);
         }

@@ -33,8 +33,8 @@ test('it fetches name and class from ldap after google login', function () {
 
     /** @var Builder&MockInterface $query */
     $query = Mockery::mock(Builder::class);
-    /** @var Expectation $expectation */
     $expectation = $query->shouldReceive('where');
+    $expectation->with('sAMAccountName', '=', 'usertag');
     $expectation->andReturnSelf();
     $query->shouldReceive('first')->andReturn($ldapUser);
 
@@ -69,10 +69,9 @@ test('it falls back to google name and personal class if ldap fetch fails', func
 
     Socialite::shouldReceive('driver->user')->andReturn($socialiteUser);
 
-    /** @var Builder&MockInterface $query */
     $query = Mockery::mock(Builder::class);
-    /** @var Expectation $expectation */
     $expectation = $query->shouldReceive('where');
+    $expectation->with('sAMAccountName', '=', 'usertag');
     $expectation->andReturnSelf();
     $query->shouldReceive('first')->andReturn(null);
 
@@ -89,7 +88,7 @@ test('it falls back to google name and personal class if ldap fetch fails', func
 
     $user = User::where('email', 'usertag@example.com')->first();
     expect($user->name)->toBe('Google Name');
-    expect($user->class)->toBe('Personal');
+    expect($user->class)->toBe('Unknown');
 });
 
 test('it handles ldap exception gracefully', function () {
@@ -122,5 +121,5 @@ test('it handles ldap exception gracefully', function () {
 
     $user = User::where('email', 'usertag@example.com')->first();
     expect($user->name)->toBe('Google Name');
-    expect($user->class)->toBe('Personal');
+    expect($user->class)->toBe('Unknown');
 });
