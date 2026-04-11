@@ -26,8 +26,9 @@ test('it fetches name and class from ldap after google login', function () {
     Socialite::shouldReceive('driver->user')->andReturn($socialiteUser);
 
     $ldapUser = new Entry([
-        'displayname' => ['LDAP Name'],
-        'description' => ['TE25A'],
+        'givenname' => ['LDAP Firstname'],
+        'sn' => ['LDAP Lastname'],
+        'memberof' => ['CN=TE25A,OU=Klass,DC=ad,DC=ssis,DC=nu'],
     ]);
 
     /** @var Builder&MockInterface $query */
@@ -49,11 +50,11 @@ test('it fetches name and class from ldap after google login', function () {
     $response->assertRedirect('/');
 
     $user = User::where('email', 'usertag@example.com')->first();
-    expect($user->name)->toBe('LDAP Name');
+    expect($user->name)->toBe('LDAP Firstname LDAP Lastname');
     expect($user->class)->toBe('TE25A');
 });
 
-test('it falls back to google name and unknown class if ldap fetch fails', function () {
+test('it falls back to google name and personal class if ldap fetch fails', function () {
     config(['services.google.hd' => 'example.com']);
 
     /** @var SocialiteUser&MockInterface $socialiteUser */
@@ -88,7 +89,7 @@ test('it falls back to google name and unknown class if ldap fetch fails', funct
 
     $user = User::where('email', 'usertag@example.com')->first();
     expect($user->name)->toBe('Google Name');
-    expect($user->class)->toBe('Unknown');
+    expect($user->class)->toBe('Personal');
 });
 
 test('it handles ldap exception gracefully', function () {
@@ -121,5 +122,5 @@ test('it handles ldap exception gracefully', function () {
 
     $user = User::where('email', 'usertag@example.com')->first();
     expect($user->name)->toBe('Google Name');
-    expect($user->class)->toBe('Unknown');
+    expect($user->class)->toBe('Personal');
 });

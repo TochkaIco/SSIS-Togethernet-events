@@ -41,6 +41,10 @@ return [
             'sasl_options' => [
                 // 'mech' => 'GSSAPI',
             ],
+            'options' => [
+                // LDAP_OPT_X_TLS_REQUIRE_CERT => LDAP_OPT_X_TLS_NEVER,
+                LDAP_OPT_X_TLS_REQUIRE_CERT => env('LDAP_VERIFY_SSL', true) ? 1 : 0,
+            ],
         ],
 
     ],

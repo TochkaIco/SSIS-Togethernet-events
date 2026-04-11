@@ -27,7 +27,7 @@ class OAuthController extends Controller
         }
 
         $ldapName = $googleUser->name;
-        $ldapClass = 'Unknown';
+        $ldapClass = 'Personal';
 
         try {
             $usertag = str($googleUser->email)->before('@')->toString();
@@ -36,8 +36,21 @@ class OAuthController extends Controller
                 ->first();
 
             if ($ldapUser) {
-                $ldapName = $ldapUser['displayname'][0] ?? $googleUser->name;
-                $ldapClass = $ldapUser['description'][0] ?? 'Unknown';
+                $givenName = $ldapUser['givenname'][0] ?? null;
+                $sn = $ldapUser['sn'][0] ?? null;
+
+                if ($givenName && $sn) {
+                    $ldapName = "$givenName $sn";
+                }
+
+                $memberOf = $ldapUser['memberof'] ?? [];
+
+                foreach ($memberOf as $group) {
+                    if (str_contains($group, 'OU=Klass')) {
+                        $ldapClass = substr($group, 3, 5);
+                        break;
+                    }
+                }
             }
         } catch (\Exception $e) {
             \Log::error($e->getMessage());
