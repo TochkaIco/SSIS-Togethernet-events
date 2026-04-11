@@ -35,15 +35,15 @@ return [
             'port' => (int) env('LDAP_PORT', 389),
             'base_dn' => env('LDAP_BASE_DN', 'dc=local,dc=com'),
             'timeout' => env('LDAP_TIMEOUT', 5),
-            'use_ssl' => env('LDAP_SSL', false),
-            'use_tls' => env('LDAP_TLS', true),
+            'use_ssl' => env('LDAP_SSL', true),
+            'use_tls' => env('LDAP_TLS', false),
             'use_sasl' => env('LDAP_SASL', false),
             'sasl_options' => [
                 // 'mech' => 'GSSAPI',
             ],
             'options' => [
                 // LDAP_OPT_X_TLS_REQUIRE_CERT => LDAP_OPT_X_TLS_NEVER,
-                LDAP_OPT_X_TLS_REQUIRE_CERT => env('LDAP_VERIFY_SSL', true) ? 1 : 0,
+                LDAP_OPT_X_TLS_REQUIRE_CERT => env('LDAP_VERIFY_SSL', false),
             ],
         ],
 
