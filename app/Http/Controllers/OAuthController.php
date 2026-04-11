@@ -67,8 +67,6 @@ class OAuthController extends Controller
         );
 
         $user->update([
-            'name' => $ldapName,
-            'class' => $ldapClass,
             'google_token' => $googleUser->token,
             'google_refresh_token' => $googleUser->refreshToken,
         ]);

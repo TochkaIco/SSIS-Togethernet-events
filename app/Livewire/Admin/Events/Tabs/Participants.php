@@ -190,7 +190,7 @@ class Participants extends Component
         return view('livewire.admin.events.tabs.participants', [
             'participants' => $participants,
             'allClassGroups' => [
-                'School Staff',
+                'Personal',
                 'TE'.now()->subMonths(6)->format('y'),
                 'TE'.now()->subMonths(6)->subYear()->format('y'),
                 'TE'.now()->subMonths(6)->subYears(2)->format('y'),
