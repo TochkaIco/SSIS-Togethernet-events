@@ -19,6 +19,8 @@
     "Name": "Namn",
     "Your email is handled by Google.": "Din e-post hanteras av Google.",
     "Your name is handled by Google and school LDAP. Contact Togethernet to change your name in the system.": "Ditt namn hanteras av Google och skolans LDAP. Kontakta Togethernet för att ändra ditt namn i systemet.",
+    "Your class is handled by school LDAP. Contact Togethernet to change your name in the system.": "Din klass hanteras av skolans LDAP. Kontakta Togethernet för att ändra ditt namn i systemet.",
+    "Class": "Klass",
     "Save": "Spara",
     "Saved.": "Sparat.",
     "Security": "Säkerhet",
@@ -317,5 +319,7 @@
     "Configuration": "Konfiguration",
     "App Configuration": "App konfiguration",
     "Failed to fetch your data from Google, likely because you used an email not affiliated with SSIS": "Det gick inte att hämta dina data från Google, troligen på grund av att du använde en e-postadress som inte är kopplad till SSIS",
-    "login_restriction": "Om den inte är markerad kan endast konton från :hd logga in."
+    "login_restriction": "Om den inte är markerad kan endast konton från :hd logga in.",
+    "Class updated.": "Klass uppdaterad.",
+    "All Classes": "Alla klasser"
 }

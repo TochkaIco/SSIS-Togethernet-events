@@ -28,6 +28,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+
         <div class="space-y-6">
             <flux:heading size="lg">{{ __('User Details') }}</flux:heading>
 
@@ -47,8 +48,14 @@
             </div>
         </div>
 
-        {{-- Roles and Permissions --}}
         <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Class') }}</flux:heading>
+
+                <x-class-badge :user-class="$user->class ?? 'Unknown'" />
+            </div>
+
+            {{-- Roles and Permissions --}}
             <flux:heading size="xl">{{ __('Access Control') }}</flux:heading>
 
             <div>
@@ -58,6 +65,19 @@
                         <flux:badge variant="primary" size="sm">{{ $role->name }}</flux:badge>
                     @empty
                         <flux:text>{{ __('No roles assigned.') }}</flux:text>
+                    @endforelse
+                </div>
+            </div>
+
+            <div>
+                <flux:label class="mb-2 text-xl">{{ __('Permissions') }}</flux:label>
+                <div class="flex flex-wrap gap-1">
+                    @forelse ($user->getAllPermissions() as $permission)
+                        <flux:badge variant="ghost" size="sm" class="whitespace-nowrap w-min rounded-full border px-2 py-1 text-xs font-medium bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
+                            {{ str_replace('_', ' ', $permission->name) }}
+                        </flux:badge>
+                    @empty
+                        <flux:text>{{ __('No specific permissions.') }}</flux:text>
                     @endforelse
                 </div>
             </div>

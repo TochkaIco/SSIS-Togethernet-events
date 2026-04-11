@@ -2,6 +2,7 @@
     <flux:table>
         <flux:table.columns>
             <flux:table.column>{{ __('Name') }}</flux:table.column>
+            <flux:table.column>{{ __('Class') }}</flux:table.column>
             <flux:table.column>{{ __('Email') }}</flux:table.column>
             @if($event->one_hour_periods)
                 <flux:table.column>{{ __('Period') }}</flux:table.column>
@@ -18,6 +19,10 @@
                             <flux:avatar class="size-10" circle :initials="$waiting->initials()" :src="$waiting->profile_picture" />
                             <span class="font-medium hover:underline hover:text-orange-300">{{ $waiting->name }}</span>
                         </button>
+                    </flux:table.cell>
+
+                    <flux:table.cell>
+                        <x-class-badge :user-class="$waiting->class ?? 'Unknown'" />
                     </flux:table.cell>
 
                     <flux:table.cell>

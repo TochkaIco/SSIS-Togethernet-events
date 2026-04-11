@@ -30,8 +30,16 @@
             </div>
         </div>
 
-        {{-- Roles and Permissions --}}
         <div class="space-y-6">
+            <flux:label>{{ __('Class') }}</flux:label>
+            <flux:select class="w-fit" wire:model.live="selectedClass" wire:key="user-select-class-{{ $user->id }}">
+                <flux:select.option value="">{{ __('Unset') }}</flux:select.option>
+                @foreach($user->validClasses() as $classOption)
+                    <flux:select.option :value="$classOption">{{ $classOption }}</flux:select.option>
+                @endforeach
+            </flux:select>
+
+            {{-- Roles and Permissions --}}
             <flux:heading size="xl">{{ __('Access Control') }}</flux:heading>
 
             <div>

@@ -89,4 +89,20 @@ class User extends Authenticatable
 
         return $registration->in_waitinglist ? 2 : 0;
     }
+
+    public function validClasses(): array
+    {
+        return [
+            'School Staff',
+            'TE'.now()->subMonths(6)->format('y').'A',
+            'TE'.now()->subMonths(6)->format('y').'B',
+            'TE'.now()->subMonths(6)->format('y').'C',
+            'TE'.now()->subMonths(6)->subYear()->format('y').'A',
+            'TE'.now()->subMonths(6)->subYear()->format('y').'B',
+            'TE'.now()->subMonths(6)->subYear()->format('y').'C',
+            'TE'.now()->subMonths(6)->subYears(2)->format('y').'A',
+            'TE'.now()->subMonths(6)->subYears(2)->format('y').'B',
+            'TE'.now()->subMonths(6)->subYears(2)->format('y').'C',
+        ];
+    }
 }

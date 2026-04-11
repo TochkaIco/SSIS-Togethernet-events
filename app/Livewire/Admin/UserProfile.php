@@ -18,11 +18,17 @@ class UserProfile extends Component
     #[Validate('required|string|min:3|max:255')]
     public string $name = '';
 
+    public string $class = '';
+
+    public string $selectedClass = '';
+
     public function mount(User $user): void
     {
         $this->authorize('manage users');
         $this->user = $user->load(['roles', 'permissions']);
         $this->name = $user->name;
+        $this->class = $user->class ?? 'Unknown';
+        $this->selectedClass = $this->class;
     }
 
     public function changeUserName(): void
@@ -34,6 +40,22 @@ class UserProfile extends Component
         ]);
 
         Flux::toast(text: __('Name updated.'), variant: 'success');
+    }
+
+    public function updatedSelectedClass($value): void
+    {
+        $this->changeUserClass($value);
+    }
+
+    public function changeUserClass($class): void
+    {
+        $this->authorize('manage users');
+
+        $this->user->update([
+            'class' => $class,
+        ]);
+
+        Flux::toast(text: __('Class updated.'), variant: 'success');
     }
 
     public function render(): View

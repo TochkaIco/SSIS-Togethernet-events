@@ -35,6 +35,8 @@ class UserManagement extends Component
 
     public $userPermissions = [];
 
+    public $filterClassGroup = '';
+
     public function editRoles($userId): void
     {
         $this->authorize('manage users');
@@ -203,6 +205,9 @@ class UserManagement extends Component
             ->when($this->filterRole, function ($q) {
                 $q->role($this->filterRole);
             })
+            ->when($this->filterClassGroup, function ($q) {
+                $q->where('class', 'like', $this->filterClassGroup.'%');
+            })
             ->with('roles')
             ->paginate(12);
 
@@ -210,6 +215,12 @@ class UserManagement extends Component
             'users' => $users,
             'allRoles' => Role::all(),
             'allPermissions' => Permission::all(),
+            'allClassGroups' => [
+                'School Staff',
+                'TE'.now()->subMonths(6)->format('y'),
+                'TE'.now()->subMonths(6)->subYear()->format('y'),
+                'TE'.now()->subMonths(6)->subYears(2)->format('y'),
+            ],
         ]);
     }
 }

@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as GoogleUser;
+use LdapRecord\Container;
 
 class OAuthController extends Controller
 {
@@ -24,16 +25,37 @@ class OAuthController extends Controller
         } catch (\Exception $e) {
             return redirect('/login')->with('error', 'Failed to fetch your data from Google, likely because you used an email not affiliated with SSIS');
         }
+
+        $ldapName = $googleUser->name;
+        $ldapClass = 'Unknown';
+
+        try {
+            $usertag = str($googleUser->email)->before('@')->toString();
+            $ldapUser = Container::getDefaultConnection()->query()
+                ->where('samaccountname', '=', $usertag)
+                ->first();
+
+            if ($ldapUser) {
+                $ldapName = $ldapUser['displayname'][0] ?? $googleUser->name;
+                $ldapClass = $ldapUser['description'][0] ?? 'Unknown';
+            }
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+        }
+
         $user = User::firstOrCreate(
             ['email' => $googleUser->email],
             [
-                'name' => $googleUser->name,
+                'name' => $ldapName,
+                'class' => $ldapClass,
                 'google_id' => $googleUser->id,
                 'profile_picture' => $googleUser->getAvatar(),
             ]
         );
 
         $user->update([
+            'name' => $ldapName,
+            'class' => $ldapClass,
             'google_token' => $googleUser->token,
             'google_refresh_token' => $googleUser->refreshToken,
         ]);

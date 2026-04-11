@@ -3,6 +3,13 @@
     <div class="flex flex-col md:flex-row gap-4 mb-6">
         <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="{{ __('Search by name or email...') }}" class="flex-1" />
 
+        <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="md:w-64">
+            <flux:select.option value="">{{ __('All Classes') }}</flux:select.option>
+            @foreach($allClassGroups as $classGroup)
+                <flux:select.option :value="$classGroup">{{ ucfirst($classGroup) }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
         <flux:select wire:model.live="filterRole" placeholder="{{ __('Filter by Role') }}" class="md:w-64">
             <flux:select.option value="">{{ __('All Roles') }}</flux:select.option>
             @foreach($allRoles as $role)
@@ -16,6 +23,7 @@
         <flux:table.columns>
             <flux:table.column>{{ __('Index') }}</flux:table.column>
             <flux:table.column>{{ __('User') }}</flux:table.column>
+            <flux:table.column>{{ __('Class') }}</flux:table.column>
             <flux:table.column>{{ __('Email') }}</flux:table.column>
             <flux:table.column>{{ __('Roles') }}</flux:table.column>
             <flux:table.column>{{ __('Permissions') }}</flux:table.column>
@@ -36,6 +44,10 @@
                             <flux:avatar circle class="size-10" :initials="$user->initials()" :src="$user->profile_picture" />
                             <span class="font-medium group-hover:text-orange-300 group-hover:underline">{{ $user->name }}</span>
                         </button>
+                    </flux:table.cell>
+
+                    <flux:table.cell>
+                        <x-class-badge :user-class="$user->class ?? 'Unknown'" />
                     </flux:table.cell>
 
                     <flux:table.cell>
@@ -95,9 +107,7 @@
         </flux:table.rows>
     </flux:table>
 
-    <div class="mt-6">
-        {{ $users->links() }}
-    </div>
+    <flux:pagination :paginator="$users" scroll-to />
 
     {{-- Modal: Manage Roles & Permissions --}}
     <flux:modal name="edit-user-permissions" class="md:w-125">

@@ -16,6 +16,8 @@ class Profile extends Component
 
     public string $name = '';
 
+    public string $class = '';
+
     public string $email = '';
 
     public string $google_id = '';
@@ -26,6 +28,7 @@ class Profile extends Component
     public function mount(): void
     {
         $this->name = Auth::user()->name;
+        $this->class = Auth::user()->class ?? 'Unknown';
         $this->email = Auth::user()->email;
         if (Auth::user()->google_id) {
             $this->google_id = Auth::user()->google_id;

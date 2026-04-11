@@ -21,6 +21,13 @@
                 <flux:select.option value="1">{{ __('Paid') }}</flux:select.option>
                 <flux:select.option value="0">{{ __('Unpaid') }}</flux:select.option>
             </flux:select>
+
+            <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="w-fit">
+                <flux:select.option value="">{{ __('All Classes') }}</flux:select.option>
+                @foreach($allClassGroups as $classGroup)
+                    <flux:select.option :value="$classGroup">{{ ucfirst($classGroup) }}</flux:select.option>
+                @endforeach
+            </flux:select>
         </div>
     </div>
 
@@ -29,6 +36,7 @@
         <flux:table.columns>
             <flux:table.column>{{ __('Index') }}</flux:table.column>
             <flux:table.column>{{ __('Participant') }}</flux:table.column>
+            <flux:table.column>{{ __('Class') }}</flux:table.column>
             @if($event->one_hour_periods)
                 <flux:table.column>{{ __('Period') }}</flux:table.column>
             @endif
@@ -57,6 +65,10 @@
                                 <span class="text-xs">{{ $participant->email }}</span>
                             </div>
                         </div>
+                    </flux:table.cell>
+
+                    <flux:table.cell>
+                        <x-class-badge :user-class="$participant->class ?? 'Unknown'" />
                     </flux:table.cell>
 
                     {{-- Period Selection --}}
@@ -144,7 +156,5 @@
         </flux:table.rows>
     </flux:table>
 
-    <div class="mt-6">
-        {{ $participants->links() }}
-    </div>
+    <flux:pagination :paginator="$participants" scroll-to />
 </div>

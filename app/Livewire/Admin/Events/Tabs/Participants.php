@@ -28,6 +28,8 @@ class Participants extends Component
 
     public array $participantPeriods = [];
 
+    public string $filterClassGroup = '';
+
     /**
      * Keep the UI state in the URL for easy sharing/reloading.
      */
@@ -172,6 +174,9 @@ class Participants extends Component
             })
             ->when($this->onlyWorkers, function (Builder $q) {
                 $q->where('event_users.is_working', true);
+            })
+            ->when($this->filterClassGroup, function ($q) {
+                $q->where('class', 'like', $this->filterClassGroup.'%');
             });
 
         $participants = $query->paginate(10);
@@ -184,6 +189,12 @@ class Participants extends Component
 
         return view('livewire.admin.events.tabs.participants', [
             'participants' => $participants,
+            'allClassGroups' => [
+                'School Staff',
+                'TE'.now()->subMonths(6)->format('y'),
+                'TE'.now()->subMonths(6)->subYear()->format('y'),
+                'TE'.now()->subMonths(6)->subYears(2)->format('y'),
+            ],
         ]);
     }
 }

@@ -19,6 +19,11 @@
             </div>
 
             <div>
+                <flux:input wire:model="class" :label="__('Class')" type="text" disabled required />
+                <flux:text class="mt-1 text-xs text-orange-400/80 cursor-default">{{ __('Your class is handled by school LDAP. Contact Togethernet to change your name in the system.') }}</flux:text>
+            </div>
+
+            <div>
                 @if($this->google_id !== '')
                     <flux:input wire:model="email" :label="__('Email')" disabled />
                     <flux:text class="mt-1 text-xs text-orange-400/80 cursor-default">{{ __('Your email is handled by Google.') }}</flux:text>
