@@ -53,20 +53,23 @@ class OAuthController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            report($e);
+            \Log::error($e->getMessage());
         }
 
-        $user = User::updateOrCreate(
+        $user = User::firstOrCreate(
             ['email' => $googleUser->email],
             [
                 'name' => $ldapName,
                 'class' => $ldapClass,
                 'google_id' => $googleUser->id,
-                'google_token' => $googleUser->token,
-                'google_refresh_token' => $googleUser->refreshToken,
+                'profile_picture' => $googleUser->getAvatar(),
             ]
         );
 
+        $user->update([
+            'google_token' => $googleUser->token,
+            'google_refresh_token' => $googleUser->refreshToken,
+        ]);
         if (! $user->profile_picture) {
             $user->update(['profile_picture' => $googleUser->getAvatar()]);
         }
