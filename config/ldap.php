@@ -29,21 +29,17 @@ return [
     'connections' => [
 
         'default' => [
-            'hosts' => [env('LDAP_HOST', '127.0.0.1')],
+            'hosts' => [env('LDAP_HOST', 'ad.ssis.nu')],
+            'port' => (int) env('LDAP_PORT', 636),
+            'use_ssl' => true,
+            'use_tls' => false,
             'username' => env('LDAP_USERNAME'),
             'password' => env('LDAP_PASSWORD'),
-            'port' => (int) env('LDAP_PORT', 389),
-            'base_dn' => env('LDAP_BASE_DN', 'dc=local,dc=com'),
+            'base_dn' => env('LDAP_BASE_DN', 'DC=ad,DC=ssis,DC=nu'),
             'timeout' => env('LDAP_TIMEOUT', 5),
-            'use_ssl' => env('LDAP_SSL', true),
-            'use_tls' => env('LDAP_TLS', false),
-            'use_sasl' => env('LDAP_SASL', false),
-            'sasl_options' => [
-                // 'mech' => 'GSSAPI',
-            ],
             'options' => [
-                // LDAP_OPT_X_TLS_REQUIRE_CERT => LDAP_OPT_X_TLS_NEVER,
-                LDAP_OPT_X_TLS_REQUIRE_CERT => env('LDAP_VERIFY_SSL', false),
+                LDAP_OPT_X_TLS_REQUIRE_CERT => 0,
+                LDAP_OPT_REFERRALS => 0,
             ],
         ],
 
