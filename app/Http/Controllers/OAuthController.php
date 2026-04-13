@@ -58,8 +58,8 @@ class OAuthController extends Controller
                 if ($givenName && $sn) {
                     $ldapName = "$givenName $sn";
                 }
-
-                if (str_contains($ldapUser['dn'][1], 'OU=Personal')) {
+                \Log::error($ldapUser['dn']); // temporary
+                if (str_contains($ldapUser['dn'], 'OU=Personal')) {
                     $ldapClass = 'Personal';
                 } else {
                     $memberOf = array_filter($ldapUser['memberof'] ?? [], 'is_string');
