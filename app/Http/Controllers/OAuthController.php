@@ -59,7 +59,7 @@ class OAuthController extends Controller
                     $ldapName = "$givenName $sn";
                 }
 
-                if (str_contains($sn, 'OU=Personal')) {
+                if (str_contains($ldapUser['dn'][1], 'OU=Personal')) {
                     $ldapClass = 'Personal';
                 } else {
                     $memberOf = array_filter($ldapUser['memberof'] ?? [], 'is_string');
