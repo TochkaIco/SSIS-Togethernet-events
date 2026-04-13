@@ -34,7 +34,7 @@ test('it fetches name and class from ldap after google login', function () {
     $query = Mockery::mock(Builder::class);
     /** @var Expectation $whereExpectation */
     $whereExpectation = $query->shouldReceive('where');
-    $whereExpectation->with('sAMAccountName', 'usertag')->andReturnSelf();
+    $whereExpectation->with('sAMAccountName', '=', 'usertag')->andReturnSelf();
     $query->shouldReceive('first')->andReturn($ldapUser);
 
     /** @var Connection&MockInterface $connection */
@@ -71,7 +71,7 @@ test('it falls back to google name and personal class if ldap fetch fails', func
     $query = Mockery::mock(Builder::class);
     /** @var Expectation $whereExpectation */
     $whereExpectation = $query->shouldReceive('where');
-    $whereExpectation->with('sAMAccountName', 'usertag')->andReturnSelf();
+    $whereExpectation->with('sAMAccountName', '=', 'usertag')->andReturnSelf();
     $query->shouldReceive('first')->andReturn(null);
 
     /** @var Connection&MockInterface $connection */

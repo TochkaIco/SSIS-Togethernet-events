@@ -31,8 +31,12 @@ class OAuthController extends Controller
 
         try {
             $usertag = str($googleUser->email)->before('@')->toString();
-            $ldapUser = Container::getDefaultConnection()->query()
-                ->where('sAMAccountName', $usertag)
+
+            $connection = Container::getDefaultConnection();
+            $connection->connect();
+
+            $ldapUser = $connection->query()
+                ->where('sAMAccountName', '=', $usertag)
                 ->first();
 
             if ($ldapUser) {
@@ -53,7 +57,7 @@ class OAuthController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
+            \Log::error('LDAP error: '.$e->getMessage());
         }
 
         $user = User::firstOrCreate(
