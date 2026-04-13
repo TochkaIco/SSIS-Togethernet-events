@@ -78,7 +78,7 @@
                     </div>
 
                     {{--- User Class Distribution For This Event ---}}
-                    @if($this->latestEvent()->event_starts_at >= now())
+                    @if($this->latestEvent()->event_starts_at <= now())
                         <div class="flex flex-col">
                             <h2 class="text-lg font-bold mb-4">{{ __('Class Breakdown') }}</h2>
                             <div
