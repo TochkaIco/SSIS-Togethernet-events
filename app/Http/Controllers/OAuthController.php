@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as GoogleUser;
-use LdapRecord\Container;
+use LdapRecord\Connection;
 
 class OAuthController extends Controller
 {
@@ -32,10 +32,22 @@ class OAuthController extends Controller
         try {
             $usertag = str($googleUser->email)->before('@')->toString();
 
-            $connection = Container::getDefaultConnection();
-            $connection->connect();
+            $connection = new Connection([
+                'hosts' => config('ldap.connections.default.hosts'),
+                'port' => config('ldap.connections.default.port'),
+                'use_ssl' => config('ldap.connections.default.use_ssl'),
+                'use_tls' => config('ldap.connections.default.use_tls'),
+                'base_dn' => config('ldap.connections.default.base_dn'),
+            ]);
+
+            $connection->auth()->attempt(
+                config('ldap.connections.default.username'),
+                config('ldap.connections.default.password'),
+                stayBound: true
+            );
 
             $ldapUser = $connection->query()
+                ->in(config('ldap.connections.default.base_dn'))
                 ->where('sAMAccountName', '=', $usertag)
                 ->first();
 
@@ -47,11 +59,15 @@ class OAuthController extends Controller
                     $ldapName = "$givenName $sn";
                 }
 
-                $memberOf = $ldapUser['memberof'] ?? [];
+                $memberOf = array_filter($ldapUser['memberof'] ?? [], 'is_string');
 
                 foreach ($memberOf as $group) {
                     if (str_contains($group, 'OU=Klass')) {
-                        $ldapClass = substr($group, 3, 5);
+                        preg_match('/^CN=([^,]+)/', $group, $matches);
+                        $ldapClass = $matches[1] ?? 'Unknown';
+                        break;
+                    } elseif (str_contains($group, 'OU=Personal')) {
+                        $ldapClass = 'Personal';
                         break;
                     }
                 }

@@ -38,6 +38,8 @@
 
                 <flux:button
                     variant="danger"
+                    type="submit"
+                    class="cursor-pointer"
                     x-bind:disabled="!canDelete"
                     x-bind:class="!canDelete && 'opacity-50 grayscale'"
                 >
