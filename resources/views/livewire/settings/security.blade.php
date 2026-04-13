@@ -35,9 +35,8 @@
 
                             <flux:button
                                 variant="primary"
-                                class="cursor-pointer"
-                                wire:click="enable"
-                                disabled
+                                class="cursor-not-allowed"
+                                {{--- wire:click="enable" is disabled for now since 2FA just doesn't work ---}}
                             >
                                 {{ __('Enable 2FA') }}
                             </flux:button>

@@ -167,12 +167,13 @@
 
                 <div class="flex gap-2 justify-end">
                     <flux:modal.close>
-                        <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                        <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
                     </flux:modal.close>
 
                     <flux:button
                         wire:click="deleteUser"
                         variant="danger"
+                        class="cursor-pointer"
                         x-bind:disabled="!canDelete"
                         x-bind:class="!canDelete && 'opacity-50 grayscale'"
                     >

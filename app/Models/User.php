@@ -93,6 +93,7 @@ class User extends Authenticatable
     public function validClasses(): array
     {
         return [
+            'Alumni',
             'Personal',
             'TE'.now()->subMonths(6)->format('y').'A',
             'TE'.now()->subMonths(6)->format('y').'B',

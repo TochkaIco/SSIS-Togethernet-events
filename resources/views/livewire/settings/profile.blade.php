@@ -24,17 +24,13 @@
             </div>
 
             <div>
-                @if($this->google_id !== '')
-                    <flux:input wire:model="email" :label="__('Email')" disabled />
-                    <flux:text class="mt-1 text-xs text-orange-400/80 cursor-default">{{ __('Your email is handled by Google.') }}</flux:text>
-                @else
-                    <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
-                @endif
+                <flux:input wire:model="email" :label="__('Email')" disabled />
+                <flux:text class="mt-1 text-xs text-orange-400/80 cursor-default">{{ __('Your email is handled by Google.') }}</flux:text>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full cursor-pointer" disabled>{{ __('Save') }}</flux:button>
+                    <flux:button variant="primary" type="button" class="w-full cursor-not-allowed">{{ __('Save') }}</flux:button>
                 </div>
 
                 <x-action-message class="me-3" on="profile-updated">
