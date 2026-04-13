@@ -7,6 +7,7 @@ namespace App\Livewire\Admin;
 use App\Models\AppConfig;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class AppConfigurationPage extends Component
@@ -26,6 +27,7 @@ class AppConfigurationPage extends Component
         Flux::toast('Setting saved.');
     }
 
+    #[Layout('layouts.app', ['title' => 'Config'])]
     public function render(): View
     {
         return view('livewire.admin.app-configuration');

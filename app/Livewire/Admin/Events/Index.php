@@ -7,6 +7,7 @@ namespace App\Livewire\Admin\Events;
 use App\Models\Event;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\View\View;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class Index extends Component
@@ -16,6 +17,7 @@ class Index extends Component
         return $event->display_starts_at <= now() && $event->event_ends_at >= now();
     }
 
+    #[Layout('layouts.app', ['title' => 'Admin Events'])]
     public function render(): Factory|\Illuminate\Contracts\View\View|View
     {
         return view('livewire.admin.events.index', [

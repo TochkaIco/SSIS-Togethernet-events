@@ -32,7 +32,7 @@ class OAuthController extends Controller
         try {
             $usertag = str($googleUser->email)->before('@')->toString();
             $ldapUser = Container::getDefaultConnection()->query()
-                ->where('sAMAccountName', '=', $usertag)
+                ->where('sAMAccountName', $usertag)
                 ->first();
 
             if ($ldapUser) {

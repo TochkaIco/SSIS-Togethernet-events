@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 /**
@@ -88,6 +89,7 @@ class Index extends Component
         }
     }
 
+    #[Layout('layouts.app', ['title' => 'Events'])]
     public function render(): Factory|\Illuminate\Contracts\View\View|View
     {
         return view('livewire.events.index', [

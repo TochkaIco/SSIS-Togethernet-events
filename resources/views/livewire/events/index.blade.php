@@ -7,7 +7,7 @@
                     <div class="absolute top-4 left-4 z-20">
                         @if(auth()->user())
                             @if(! $this->userIsRegistered($event->id))
-                                <flux:button class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
+                                <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
                             @else
                                 <div class="flex flex-col items-start gap-2">
                                     @php
@@ -26,7 +26,7 @@
                                 </div>
                             @endif
                         @else
-                            <flux:button href="{{ route('login') }}" icon="user-plus" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl" variant="primary">{{ __('Login to register for the event') }}</flux:button>
+                            <flux:button href="{{ route('login') }}" icon="user-plus" class="cursor-pointer" variant="primary">{{ __('Login to register for the event') }}</flux:button>
                         @endif
                     </div>
                 @endif

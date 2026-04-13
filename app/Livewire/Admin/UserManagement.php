@@ -9,6 +9,7 @@ use Flux\Flux;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -193,6 +194,7 @@ class UserManagement extends Component
         return redirect()->route('admin.user.profile', $userId);
     }
 
+    #[Layout('layouts.app', ['title' => 'Users'])]
     public function render(): View|Factory|\Illuminate\View\View
     {
         $users = User::query()

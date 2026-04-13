@@ -37,10 +37,6 @@ return [
             'password' => env('LDAP_PASSWORD'),
             'base_dn' => env('LDAP_BASE_DN', 'DC=ad,DC=ssis,DC=nu'),
             'timeout' => env('LDAP_TIMEOUT', 5),
-            'options' => [
-                LDAP_OPT_X_TLS_REQUIRE_CERT => 0,
-                LDAP_OPT_REFERRALS => 0,
-            ],
         ],
 
     ],

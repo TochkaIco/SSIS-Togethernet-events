@@ -31,11 +31,10 @@ test('it fetches name and class from ldap after google login', function () {
         'memberof' => ['CN=TE25A,OU=Klass,DC=ad,DC=ssis,DC=nu'],
     ]);
 
-    /** @var Builder&MockInterface $query */
     $query = Mockery::mock(Builder::class);
-    $expectation = $query->shouldReceive('where');
-    $expectation->with('sAMAccountName', '=', 'usertag');
-    $expectation->andReturnSelf();
+    /** @var Expectation $whereExpectation */
+    $whereExpectation = $query->shouldReceive('where');
+    $whereExpectation->with('sAMAccountName', 'usertag')->andReturnSelf();
     $query->shouldReceive('first')->andReturn($ldapUser);
 
     /** @var Connection&MockInterface $connection */
@@ -70,9 +69,9 @@ test('it falls back to google name and personal class if ldap fetch fails', func
     Socialite::shouldReceive('driver->user')->andReturn($socialiteUser);
 
     $query = Mockery::mock(Builder::class);
-    $expectation = $query->shouldReceive('where');
-    $expectation->with('sAMAccountName', '=', 'usertag');
-    $expectation->andReturnSelf();
+    /** @var Expectation $whereExpectation */
+    $whereExpectation = $query->shouldReceive('where');
+    $whereExpectation->with('sAMAccountName', 'usertag')->andReturnSelf();
     $query->shouldReceive('first')->andReturn(null);
 
     /** @var Connection&MockInterface $connection */
