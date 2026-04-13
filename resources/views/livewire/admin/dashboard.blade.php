@@ -8,7 +8,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {{-- Total Users --}}
-        <flux:card class="flex flex-col gap-2">
+        <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <div class="flex items-center gap-3">
                 <flux:icon.users variant="outline" class="size-6" />
                 <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Total Users') }}</span>
@@ -17,7 +17,7 @@
         </flux:card>
 
         {{-- Active Events --}}
-        <flux:card class="flex flex-col gap-2">
+        <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <div class="flex items-center gap-3">
                 <flux:icon.calendar variant="outline" class="size-6" />
                 <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Active Events') }}</span>
@@ -26,7 +26,7 @@
         </flux:card>
 
         {{-- Upcoming Events --}}
-        <flux:card class="flex flex-col gap-2">
+        <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <div class="flex items-center gap-3">
                 <flux:icon.clock variant="outline" class="size-6" />
                 <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Upcoming Events') }}</span>
@@ -35,7 +35,7 @@
         </flux:card>
 
         {{-- Kiosk Revenue --}}
-        <flux:card class="flex flex-col gap-2">
+        <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <div class="flex items-center gap-3">
                 <flux:icon.banknotes variant="outline" class="size-6" />
                 <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Kiosk Revenue') }}</span>
@@ -46,7 +46,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- Latest Event Stats --}}
-        <flux:card>
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-bold">{{ __('Latest Event Stats') }}</h2>
                 @if($this->latestEvent)
@@ -77,6 +77,61 @@
                         </div>
                     </div>
 
+                    {{--- User Class Distribution For This Event ---}}
+                    <div class="flex flex-col">
+                        <h2 class="text-lg font-bold mb-4">{{ __('Class Breakdown') }}</h2>
+                        <div
+                            x-data="{
+                                init() {
+                                    const dist = @js($this->latestEventStats['class_distribution']);
+                                    new Chart(this.$refs.eventClassChart, {
+                                        type: 'doughnut',
+                                        data: {
+                                            labels: dist.labels,
+                                            datasets: [{
+                                                data: dist.data,
+                                                backgroundColor: dist.colors,
+                                                borderWidth: 2,
+                                                hoverOffset: 5
+                                            }]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            cutout: '0%',
+                                            plugins: {
+                                                legend: {
+                                                    position: 'bottom',
+                                                    labels: {
+                                                        usePointStyle: true,
+                                                        padding: 20,
+                                                        font: { size: 12 }
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    callbacks: {
+                                                        label: function(context) {
+                                                            const label = context.label || '';
+                                                            const value = context.raw || 0;
+                                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                            const percentage = Math.round((value / total) * 100);
+                                                            return `${label}: ${value} (${percentage}%)`;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }"
+                            class="h-40"
+                        >
+                            <canvas x-ref="eventClassChart"></canvas>
+                        </div>
+                    </div>
+
+                    <flux:separator />
+
                     <flux:button href="{{ route('admin.event.show', $this->latestEvent) }}" variant="ghost" size="sm" class="w-full">
                         {{ __('View Event Details') }}
                     </flux:button>
@@ -90,7 +145,7 @@
         </flux:card>
 
         {{-- Quick Links --}}
-        <flux:card>
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <h2 class="text-lg font-bold mb-4">{{ __('Quick Actions') }}</h2>
             <div class="grow gap-3">
                 @can('create articles')
@@ -184,8 +239,10 @@
                             </div>
                         </div>
 
+                        <flux:separator />
+
                         {{-- Timezone --}}
-                        <div class="flex items-center justify-between text-xs pt-2 border-t border-zinc-100 dark:border-zinc-800 text-zinc-500">
+                        <div class="flex items-center justify-between text-xs pt-2 border-zinc-100 dark:border-zinc-800 text-zinc-500">
                             <span>{{ __('Timezone') }}</span>
                             <span>{{ $this->systemStats['timezone'] }}</span>
                         </div>
@@ -247,7 +304,7 @@
         </flux:card>
 
         {{-- Attendance History Chart --}}
-        <flux:card>
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <h2 class="text-lg font-bold mb-4">{{ __('Attendance Trends') }}</h2>
             <div
                 x-data="{
@@ -290,7 +347,7 @@
         </flux:card>
 
         {{-- Kiosk Revenue Chart --}}
-        <flux:card>
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <h2 class="text-lg font-bold mb-4">{{ __('Kiosk Revenue Trends') }}</h2>
             <div
                 x-data="{
@@ -327,7 +384,7 @@
         </flux:card>
 
         {{-- User Growth Chart --}}
-        <flux:card>
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
             <h2 class="text-lg font-bold mb-4">{{ __('User Registrations (Last Year)') }}</h2>
             <div
                 x-data="{
@@ -361,6 +418,59 @@
                 class="h-64"
             >
                 <canvas x-ref="growthChart"></canvas>
+            </div>
+        </flux:card>
+
+        {{--- User Class Distribution ---}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <h2 class="text-lg font-bold mb-4">{{ __('User Distribution by Class') }}</h2>
+            <div
+                x-data="{
+                            init() {
+                                const distributionData = @js($this->userClassDistribution());
+                                new Chart(this.$refs.classChart, {
+                                    type: 'doughnut',
+                                    data: {
+                                        labels: distributionData.labels,
+                                        datasets: [{
+                                            data: distributionData.data,
+                                            backgroundColor: distributionData.colors,
+                                            borderWidth: 2,
+                                            hoverOffset: 5
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        cutout: '0%',
+                                        plugins: {
+                                            legend: {
+                                                position: 'bottom',
+                                                labels: {
+                                                    usePointStyle: true,
+                                                    padding: 20,
+                                                    font: { size: 12 }
+                                                }
+                                            },
+                                            tooltip: {
+                                                callbacks: {
+                                                    label: function(context) {
+                                                        const label = context.label || '';
+                                                        const value = context.raw || 0;
+                                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                        const percentage = Math.round((value / total) * 100);
+                                                        return `${label}: ${value} (${percentage}%)`;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }"
+                class="h-64"
+            >
+                <canvas x-ref="classChart"></canvas>
             </div>
         </flux:card>
     </div>

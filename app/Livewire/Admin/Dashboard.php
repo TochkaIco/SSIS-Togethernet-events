@@ -47,7 +47,7 @@ class Dashboard extends Component
         $latest = $this->latestEvent();
 
         if (! $latest instanceof Event) {
-            return [];
+            return ['registrations' => 0, 'attendance' => 0, 'attendance_rate' => 0, 'class_distribution' => []];
         }
 
         $registrationsCount = EventUser::where('event_id', $latest->id)
@@ -58,12 +58,23 @@ class Dashboard extends Component
             ->where('has_arrived', true)
             ->count();
 
+        $userIds = EventUser::where('event_id', $latest->id)
+            ->pluck('user_id');
+
+        $classData = User::whereIn('id', $userIds)
+            ->selectRaw('class, COUNT(*) as count')
+            ->groupBy('class')
+            ->get();
+
         return [
             'registrations' => $registrationsCount,
             'attendance' => $attendanceCount,
-            'attendance_rate' => $registrationsCount > 0
-                ? round(($attendanceCount / $registrationsCount) * 100)
-                : 0,
+            'attendance_rate' => $registrationsCount > 0 ? round(($attendanceCount / $registrationsCount) * 100) : 0,
+            'class_distribution' => [
+                'labels' => $classData->pluck('class')->map(fn ($c) => $c ?? __('Unknown'))->toArray(),
+                'data' => $classData->pluck('count')->toArray(),
+                'colors' => $classData->map(fn ($item) => '#'.substr(md5($item->class ?? 'Unknown'), 0, 6))->toArray(),
+            ],
         ];
     }
 
@@ -116,6 +127,20 @@ class Dashboard extends Component
         return [
             'labels' => $growth->pluck('date')->toArray(),
             'data' => $growth->pluck('count')->toArray(),
+        ];
+    }
+
+    #[Computed]
+    public function userClassDistribution(): array
+    {
+        $distribution = User::selectRaw('class, COUNT(*) as count')
+            ->groupBy('class')
+            ->get();
+
+        return [
+            'labels' => $distribution->pluck('class')->toArray(),
+            'data' => $distribution->pluck('count')->toArray(),
+            'colors' => $distribution->map(fn ($item) => '#'.substr(md5($item->class ?? 'Unknown'), 0, 6))->toArray(),
         ];
     }
 
