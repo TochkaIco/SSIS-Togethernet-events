@@ -78,10 +78,11 @@
                     </div>
 
                     {{--- User Class Distribution For This Event ---}}
-                    <div class="flex flex-col">
-                        <h2 class="text-lg font-bold mb-4">{{ __('Class Breakdown') }}</h2>
-                        <div
-                            x-data="{
+                    @if($this->latestEvent()->event_starts_at >= now())
+                        <div class="flex flex-col">
+                            <h2 class="text-lg font-bold mb-4">{{ __('Class Breakdown') }}</h2>
+                            <div
+                                x-data="{
                                 init() {
                                     const dist = @js($this->latestEventStats['class_distribution']);
                                     new Chart(this.$refs.eventClassChart, {
@@ -124,11 +125,12 @@
                                     });
                                 }
                             }"
-                            class="h-40"
-                        >
-                            <canvas x-ref="eventClassChart"></canvas>
+                                class="h-40"
+                            >
+                                <canvas x-ref="eventClassChart"></canvas>
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                     <flux:separator />
 
