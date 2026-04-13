@@ -19,7 +19,7 @@ class OAuthController extends Controller
         try {
             /** @var GoogleUser $googleUser */
             $googleUser = Socialite::driver('google')->user();
-            if (! $allowExternal && (! empty(config('services.google.hd')) && data_get($googleUser->user, 'hd') !== config('services.google.hd'))) {
+            if (! $allowExternal && (! empty(config('services.google.hd')) && data_get($googleUser->user, 'hd') !== config('services.google.hd')) && (! User::where('email', $googleUser->getEmail())->first())) {
                 abort(403);
             }
         } catch (\Exception $e) {
