@@ -59,16 +59,16 @@ class OAuthController extends Controller
                     $ldapName = "$givenName $sn";
                 }
 
-                $memberOf = array_filter($ldapUser['memberof'] ?? [], 'is_string');
-
-                foreach ($memberOf as $group) {
-                    if (str_contains($group, 'OU=Klass')) {
-                        preg_match('/^CN=([^,]+)/', $group, $matches);
-                        $ldapClass = $matches[1] ?? 'Unknown';
-                        break;
-                    } elseif (str_contains($group, 'OU=Personal')) {
-                        $ldapClass = 'Personal';
-                        break;
+                if (str_contains($sn, 'OU=Personal')) {
+                    $ldapClass = 'Personal';
+                } else {
+                    $memberOf = array_filter($ldapUser['memberof'] ?? [], 'is_string');
+                    foreach ($memberOf as $group) {
+                        if (str_contains($group, 'OU=Elever')) {
+                            preg_match('/^CN=([^,]+)/', $group, $matches);
+                            $ldapClass = $matches[1] ?? 'Unknown';
+                            break;
+                        }
                     }
                 }
             }
