@@ -63,7 +63,7 @@ class OAuthController extends Controller
                 } else {
                     $memberOf = array_filter($ldapUser['memberof'] ?? [], 'is_string');
                     foreach ($memberOf as $group) {
-                        if (str_contains($group, 'OU=Elever')) {
+                        if (str_contains($group, 'OU=Klass')) {
                             preg_match('/^CN=([^,]+)/', $group, $matches);
                             $ldapClass = $matches[1] ?? 'Unknown';
                             break;
