@@ -5,17 +5,14 @@
     "guidelines": true,
     "mcp": true,
     "nightwatch_mcp": false,
-    "packages": [
-        "laravel/fortify"
-    ],
     "sail": false,
     "skills": [
+        "fortify-development",
         "laravel-best-practices",
         "socialite-development",
         "fluxui-development",
         "livewire-development",
         "pest-testing",
-        "tailwindcss-development",
-        "fortify-development"
+        "tailwindcss-development"
     ]
 }
