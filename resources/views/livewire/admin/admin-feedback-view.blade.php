@@ -61,7 +61,7 @@
         </flux:table.rows>
     </flux:table>
 
-    <flux:modal name="feedback-modal" class="md:w-md space-y-6" background-blur>
+    <flux:modal name="feedback-modal-admin" class="md:w-md space-y-6" background-blur>
         <flux:heading size="lg">{{ __('Feedback Details') }}</flux:heading>
 
         <flux:radio.group wire:model="feedback_type" variant="segmented" class="w-full" disabled>
