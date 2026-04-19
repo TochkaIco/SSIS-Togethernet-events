@@ -14,7 +14,6 @@ use App\Livewire\Admin\UserManagement;
 use App\Livewire\Admin\UserProfile;
 use App\Livewire\Events\EventShow as PublicEventShow;
 use App\Livewire\Events\Index as PublicEvents;
-use App\Livewire\FeedbackModal;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -22,7 +21,6 @@ Route::view('/', 'homepage')->name('home');
 Route::get('/events', PublicEvents::class)->name('events');
 Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
 Route::view('/faq', 'faq')->name('faq');
-Route::get('feedback', FeedbackModal::class)->name('feedback');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'can:view articles'])->group(function () {
@@ -49,7 +47,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/auth/redirect', function () {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->with(['prompt' => 'select_account'])
+            ->redirect();
     })->name('auth.google');
     Route::get('/api/auth/callback/google', [OAuthController::class, 'store'])->name('login.oauth');
 });
