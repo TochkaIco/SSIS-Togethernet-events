@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Jenssegers\Agent\AgentServiceProvider;
 use Jenssegers\Agent\Facades\Agent;
 

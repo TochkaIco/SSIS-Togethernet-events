@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Database\Factories\EventUserFactory;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -20,12 +21,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
+#[Table(name: 'event_users')]
 class EventUser extends Pivot
 {
     /** @use HasFactory<EventUserFactory> */
     use HasFactory;
-
-    protected $table = 'event_users';
 
     public $incrementing = true;
 

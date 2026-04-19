@@ -61,13 +61,18 @@
                                 </flux:sidebar.group>
                             @endif
                             @can('manage users')
-                                <flux:sidebar.item icon="user-circle" :href="route('admin.users')" :current="request()->routeIs('admin.user*')" wire:navigate>
+                                <flux:sidebar.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.user*')" wire:navigate>
                                     {{ __('Users') }}
                                 </flux:sidebar.item>
                             @endcan
-                            @hasanyrole(['admin', 'super-admin', 'maintainer'])
+                            @haspermission('configure pages')
                                 <flux:sidebar.item icon="wrench-screwdriver" :href="route('admin.app.config')" :current="request()->routeIs('admin.app.config*')" wire:navigate>
                                     {{ __('Configuration') }}
+                                </flux:sidebar.item>
+                            @endhaspermission
+                            @hasanyrole(['admin', 'super-admin', 'maintainer'])
+                                <flux:sidebar.item icon="book-open" :href="route('admin.feedback')" :current="request()->routeIs('admin.feedback*')" wire:navigate>
+                                    {{ __('View Feedback') }}
                                 </flux:sidebar.item>
                             @endhasanyrole
                         @endcan
@@ -96,6 +101,8 @@
             @endcan
 
             <flux:spacer />
+
+            <flux:sidebar.item icon="book-open" class="cursor-pointer" x-on:click="$flux.modal('feedback-modal').show()">{{ __('Give Feedback') }}</flux:sidebar.item>
 
             @auth
                 <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />

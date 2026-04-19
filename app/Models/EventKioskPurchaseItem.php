@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Fillable([
+    'purchase_id',
+    'article_id',
+    'amount',
+    'cost',
+])]
 class EventKioskPurchaseItem extends Model
 {
-    protected $fillable = [
-        'purchase_id',
-        'article_id',
-        'amount',
-        'cost',
-    ];
-
     protected $casts = [
         'amount' => 'integer',
         'cost' => 'integer',
