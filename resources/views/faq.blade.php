@@ -19,7 +19,7 @@
             </x-faq.question>
             <x-faq.answer>
                 <div x-data>
-                    {!! __('If you discover any issues – please leave feedback :feedback or contact our current maintainer at :email', [
+                    {!! __('If you discover any issues – please leave :feedback or contact our current maintainer at :email', [
                         'feedback' => '<a class="hover:underline hover:text-orange-300 text-muted-foreground cursor-pointer" x-on:click=\'$flux.modal("feedback-modal").show()\'>Feedback</a>',
                         'email' => '<a class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground" href="mailto:' . config('app.dev_info.maintainer_email') . '">' . config('app.dev_info.maintainer_email') . '</a>'
                     ]) !!}
