@@ -32,7 +32,7 @@
                 {{ __('Rules') }}
             </h1>
             <x-faq.answer>
-                {!! __('<b>1 §</b> Alcohol and drugs are strictly prohibited during Togethernet. Whether they occur <i>before or during</i>. <b>If we notice behavior that violates this, Togethernet will ask you to leave the premises immediately</b>.') !!}
+                {!! __('<b>1 §</b> Alcohol and drugs are strictly prohibited during Togethernet events. Whether they occur <i>before or during</i>. <b>If we notice behavior that violates this, Togethernet will ask you to leave the premises immediately</b>.') !!}
             </x-faq.answer>
             <x-faq.answer>
                 {!! __('<b>2 §</b> If any fights or unpleasantness of e.g. racist, sexist, antisemitic or other offensive nature occur, <b>Togethernet will ask you to leave the premises immediately.</b> At Togethernet we have fun, it is no place for hate.') !!}
