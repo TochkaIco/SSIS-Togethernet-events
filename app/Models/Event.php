@@ -60,7 +60,7 @@ class Event extends Model
     {
         return $this->belongsToMany(User::class, 'event_users')
             ->using(EventUser::class)
-            ->withPivot(['is_working', 'in_waitinglist', 'has_paid', 'has_arrived'])
+            ->withPivot(['is_working', 'in_waitinglist', 'has_paid', 'has_arrived', 'period'])
             ->withTimestamps();
     }
 

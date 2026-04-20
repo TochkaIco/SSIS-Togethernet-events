@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property bool $has_paid
  * @property bool $has_arrived
  * @property bool $is_working
+ * @property int $period
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
