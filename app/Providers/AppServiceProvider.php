@@ -41,15 +41,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('admin', function ($user) {
             return $user->hasRole('admin');
         });
-
-        Event::listen(Authenticated::class, function ($event) {
-            $maintainerEmail = config('app.dev_info.maintainer_email', '');
-
-            // Check if this is the person from .env and if they lack the role
-            if ($event->user->email === $maintainerEmail && ! $event->user->hasRole('maintainer')) {
-                $event->user->assignRole('maintainer');
-            }
-        });
     }
 
     /**
