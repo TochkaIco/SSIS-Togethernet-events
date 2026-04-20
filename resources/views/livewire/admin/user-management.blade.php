@@ -3,23 +3,25 @@
     <div class="flex flex-col md:flex-row gap-4 mb-6">
         <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="{{ __('Search by name or email...') }}" class="flex-1" />
 
-        <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="md:w-64">
-            <flux:select.option value="">{{ __('All Classes') }}</flux:select.option>
-            @foreach($allClassGroups as $classGroup)
-                <flux:select.option :value="$classGroup">{{ ucfirst($classGroup) }}</flux:select.option>
-            @endforeach
-        </flux:select>
+        <div class="flex gap-2 md:gap-4">
+            <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="md:w-64">
+                <flux:select.option value="">{{ __('All Classes') }}</flux:select.option>
+                @foreach($allClassGroups as $classGroup)
+                    <flux:select.option :value="$classGroup">{{ ucfirst($classGroup) }}</flux:select.option>
+                @endforeach
+            </flux:select>
 
-        <flux:select wire:model.live="filterRole" placeholder="{{ __('Filter by Role') }}" class="md:w-64">
-            <flux:select.option value="">{{ __('All Roles') }}</flux:select.option>
-            @foreach($allRoles as $role)
-                <flux:select.option :value="$role->name">{{ ucfirst($role->name) }}</flux:select.option>
-            @endforeach
-        </flux:select>
+            <flux:select wire:model.live="filterRole" placeholder="{{ __('Filter by Role') }}" class="md:w-64">
+                <flux:select.option value="">{{ __('All Roles') }}</flux:select.option>
+                @foreach($allRoles as $role)
+                    <flux:select.option :value="$role->name">{{ ucfirst($role->name) }}</flux:select.option>
+                @endforeach
+            </flux:select>
+        </div>
     </div>
 
-    {{-- Users Table --}}
-    <flux:table>
+    {{-- Users Table for Desktop --}}
+    <flux:table class="hidden md:table">
         <flux:table.columns>
             <flux:table.column>{{ __('Index') }}</flux:table.column>
             <flux:table.column>{{ __('User') }}</flux:table.column>
@@ -107,7 +109,67 @@
         </flux:table.rows>
     </flux:table>
 
-    <flux:pagination :paginator="$users" scroll-to />
+    <div class="md:hidden space-y-4">
+        @foreach ($users as $user)
+            <div class="p-4 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl space-y-4">
+                {{-- Header: Avatar, Name, and Actions --}}
+                <div class="flex items-start justify-between">
+                    <button wire:click="viewUserProfile({{ $user->id }})" class="flex items-center gap-3 text-left">
+                        <flux:avatar circle class="size-12" :initials="$user->initials()" :src="$user->profile_picture" />
+                        <div>
+                            <div class="font-semibold text-zinc-800 dark:text-white">{{ $user->name }}</div>
+                            <div class="text-sm text-zinc-500">#{{ $users->firstItem() + $loop->index }}</div>
+                        </div>
+                    </button>
+
+                    <div class="flex gap-1">
+                        <flux:button size="sm" wire:click="editRoles({{ $user->id }})" icon="shield-check" variant="ghost" />
+                        @can('delete users')
+                            <flux:button size="sm" wire:click="confirmDelete({{ $user->id }})" variant="ghost" icon="trash" class="text-red-500" />
+                        @endcan
+                    </div>
+                </div>
+
+                <flux:separator />
+
+                {{-- Body: Details Grid --}}
+                <div class="flex flex-col gap-4 text-sm">
+                    <div class="space-y-3">
+                        <div class="flex flex-col">
+                            <flux:label class="text-xs font-medium uppercase tracking-wider">{{ __('Email') }}</flux:label>
+                            <a href="mailto:{{ $user->email }}" class="hover:text-orange-400 text-muted-foreground underline truncate">
+                                {{ $user->email }}
+                            </a>
+                        </div>
+
+                        <flux:label class="text-xs font-medium uppercase tracking-wider mr-1">{{ __('Class') }}</flux:label>
+                        <x-class-badge :user-class="$user->class ?? 'Unknown'" />
+                    </div>
+
+                    <div class="col-span-2 space-3">
+                        <flux:label class="text-xs font-medium uppercase tracking-wider">{{ __('Roles') }}</flux:label>
+                        <div class="flex flex-wrap gap-5 mt-3 ml-2">
+                            @foreach ($user->roles as $role)
+                                <flux:badge size="sm" color="yellow" inset>{{ $role->name }}</flux:badge>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="col-span-2">
+                        <div class="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1">{{ __('Permissions') }}</div>
+                        <div class="text-zinc-600 dark:text-zinc-400 italic text-xs">
+                            {{ $user->getAllPermissions()->take(5)->pluck('name')->map(fn($n) => Str::headline($n))->join(', ') }}
+                            @if($user->getAllPermissions()->count() > 5)
+                                <span class="font-bold text-zinc-800 dark:text-zinc-200"> +{{ $user->getAllPermissions()->count() - 5 }} more</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    <flux:pagination :paginator="$users" scroll-to class="mt-3" />
 
     {{-- Modal: Manage Roles & Permissions --}}
     <flux:modal name="edit-user-permissions" class="md:w-125">
