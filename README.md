@@ -60,7 +60,7 @@ $ php artisan key:generate
 ### Start up a dev server
 ```commandline
 $ vendor/bin/sail up -d
-$ vendor/bin/npm run dev
+$ vendor/bin/sail npm run dev
 ```
 
 ___
