@@ -81,7 +81,7 @@
         @empty
             <div class="flex mx-auto my-auto relative h-120 w-240 flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
                 <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
-                    <flux:icon.calendar />
+                    <flux:icon.calendar class="hidden md:block" />
                     <flux:text class="text-2xl md:text-4xl ml-3 cursor-default">{{ __('No Events Found') }}</flux:text>
                 </x-placeholder-pattern>
             </div>

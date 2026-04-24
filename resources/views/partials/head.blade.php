@@ -13,3 +13,8 @@
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @fluxAppearance
+<style>
+    /* Prevents the main content from collapsing when editors try to calculate width */
+    flux-main { min-width: 0; flex: 1 1 0%; display: flex; flex-direction: column; }
+</style>
+@stack('head_scripts')

@@ -1,11 +1,15 @@
 {
     "agents": [
-        "gemini"
+        "gemini",
+        "opencode"
     ],
     "guidelines": true,
     "mcp": true,
     "nightwatch_mcp": false,
-    "sail": false,
+    "packages": [
+        "spatie/laravel-permission"
+    ],
+    "sail": true,
     "skills": [
         "fortify-development",
         "laravel-best-practices",
@@ -13,6 +17,7 @@
         "fluxui-development",
         "livewire-development",
         "pest-testing",
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "laravel-permission-development"
     ]
 }

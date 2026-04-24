@@ -10,6 +10,9 @@ use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Events\EventShow as AdminShow;
 use App\Livewire\Admin\Events\Index as AdminEventsIndex;
 use App\Livewire\Admin\Events\ParticipantProfile;
+use App\Livewire\Admin\Meetings\Index;
+use App\Livewire\Admin\Meetings\Protocol;
+use App\Livewire\Admin\Meetings\Show;
 use App\Livewire\Admin\UserManagement;
 use App\Livewire\Admin\UserProfile;
 use App\Livewire\Events\EventShow as PublicEventShow;
@@ -27,6 +30,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/dashboard', Dashboard::class)->name('admin.dashboard');
         Route::get('/admin/events', AdminEventsIndex::class)->name('admin.events');
         Route::get('/admin/events/{event}', AdminShow::class)->name('admin.event.show');
+
+        Route::get('/admin/meetings', Index::class)->name('admin.meetings.index');
+        Route::get('/admin/meetings/{meeting}', Show::class)->name('admin.meetings.show');
+        Route::get('/admin/meetings/{meeting}/protocol', Protocol::class)->name('admin.meetings.protocol');
     });
     Route::middleware(['auth', 'can:create articles'])->group(function () {
         Route::post('/admin/events/create', [EventController::class, 'store'])->name('admin.event.store');

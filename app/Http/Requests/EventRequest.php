@@ -37,7 +37,7 @@ class EventRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string'],
-            'description' => ['required', 'string'],
+            'description' => ['required', 'string', 'max:4000000'],
             'event_type' => ['required', Rule::enum(EventType::class)],
             'num_of_seats' => ['required', 'integer', 'min:1'],
 

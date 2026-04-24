@@ -60,6 +60,21 @@
                                     @endcan
                                 </flux:sidebar.group>
                             @endif
+
+                            <flux:sidebar.item icon="calendar" :href="route('admin.meetings.index')" :current="request()->routeIs('admin.meetings.index')" wire:navigate>
+                                {{ __('Meetings') }}
+                            </flux:sidebar.item>
+
+                            @if((request()->routeIs('admin.meetings.show') || request()->routeIs('admin.meetings.protocol')) && $meeting = request()->route('meeting'))
+                                <flux:sidebar.group :heading="is_object($meeting) ? Str::limit($meeting->title, 20) : __('Meeting')" expandable expanded class="ml-4">
+                                    <flux:sidebar.item :href="route('admin.meetings.show', $meeting)" :current="request()->routeIs('admin.meetings.show')" wire:navigate>
+                                        {{ __('View Details') }}
+                                    </flux:sidebar.item>
+                                    <flux:sidebar.item :href="route('admin.meetings.protocol', $meeting)" :current="request()->routeIs('admin.meetings.protocol')" wire:navigate>
+                                        {{ __('Protocol') }}
+                                    </flux:sidebar.item>
+                                </flux:sidebar.group>
+                            @endif
                             @can('manage users')
                                 <flux:sidebar.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.user*')" wire:navigate>
                                     {{ __('Users') }}
