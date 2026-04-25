@@ -24,7 +24,7 @@ class AppConfigurationPage extends Component
         AppConfig::where('key', 'allow_external_emails')
             ->update(['value' => $value ? 'true' : 'false']);
 
-        Flux::toast('Setting saved.');
+        Flux::toast(__('Setting saved.'), variant: 'success');
     }
 
     #[Layout('layouts.app', ['title' => 'Config'])]

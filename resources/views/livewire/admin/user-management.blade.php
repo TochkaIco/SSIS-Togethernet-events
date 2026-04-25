@@ -4,14 +4,14 @@
         <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="{{ __('Search by name or email...') }}" class="flex-1" />
 
         <div class="flex gap-2 md:gap-4">
-            <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="md:w-64">
+            <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="md:w-64 flex-1">
                 <flux:select.option value="">{{ __('All Classes') }}</flux:select.option>
                 @foreach($allClassGroups as $classGroup)
                     <flux:select.option :value="$classGroup">{{ ucfirst($classGroup) }}</flux:select.option>
                 @endforeach
             </flux:select>
 
-            <flux:select wire:model.live="filterRole" placeholder="{{ __('Filter by Role') }}" class="md:w-64">
+            <flux:select wire:model.live="filterRole" placeholder="{{ __('Filter by Role') }}" class="md:w-64 flex-1">
                 <flux:select.option value="">{{ __('All Roles') }}</flux:select.option>
                 @foreach($allRoles as $role)
                     <flux:select.option :value="$role->name">{{ ucfirst($role->name) }}</flux:select.option>
