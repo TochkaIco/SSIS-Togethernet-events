@@ -10,6 +10,7 @@
                 theme: 'snow',
                 modules: {
                     resize: {},
+                    syntax: { hljs: window.hljs },
                     toolbar: [
                         [{ 'header': [1, 2, 3, false] }],
                         ['bold', 'italic', 'underline', 'strike'],
@@ -19,11 +20,18 @@
                         [{ 'align': [] }],
                         ['link', 'image'],
                         ['clean']
-                    ]
+                    ],
+                    history: {
+                        delay: 2000,
+                        maxStack: 500,
+                        userOnly: true
+                    },
                 }
             });
 
-            this.quill.root.innerHTML = this.content || '';
+            this.$nextTick(() => {
+                this.quill.root.innerHTML = this.content || '';
+            });
 
             this.quill.on('text-change', () => {
                 this.content = this.quill.root.innerHTML;

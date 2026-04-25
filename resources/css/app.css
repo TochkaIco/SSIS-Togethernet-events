@@ -83,13 +83,50 @@
         @apply border-l-4 border-zinc-300 dark:border-zinc-600 pl-4 italic text-zinc-500 dark:text-zinc-400 my-3;
     }
 
-    /* Code block */
+    /* Code block container */
     .ql-code-block-container {
         @apply my-3 rounded-lg overflow-hidden;
     }
 
+    /* Override hljs/Quill code block to match your theme */
+    .ql-code-block-container .hljs,
+    .ql-code-block-container pre,
     .ql-code-block {
-        @apply bg-zinc-900 dark:bg-zinc-950 text-green-400 font-mono text-sm px-4 py-3 block whitespace-pre-wrap;
+        @apply bg-zinc-900 dark:bg-zinc-950 font-mono text-sm;
+        padding-left: 10px !important;
+        margin: 0 !important;
+    }
+
+    .ql-code-block-container .ql-code-block:not([data-language]),
+    .ql-code-block-container .ql-code-block[data-language="plain"] {
+        @apply text-green-400;
+    }
+
+    .ql-code-block-container .ql-ui {
+        display: none;
+    }
+
+    .ql-editor .ql-code-block-container .ql-ui {
+        display: block;
+    }
+
+    /* The actual code lines */
+    .ql-code-block {
+        @apply px-4 py-1 block whitespace-pre-wrap;
+    }
+
+    /* First and last line padding fix */
+    .ql-code-block:first-child {
+        @apply pt-3;
+    }
+
+    .ql-code-block:last-child {
+        @apply pb-3;
+    }
+
+    /* Language label Quill adds at the top-right */
+    .ql-code-block-container .ql-ui {
+        @apply text-zinc-400 text-xs font-mono;
     }
 
     /* Images */
@@ -112,6 +149,11 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
+}
+
+.dark .hljs {
+    background: #1c1b1b;
+    color: #ffffff;
 }
 
 [data-flux-field]:not(ui-radio, ui-checkbox) {
