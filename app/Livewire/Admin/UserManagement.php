@@ -20,6 +20,12 @@ class UserManagement extends Component
 {
     use WithPagination;
 
+    public string $createUserName = '';
+
+    public string $createUserEmail = '';
+
+    public string $createUserClass = '';
+
     #[Url(history: true)]
     public $search = '';
 
@@ -37,6 +43,36 @@ class UserManagement extends Component
     public $userPermissions = [];
 
     public $filterClassGroup = '';
+
+    public function createUserModal(): void
+    {
+        $this->authorize('manage users');
+
+        $this->modal('create-user')->show();
+    }
+
+    public function createUser(): void
+    {
+        $this->authorize('manage users');
+
+        $this->validate([
+            'createUserName' => ['required', 'string', 'min:3', 'max:255'],
+            'createUserEmail' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'createUserClass' => ['required', 'string'],
+        ]);
+
+        User::create([
+            'name' => $this->createUserName,
+            'email' => $this->createUserEmail,
+            'class' => $this->createUserClass,
+        ]);
+
+        $this->reset(['createUserName', 'createUserEmail', 'createUserClass']);
+
+        $this->modal('create-user')->close();
+
+        Flux::toast(__('User created!'), variant: 'success');
+    }
 
     public function editAccess($userId): void
     {

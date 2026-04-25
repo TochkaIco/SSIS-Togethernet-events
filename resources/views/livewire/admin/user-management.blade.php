@@ -17,6 +17,8 @@
                     <flux:select.option :value="$role->name">{{ ucfirst($role->name) }}</flux:select.option>
                 @endforeach
             </flux:select>
+
+            <flux:button icon="user-plus" wire:click="createUserModal" class="cursor-pointer" />
         </div>
     </div>
 
@@ -251,6 +253,43 @@
                         <span x-show="!canDelete">{{ __('Wait') }} (<span x-text="timer"></span>s)</span>
                     </flux:button>
                 </div>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- Modal: Create User --}}
+    <flux:modal name="create-user" class="md:w-100">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Create User') }}</flux:heading>
+                <flux:subheading>
+                    {{ __('Here you can create a user that hasn\'t logged in yet') }}
+                </flux:subheading>
+            </div>
+
+            <div class="space-y-3">
+                <flux:input wire:model="createUserName" label="{{ __('Name') }} *" placeholder="{{ __('User\'s Name') }}" required />
+                <flux:input wire:model="createUserEmail" label="{{ __('Email') }} *" placeholder="12abcd@stockholmscience.se" required />
+                <flux:select label="{{ __('Class') }} *" class="w-fit" wire:model.live="createUserClass" wire:key="user-select-class-{{ $user->id }}" required >
+                    <flux:select.option value="">{{ __('Unset') }}</flux:select.option>
+                    @foreach($user->validClasses() as $classOption)
+                        <flux:select.option :value="$classOption">{{ $classOption }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+            </div>
+
+            <div class="flex gap-2 justify-end">
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+
+                <flux:button
+                    wire:click="createUser"
+                    variant="primary"
+                    class="cursor-pointer"
+                >
+                    {{ __('Create') }}
+                </flux:button>
             </div>
         </div>
     </flux:modal>

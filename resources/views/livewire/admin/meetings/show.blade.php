@@ -95,9 +95,20 @@
                     </div>
                 </div>
 
-                <div class="space-y-1 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                <div class="space-y-1 max-h-150 overflow-y-auto pr-2 custom-scrollbar">
                     @foreach($users as $user)
-                        <div class="group flex items-center justify-between py-2 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors">
+                        @php $canTakeAttendance = auth()->user()->hasPermissionTo('take attendance'); @endphp
+                        <div
+                            wire:key="user-row-{{ $user->id }}"
+                            @if($canTakeAttendance)
+                                wire:click="toggleAttendance('{{ $user->id }}')"
+                            @endif
+                            @class([
+                                'group flex items-center justify-between py-2 px-2 rounded-lg transition-colors',
+                                'hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer' => $canTakeAttendance,
+                                'opacity-50 cursor-not-allowed' => !$canTakeAttendance
+                            ])
+                        >
                             <div class="flex items-center gap-3">
                                 <flux:avatar :src="$user->profile_picture" :name="$user->name" size="sm" class="shrink-0" />
                                 <div class="text-sm">
@@ -105,16 +116,12 @@
                                     <p class="text-[10px] text-zinc-500">{{ $user->email }}</p>
                                 </div>
                             </div>
-                            <div
-                                @class(['pointer-events-none opacity-50 cursor-not-allowed' => !auth()->user()->hasPermissionTo('take attendance')])
-                                title="You don't have permission to take attendance"
-                            >
-                                <flux:switch
-                                    wire:click="toggleAttendance('{{ $user->id }}')"
-                                    :checked="in_array($user->id, $attendedUserIds)"
-                                    size="sm"
-                                />
-                            </div>
+
+                            <flux:switch
+                                wire:model.live="attendance.{{ $user->id }}"
+                                size="sm"
+                                class="pointer-events-none"
+                            />
                         </div>
                     @endforeach
                 </div>

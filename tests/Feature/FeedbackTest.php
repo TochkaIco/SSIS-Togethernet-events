@@ -77,3 +77,31 @@ test('admin can see anonymous feedback as Guest', function () {
         ->assertSee('Guest')
         ->assertSee('Anonymous feedback');
 });
+
+test('admin can filter feedback by comment', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    Feedback::factory()->create(['comment' => 'First unique comment']);
+    Feedback::factory()->create(['comment' => 'Second unique comment']);
+
+    Livewire::test(AdminFeedbackView::class)
+        ->set('search', 'First')
+        ->assertSee('First unique comment')
+        ->assertDontSee('Second unique comment');
+});
+
+test('admin can filter for only unresolved feedback', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    Feedback::factory()->create(['comment' => 'Unresolved feedback', 'is_finished' => false]);
+    Feedback::factory()->create(['comment' => 'Resolved feedback', 'is_finished' => true]);
+
+    Livewire::test(AdminFeedbackView::class)
+        ->set('filterResolved', true)
+        ->assertSee('Unresolved feedback')
+        ->assertDontSee('Resolved feedback');
+});

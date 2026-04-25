@@ -4,6 +4,17 @@
 
     <flux:separator class="my-6" />
 
+    <div class="flex flex-col md:flex-row items-center gap-4 mb-4 w-full">
+        <flux:input
+            wire:model.live="search"
+            icon="magnifying-glass"
+            placeholder="{{ __('Search by comment...') }}"
+            class="flex-1"
+        />
+
+        <flux:switch wire:model.live="filterResolved" label="{{ __('Only unresolved') }}" />
+    </div>
+
     <flux:table :paginate="$feedbacks">
         <flux:table.columns>
             <flux:table.column>{{ __('User') }}</flux:table.column>

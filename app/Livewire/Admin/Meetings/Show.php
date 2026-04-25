@@ -18,9 +18,22 @@ class Show extends Component
 
     public array $selectedClasses = [];
 
+    public array $attendance = [];
+
     public function mount(Meeting $meeting): void
     {
         $this->meeting = $meeting;
+
+        $attendedIds = MeetingAttendant::where('meeting_id', $this->meeting->id)
+            ->where('has_attended', true)
+            ->pluck('attendant_id')
+            ->toArray();
+
+        // Pre-initialize attendance for all members to ensure stable wire:model binding
+        $this->attendance = User::role('tog-member')
+            ->pluck('id')
+            ->mapWithKeys(fn ($id) => [(string) $id => in_array($id, $attendedIds)])
+            ->toArray();
     }
 
     public function endMeeting(): void
@@ -33,23 +46,23 @@ class Show extends Component
         $this->meeting->refresh();
     }
 
+    public function updatedAttendance($value, $key): void
+    {
+        $this->authorize('take attendance');
+
+        MeetingAttendant::updateOrCreate(
+            ['meeting_id' => $this->meeting->id, 'attendant_id' => $key],
+            ['has_attended' => (bool) $value]
+        );
+    }
+
     public function toggleAttendance($userId): void
     {
         $this->authorize('take attendance');
 
-        $attendant = MeetingAttendant::where('meeting_id', $this->meeting->id)
-            ->where('attendant_id', $userId)
-            ->first();
+        $this->attendance[(string) $userId] = ! ($this->attendance[(string) $userId] ?? false);
 
-        if ($attendant) {
-            $attendant->update(['has_attended' => ! $attendant->has_attended]);
-        } else {
-            MeetingAttendant::create([
-                'meeting_id' => $this->meeting->id,
-                'attendant_id' => $userId,
-                'has_attended' => true,
-            ]);
-        }
+        $this->updatedAttendance($this->attendance[(string) $userId], (string) $userId);
     }
 
     public function deleteMeeting(): void
