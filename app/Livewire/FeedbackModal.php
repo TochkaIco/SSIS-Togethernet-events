@@ -14,9 +14,12 @@ class FeedbackModal extends Component
 
     public $comment = '';
 
+    public bool $anonymous = false;
+
     protected $rules = [
         'type' => 'required|in:bug,feature,qol',
-        'comment' => 'required|min:5|max:255',
+        'comment' => 'required|min:5|max:5000',
+        'anonymous' => 'boolean',
     ];
 
     public function save(): void
@@ -26,9 +29,10 @@ class FeedbackModal extends Component
         Feedback::create([
             'type' => $this->type,
             'comment' => $this->comment,
+            'user_id' => $this->anonymous ? null : auth()->id(),
         ]);
 
-        $this->reset(['comment', 'type']);
+        $this->reset(['comment', 'type', 'anonymous']);
         Flux::modal('feedback-modal')->close();
         Flux::toast(__('Feedback submitted. Thanks!'), variant: 'success');
     }

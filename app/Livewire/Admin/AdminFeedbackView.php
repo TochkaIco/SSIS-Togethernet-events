@@ -18,6 +18,8 @@ class AdminFeedbackView extends Component
 
     public FeedbackType $feedback_type = FeedbackType::FEATURE;
 
+    public ?Feedback $selected_feedback = null;
+
     public function markAsResolved(Feedback $feedback): void
     {
         if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
@@ -44,6 +46,7 @@ class AdminFeedbackView extends Component
             abort(403);
         }
 
+        $this->selected_feedback = $feedback;
         $this->feedback_comment = $feedback->comment;
         $this->feedback_type = $feedback->type;
         $this->modal('feedback-modal-admin')->show();
@@ -52,7 +55,7 @@ class AdminFeedbackView extends Component
     public function render()
     {
         return view('livewire.admin.admin-feedback-view', [
-            'feedbacks' => Feedback::latest()->paginate(10),
+            'feedbacks' => Feedback::with('user')->latest()->paginate(10),
         ]);
     }
 }

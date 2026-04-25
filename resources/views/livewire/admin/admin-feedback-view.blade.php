@@ -6,6 +6,7 @@
 
     <flux:table :paginate="$feedbacks">
         <flux:table.columns>
+            <flux:table.column>{{ __('User') }}</flux:table.column>
             <flux:table.column>{{ __('Type') }}</flux:table.column>
             <flux:table.column sortable>{{ __('Comment') }}</flux:table.column>
             <flux:table.column>{{ __('Status') }}</flux:table.column>
@@ -16,6 +17,18 @@
         <flux:table.rows>
             @foreach ($feedbacks as $feedback)
                 <flux:table.row :key="$feedback->id">
+                    <flux:table.cell>
+                        <div class="flex items-center gap-2">
+                            @if($feedback->user)
+                                <flux:avatar :src="$feedback->user->profile_picture" :initials="$feedback->user->initials()" size="xs" />
+                                <a href="{{ route('admin.user.profile', $feedback->user) }}" class="text-sm hover:underline hover:text-orange-300">{{ $feedback->user->name }}</a>
+                            @else
+                                <flux:avatar size="xs" />
+                                <span class="text-sm text-zinc-500 italic">{{ __('Guest') }}</span>
+                            @endif
+                        </div>
+                    </flux:table.cell>
+
                     <flux:table.cell>
                         @if($feedback->type === \App\FeedbackType::BUG)
                             <flux:badge color="red" icon="bug-ant">{{ __('Bug') }}</flux:badge>
@@ -62,7 +75,24 @@
     </flux:table>
 
     <flux:modal name="feedback-modal-admin" class="md:w-md space-y-6" background-blur>
-        <flux:heading size="lg">{{ __('Feedback Details') }}</flux:heading>
+        <div>
+            <flux:heading size="lg">{{ __('Feedback Details') }}</flux:heading>
+            @if($feedback_user = $this->selected_feedback?->user)
+                <flux:subheading>
+                    <div class="flex items-center gap-2 mt-2">
+                        <flux:avatar :src="$feedback_user->profile_picture" :initials="$feedback_user->initials()" size="xs" />
+                        {{ $feedback_user->name }}
+                    </div>
+                </flux:subheading>
+            @else
+                <flux:subheading>
+                    <div class="flex items-center gap-2 mt-2 text-zinc-500 italic">
+                        <flux:avatar size="xs" />
+                        {{ __('Guest') }}
+                    </div>
+                </flux:subheading>
+            @endif
+        </div>
 
         <flux:radio.group wire:model="feedback_type" variant="segmented" class="w-full" disabled>
             @foreach(\App\FeedbackType::cases() as $case)

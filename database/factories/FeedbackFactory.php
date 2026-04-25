@@ -18,7 +18,10 @@ class FeedbackFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'type' => $this->faker->randomElement(['bug', 'feature', 'qol']),
+            'comment' => $this->faker->paragraph(),
+            'is_finished' => false,
+            'user_id' => null,
         ];
     }
 }

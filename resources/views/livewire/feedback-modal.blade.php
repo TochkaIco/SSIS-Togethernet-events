@@ -19,6 +19,10 @@
                 <flux:error name="comment" />
             </flux:field>
 
+            @auth
+                <flux:checkbox wire:model="anonymous" :label="__('Send anonymously')" />
+            @endauth
+
             <div class="flex gap-3">
                 <flux:spacer />
                 <flux:modal.close>
