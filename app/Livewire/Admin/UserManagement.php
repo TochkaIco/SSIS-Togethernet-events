@@ -38,30 +38,15 @@ class UserManagement extends Component
 
     public $filterClassGroup = '';
 
-    public function editRoles($userId): void
+    public function editAccess($userId): void
     {
         $this->authorize('manage users');
-        $user = User::findOrFail($userId);
 
-        $this->editingUserId = $user->id;
-        $this->editingUserName = $user->name;
-
-        $this->userRoles = $user->roles->pluck('name')->toArray();
-
-        $this->modal('edit-user-permissions')->show();
-    }
-
-    public function editPermissions($userId): void
-    {
-        $this->authorize('manage users');
         $user = User::findOrFail($userId);
         $this->editingUserId = $user->id;
         $this->editingUserName = $user->name;
 
-        // Load Roles
         $this->userRoles = $user->roles->pluck('name')->toArray();
-
-        // Load Direct Permissions (those not inherited from roles)
         $this->userPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
 
         $this->modal('edit-user-permissions')->show();
@@ -82,7 +67,7 @@ class UserManagement extends Component
                     heading: 'Error',
                     variant: 'danger'
                 );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles']);
+                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
 
                 return;
             }
@@ -94,7 +79,7 @@ class UserManagement extends Component
                     heading: 'Error',
                     variant: 'danger'
                 );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles']);
+                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
 
                 return;
             }
@@ -106,7 +91,7 @@ class UserManagement extends Component
                     heading: 'Error',
                     variant: 'danger'
                 );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles']);
+                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
 
                 return;
             }
@@ -118,7 +103,7 @@ class UserManagement extends Component
                     heading: 'Error',
                     variant: 'danger'
                 );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles']);
+                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
 
                 return;
             }
@@ -130,7 +115,7 @@ class UserManagement extends Component
                     heading: 'Error',
                     variant: 'danger'
                 );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles']);
+                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
 
                 return;
             }
@@ -142,7 +127,7 @@ class UserManagement extends Component
                     heading: 'Error',
                     variant: 'danger'
                 );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles']);
+                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
 
                 return;
             }
@@ -156,7 +141,7 @@ class UserManagement extends Component
             heading: 'Saved',
             variant: 'success'
         );
-        $this->reset(['editingUserId', 'editingUserName', 'userRoles']);
+        $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
     }
 
     public function confirmDelete($userId): void

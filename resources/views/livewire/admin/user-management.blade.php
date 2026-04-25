@@ -91,7 +91,7 @@
                     {{-- Actions --}}
                     <flux:table.cell align="end">
                         <div class="flex justify-end mr-2 gap-2">
-                            <flux:button size="sm" wire:click="editRoles({{ $user->id }})" class="cursor-pointer" icon="shield-check" variant="ghost">{{ __('Manage') }}</flux:button>
+                            <flux:button size="sm" wire:click="editAccess({{ $user->id }})" class="cursor-pointer" icon="shield-check" variant="ghost">{{ __('Manage') }}</flux:button>
 
                             @can('delete users')
                                 <flux:button
@@ -123,7 +123,7 @@
                     </button>
 
                     <div class="flex gap-1">
-                        <flux:button size="sm" wire:click="editRoles({{ $user->id }})" icon="shield-check" variant="ghost" />
+                        <flux:button size="sm" wire:click="editAccess({{ $user->id }})" icon="shield-check" variant="ghost" />
                         @can('delete users')
                             <flux:button size="sm" wire:click="confirmDelete({{ $user->id }})" variant="ghost" icon="trash" class="text-red-500" />
                         @endcan
@@ -198,10 +198,18 @@
 
             {{-- Permissions Content --}}
             <div x-show="tab === 'permissions'" x-cloak>
-                <flux:checkbox.group wire:model="userPermissions" :label="__('Individual Overrides')">
+                <flux:checkbox.group
+                    wire:model="userPermissions"
+                    :label="__('Individual Overrides')"
+                    wire:key="permissions-group-{{ $editingUserId }}"
+                >
                     <div class="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 max-h-64 overflow-y-auto p-3 border rounded-xl bg-zinc-50 dark:bg-zinc-900">
                         @foreach($allPermissions as $permission)
-                            <flux:checkbox :value="$permission->name" :label="Str::headline($permission->name)" />
+                            <flux:checkbox
+                                wire:key="perm-{{ $permission->id }}-{{ $editingUserId }}"
+                                :value="$permission->name"
+                                :label="Str::headline($permission->name)"
+                            />
                         @endforeach
                     </div>
                 </flux:checkbox.group>
