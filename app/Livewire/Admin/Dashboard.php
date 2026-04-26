@@ -7,6 +7,8 @@ namespace App\Livewire\Admin;
 use App\Models\Event;
 use App\Models\EventKioskPurchase;
 use App\Models\EventUser;
+use App\Models\Meeting;
+use App\Models\MeetingAttendant;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
@@ -145,13 +147,61 @@ class Dashboard extends Component
     }
 
     #[Computed]
+    public function meetingAttendanceHistory(): array
+    {
+        $meetings = Meeting::orderBy('meeting_starts_at', 'desc')
+            ->take(10)
+            ->get()
+            ->reverse();
+
+        return [
+            'labels' => $meetings->pluck('title')->toArray(),
+            'data' => $meetings->map(fn ($m) => MeetingAttendant::where('meeting_id', $m->id)->where('has_attended', true)->count())->toArray(),
+        ];
+    }
+
+    #[Computed]
+    public function meetingAttendanceYearly(): array
+    {
+        $attendance = MeetingAttendant::selectRaw('COUNT(*) as count, DATE_FORMAT(meetings.meeting_starts_at, "%Y-%m") as month')
+            ->join('meetings', 'meetings.id', '=', 'meeting_attendants.meeting_id')
+            ->where('meeting_attendants.has_attended', true)
+            ->where('meetings.meeting_starts_at', '>=', now()->subYear())
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        return [
+            'labels' => $attendance->pluck('month')->toArray(),
+            'data' => $attendance->pluck('count')->toArray(),
+        ];
+    }
+
+    #[Computed]
     public function systemStats(): array
     {
         $storagePath = storage_path('app/public');
-        $diskFree = disk_free_space($storagePath);
-        $diskTotal = disk_total_space($storagePath);
-        $diskUsed = $diskTotal - $diskFree;
-        $diskPercentage = round(($diskUsed / $diskTotal) * 100);
+
+        // On some systems like OpenShift, disk_free_space might return false if the path is not accessible or not a mount point
+        $diskFree = @disk_free_space($storagePath);
+        $diskTotal = @disk_total_space($storagePath);
+
+        // Fallback to root if storage path fails
+        if ($diskFree === false || $diskTotal === false) {
+            $diskFree = @disk_free_space('/');
+            $diskTotal = @disk_total_space('/');
+        }
+
+        if ($diskFree !== false && $diskTotal !== false && $diskTotal > 0) {
+            $diskUsed = $diskTotal - $diskFree;
+            $diskPercentage = (int) round(($diskUsed / $diskTotal) * 100);
+            $diskLabel = $this->formatBytes($diskUsed).' / '.$this->formatBytes($diskTotal);
+        } else {
+            $diskUsed = 0;
+            $diskPercentage = 0;
+            $diskLabel = __('Unavailable');
+        }
+
         $dbDriver = config('database.default');
 
         return [
@@ -160,7 +210,7 @@ class Dashboard extends Component
             'laravel_version' => app()->version(),
             'failed_jobs' => DB::table('failed_jobs')->count(),
             'disk_percentage' => $diskPercentage,
-            'disk_label' => $this->formatBytes($diskUsed).' / '.$this->formatBytes($diskTotal),
+            'disk_label' => $diskLabel,
             'timezone' => config('app.timezone'),
             'db_host' => config('database.connections.'.$dbDriver.'.host'),
         ];

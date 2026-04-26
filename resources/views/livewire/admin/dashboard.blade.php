@@ -475,6 +475,79 @@
                 <canvas x-ref="classChart"></canvas>
             </div>
         </flux:card>
+
+        {{-- Meeting Attendance Trends --}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <h2 class="text-lg font-bold mb-4">{{ __('Meeting Attendance Trends') }}</h2>
+            <div
+                x-data="{
+                    init() {
+                        new Chart(this.$refs.meetingChart, {
+                            type: 'bar',
+                            data: {
+                                labels: @js($this->meetingAttendanceHistory['labels']),
+                                datasets: [{
+                                    label: '{{ __('Attendees') }}',
+                                    data: @js($this->meetingAttendanceHistory['data']),
+                                    backgroundColor: '#10b981',
+                                    borderRadius: 6,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { display: false } },
+                                    x: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
+                }"
+                class="h-64"
+            >
+                <canvas x-ref="meetingChart"></canvas>
+            </div>
+        </flux:card>
+
+        {{-- Yearly Meeting Attendance --}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <h2 class="text-lg font-bold mb-4">{{ __('Meeting Attendance (Last Year)') }}</h2>
+            <div
+                x-data="{
+                    init() {
+                        new Chart(this.$refs.yearlyMeetingChart, {
+                            type: 'line',
+                            data: {
+                                labels: @js($this->meetingAttendanceYearly['labels']),
+                                datasets: [{
+                                    label: '{{ __('Total Monthly Attendees') }}',
+                                    data: @js($this->meetingAttendanceYearly['data']),
+                                    borderColor: '#14b8a6',
+                                    backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointRadius: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                                    x: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
+                }"
+                class="h-64"
+            >
+                <canvas x-ref="yearlyMeetingChart"></canvas>
+            </div>
+        </flux:card>
     </div>
 
     <x-admin.event.modal />

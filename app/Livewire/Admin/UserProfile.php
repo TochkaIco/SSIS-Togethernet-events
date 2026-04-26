@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\User;
-use Carbon\Carbon;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Validate;
@@ -60,10 +59,8 @@ class UserProfile extends Component
 
     public function render(): View
     {
-        $lastActivity = $this->user->sessions()->first()?->last_activity;
-
         return view('livewire.admin.user-profile', [
-            'lastActivity' => $lastActivity ? Carbon::createFromTimestamp($lastActivity) : null,
+            'lastActivity' => $this->user->last_activity_at,
         ]);
     }
 }

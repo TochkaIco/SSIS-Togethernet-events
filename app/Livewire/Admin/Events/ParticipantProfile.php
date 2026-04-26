@@ -7,7 +7,6 @@ namespace App\Livewire\Admin\Events;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -52,12 +51,8 @@ class ParticipantProfile extends Component
 
     public function render(): View
     {
-        $lastActivity = $this->user->sessions()
-            ->orderByDesc('last_activity')
-            ->first()?->last_activity;
-
         return view('livewire.admin.events.participant.profile', [
-            'lastActivity' => $lastActivity ? Carbon::createFromTimestamp($lastActivity) : null,
+            'lastActivity' => $this->user->last_activity_at,
         ]);
     }
 }

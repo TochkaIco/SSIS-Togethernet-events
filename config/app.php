@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-use Jenssegers\Agent\AgentServiceProvider;
-use Jenssegers\Agent\Facades\Agent;
-
 return [
 
     /*
@@ -134,8 +131,5 @@ return [
         'jira_url' => env('JIRA_URL', 'https://togethernet.atlassian.net/'),
         'maintainer_email' => env('MAINTAINER_EMAIL'),
     ],
-
-    AgentServiceProvider::class,
-    'Agent' => Agent::class,
 
 ];

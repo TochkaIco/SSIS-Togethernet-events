@@ -22,7 +22,12 @@ class SetLocale
         $locale = config('app.locale');
 
         if (Auth::check()) {
-            $locale = Auth::user()->locale ?? $locale;
+            $user = Auth::user();
+            $locale = $user->locale ?? $locale;
+
+            if ($user->last_activity_at === null || $user->last_activity_at->diffInMinutes(now()) >= 5) {
+                $user->update(['last_activity_at' => now()]);
+            }
         } elseif (session()->has('locale')) {
             $locale = session()->get('locale');
         }

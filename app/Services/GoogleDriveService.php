@@ -41,7 +41,7 @@ class GoogleDriveService
      */
     public function backupToDocs(string $quillHtml, string $title)
     {
-        $quillHtml = preg_replace_callback('/<img([^>]+)>/', function ($matches): string {
+        $quillHtml = preg_replace_callback('/<img([^>]+)>/', function (array $matches): string {
             $tag = $matches[1];
             $width = '250'; // Default to half page width
 

@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Laravel\Pulse\Entry;
+use Laravel\Pulse\Value;
 
 return [
 
@@ -127,6 +132,13 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => [
+        Collection::class,
+        CarbonImmutable::class,
+        Carbon::class,
+        stdClass::class,
+        Entry::class,
+        Value::class,
+    ],
 
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Services\GoogleDriveService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -31,16 +32,14 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
 
-        Gate::before(function ($user): ?true {
-            if ($user->hasRole(['super-admin', 'maintainer'])) {
-                return true;
-            }
-
-            return null;
-        });
-
         Gate::define('admin', function ($user) {
             return $user->hasRole('admin');
+        });
+
+        Gate::define('viewPulse', function (User $user): bool {
+
+            return $user->hasPermissionTo('dev');
+
         });
     }
 

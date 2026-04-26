@@ -100,6 +100,10 @@
 
                 <flux:sidebar.nav>
                     <flux:sidebar.group :heading="__('Dev')" class="grid">
+                        <flux:sidebar.item icon="command-line" href="{{ config('pulse.path') }}" target="_blank">
+                            {{ __('Dev Monitor') }}
+                        </flux:sidebar.item>
+
                         <flux:sidebar.item icon="folder-git-2" href="{{ config('app.dev_info.repo') }}" target="_blank">
                             {{ __('Repository') }}
                         </flux:sidebar.item>
