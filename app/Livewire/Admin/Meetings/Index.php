@@ -29,7 +29,9 @@ class Index extends Component
     public function render(): Factory|\Illuminate\Contracts\View\View|View
     {
         return view('livewire.admin.meetings.index', [
-            'meetings' => Meeting::all(),
+            'meetings' => Meeting::query()
+                ->orderBy('meeting_starts_at')
+                ->paginate(10),
         ])->layout('layouts.app', ['title' => 'Meetings']);
     }
 }

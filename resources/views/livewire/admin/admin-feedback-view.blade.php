@@ -4,7 +4,7 @@
 
     <flux:separator class="my-6" />
 
-    <div class="flex flex-col md:flex-row items-center gap-4 mb-4 w-full">
+    <div class="flex flex-col items-start md:flex-row md:items-center gap-4 mb-4 w-full">
         <flux:input
             wire:model.live="search"
             icon="magnifying-glass"
@@ -99,7 +99,7 @@
                             </button>
                         @else
                             <button class="flex items-center gap-3 text-left">
-                                <flux:avatar circle class="size-12" initials="D" />
+                                <flux:avatar circle class="size-12" initials="G" />
                                 <div class="font-semibold text-zinc-800 dark:text-white">{{ __('Guest') }}</div>
                             </button>
                         @endif
@@ -137,7 +137,7 @@
 
                             <div>
                                 @if($feedback->is_finished === 1)
-                                    <flux:button class="cursor-pointer" variant="primary" size="xs" icon="x-mark" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Unresolve') }}</flux:button>
+                                    <flux:button class="cursor-pointer" variant="filled" size="xs" icon="x-mark" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Unresolve') }}</flux:button>
                                 @else
                                     <flux:button class="cursor-pointer" variant="primary" size="xs" icon="check" wire:click="markAsResolved({{ $feedback->id }})">{{ __('Resolve') }}</flux:button>
                                 @endif

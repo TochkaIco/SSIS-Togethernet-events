@@ -1,4 +1,4 @@
-<div class="p-6">
+<div class="p-1 md:p-6">
     <div class="mb-6">
         <flux:button icon="chevron-left" variant="ghost" :href="route('admin.meetings.show', $meeting)" wire:navigate size="sm" class="-ml-2 mb-2">
             {{ __('Back to Meeting') }}

@@ -1,4 +1,4 @@
-<div class="p-6">
+<div class="p-2 md:p-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <flux:button icon="chevron-left" variant="ghost" :href="route('admin.meetings.index')" wire:navigate size="sm" class="-ml-2 mb-2">
@@ -13,19 +13,24 @@
                 @endif
             </flux:subheading>
         </div>
-        <div class="flex flex-col md:flex-row items-center gap-2">
+        <div class="flex items-center gap-2">
             @if(!$meeting->meeting_ends_at)
-                <flux:button wire:click="endMeeting" variant="subtle" icon="clock">
+                <flux:button wire:click="endMeeting" variant="filled" icon="clock">
                     {{ __('End Meeting') }}
                 </flux:button>
             @endif
-            <flux:button :href="route('admin.meetings.protocol', $meeting)" variant="primary" icon="pencil-square" wire:navigate>
-                {{ __('Edit Protocol') }}
-            </flux:button>
+            <div class="hidden md:block">
+                <flux:button :href="route('admin.meetings.protocol', $meeting)" variant="primary" icon="pencil-square" wire:navigate>
+                    {{ __('Edit Protocol') }}
+                </flux:button>
+            </div>
+            <div class="block md:hidden">
+                <flux:button :href="route('admin.meetings.protocol', $meeting)" variant="primary" icon="pencil-square" wire:navigate />
+            </div>
             @if(! \Carbon\Carbon::now()->greaterThan($meeting->meeting_starts_at->addMinutes(20)))
                     <flux:button
                         wire:click="confirmDelete"
-                        variant="ghost"
+                        variant="filled"
                         icon="trash"
                         class="hover:text-red-600 cursor-pointer"
                     />
