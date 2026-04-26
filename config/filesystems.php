@@ -60,6 +60,11 @@ return [
             'report' => false,
         ],
 
+        'google' => [
+            'driver' => 'google',
+            'credentials_file' => env('GOOGLE_DRIVE_CREDENTIALS', 'google-credentials.json'),
+            'folder_id' => env('GOOGLE_DRIVE_FOLDER_ID'),
+        ],
     ],
 
     /*

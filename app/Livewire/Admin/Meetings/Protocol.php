@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Meetings;
 
+use App\Jobs\BackupMeetingToGoogleDrive;
 use App\Models\Meeting;
 use Flux\Flux;
 use Illuminate\Contracts\View\Factory;
@@ -31,7 +32,7 @@ class Protocol extends Component
         $this->meeting_ends_at = $meeting->meeting_ends_at ? $meeting->meeting_ends_at->format('Y-m-d\TH:i') : '';
     }
 
-    public function save()
+    public function save(): void
     {
         if (! auth()->user()->hasRole('tog-member')) {
             abort(403);
@@ -51,9 +52,9 @@ class Protocol extends Component
             'meeting_ends_at' => $this->meeting_ends_at ?: null,
         ]);
 
-        Flux::toast(__('Protocol saved successfully.'), variant: 'success');
+        BackupMeetingToGoogleDrive::dispatch($this->description, $this->title);
 
-        return redirect()->route('admin.meetings.show', $this->meeting);
+        Flux::toast(__('Protocol saved successfully, syncing with Google Drive...'), variant: 'success');
     }
 
     public function render(): Factory|\Illuminate\Contracts\View\View|View

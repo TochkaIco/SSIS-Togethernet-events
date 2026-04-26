@@ -88,26 +88,9 @@
         @apply my-3 rounded-lg overflow-hidden;
     }
 
-    /* Override hljs/Quill code block to match your theme */
-    .ql-code-block-container .hljs,
-    .ql-code-block-container pre,
-    .ql-code-block {
-        @apply bg-zinc-900 dark:bg-zinc-950 font-mono text-sm;
-        padding-left: 10px !important;
-        margin: 0 !important;
-    }
 
-    .ql-code-block-container .ql-code-block:not([data-language]),
-    .ql-code-block-container .ql-code-block[data-language="plain"] {
+    .ql-code-block-container .ql-code-block {
         @apply text-green-400;
-    }
-
-    .ql-code-block-container .ql-ui {
-        display: none;
-    }
-
-    .ql-editor .ql-code-block-container .ql-ui {
-        display: block;
     }
 
     /* The actual code lines */
@@ -122,11 +105,6 @@
 
     .ql-code-block:last-child {
         @apply pb-3;
-    }
-
-    /* Language label Quill adds at the top-right */
-    .ql-code-block-container .ql-ui {
-        @apply text-zinc-400 text-xs font-mono;
     }
 
     /* Images */
@@ -149,11 +127,6 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
-}
-
-.dark .hljs {
-    background: #1c1b1b;
-    color: #ffffff;
 }
 
 [data-flux-field]:not(ui-radio, ui-checkbox) {

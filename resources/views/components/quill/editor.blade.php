@@ -10,7 +10,6 @@
                 theme: 'snow',
                 modules: {
                     resize: {},
-                    syntax: { hljs: window.hljs },
                     toolbar: [
                         [{ 'header': [1, 2, 3, false] }],
                         ['bold', 'italic', 'underline', 'strike'],

@@ -96,10 +96,10 @@ class UserManagement extends Component
         // protectedRoles => ['admin', 'super-admin', 'maintainer']
 
         if (in_array('maintainer', $this->userRoles)) {
-            if (! Auth::user()->hasRole(['maintainer'])) {
+            if (! Auth::user()->hasRole(['super-admin', 'maintainer'])) {
                 $this->modal('edit-user-permissions')->close();
                 Flux::toast(
-                    text: 'Maintainers can grant Maintainer role.',
+                    text: 'Only Super-Admins or Maintainers can grant Maintainer role.',
                     heading: 'Error',
                     variant: 'danger'
                 );
