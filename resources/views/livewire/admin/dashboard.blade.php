@@ -156,14 +156,26 @@
                     </flux:button>
                 @endcan
                 @can('view articles')
-                        <flux:button href="{{ route('admin.events') }}" icon="calendar" variant="subtle" class="justify-start">
+                        <flux:button href="{{ route('admin.events') }}" icon="layout-grid" variant="subtle" class="justify-start">
                             {{ __('Manage Events') }}
                         </flux:button>
                 @endcan
+                <flux:button href="{{ route('admin.meetings.index') }}" icon="calendar" variant="subtle" class="justify-start">
+                    {{ __('Manage Meetings') }}
+                </flux:button>
                 @can('manage users')
                         <flux:button href="{{ route('admin.users') }}" icon="users" variant="subtle" class="justify-start">
                             {{ __('Manage Users') }}
                         </flux:button>
+                @endcan
+                @can('dev')
+                    <flux:button href="{{ route('admin.feedback') }}" icon="book-open" variant="subtle" class="justify-start">
+                        {{ __('Manage Feedback') }}
+                    </flux:button>
+
+                    <flux:button href="{{ config('pulse.path') }}" icon="command-line" variant="subtle" class="justify-start">
+                        {{ __('Laravel Pulse') }}
+                    </flux:button>
                 @endcan
             </div>
 
