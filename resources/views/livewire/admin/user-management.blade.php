@@ -111,6 +111,7 @@
         </flux:table.rows>
     </flux:table>
 
+    {{-- Users Table for Mobile --}}
     <div class="md:hidden space-y-4">
         @foreach ($users as $user)
             <div class="p-4 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl space-y-4">
