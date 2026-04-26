@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "ext-ldap": "*",
         "directorytree/ldaprecord-laravel": "^3.4",
         "jenssegers/agent": "^2.6",

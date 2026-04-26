@@ -180,53 +180,14 @@ class Dashboard extends Component
     #[Computed]
     public function systemStats(): array
     {
-        $storagePath = storage_path('app/public');
-
-        // On some systems like OpenShift, disk_free_space might return false if the path is not accessible or not a mount point
-        $diskFree = @disk_free_space($storagePath);
-        $diskTotal = @disk_total_space($storagePath);
-
-        // Fallback to root if storage path fails
-        if ($diskFree === false || $diskTotal === false) {
-            $diskFree = @disk_free_space('/');
-            $diskTotal = @disk_total_space('/');
-        }
-
-        if ($diskFree !== false && $diskTotal !== false && $diskTotal > 0) {
-            $diskUsed = $diskTotal - $diskFree;
-            $diskPercentage = (int) round(($diskUsed / $diskTotal) * 100);
-            $diskLabel = $this->formatBytes($diskUsed).' / '.$this->formatBytes($diskTotal);
-        } else {
-            $diskUsed = 0;
-            $diskPercentage = 0;
-            $diskLabel = __('Unavailable');
-        }
-
-        $dbDriver = config('database.default');
-
         return [
             'env' => config('app.env'),
             'debug' => config('app.debug'),
             'laravel_version' => app()->version(),
             'failed_jobs' => DB::table('failed_jobs')->count(),
-            'disk_percentage' => $diskPercentage,
-            'disk_label' => $diskLabel,
             'timezone' => config('app.timezone'),
-            'db_host' => config('database.connections.'.$dbDriver.'.host'),
+            'db_driver' => config('database.default'),
         ];
-    }
-
-    private function formatBytes(float $bytes, int $precision = 2): string
-    {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-
-        $bytes /= (1 << (10 * $pow));
-
-        return round($bytes, $precision).' '.$units[$pow];
     }
 
     public function render(): View

@@ -178,7 +178,7 @@
                                 <span>{{ __('Database & PHP') }}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <flux:badge color="green" size="sm" inset="top bottom">{{ strtoupper($this->systemStats['db_host']) }}</flux:badge>
+                                <flux:badge color="green" size="sm" inset="top bottom">{{ strtoupper($this->systemStats['db_driver']) }}</flux:badge>
                                 <span class="font-mono text-xs">{{ phpversion() }}</span>
                             </div>
                         </div>
@@ -217,28 +217,6 @@
                             @else
                                 <flux:badge color="green" size="sm" inset="top bottom">0</flux:badge>
                             @endif
-                        </div>
-
-                        {{-- Storage Usage --}}
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between text-xs">
-                                <div class="flex items-center gap-2">
-                                    <flux:icon.circle-stack variant="outline" class="size-4 text-zinc-400" />
-                                    <span>{{ __('Storage Usage (Public)') }}</span>
-                                </div>
-                                <span class="text-zinc-500">{{ $this->systemStats['disk_label'] }}</span>
-                            </div>
-                            <div class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
-                                <div
-                                    class="h-full rounded-full transition-all duration-500"
-                                    :class="{
-                                    'bg-green-500': {{ $this->systemStats['disk_percentage'] }} < 70,
-                                    'bg-yellow-500': {{ $this->systemStats['disk_percentage'] }} >= 70 && {{ $this->systemStats['disk_percentage'] }} < 90,
-                                    'bg-red-500': {{ $this->systemStats['disk_percentage'] }} >= 90
-                                }"
-                                    style="width: {{ $this->systemStats['disk_percentage'] }}%"
-                                ></div>
-                            </div>
                         </div>
 
                         <flux:separator />
