@@ -39,6 +39,9 @@
 }
 
 @layer base {
+    .img {
+        image-rendering: crisp-edges;
+    }
     /* Headings */
     .prose h1 {
         @apply text-2xl font-bold text-zinc-800 dark:text-zinc-100 my-3;
