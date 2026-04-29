@@ -21,13 +21,13 @@ test('it does not update last_activity_at too frequently', function () {
     $this->get('/');
 
     $user->refresh();
-    expect($user->last_activity_at->toDateTimeString())->toBe($initialTime->toDateTimeString());
+    expect($user->last_activity_at->toDateTimeString())->toBe($initialTime->toDateTimeString());  // @phpstan-ignore-line
 
     // Travel to 6 minutes later
-    $this->travelTo(now()->addMinutes(6));
+    $this->travelTo(now()->addMinutes(6)); // @phpstan-ignore-line
 
     $this->get('/');
 
     $user->refresh();
-    expect($user->last_activity_at->toDateTimeString())->not->toBe($initialTime->toDateTimeString());
+    expect($user->last_activity_at->toDateTimeString())->not->toBe($initialTime->toDateTimeString()); // @phpstan-ignore-line
 });

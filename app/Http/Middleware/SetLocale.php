@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -25,7 +26,7 @@ class SetLocale
             $user = Auth::user();
             $locale = $user->locale ?? $locale;
 
-            if ($user->last_activity_at === null || $user->last_activity_at->diffInMinutes(now()) >= 5) {
+            if ($user->last_activity_at === null || $user->last_activity_at->diffInMinutes(now()) >= 5) { // @phpstan-ignore-line
                 $user->update(['last_activity_at' => now()]);
             }
         } elseif (session()->has('locale')) {

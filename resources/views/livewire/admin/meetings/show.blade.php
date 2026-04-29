@@ -27,14 +27,16 @@
             <div class="block md:hidden">
                 <flux:button :href="route('admin.meetings.protocol', $meeting)" variant="primary" icon="pencil-square" wire:navigate />
             </div>
-            @if(! \Carbon\Carbon::now()->greaterThan($meeting->meeting_starts_at->addMinutes(20)))
+            @hasanyrole('admin|super-admin|maintainer')
+                @if(! \Carbon\Carbon::now()->greaterThan($meeting->meeting_starts_at->addMinutes(20)))
                     <flux:button
                         wire:click="confirmDelete"
                         variant="filled"
                         icon="trash"
                         class="hover:text-red-600 cursor-pointer"
                     />
-            @endif
+                @endif
+            @endhasanyrole
         </div>
     </div>
 

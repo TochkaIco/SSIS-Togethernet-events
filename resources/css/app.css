@@ -112,7 +112,7 @@
 
     /* Images */
     .prose img {
-        @apply max-w-full rounded-lg my-3;
+        @apply max-w-full my-3;
     }
 
     .ql-toolbar {
