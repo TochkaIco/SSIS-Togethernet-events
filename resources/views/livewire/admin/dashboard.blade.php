@@ -173,7 +173,7 @@
                         {{ __('Manage Feedback') }}
                     </flux:button>
 
-                    <flux:button href="{{ config('pulse.path') }}" icon="command-line" variant="subtle" class="justify-start">
+                    <flux:button href="/admin/pulse" icon="command-line" variant="subtle" class="justify-start">
                         {{ __('Laravel Pulse') }}
                     </flux:button>
                 @endcan

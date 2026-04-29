@@ -52,7 +52,7 @@ class Protocol extends Component
             'meeting_ends_at' => $this->meeting_ends_at ?: null,
         ]);
 
-        BackupMeetingToGoogleDrive::dispatch($this->description, $this->title);
+        BackupMeetingToGoogleDrive::dispatch($this->description, $this->title, $this->meeting_starts_at);
 
         Flux::toast(__('Protocol saved successfully, syncing with Google Drive...'), variant: 'success');
     }

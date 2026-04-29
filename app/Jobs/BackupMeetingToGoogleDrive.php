@@ -20,10 +20,13 @@ class BackupMeetingToGoogleDrive implements ShouldQueue
 
     protected $title;
 
-    public function __construct($html, $title)
+    protected $meeting_starts_at;
+
+    public function __construct($html, $title, $meeting_starts_at)
     {
         $this->html = $html;
         $this->title = $title;
+        $this->meeting_starts_at = $meeting_starts_at;
     }
 
     /**
@@ -31,6 +34,6 @@ class BackupMeetingToGoogleDrive implements ShouldQueue
      */
     public function handle(GoogleDriveService $service): void
     {
-        $service->backupToDocs($this->html, $this->title);
+        $service->backupToDocs($this->html, $this->title, $this->meeting_starts_at);
     }
 }

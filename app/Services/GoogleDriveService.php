@@ -39,7 +39,7 @@ class GoogleDriveService
     /**
      * @throws Exception
      */
-    public function backupToDocs(string $quillHtml, string $title)
+    public function backupToDocs(string $quillHtml, string $title, string $meetingStartsAt)
     {
         $quillHtml = preg_replace_callback('/<img([^>]+)>/', function (array $matches): string {
             $tag = $matches[1];
@@ -110,8 +110,9 @@ class GoogleDriveService
         $finalHtml = $inliner->convert("<html><body>{$quillHtml}</body></html>", $quillCss);
 
         $rootFolderId = config('filesystems.disks.google.folder_id');
-        $yearFolderName = date('Y');
-        $dateFolderName = date('F j, Y');
+        $date = strtotime($meetingStartsAt);
+        $yearFolderName = date('Y', $date);
+        $dateFolderName = date('F j, Y', $date);
 
         $yearFolderId = $this->getOrCreateFolder($yearFolderName, $rootFolderId);
         $destinationFolderId = $this->getOrCreateFolder($dateFolderName, $yearFolderId);
