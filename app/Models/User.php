@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -24,7 +25,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, HasRoles, Impersonate, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -109,5 +110,15 @@ class User extends Authenticatable
             'TE'.now()->subMonths(6)->subYears(2)->format('y').'C',
             'TE'.now()->subMonths(6)->subYears(2)->format('y').'D',
         ];
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->hasPermissionTo('impersonate users');
+    }
+
+    public function canBeImpersonated(): bool
+    {
+        return ! $this->hasAnyRole('admin|super-admin|maintainer');
     }
 }

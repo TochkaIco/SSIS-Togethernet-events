@@ -13,6 +13,7 @@ use App\Livewire\Admin\Events\ParticipantProfile;
 use App\Livewire\Admin\Meetings\Index;
 use App\Livewire\Admin\Meetings\Protocol;
 use App\Livewire\Admin\Meetings\Show;
+use App\Livewire\Admin\UserImpersonationPage;
 use App\Livewire\Admin\UserManagement;
 use App\Livewire\Admin\UserProfile;
 use App\Livewire\Events\EventShow as PublicEventShow;
@@ -50,6 +51,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/config', AppConfigurationPage::class)
         ->middleware('can:configure pages')->name('admin.app.config');
     Route::get('/admin/feedback', AdminFeedbackView::class)->name('admin.feedback');
+
+    Route::middleware(['auth', 'can:impersonate users'])->group(function () {
+        Route::get('/admin/user_impersonation', UserImpersonationPage::class)->name('admin.impersonation-page');
+    });
+    Route::impersonate();
 });
 
 Route::middleware(['guest'])->group(function () {

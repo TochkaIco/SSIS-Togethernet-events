@@ -100,6 +100,12 @@
 
                 <flux:sidebar.nav>
                     <flux:sidebar.group :heading="__('Dev')" class="grid">
+                        @can('impersonate users')
+                            <flux:sidebar.item icon="user" href="{{ route('admin.impersonation-page') }}" :current="request()->routeIs('admin.impersonation-page*')" wire:navigate>
+                                {{ __('User Impersonation') }}
+                            </flux:sidebar.item>
+                        @endcan
+
                         <flux:sidebar.item icon="command-line" href="/admin/pulse" target="_blank">
                             {{ __('Dev Monitor') }}
                         </flux:sidebar.item>
@@ -166,6 +172,12 @@
                         <flux:menu.separator />
 
                         <flux:menu.radio.group>
+                            @if(app('impersonate')->isImpersonating())
+                                <flux:menu.item :href="route('impersonate.leave')" icon="arrow-down-left" class="text-red-500">
+                                    {{ __('Stop Impersonating') }}
+                                </flux:menu.item>
+                                <flux:menu.separator />
+                            @endif
                             <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                                 {{ __('Settings') }}
                             </flux:menu.item>
