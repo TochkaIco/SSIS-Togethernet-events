@@ -2,6 +2,7 @@
 
 use App\Livewire\Events\EventShow;
 use App\Models\Event;
+use App\Models\EventUser;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,8 +27,11 @@ test('registered period is highlighted on event show page', function () {
     ]);
 
     // Register user for period 2
-    $user->events()->attach($event, [
-        'period' => 2,
+    $period2 = $event->periods->where('number', 2)->first();
+    EventUser::create([
+        'user_id' => $user->id,
+        'event_id' => $event->id,
+        'event_period_id' => $period2->id,
         'in_waitinglist' => false,
     ]);
 
@@ -51,8 +55,11 @@ test('registered waiting list period is highlighted differently', function () {
     ]);
 
     // Register user for period 2 on waiting list
-    $user->events()->attach($event, [
-        'period' => 2,
+    $period2 = $event->periods->where('number', 2)->first();
+    EventUser::create([
+        'user_id' => $user->id,
+        'event_id' => $event->id,
+        'event_period_id' => $period2->id,
         'in_waitinglist' => true,
     ]);
 

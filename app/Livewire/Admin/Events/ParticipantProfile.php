@@ -18,6 +18,8 @@ class ParticipantProfile extends Component
 
     public User $user;
 
+    public EventUser $registration;
+
     public function mount(Event $event, $userId): void
     {
         $this->authorize('manage users');
@@ -32,21 +34,19 @@ class ParticipantProfile extends Component
      */
     protected function loadUser($userId): void
     {
-        $participant = EventUser::where('event_id', $this->event->id)
+        $this->registration = EventUser::where('event_id', $this->event->id)
             ->where('user_id', $userId)
             ->firstOrFail();
 
         $user = User::findOrFail($userId);
         $user->load(['roles', 'permissions']);
 
-        $user->setRelation('pivot', $participant);
-
         $this->user = $user;
     }
 
     public function participantIsWorking(): bool
     {
-        return (bool) ($this->user->pivot->is_working ?? false);
+        return (bool) ($this->registration->is_working ?? false);
     }
 
     public function render(): View

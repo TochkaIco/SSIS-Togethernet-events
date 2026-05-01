@@ -22,7 +22,7 @@ class CreateEvent
         if ($attributes['one_hour_periods'] ?? false) {
             $startTime = Carbon::parse($data['event_starts_at']);
             $hoursToAdd = (int) ($attributes['one_hour_periods_number'] ?? 1);
-            $totalIntervalLength = (int) ($attributes['interval_length'] ?? 1) * ((int) ($attributes['one_hour_periods_number'] ?? 1) - 1);
+            $totalIntervalLength = (int) ($attributes['interval_length'] ?? 0) * (max(0, (int) ($attributes['one_hour_periods_number'] ?? 1) - 1));
 
             $data['event_ends_at'] = $startTime->addHours($hoursToAdd)->addMinutes($totalIntervalLength);
         }
@@ -31,8 +31,43 @@ class CreateEvent
             $data['image_path'] = $attributes['image']->store('events', 'public');
         }
 
-        DB::transaction(function () use ($data) {
-            Event::create($data);
+        DB::transaction(function () use ($data, $attributes) {
+            $event = Event::create($data);
+
+            if ($attributes['one_hour_periods'] ?? false) {
+                $currentStart = Carbon::parse($data['event_starts_at']);
+                $numPeriods = (int) ($attributes['one_hour_periods_number'] ?? 1);
+                $interval = (int) ($attributes['interval_length'] ?? 0);
+
+                for ($i = 1; $i <= $numPeriods; $i++) {
+                    $periodEnd = $currentStart->copy()->addHour();
+
+                    $event->periods()->create([
+                        'starts_at' => $currentStart,
+                        'ends_at' => $periodEnd,
+                        'type' => 'period',
+                        'number' => $i,
+                    ]);
+
+                    $currentStart = $periodEnd->copy()->addMinutes($interval);
+
+                    // Add break if there's an interval and it's not the last period
+                    if ($interval > 0 && $i < $numPeriods) {
+                        $event->periods()->create([
+                            'starts_at' => $periodEnd,
+                            'ends_at' => $currentStart,
+                            'type' => 'break',
+                        ]);
+                    }
+                }
+            } else {
+                $event->periods()->create([
+                    'starts_at' => $data['event_starts_at'],
+                    'ends_at' => $data['event_ends_at'],
+                    'type' => 'period',
+                    'number' => 1,
+                ]);
+            }
         });
     }
 }

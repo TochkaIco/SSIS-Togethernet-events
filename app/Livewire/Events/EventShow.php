@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Events;
 
 use App\Actions\RegisterUserToEvent;
+use App\Actions\UnregisterUserFromEvent;
 use App\Models\Event;
 use App\Models\EventUser;
 use Flux\Flux;
@@ -41,6 +42,7 @@ class EventShow extends Component
 
         return EventUser::where('event_id', $this->event->id)
             ->where('user_id', Auth::id())
+            ->with(['eventPeriod'])
             ->first();
     }
 
@@ -62,9 +64,10 @@ class EventShow extends Component
         return $this->event->waitingList()->get();
     }
 
-    public function moveToAttendees(int $userId): void
+    public function moveToAttendees(int $registrationId): void
     {
-        $this->event->users()->updateExistingPivot($userId, [
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+        $registration->update([
             'in_waitinglist' => false,
         ]);
 
@@ -86,14 +89,17 @@ class EventShow extends Component
         $this->eventIdToUnregister = $eventId;
     }
 
-    public function unregisterUser()
+    public function unregisterUser(UnregisterUserFromEvent $action)
     {
         if (! Auth::check()) {
             return redirect()->route('login');
         }
 
         if ($this->eventIdToUnregister && $this->userIsRegistered($this->eventIdToUnregister)) {
-            EventUser::where('event_id', $this->eventIdToUnregister)->where('user_id', Auth::id())->delete();
+            $event = Event::findOrFail($this->eventIdToUnregister);
+
+            $action->handle(Auth::user(), $event);
+
             Flux::toast(text: __('You have been unregistered from this event.'), heading: __('Success'), variant: 'success');
             $this->eventIdToUnregister = null;
             $this->modal('unregister-confirmation')->close();
@@ -109,12 +115,6 @@ class EventShow extends Component
         }
 
         $event = Event::findOrFail($eventId);
-
-        if ($event->one_hour_periods && $this->period === null) {
-            Flux::toast(text: __('Please select an event period.'), heading: __('Error'), variant: 'danger');
-
-            return;
-        }
 
         $alreadyRegistered = EventUser::where('event_id', $eventId)
             ->where('user_id', Auth::id())

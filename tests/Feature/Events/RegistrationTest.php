@@ -27,7 +27,7 @@ test('user can register for an event', function () {
         ->call('registerUser', $event->id)
         ->assertSee('Registered');
 
-    expect($event->users()->where('user_id', $user->id)->exists())->toBeTrue();
+    expect($event->registrations()->where('user_id', $user->id)->exists())->toBeTrue();
 });
 
 // test('user can unregister from an event', function () {

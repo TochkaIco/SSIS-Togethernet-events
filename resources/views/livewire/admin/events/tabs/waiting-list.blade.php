@@ -16,31 +16,31 @@
                 <flux:table.row :key="$waiting->id">
                     <flux:table.cell>
                         <button wire:click="viewUserProfile({{ $waiting->id }})" class="flex items-center cursor-pointer gap-x-3 text-left">
-                            <flux:avatar class="size-10" circle :initials="$waiting->initials()" :src="$waiting->profile_picture" />
-                            <span class="font-medium hover:underline hover:text-orange-300">{{ $waiting->name }}</span>
+                            <flux:avatar class="size-10" circle :initials="$waiting->user->initials()" :src="$waiting->user->profile_picture" />
+                            <span class="font-medium hover:underline hover:text-orange-300">{{ $waiting->user->name }}</span>
                         </button>
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <x-class-badge :user-class="$waiting->class ?? 'Unknown'" />
+                        <x-class-badge :user-class="$waiting->user->class ?? 'Unknown'" />
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <a href="mailto:{{ $waiting->email }}" class="hover:text-orange-300 hover:underline">
-                            {{ $waiting->email }}
+                        <a href="mailto:{{ $waiting->user->email }}" class="hover:text-orange-300 hover:underline">
+                            {{ $waiting->user->email }}
                         </a>
                     </flux:table.cell>
 
                     @if($event->one_hour_periods)
                         <flux:table.cell>
                             @php
-                                $periodLabel = $event->eventPeriods()->where('type', 'period')->where('number', $waiting->pivot->period)->first()?->label;
+                                $periodLabel = $waiting->eventPeriod?->label;
                             @endphp
                             {{ $periodLabel ?? __('N/A') }}
                         </flux:table.cell>
                     @endif
 
-                    <flux:table.cell>{{ $waiting->pivot->created_at->diffForHumans() }}</flux:table.cell>
+                    <flux:table.cell>{{ $waiting->created_at->diffForHumans() }}</flux:table.cell>
 
                     <flux:table.cell align="end">
                         <flux:button wire:click="moveToParticipants({{ $waiting->id }})" size="sm" variant="primary" class="cursor-pointer">
@@ -50,7 +50,7 @@
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="4" class="text-center py-12">
+                    <flux:table.cell colspan="4" class="text-center py-12 w-full">
                         <div class="flex flex-col items-center justify-center">
                             <flux:icon.users class="size-12 mb-4" />
                             <flux:heading>{{ __('No users on waiting list') }}</flux:heading>

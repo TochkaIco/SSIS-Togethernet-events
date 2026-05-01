@@ -19,15 +19,17 @@ test('user can register for a specific period in a karaoke event', function () {
         'num_of_seats' => 20,
     ]);
 
+    $periodToRegister = $event->periods->get(1); // Period 2
+
     Auth::login($user);
 
     Livewire::test(EventShow::class, ['event' => $event])
-        ->set('period', 2)
+        ->set('period', $periodToRegister->id)
         ->call('registerUser', $event->id)
         ->assertStatus(200);
 
     $registration = EventUser::where('event_id', $event->id)->where('user_id', $user->id)->first();
-    expect($registration->period)->toBe(2);
+    expect($registration->event_period_id)->toBe($periodToRegister->id);
 });
 
 test('admin can move participant to another period', function () {
@@ -42,15 +44,22 @@ test('admin can move participant to another period', function () {
     $admin = User::factory()->create();
     $admin->assignRole('admin');
 
-    $event->users()->attach($user, ['period' => 1]);
+    $period1 = $event->periods->get(0);
+    $period3 = $event->periods->get(2);
+
+    $registration = EventUser::create([
+        'user_id' => $user->id,
+        'event_id' => $event->id,
+        'event_period_id' => $period1->id,
+    ]);
 
     Auth::login($admin);
 
     Livewire::test(Participants::class, ['event' => $event])
-        ->set('participantPeriods.'.$user->id, 3)
-        ->call('changePeriod', $user->id)
+        ->set('participantPeriods.'.$registration->id, $period3->id)
+        ->call('changePeriod', $registration->id)
         ->assertStatus(200);
 
-    $registration = EventUser::where('event_id', $event->id)->where('user_id', $user->id)->first();
-    expect($registration->period)->toBe(3);
+    $registration->refresh();
+    expect($registration->event_period_id)->toBe($period3->id);
 });

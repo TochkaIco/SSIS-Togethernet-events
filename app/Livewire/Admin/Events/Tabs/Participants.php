@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Events\Tabs;
 
+use App\Actions\ProcessWaitingList;
 use App\Models\Event;
-use App\Models\User;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
@@ -58,97 +58,105 @@ class Participants extends Component
     }
 
     /**
-     * Toggle the 'has_paid' status on the pivot table.
+     * Toggle the 'has_paid' status on the registration.
      */
-    public function togglePaid(int $userId): void
+    public function togglePaid(int $registrationId): void
     {
         $this->authorize('manage users');
 
-        /** @var User $user */
-        $user = $this->event->users()->findOrFail($userId);
+        $registration = $this->event->registrations()->findOrFail($registrationId);
 
-        $this->event->users()->updateExistingPivot($userId, [
-            'has_paid' => ! $user->pivot->has_paid,
+        $registration->update([
+            'has_paid' => ! $registration->has_paid,
         ]);
 
         Flux::toast(__('Payment status updated.'));
     }
 
     /**
-     * Toggle the 'has_arrived' status on the pivot table.
+     * Toggle the 'has_arrived' status on the registration.
      */
-    public function toggleArrived(int $userId): void
+    public function toggleArrived(int $registrationId): void
     {
         $this->authorize('manage users');
 
-        /** @var User $user */
-        $user = $this->event->users()->findOrFail($userId);
+        $registration = $this->event->registrations()->findOrFail($registrationId);
 
-        $this->event->users()->updateExistingPivot($userId, [
-            'has_arrived' => ! $user->pivot->has_arrived,
+        $registration->update([
+            'has_arrived' => ! $registration->has_arrived,
         ]);
 
         Flux::toast(__('Arrival status updated.'));
     }
 
     /**
-     * Move a participant to the waiting list by flipping the pivot flag.
+     * Move a participant to the waiting list.
      */
-    public function moveToWaitingList(int $userId): void
+    public function moveToWaitingList(int $registrationId, ProcessWaitingList $processAction): void
     {
         $this->authorize('manage users');
 
-        $this->event->users()->updateExistingPivot($userId, [
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+        $periodId = $registration->event_period_id;
+
+        $registration->update([
             'in_waitinglist' => true,
+            'created_at' => now(),
         ]);
+
+        $processAction->handle($this->event, $periodId);
 
         Flux::toast(__('Moved to waiting list.'));
     }
 
-    public function participantIsWorking(int $participantId): bool
+    public function participantIsWorking(int $registrationId): bool
     {
-        /** @var User $participant */
-        $participant = $this->event->users()->findOrFail($participantId);
+        $registration = $this->event->registrations()->findOrFail($registrationId);
 
-        return (bool) $participant->pivot->is_working;
+        return (bool) $registration->is_working;
     }
 
-    public function viewUserProfile(int $participantId)
+    public function viewUserProfile(int $registrationId)
     {
         $this->authorize('manage users');
 
-        /** @var User $user */
-        $user = $this->event->users()->findOrFail($participantId);
+        $registration = $this->event->registrations()->with('user')->findOrFail($registrationId);
 
-        return redirect()->route('admin.event.participant.profile', [$this->event, $user->id]);
+        return redirect()->route('admin.event.participant.profile', [$this->event, $registration->user->id]);
     }
 
-    public function updateParticipantWorkingStatus(int $participantId): void
+    public function updateParticipantWorkingStatus(int $registrationId): void
     {
         $this->authorize('manage users');
 
-        /** @var User $participant */
-        $participant = $this->event->users()->findOrFail($participantId);
-        $this->event->users()->updateExistingPivot($participantId, [
-            'is_working' => ! $participant->pivot->is_working,
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+        $registration->update([
+            'is_working' => ! $registration->is_working,
         ]);
 
         Flux::toast(__('Worker status updated.'));
     }
 
-    public function changePeriod(int $userId): void
+    public function changePeriod(int $registrationId, ProcessWaitingList $processAction): void
     {
         $this->authorize('manage users');
 
-        $period = $this->participantPeriods[$userId] ?? null;
+        $periodId = $this->participantPeriods[$registrationId] ?? null;
 
-        if ($period === null) {
+        if ($periodId === null) {
             return;
         }
 
-        $this->event->users()->updateExistingPivot($userId, [
-            'period' => (int) $period,
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+        $oldPeriodId = $registration->event_period_id;
+
+        $registration->update([
+            'event_period_id' => (int) $periodId,
         ]);
+
+        if ($oldPeriodId !== (int) $periodId) {
+            $processAction->handle($this->event, $oldPeriodId);
+        }
 
         Flux::toast(__('Period updated.'));
     }
@@ -158,32 +166,31 @@ class Participants extends Component
      */
     public function render()
     {
-        $query = $this->event->users()
-            ->where(function ($q) {
-                $q->where('event_users.in_waitinglist', false)
-                    ->orWhereNull('in_waitinglist');
-            })
-            ->when($this->search, function (Builder $q) {
-                $q->where(function (Builder $sub) {
-                    $sub->where('name', 'like', '%'.$this->search.'%')
-                        ->orWhere('email', 'like', '%'.$this->search.'%');
-                });
+        $query = $this->event->participants()
+            ->with('user')
+            ->whereHas('user', function (Builder $q) {
+                $q->when($this->search, function (Builder $q) {
+                    $q->where(function (Builder $sub) {
+                        $sub->where('name', 'like', '%'.$this->search.'%')
+                            ->orWhere('email', 'like', '%'.$this->search.'%');
+                    });
+                })
+                    ->when($this->filterClassGroup, function ($q) {
+                        $q->where('class', 'like', $this->filterClassGroup.'%');
+                    });
             })
             ->when($this->filterPaid !== '', function (Builder $q) {
-                $q->where('event_users.has_paid', (bool) $this->filterPaid);
+                $q->where('has_paid', (bool) $this->filterPaid);
             })
             ->when($this->onlyWorkers, function (Builder $q) {
-                $q->where('event_users.is_working', true);
-            })
-            ->when($this->filterClassGroup, function ($q) {
-                $q->where('class', 'like', $this->filterClassGroup.'%');
+                $q->where('is_working', true);
             });
 
         $participants = $query->paginate(10);
 
         foreach ($participants as $participant) {
             if (! isset($this->participantPeriods[$participant->id])) {
-                $this->participantPeriods[$participant->id] = $participant->pivot->period;
+                $this->participantPeriods[$participant->id] = $participant->event_period_id;
             }
         }
 

@@ -19,7 +19,7 @@
                 <flux:badge size="sm">{{ __('Attendee') }}</flux:badge>
             @endif
 
-            @if($this->user->pivot->in_waitinglist)
+            @if($registration->in_waitinglist)
                 <flux:badge size="sm" color="yellow">{{ __('On Waiting List') }}</flux:badge>
             @else
                 <flux:badge size="sm" color="green">{{ __('Registered Participant') }}</flux:badge>
@@ -43,7 +43,7 @@
                 </div>
                 <div>
                     <flux:label>{{ __('Registered For Event At') }}</flux:label>
-                    <flux:text>{{ $this->user->pivot->created_at->format('M d, Y H:i') }}</flux:text>
+                    <flux:text>{{ $registration->created_at->format('M d, Y H:i') }}</flux:text>
                 </div>
             </div>
         </div>

@@ -9,16 +9,16 @@
                             @if(! $this->userIsRegistered($event->id))
                                 <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
                             @else
-                                <div class="flex flex-col items-start gap-2">
-                                    @php
-                                        $registration = auth()->user()->events()->where('event_id', $event->id)->first()->pivot;
-                                    @endphp
+                            <div class="flex flex-col items-start gap-2">
+                                @php
+                                    $registration = auth()->user()->registrations()->where('event_id', $event->id)->first();
+                                @endphp
 
-                                    @if($registration->in_waitinglist)
-                                        <flux:badge color="yellow" icon="clock">{{ __('Waiting List') }}</flux:badge>
-                                    @else
-                                        <flux:badge color="green" icon="check">{{ __('Registered') }}</flux:badge>
-                                    @endif
+                                @if($registration->in_waitinglist)
+                                    <flux:badge color="yellow" icon="clock">{{ __('Waiting List') }}</flux:badge>
+                                @else
+                                    <flux:badge color="green" icon="check">{{ __('Registered') }}</flux:badge>
+                                @endif
 
                                     <flux:modal.trigger name="unregister-confirmation">
                                         <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer">{{ __('Unregister') }}</flux:button>

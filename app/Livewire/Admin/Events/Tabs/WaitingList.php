@@ -12,29 +12,32 @@ class WaitingList extends Component
 {
     public Event $event;
 
-    public function moveToParticipants($userId): void
+    public function moveToParticipants($registrationId): void
     {
         $this->authorize('manage users');
 
-        $this->event->users()->updateExistingPivot($userId, [
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+        $registration->update([
             'in_waitinglist' => false,
         ]);
 
         Flux::toast(__('User moved to participants.'));
     }
 
-    public function viewUserProfile($userId)
+    public function viewUserProfile($registrationId)
     {
         $this->authorize('manage users');
 
-        return redirect()->route('admin.event.participant.profile', [$this->event, $userId]);
+        $registration = $this->event->registrations()->with('user')->findOrFail($registrationId);
+
+        return redirect()->route('admin.event.participant.profile', [$this->event, $registration->user->id]);
     }
 
     public function render()
     {
         return view('livewire.admin.events.tabs.waiting-list', [
-            'waitingList' => $this->event->users()
-                ->where('event_users.in_waitinglist', true)
+            'waitingList' => $this->event->waitingList()
+                ->with('user')
                 ->get(),
         ]);
     }

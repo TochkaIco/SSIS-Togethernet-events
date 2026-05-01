@@ -6,4 +6,10 @@
         label="{{ __('Allow external email domains') }}"
         description="{{ __('login_restriction', ['hd' => config('services.google.hd')]) }}"
     />
+
+    <flux:checkbox
+        wire:model.live="automatedWaitingListMove"
+        label="{{ __('Automated waiting list move') }}"
+        description="{{ __('Automatically move people from the waiting list when a spot becomes available.') }}"
+    />
 </div>

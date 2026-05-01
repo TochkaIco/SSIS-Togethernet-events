@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -53,16 +54,20 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    public function sessions()
+    public function sessions(): HasMany
     {
         return $this->hasMany(Session::class)->orderBy('last_activity', 'desc');
+    }
+
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(EventUser::class);
     }
 
     public function events(): BelongsToMany
     {
         return $this->belongsToMany(Event::class, 'event_users')
-            ->using(EventUser::class)
-            ->withPivot(['is_working', 'in_waitinglist', 'has_paid', 'has_arrived'])
+            ->withPivot(['id', 'is_working', 'in_waitinglist', 'has_paid', 'has_arrived', 'event_period_id'])
             ->withTimestamps();
     }
 

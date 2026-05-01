@@ -14,9 +14,10 @@
                         <div class="flex items-end gap-4">
                             @if($event->one_hour_periods)
                                 <flux:select wire:model="period" placeholder="{{ __('Select Period') }}" class="min-w-48">
+                                    <flux:select.option :value="null">{{ __('Any available period') }}</flux:select.option>
                                     @foreach($event->eventPeriods() as $item)
                                         @if($item->type === 'period')
-                                            <flux:select.option value="{{ $item->number }}">{{ $item->label }} ({{ $event->seatsTaken($item->number) }}/{{ $event->num_of_seats }})</flux:select.option>
+                                            <flux:select.option value="{{ $item->id }}">{{ $item->label }} ({{ $event->seatsTaken($item->id) }}/{{ $item->num_of_seats }})</flux:select.option>
                                         @endif
                                     @endforeach
                                 </flux:select>
@@ -26,9 +27,9 @@
                     @else
                         <div class="flex flex-col items-end gap-2">
                             <div class="flex gap-2 items-center">
-                                @if($event->one_hour_periods && $this->registration->period)
+                                @if($event->one_hour_periods && $this->registration->event_period_id)
                                     @php
-                                        $periodLabel = $event->eventPeriods()->where('type', 'period')->where('number', $this->registration->period)->first()?->label;
+                                        $periodLabel = $this->registration->eventPeriod?->label;
                                     @endphp
                                     <flux:badge color="orange" icon="clock" inset="top bottom">{{ __('Period') }}: {{ $periodLabel }}</flux:badge>
                                 @endif
@@ -105,44 +106,46 @@
             </flux:card>
         @endif
 
-        <h3 class="font-bold">{{ __('Event Schedule') }}</h3>
-        <div class="flex flex-col">
-            @foreach($event->eventPeriods() as $item)
-                @if($item->type === 'period')
-                    @php
-                        $isRegisteredForThisPeriod = $this->registration && $this->registration->period === $item->number;
-                    @endphp
-                    {{-- Period Row --}}
-                    <div @class([
+        @if($event->periods()->count() > 1)
+            <h3 class="font-bold mt-6 mb-3">{{ __('Event Schedule') }}</h3>
+            <div class="flex flex-col">
+                @foreach($event->eventPeriods() as $item)
+                    @if($item->type === 'period')
+                        @php
+                            $isRegisteredForThisPeriod = $this->registration && $this->registration->event_period_id === $item->id;
+                        @endphp
+                        {{-- Period Row --}}
+                        <div @class([
                         'p-1 border flex items-center justify-between rounded-lg transition-all duration-300',
                         'ring-2 ring-orange-400 bg-orange-100/50 dark:bg-orange-950/40 border-orange-400/50' => $isRegisteredForThisPeriod,
                         'border-accent-content/80' => ! $isRegisteredForThisPeriod,
                     ])>
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium px-2 italic text-muted-foreground">{{ __('Period') }} {{ $item->number }}</span>
-                            @if($isRegisteredForThisPeriod)
-                                <flux:badge :color="$this->registration->in_waitinglist ? 'yellow' : 'orange'" :icon="$this->registration->in_waitinglist ? 'clock' : 'check'" size="sm" inset="top bottom">
-                                    {{ $this->registration->in_waitinglist ? __('Your Time (Waiting List)') : __('Your Time') }}
-                                </flux:badge>
-                            @endif
-                        </div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium px-2 italic text-muted-foreground">{{ __('Period') }} {{ $item->number }}</span>
+                                @if($isRegisteredForThisPeriod)
+                                    <flux:badge :color="$this->registration->in_waitinglist ? 'yellow' : 'orange'" :icon="$this->registration->in_waitinglist ? 'clock' : 'check'" size="sm" inset="top bottom">
+                                        {{ $this->registration->in_waitinglist ? __('Your Time (Waiting List)') : __('Your Time') }}
+                                    </flux:badge>
+                                @endif
+                            </div>
 
-                        <span class="border-l-4 border-l-orange-300 border border-orange-300 p-1 font-bold tracking-wider rounded text-sm bg-orange-300/20">
+                            <span class="border-l-4 border-l-orange-300 border border-orange-300 p-1 font-bold tracking-wider rounded text-sm bg-orange-300/20">
                             {{ $item->label }}
                         </span>
-                    </div>
-                @else
-                    {{-- Break Row --}}
-                    <div class="flex flex-col items-center justify-center">
-                        <flux:icon icon="arrow-down" />
-                        <div class="bg-accent-foreground px-3 text-[12px] font-bold uppercase tracking-widest text-muted-foreground border border-accent-content rounded-full shadow-sm">
-                            {{ $item->label }}
                         </div>
-                        <flux:icon icon="arrow-down" />
-                    </div>
-                @endif
-            @endforeach
-        </div>
+                    @else
+                        {{-- Break Row --}}
+                        <div class="flex flex-col items-center justify-center">
+                            <flux:icon icon="arrow-down" />
+                            <div class="bg-accent-foreground px-3 text-[12px] font-bold uppercase tracking-widest text-muted-foreground border border-accent-content rounded-full shadow-sm">
+                                {{ $item->label }}
+                            </div>
+                            <flux:icon icon="arrow-down" />
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+        @endif
 
         @if($event->links && $event->links->count())
             <div class="mt-8">

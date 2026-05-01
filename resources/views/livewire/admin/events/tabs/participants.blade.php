@@ -59,16 +59,16 @@
                     {{-- Avatar & Name --}}
                     <flux:table.cell>
                         <div wire:click="viewUserProfile({{ $participant->id }})" class="flex items-center gap-x-3 cursor-pointer hover:text-orange-300 w-min">
-                            <flux:avatar class="size-10" circle :initials="$participant->initials()" :src="$participant->profile_picture" />
+                            <flux:avatar class="size-10" circle :initials="$participant->user->initials()" :src="$participant->user->profile_picture" />
                             <div class="flex flex-col">
-                                <span class="font-medium">{{ $participant->name }}</span>
-                                <span class="text-xs">{{ $participant->email }}</span>
+                                <span class="font-medium">{{ $participant->user->name }}</span>
+                                <span class="text-xs">{{ $participant->user->email }}</span>
                             </div>
                         </div>
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <x-class-badge :user-class="$participant->class ?? 'Unknown'" />
+                        <x-class-badge :user-class="$participant->user->class ?? 'Unknown'" />
                     </flux:table.cell>
 
                     {{-- Period Selection --}}
@@ -78,12 +78,12 @@
                                 wire:model.live="participantPeriods.{{ $participant->id }}"
                                 wire:change="changePeriod({{ $participant->id }})"
                                 size="sm"
-                                class="w-24"
+                                class="w-32"
                             >
                                 @foreach($event->eventPeriods() as $item)
                                     @if($item->type === 'period')
                                         <flux:select.option
-                                            value="{{ $item->number }}"
+                                            value="{{ $item->id }}"
                                         >
                                             {{ $item->label }}
                                         </flux:select.option>
@@ -113,7 +113,7 @@
                         <flux:table.cell>
                             <flux:checkbox
                                 wire:change="togglePaid({{ $participant->id }})"
-                                :checked="(bool) $participant->pivot->has_paid"
+                                :checked="(bool) $participant->has_paid"
                             />
                         </flux:table.cell>
                     @endif
@@ -122,7 +122,7 @@
                     <flux:table.cell>
                         <flux:checkbox
                             wire:change="toggleArrived({{ $participant->id }})"
-                            :checked="(bool) $participant->pivot->has_arrived"
+                            :checked="(bool) $participant->has_arrived"
                         />
                     </flux:table.cell>
 

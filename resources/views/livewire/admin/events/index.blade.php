@@ -28,7 +28,11 @@
                     <div class="mt-2 flex items-center gap-2">
                         <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
                         <flux:badge color="orange" size="sm">
-                            {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                            @if($event->one_hour_periods)
+                                {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
+                            @else
+                                {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                            @endif
                         </flux:badge>
 
                         @if($event->paid_entry===1)

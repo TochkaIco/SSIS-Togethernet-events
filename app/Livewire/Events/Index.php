@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Events;
 
 use App\Actions\RegisterUserToEvent;
+use App\Actions\UnregisterUserFromEvent;
 use App\Models\Event;
 use App\Models\EventUser;
 use Flux\Flux;
@@ -46,19 +47,22 @@ class Index extends Component
         $this->eventIdToUnregister = $eventId;
     }
 
-    public function unregisterUser()
+    public function unregisterUser(UnregisterUserFromEvent $action)
     {
         if (! Auth::check()) {
             return redirect()->route('login');
         }
 
         if ($this->eventIdToUnregister && $this->userIsRegistered($this->eventIdToUnregister)) {
-            EventUser::where('event_id', $this->eventIdToUnregister)->where('user_id', Auth::id())->delete();
-            Flux::toast(text: 'You have been unregistered from this event.', heading: 'Success', variant: 'success');
+            $event = Event::findOrFail($this->eventIdToUnregister);
+
+            $action->handle(Auth::user(), $event);
+
+            Flux::toast(text: __('You have been unregistered from this event.'), heading: __('Success'), variant: 'success');
             $this->eventIdToUnregister = null;
             $this->modal('unregister-confirmation')->close();
         } else {
-            Flux::toast(text: 'Failed to remove your registration.', heading: 'Error', variant: 'danger');
+            Flux::toast(text: __('Failed to remove your registration.'), heading: __('Error'), variant: 'danger');
         }
     }
 
