@@ -271,9 +271,9 @@
             <div class="space-y-3">
                 <flux:input wire:model="createUserName" label="{{ __('Name') }} *" placeholder="{{ __('User\'s Name') }}" required />
                 <flux:input wire:model="createUserEmail" label="{{ __('Email') }} *" placeholder="12abcd@stockholmscience.se" required />
-                <flux:select label="{{ __('Class') }} *" class="w-fit" wire:model.live="createUserClass" wire:key="user-select-class-{{ $user->id }}" required >
+                <flux:select label="{{ __('Class') }} *" class="w-fit" wire:model.live="createUserClass" required >
                     <flux:select.option value="">{{ __('Unset') }}</flux:select.option>
-                    @foreach($user->validClasses() as $classOption)
+                    @foreach($validClasses as $classOption)
                         <flux:select.option :value="$classOption">{{ $classOption }}</flux:select.option>
                     @endforeach
                 </flux:select>

@@ -57,6 +57,11 @@ class Participants extends Component
         $this->resetPage();
     }
 
+    public function updatingFilterClassGroup(): void
+    {
+        $this->resetPage();
+    }
+
     /**
      * Toggle the 'has_paid' status on the registration.
      */

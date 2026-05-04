@@ -37,6 +37,21 @@ class UserImpersonationPage extends Component
 
     public $filterClassGroup = '';
 
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterRole(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterClassGroup(): void
+    {
+        $this->resetPage();
+    }
+
     public function impersonate($userId): void
     {
         $this->authorize('impersonate users');

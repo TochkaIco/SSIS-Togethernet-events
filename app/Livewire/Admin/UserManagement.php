@@ -44,6 +44,21 @@ class UserManagement extends Component
 
     public $filterClassGroup = '';
 
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterRole(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterClassGroup(): void
+    {
+        $this->resetPage();
+    }
+
     public function createUserModal(): void
     {
         $this->authorize('manage users');
@@ -238,6 +253,7 @@ class UserManagement extends Component
             'users' => $users,
             'allRoles' => Role::all(),
             'allPermissions' => Permission::all(),
+            'validClasses' => (new User)->validClasses(),
             'allClassGroups' => [
                 'Personal',
                 'TE'.now()->subMonths(6)->format('y'),
