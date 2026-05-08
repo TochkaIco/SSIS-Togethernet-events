@@ -1,5 +1,6 @@
 <?php
 
+use App\FeedbackType;
 use App\Livewire\Admin\AdminFeedbackView;
 use App\Livewire\FeedbackModal;
 use App\Models\Feedback;
@@ -104,4 +105,53 @@ test('admin can filter for only unresolved feedback', function () {
         ->set('filterResolved', true)
         ->assertSee('Unresolved feedback')
         ->assertDontSee('Resolved feedback');
+});
+
+test('admin can update feedback', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $feedback = Feedback::factory()->create([
+        'comment' => 'Original comment',
+        'type' => FeedbackType::BUG,
+    ]);
+
+    Livewire::test(AdminFeedbackView::class)
+        ->call('openUserFeedbackModal', $feedback)
+        ->set('feedback_comment', 'Updated comment')
+        ->set('feedback_type', FeedbackType::FEATURE)
+        ->call('updateFeedback');
+
+    expect($feedback->fresh()->comment)->toBe('Updated comment')
+        ->and($feedback->fresh()->type)->toBe(FeedbackType::FEATURE);
+});
+
+test('admin can delete feedback', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $feedback = Feedback::factory()->create();
+
+    Livewire::test(AdminFeedbackView::class)
+        ->call('confirmDelete', $feedback->id)
+        ->call('deleteFeedback');
+
+    expect(Feedback::count())->toBe(0);
+});
+
+test('admin can mark feedback as rejected', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $feedback = Feedback::factory()->create(['is_finished' => false, 'is_rejected' => false]);
+
+    Livewire::test(AdminFeedbackView::class)
+        ->call('markAsRejected', $feedback->id);
+
+    $feedback->refresh();
+    expect($feedback->is_finished)->toBeTrue()
+        ->and($feedback->is_rejected)->toBeTrue();
 });

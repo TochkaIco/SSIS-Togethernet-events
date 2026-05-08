@@ -1,6 +1,6 @@
-<div class="p-6">
+<div class="max-w-full overflow-x-hidden">
     {{-- Header & Search --}}
-    <div class="flex flex-col md:min-w-5xl md:flex-row gap-4 mb-6 items-end">
+    <div class="flex flex-col lg:flex-row gap-4 mb-6 lg:items-end">
         <flux:input
             wire:model.live.debounce.300ms="search"
             icon="magnifying-glass"
@@ -8,31 +8,33 @@
             class="flex-1"
         />
 
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
             {{-- The Worker Filter Toggle --}}
             <flux:checkbox
                 wire:model.live="onlyWorkers"
                 label="{{ __('Workers Only') }}"
-                class="pb-2"
+                class="sm:pb-2"
             />
 
-            <flux:select wire:model.live="filterPaid" placeholder="{{ __('Payment Status') }}" class="md:w-48">
-                <flux:select.option value="">{{ __('All Statuses') }}</flux:select.option>
-                <flux:select.option value="1">{{ __('Paid') }}</flux:select.option>
-                <flux:select.option value="0">{{ __('Unpaid') }}</flux:select.option>
-            </flux:select>
+            <div class="flex gap-2 flex-1">
+                <flux:select wire:model.live="filterPaid" placeholder="{{ __('Payment Status') }}" class="flex-1 lg:w-48">
+                    <flux:select.option value="">{{ __('All Statuses') }}</flux:select.option>
+                    <flux:select.option value="1">{{ __('Paid') }}</flux:select.option>
+                    <flux:select.option value="0">{{ __('Unpaid') }}</flux:select.option>
+                </flux:select>
 
-            <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="w-fit">
-                <flux:select.option value="">{{ __('All Classes') }}</flux:select.option>
-                @foreach($allClassGroups as $classGroup)
-                    <flux:select.option :value="$classGroup">{{ ucfirst($classGroup) }}</flux:select.option>
-                @endforeach
-            </flux:select>
+                <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="flex-1 lg:w-fit">
+                    <flux:select.option value="">{{ __('All Classes') }}</flux:select.option>
+                    @foreach($allClassGroups as $classGroup)
+                        <flux:select.option :value="$classGroup">{{ ucfirst($classGroup) }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+            </div>
         </div>
     </div>
 
     {{-- Participants Table --}}
-    <flux:table>
+    <flux:table class="hidden md:table">
         <flux:table.columns>
             <flux:table.column>{{ __('Index') }}</flux:table.column>
             <flux:table.column>{{ __('Participant') }}</flux:table.column>
@@ -144,7 +146,7 @@
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="6" class="text-center py-12">
+                    <flux:table.cell colspan="8" class="text-center py-12">
                         <div class="flex flex-col items-center justify-center">
                             <flux:icon.users class="size-12 mb-4" />
                             <flux:heading>{{ __('No participants found') }}</flux:heading>
@@ -155,6 +157,114 @@
             @endforelse
         </flux:table.rows>
     </flux:table>
+
+    {{-- Participants for Mobile --}}
+    <div class="md:hidden space-y-4">
+        @forelse ($participants as $participant)
+            <div class="p-4 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl space-y-4">
+                {{-- Header: Avatar, Name, and Actions --}}
+                <div class="flex items-start justify-between gap-2">
+                    <button wire:click="viewUserProfile({{ $participant->id }})" class="flex items-center gap-3 text-left min-w-0">
+                        <flux:avatar circle class="size-12 flex-shrink-0" :initials="$participant->user->initials()" :src="$participant->user->profile_picture" />
+                        <div class="min-w-0">
+                            <div class="font-semibold text-zinc-800 dark:text-white truncate">{{ $participant->user->name }}</div>
+                            <div class="text-xs text-zinc-500 truncate">{{ $participant->user->email }}</div>
+                            <div class="text-sm text-zinc-500">#{{ $participants->firstItem() + $loop->index }}</div>
+                        </div>
+                    </button>
+
+                    <div class="flex-shrink-0">
+                        <flux:dropdown>
+                            <flux:button variant="subtle" icon="ellipsis-horizontal" size="sm" class="cursor-pointer" />
+                            <flux:menu>
+                                <flux:menu.item
+                                    wire:click="moveToWaitingList({{ $participant->id }})"
+                                    icon="list-bullet"
+                                    class="cursor-pointer"
+                                >
+                                    {{ __('Move to Waiting List') }}
+                                </flux:menu.item>
+                            </flux:menu>
+                        </flux:dropdown>
+                    </div>
+                </div>
+
+                <flux:separator />
+
+                {{-- Body: Details Grid --}}
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="space-y-1">
+                        <flux:label class="text-xs font-medium uppercase tracking-wider">{{ __('Class') }}</flux:label>
+                        <div>
+                            <x-class-badge :user-class="$participant->user->class ?? 'Unknown'" />
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <flux:label class="text-xs font-medium uppercase tracking-wider">{{ __('Type') }}</flux:label>
+                        <div>
+                            @if($this->participantIsWorking($participant->id))
+                                <div class="flex items-center space-x-1">
+                                    <flux:button wire:click="updateParticipantWorkingStatus({{ $participant->id }})" variant="ghost" icon="chevron-double-down" size="xs" />
+                                    <flux:badge size="sm" color="orange">{{ __('Worker') }}</flux:badge>
+                                </div>
+                            @else
+                                <div class="flex items-center space-x-1">
+                                    <flux:button wire:click="updateParticipantWorkingStatus({{ $participant->id }})" variant="ghost" icon="chevron-double-up" size="xs" />
+                                    <span class="text-xs">{{ __('Attendee') }}</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if($event->one_hour_periods)
+                        <div class="col-span-2 space-y-1">
+                            <flux:label class="text-xs font-medium uppercase tracking-wider">{{ __('Period') }}</flux:label>
+                            <flux:select
+                                wire:model.live="participantPeriods.{{ $participant->id }}"
+                                wire:change="changePeriod({{ $participant->id }})"
+                                size="sm"
+                                class="w-full"
+                            >
+                                @foreach($event->eventPeriods() as $item)
+                                    @if($item->type === 'period')
+                                        <flux:select.option value="{{ $item->id }}">
+                                            {{ $item->label }}
+                                        </flux:select.option>
+                                    @endif
+                                @endforeach
+                            </flux:select>
+                        </div>
+                    @endif
+
+                    <div class="flex items-center justify-between col-span-2">
+                        @if($event->paid_entry === 1)
+                            <div class="flex items-center gap-2">
+                                <flux:checkbox
+                                    wire:change="togglePaid({{ $participant->id }})"
+                                    :checked="(bool) $participant->has_paid"
+                                    :label="__('Paid')"
+                                />
+                            </div>
+                        @endif
+
+                        <div class="flex items-center gap-2">
+                            <flux:checkbox
+                                wire:change="toggleArrived({{ $participant->id }})"
+                                :checked="(bool) $participant->has_arrived"
+                                :label="__('Arrived')"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="p-8 text-center bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl">
+                <flux:icon.users class="size-10 mx-auto mb-3 opacity-50" />
+                <flux:heading>{{ __('No participants found') }}</flux:heading>
+            </div>
+        @endforelse
+    </div>
 
     <flux:pagination :paginator="$participants" scroll-to />
 </div>

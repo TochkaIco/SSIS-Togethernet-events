@@ -8,9 +8,9 @@
             @endif
         </flux:breadcrumbs>
 
-        <div class="flex justify-between items-center">
-            <h1 class="font-bold text-3xl">{{ $event->title }}</h1>
-            <div class="flex gap-x-3 items-center">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h1 class="font-bold text-2xl sm:text-3xl break-words min-w-0 flex-1">{{ $event->title }}</h1>
+            <div class="flex gap-x-3 items-center flex-shrink-0">
                 @haspermission('edit articles')
                 <flux:button
                     variant="ghost"

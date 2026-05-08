@@ -17,7 +17,7 @@
                                     <flux:select.option :value="null">{{ __('Any available period') }}</flux:select.option>
                                     @foreach($event->eventPeriods() as $item)
                                         @if($item->type === 'period')
-                                            <flux:select.option value="{{ $item->id }}">{{ $item->label }} ({{ $event->seatsTaken($item->id) }}/{{ $item->num_of_seats }})</flux:select.option>
+                                            <flux:select.option value="{{ $item->id }}">{{ $item->label }} ({{ $event->seatsTaken($item->id) }}/{{ $event->num_of_seats }})</flux:select.option>
                                         @endif
                                     @endforeach
                                 </flux:select>

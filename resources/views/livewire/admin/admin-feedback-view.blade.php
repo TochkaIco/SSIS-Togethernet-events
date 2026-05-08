@@ -56,7 +56,9 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        @if($feedback->is_finished === 1)
+                        @if($feedback->is_rejected)
+                            <flux:badge color="red" variant="subtle">{{ __('Rejected') }}</flux:badge>
+                        @elseif($feedback->is_finished)
                             <flux:badge color="blue">{{ __('Resolved') }}</flux:badge>
                         @else
                             <flux:badge color="orange">{{ __('Unresolved') }}</flux:badge>
@@ -74,10 +76,19 @@
                             <flux:menu>
                                 <flux:menu.item class="cursor-pointer" icon="eye" wire:click="openUserFeedbackModal({{ $feedback }})">{{ __('View Details') }}</flux:menu.item>
                                 @if($feedback->is_finished === 1)
-                                    <flux:menu.item class="cursor-pointer" icon="x-mark" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Unresolve') }}</flux:menu.item>
+                                    <flux:menu.item class="cursor-pointer" icon="arrow-path" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Reopen') }}</flux:menu.item>
                                 @else
                                     <flux:menu.item class="cursor-pointer" icon="check" wire:click="markAsResolved({{ $feedback->id }})">{{ __('Resolve') }}</flux:menu.item>
+                                    <flux:menu.item class="cursor-pointer" icon="x-mark" wire:click="markAsRejected({{ $feedback->id }})">{{ __('Not Implementing') }}</flux:menu.item>
                                 @endif
+                                <flux:menu.separator />
+                                <flux:menu.item
+                                    class="cursor-pointer text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                                    icon="trash"
+                                    wire:click="confirmDelete({{ $feedback->id }})"
+                                >
+                                    {{ __('Delete') }}
+                                </flux:menu.item>
                             </flux:menu>
                         </flux:dropdown>
                     </flux:table.cell>
@@ -128,20 +139,26 @@
 
                         <div class="flex items-center justify-between">
                             <div>
-                                @if($feedback->is_finished === 1)
+                                @if($feedback->is_rejected)
+                                    <flux:badge color="red" variant="subtle">{{ __('Rejected') }}</flux:badge>
+                                @elseif($feedback->is_finished)
                                     <flux:badge color="blue">{{ __('Resolved') }}</flux:badge>
                                 @else
                                     <flux:badge color="orange">{{ __('Unresolved') }}</flux:badge>
                                 @endif
                             </div>
 
-                            <div>
-                                @if($feedback->is_finished === 1)
-                                    <flux:button class="cursor-pointer" variant="filled" size="xs" icon="x-mark" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Unresolve') }}</flux:button>
+                            <div class="flex gap-2">
+                                @if($feedback->is_finished)
+                                    <flux:button class="cursor-pointer" variant="filled" size="xs" icon="arrow-path" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Reopen') }}</flux:button>
                                 @else
                                     <flux:button class="cursor-pointer" variant="primary" size="xs" icon="check" wire:click="markAsResolved({{ $feedback->id }})">{{ __('Resolve') }}</flux:button>
+                                    <flux:button class="cursor-pointer" variant="ghost" size="xs" icon="x-mark" wire:click="markAsRejected({{ $feedback->id }})">{{ __('Not Implementing') }}</flux:button>
                                 @endif
+
+                                <flux:button class="cursor-pointer" variant="ghost" size="xs" icon="trash" wire:click="confirmDelete({{ $feedback->id }})" />
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -153,7 +170,7 @@
 
     <flux:modal name="feedback-modal-admin" class="md:w-md space-y-6" background-blur>
         <div>
-            <flux:heading size="lg">{{ __('Feedback Details') }}</flux:heading>
+            <flux:heading size="lg">{{ __('Edit Feedback') }}</flux:heading>
             @if($feedback_user = $this->selected_feedback?->user)
                 <flux:subheading>
                     <div class="flex items-center gap-2 mt-2">
@@ -171,7 +188,7 @@
             @endif
         </div>
 
-        <flux:radio.group wire:model="feedback_type" variant="segmented" class="w-full" disabled>
+        <flux:radio.group wire:model="feedback_type" variant="segmented" class="w-full">
             @foreach(\App\FeedbackType::cases() as $case)
                 <flux:radio :value="$case->value" :label="$case->label()" />
             @endforeach
@@ -182,8 +199,56 @@
                 wire:model="feedback_comment"
                 rows="4"
                 variant="filled"
-                readonly
             />
         </flux:field>
+
+        <div class="flex gap-2 justify-end">
+            @if($this->selected_feedback)
+                @if($this->selected_feedback->is_finished)
+                    <flux:button wire:click="markAsUnresolved({{ $this->selected_feedback->id }})" variant="filled" class="mr-auto">{{ __('Reopen') }}</flux:button>
+                @else
+                    <flux:button wire:click="markAsResolved({{ $this->selected_feedback->id }})" variant="filled" color="blue" class="mr-auto">{{ __('Resolve') }}</flux:button>
+                    <flux:button wire:click="markAsRejected({{ $this->selected_feedback->id }})" variant="filled" color="red" class="mr-auto">{{ __('Reject') }}</flux:button>
+                @endif
+            @endif
+
+            <flux:modal.close>
+                <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+            </flux:modal.close>
+            <flux:button wire:click="updateFeedback" variant="primary">{{ __('Save Changes') }}</flux:button>
+        </div>
+    </flux:modal>
+
+    {{-- Modal: Dangerous Delete --}}
+    <flux:modal name="confirm-feedback-deletion" class="md:w-100">
+        <div x-data="{ canDelete: false, timer: 3 }"
+             x-on:modal-show.window="canDelete = false; timer = 3; let interval = setInterval(() => { if(timer > 0) { timer-- } else { canDelete = true; clearInterval(interval) } }, 1000)"
+        >
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Confirm Deletion') }}</flux:heading>
+                    <flux:subheading>
+                        {{ __('This action cannot be undone. You must wait ') }}<span x-text="timer" class="font-bold text-red-600"></span>{{ __('s to confirm.') }}
+                    </flux:subheading>
+                </div>
+
+                <div class="flex gap-2 justify-end">
+                    <flux:modal.close>
+                        <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button
+                        wire:click="deleteFeedback"
+                        variant="danger"
+                        class="cursor-pointer"
+                        x-bind:disabled="!canDelete"
+                        x-bind:class="!canDelete && 'opacity-50 grayscale'"
+                    >
+                        <span x-show="canDelete">{{ __('Delete Permanently') }}</span>
+                        <span x-show="!canDelete">{{ __('Wait') }} (<span x-text="timer"></span>s)</span>
+                    </flux:button>
+                </div>
+            </div>
+        </div>
     </flux:modal>
 </div>
