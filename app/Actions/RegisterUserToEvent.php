@@ -23,7 +23,7 @@ class RegisterUserToEvent
             // Lock the event to prevent concurrent registrations from causing race conditions
             $event = Event::where('id', $event->id)->lockForUpdate()->first();
 
-            if ($event === null) {
+            if ($event === null || ! $event->canRegister()) {
                 return null;
             }
 

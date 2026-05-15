@@ -26,14 +26,16 @@
 
                     <a href="{{ route('admin.event.show', $event) }}" class="text-accent-content font-semibold text-xl hover:underline hover:text-orange-300">{{ $event->title }}</a>
                     <div class="mt-2 flex items-center gap-2">
-                        <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
-                        <flux:badge color="orange" size="sm">
-                            @if($event->one_hour_periods)
-                                {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
-                            @else
-                                {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
-                            @endif
-                        </flux:badge>
+                        @if($event->event_type !== \App\EventType::QR_TAG)
+                            <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
+                            <flux:badge color="orange" size="sm">
+                                @if($event->one_hour_periods)
+                                    {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
+                                @else
+                                    {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                                @endif
+                            </flux:badge>
+                        @endif
 
                         @if($event->paid_entry===1)
                             <div class="flex items-center gap-2">

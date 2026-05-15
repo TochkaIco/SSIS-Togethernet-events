@@ -49,14 +49,23 @@
                                         <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'participants'])" :current="request('tab') === 'participants'" wire:navigate>
                                             {{ __('Participants') }}
                                         </flux:sidebar.item>
-                                        <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'waiting'])" :current="request('tab') === 'waiting'" wire:navigate>
-                                            {{ __('Waiting List') }}
-                                        </flux:sidebar.item>
+                                        @if($event->event_type !== \App\EventType::QR_TAG)
+                                            <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'waiting'])" :current="request('tab') === 'waiting'" wire:navigate>
+                                                {{ __('Waiting List') }}
+                                            </flux:sidebar.item>
+                                        @endif
+                                        @if($event->event_type === \App\EventType::QR_TAG)
+                                            <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'qr-tag'])" :current="request('tab') === 'qr-tag'" wire:navigate>
+                                                {{ __('QR Tag') }}
+                                            </flux:sidebar.item>
+                                        @endif
                                     @endcan
                                     @can('manage kiosk')
-                                        <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'kiosk'])" :current="request('tab') === 'kiosk'" wire:navigate>
-                                            {{ __('Kiosk') }}
-                                        </flux:sidebar.item>
+                                        @if($event->event_type !== \App\EventType::QR_TAG)
+                                            <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'kiosk'])" :current="request('tab') === 'kiosk'" wire:navigate>
+                                                {{ __('Kiosk') }}
+                                            </flux:sidebar.item>
+                                        @endif
                                     @endcan
                                 </flux:sidebar.group>
                             @endif

@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use BaconQrCode\Renderer\Color\Rgb;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\Fill;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Carbon\Carbon;
 use Database\Factories\EventUserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -22,6 +28,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $has_paid
  * @property bool $has_arrived
  * @property bool $is_working
+ * @property string|null $qr_tag_token
+ * @property int|null $qr_tag_target_user_id
+ * @property Carbon|null $qr_tag_tagged_at
+ * @property int|null $qr_tag_tagged_by_user_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -34,6 +44,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'has_paid',
     'has_arrived',
     'is_working',
+    'qr_tag_token',
+    'qr_tag_target_user_id',
+    'qr_tag_tagged_at',
+    'qr_tag_tagged_by_user_id',
 ])]
 class EventUser extends Model
 {
@@ -52,6 +66,9 @@ class EventUser extends Model
             'user_id' => 'integer',
             'event_period_id' => 'integer',
             'is_working' => 'boolean',
+            'qr_tag_target_user_id' => 'integer',
+            'qr_tag_tagged_by_user_id' => 'integer',
+            'qr_tag_tagged_at' => 'datetime',
         ];
     }
 
@@ -61,6 +78,22 @@ class EventUser extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function targetUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'qr_tag_target_user_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function taggedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'qr_tag_tagged_by_user_id');
     }
 
     /**
@@ -77,6 +110,27 @@ class EventUser extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
+    }
+
+    /**
+     * Generate the QR code SVG for the tagging token.
+     */
+    public function qrTagQrCodeSvg(): string
+    {
+        if (! $this->qr_tag_token) {
+            return '';
+        }
+
+        $url = route('qr_tag.scan', ['token' => $this->qr_tag_token]);
+
+        $svg = (new Writer(
+            new ImageRenderer(
+                new RendererStyle(256, 1, null, null, Fill::uniformColor(new Rgb(255, 255, 255), new Rgb(0, 0, 0))),
+                new SvgImageBackEnd
+            )
+        ))->writeString($url);
+
+        return trim(substr($svg, strpos($svg, "\n") + 1));
     }
 
     /**

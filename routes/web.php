@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OAuthController;
+use App\Http\Controllers\QrTagController;
 use App\Livewire\Admin\AdminFeedbackView;
 use App\Livewire\Admin\AppConfigurationPage;
 use App\Livewire\Admin\Dashboard;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::view('/', 'homepage')->name('home');
+Route::get('/tag/{token}', [QrTagController::class, 'scan'])->name('qr_tag.scan');
 Route::get('/events', PublicEvents::class)->name('events');
 Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
 Route::view('/faq', 'faq')->name('faq');

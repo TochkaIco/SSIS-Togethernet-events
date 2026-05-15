@@ -33,15 +33,17 @@
         <div class="space-y-6 max-h-[65vh] px-2 overflow-y-auto">
 
             {{-- Title --}}
-            <flux:input
-                label="{{ __('Title') }} *"
-                name="title"
-                data-test="title-field"
-                placeholder="{{ __('Enter a title for your event') }}"
-                autofocus
-                required
-                :value="old('title', $event->title)"
-            />
+            <div x-show="event_type !== '{{ App\EventType::QR_TAG->value }}' || {{ $event->exists ? 'true' : 'false' }}">
+                <flux:input
+                    label="{{ __('Title') }} *"
+                    ::required="event_type !== '{{ App\EventType::QR_TAG->value }}'"
+                    name="title"
+                    data-test="title-field"
+                    placeholder="{{ __('Enter a title for your event') }}"
+                    autofocus
+                    :value="old('title', $event->title)"
+                />
+            </div>
 
             {{-- Event Type --}}
             <flux:field>
@@ -68,26 +70,30 @@
             </flux:field>
 
             {{-- Description --}}
-            <flux:textarea
-                label="{{ __('Description') }} *"
-                name="description"
-                data-test="description-field"
-                placeholder="{{ __('Describe your event...') }}"
-                required
-                rows="4"
-            >{{ old('description', $event->description) }}</flux:textarea>
+            <div x-show="event_type !== '{{ App\EventType::QR_TAG->value }}' || {{ $event->exists ? 'true' : 'false' }}">
+                <flux:textarea
+                    label="{{ __('Description') }} *"
+                    ::required="event_type !== '{{ App\EventType::QR_TAG->value }}'"
+                    name="description"
+                    data-test="description-field"
+                    placeholder="{{ __('Describe your event...') }}"
+                    rows="4"
+                >{{ old('description', $event->description) }}</flux:textarea>
+            </div>
 
             {{-- Number of Seats --}}
-            <flux:input
-                label="{{ __('Number of Seats') }} *"
-                name="num_of_seats"
-                data-test="num_of_seats-field"
-                type="number"
-                min="1"
-                placeholder="{{ __('Enter the number of seats available for this event') }}"
-                required
-                :value="old('num_of_seats', $event->num_of_seats)"
-            />
+            <template x-if="event_type !== '{{ App\EventType::QR_TAG->value }}'">
+                <flux:input
+                    label="{{ __('Number of Seats') }} *"
+                    name="num_of_seats"
+                    data-test="num_of_seats-field"
+                    type="number"
+                    min="1"
+                    placeholder="{{ __('Enter the number of seats available for this event') }}"
+                    required
+                    :value="old('num_of_seats', $event->num_of_seats)"
+                />
+            </template>
 
             <flux:separator />
 

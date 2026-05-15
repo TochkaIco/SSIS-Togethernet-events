@@ -9,8 +9,8 @@
         </flux:breadcrumbs>
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h1 class="font-bold text-2xl sm:text-3xl break-words min-w-0 flex-1">{{ $event->title }}</h1>
-            <div class="flex gap-x-3 items-center flex-shrink-0">
+            <h1 class="font-bold text-2xl sm:text-3xl wrap-break-word min-w-0 flex-1">{{ $event->title }}</h1>
+            <div class="flex space-x-3 items-center justify-between">
                 @haspermission('edit articles')
                 <flux:button
                     variant="ghost"
@@ -61,9 +61,11 @@
             <livewire:admin.events.tabs.view-details :event="$event" :key="'view-'.$event->id" />
         @elseif($tab === 'participants')
             <livewire:admin.events.tabs.participants :event="$event" :key="'part-'.$event->id" />
-        @elseif($tab === 'waiting')
+        @elseif($tab === 'waiting' && $event->event_type !== \App\EventType::QR_TAG)
             <livewire:admin.events.tabs.waiting-list :event="$event" :key="'wait-'.$event->id" />
-        @elseif($tab === 'kiosk')
+        @elseif($tab === 'qr-tag' && $event->event_type === \App\EventType::QR_TAG)
+            <livewire:admin.events.tabs.qr-tag :event="$event" :key="'qrtag-'.$event->id" />
+        @elseif($tab === 'kiosk' && $event->event_type !== \App\EventType::QR_TAG)
             <livewire:admin.events.tabs.kiosk.kiosk :event="$event" :key="'kiosk-'.$event->id" />
         @else
             <livewire:admin.events.tabs.view-details :event="$event" :key="'view-'.$event->id" />

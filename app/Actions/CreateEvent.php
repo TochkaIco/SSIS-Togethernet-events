@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\EventType;
 use App\Models\Event;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,20 @@ class CreateEvent
         $data = collect($attributes)->only([
             'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at',
         ])->toArray();
+
+        if ($data['event_type'] === EventType::QR_TAG->value) {
+            if (empty($data['title'])) {
+                $data['title'] = 'QR-Tag '.Carbon::parse($data['event_starts_at'])->format('Y-m-d');
+            }
+
+            if (empty($data['description'])) {
+                $data['description'] = __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.');
+            }
+
+            if (! isset($data['num_of_seats'])) {
+                $data['num_of_seats'] = 1000000;
+            }
+        }
 
         if ($attributes['one_hour_periods'] ?? false) {
             $startTime = Carbon::parse($data['event_starts_at']);

@@ -392,7 +392,8 @@
                                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
                                     fill: true,
                                     tension: 0.4,
-                                    pointRadius: 2
+                                    pointRadius: 0,
+                                    pointHoverRadius: 4,
                                 }]
                             },
                             options: {

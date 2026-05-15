@@ -1,11 +1,13 @@
 <div>
     <div class="flex flex-col md:min-w-5xl md:flex-row md:space-x-3 space-y-3 md:space-y-0 mb-6">
-        <div class="flex items-center gap-2">
-            <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
-            <flux:badge color="orange" size="sm">
-                {{ $event->num_of_seats }}
-            </flux:badge>
-        </div>
+        @if($event->event_type !== \App\EventType::QR_TAG)
+            <div class="flex items-center gap-2">
+                <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
+                <flux:badge color="orange" size="sm">
+                    {{ $event->num_of_seats }}
+                </flux:badge>
+            </div>
+        @endif
 
         @if($event->paid_entry===1)
             <div class="flex items-center gap-2">

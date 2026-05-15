@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\EventType;
 use App\Models\Event;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,23 @@ class UpdateEvent
         $data = collect($attributes)->only([
             'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at',
         ])->toArray();
+
+        if ($data['event_type'] === EventType::QR_TAG->value) {
+            if (array_key_exists('num_of_seats', $data) && is_null($data['num_of_seats'])) {
+                $data['num_of_seats'] = 1000000;
+            }
+
+            // If the start date is being updated, also update the title to match the new date
+            if (! empty($data['event_starts_at'])) {
+                $newDate = Carbon::parse($data['event_starts_at'])->format('Y-m-d');
+                $oldDatePattern = 'QR-Tag '.$event->event_starts_at->format('Y-m-d');
+
+                // If the user didn't change the title manually, or if it matches the old auto-generated pattern, update it
+                if (empty($attributes['title']) || $attributes['title'] === $oldDatePattern) {
+                    $data['title'] = 'QR-Tag '.$newDate;
+                }
+            }
+        }
 
         if ($attributes['one_hour_periods'] ?? false) {
             $startTime = Carbon::parse($data['event_starts_at']);

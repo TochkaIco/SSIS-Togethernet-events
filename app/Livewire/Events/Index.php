@@ -56,6 +56,13 @@ class Index extends Component
         if ($this->eventIdToUnregister && $this->userIsRegistered($this->eventIdToUnregister)) {
             $event = Event::findOrFail($this->eventIdToUnregister);
 
+            if (! $event->canUnregister()) {
+                Flux::toast(text: __('Registration changes are no longer allowed for this event.'), heading: __('Error'), variant: 'danger');
+                $this->modal('unregister-confirmation')->close();
+
+                return;
+            }
+
             $action->handle(Auth::user(), $event);
 
             Flux::toast(text: __('You have been unregistered from this event.'), heading: __('Success'), variant: 'success');
@@ -73,6 +80,12 @@ class Index extends Component
         }
 
         $event = Event::findOrFail($eventId);
+
+        if (! $event->canRegister()) {
+            Flux::toast(text: __('Registration is no longer allowed for this event.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
 
         $alreadyRegistered = EventUser::where('event_id', $eventId)
             ->where('user_id', Auth::id())

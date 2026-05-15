@@ -3,12 +3,13 @@
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
             <flux:card :key="'event-'.$event->id" class="relative w-3xl h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                @if($this->eventIsActive($event))
-                    <div class="absolute top-4 left-4 z-20">
-                        @if(auth()->user())
-                            @if(! $this->userIsRegistered($event->id))
+                <div class="absolute top-4 left-4 z-20">
+                    @if(auth()->user())
+                        @if(! $this->userIsRegistered($event->id))
+                            @if($event->canRegister())
                                 <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
-                            @else
+                            @endif
+                        @else
                             <div class="flex flex-col items-start gap-2">
                                 @php
                                     $registration = auth()->user()->registrations()->where('event_id', $event->id)->first();
@@ -20,16 +21,19 @@
                                     <flux:badge color="green" icon="check">{{ __('Registered') }}</flux:badge>
                                 @endif
 
+                                @if($event->canUnregister())
                                     <flux:modal.trigger name="unregister-confirmation">
                                         <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer">{{ __('Unregister') }}</flux:button>
                                     </flux:modal.trigger>
-                                </div>
-                            @endif
-                        @else
+                                @endif
+                            </div>
+                        @endif
+                    @else
+                        @if($event->canRegister())
                             <flux:button href="{{ route('login') }}" icon="user-plus" class="cursor-pointer" variant="primary">{{ __('Login to register for the event') }}</flux:button>
                         @endif
-                    </div>
-                @endif
+                    @endif
+                </div>
 
                 <div class="mb-auto">
                     @if($event->image_path)
@@ -44,14 +48,16 @@
 
                     <a href="{{ route('event.show', $event) }}" class="text-accent-content font-semibold text-xl hover:underline hover:text-orange-300">{{ $event->title }}</a>
                     <div class="mt-2 flex items-center gap-2">
-                        <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
-                        <flux:badge color="orange" size="sm">
-                            @if($event->one_hour_periods)
-                                {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
-                            @else
-                                {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
-                            @endif
-                        </flux:badge>
+                        @if($event->event_type !== \App\EventType::QR_TAG)
+                            <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
+                            <flux:badge color="orange" size="sm">
+                                @if($event->one_hour_periods)
+                                    {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
+                                @else
+                                    {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                                @endif
+                            </flux:badge>
+                        @endif
 
                         @if($event->paid_entry===1)
                             <div class="flex items-center gap-2">

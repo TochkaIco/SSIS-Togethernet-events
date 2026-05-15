@@ -120,15 +120,28 @@ class Dashboard extends Component
     #[Computed]
     public function userGrowth(): array
     {
-        $growth = User::selectRaw('COUNT(*) as count, DATE_FORMAT(created_at, "%Y-%m-%d") as date')
+        $growthData = User::selectRaw('COUNT(*) as count, DATE_FORMAT(created_at, "%Y-%m-%d") as date')
             ->where('created_at', '>=', now()->subYear())
             ->groupBy('date')
             ->orderBy('date', 'asc')
-            ->get();
+            ->get()
+            ->pluck('count', 'date');
+
+        $period = now()->subYear()->daysUntil(now());
+
+        $labels = [];
+        $data = [];
+
+        foreach ($period as $date) {
+            $formattedDate = $date->format('Y-m-d');
+
+            $labels[] = $formattedDate;
+            $data[] = $growthData->get($formattedDate, 0);
+        }
 
         return [
-            'labels' => $growth->pluck('date')->toArray(),
-            'data' => $growth->pluck('count')->toArray(),
+            'labels' => $labels,
+            'data' => $data,
         ];
     }
 

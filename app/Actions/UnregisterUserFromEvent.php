@@ -16,6 +16,10 @@ class UnregisterUserFromEvent
      */
     public function handle(User $user, Event $event): void
     {
+        if (! $event->canUnregister()) {
+            return;
+        }
+
         DB::transaction(function () use ($user, $event) {
             $registration = EventUser::where('event_id', $event->id)
                 ->where('user_id', $user->id)

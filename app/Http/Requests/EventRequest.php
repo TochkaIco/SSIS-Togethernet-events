@@ -36,10 +36,15 @@ class EventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string'],
-            'description' => ['required', 'string', 'max:4000000'],
+            'title' => [Rule::requiredIf($this->event_type !== EventType::QR_TAG->value), 'nullable', 'string'],
+            'description' => [Rule::requiredIf($this->event_type !== EventType::QR_TAG->value), 'nullable', 'string', 'max:4000000'],
             'event_type' => ['required', Rule::enum(EventType::class)],
-            'num_of_seats' => ['required', 'integer', 'min:1'],
+            'num_of_seats' => [
+                'nullable',
+                Rule::requiredIf($this->event_type !== EventType::QR_TAG->value),
+                'integer',
+                'min:1',
+            ],
 
             'paid_entry' => ['boolean'],
             'entry_fee' => ['nullable', 'required_if:paid_entry,true', 'integer', 'min:5'],
@@ -54,6 +59,7 @@ class EventRequest extends FormRequest
                 'required_if:one_hour_periods,false',
                 'nullable',
                 'date',
+                'after:event_starts_at',
             ],
 
             'links' => ['nullable', 'array'],
