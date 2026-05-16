@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Meetings;
 
+use App\Models\GlobalLog;
 use App\Models\Meeting;
 use App\Models\MeetingAttendant;
 use App\Models\User;
@@ -43,6 +44,9 @@ class Show extends Component
         }
 
         $this->meeting->update(['meeting_ends_at' => now()]);
+
+        GlobalLog::log('Meeting Finished', 'meeting', ['meeting_id' => $this->meeting->id, 'title' => $this->meeting->title]);
+
         $this->meeting->refresh();
     }
 
@@ -72,6 +76,8 @@ class Show extends Component
         } elseif (Carbon::now()->greaterThan($this->meeting->meeting_starts_at->addMinutes(20))) {
             abort(403, 'This action is no longer available.');
         }
+
+        GlobalLog::log('Meeting Deleted', 'meeting', ['meeting_id' => $this->meeting->id, 'title' => $this->meeting->title]);
 
         $this->meeting->delete();
         $this->redirectRoute('admin.meetings.index');

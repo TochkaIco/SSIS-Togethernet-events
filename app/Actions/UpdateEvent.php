@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\EventType;
 use App\Models\Event;
+use App\Models\GlobalLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -51,6 +52,8 @@ class UpdateEvent
 
         DB::transaction(function () use ($event, $data, $attributes) {
             $event->update($data);
+
+            GlobalLog::log('Event Updated', 'event', ['event_id' => $event->id, 'title' => $event->title]);
 
             if ($attributes['one_hour_periods'] ?? false) {
                 $numPeriods = (int) ($attributes['one_hour_periods_number'] ?? 1);

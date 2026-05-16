@@ -75,8 +75,8 @@
 
                             <flux:menu>
                                 <flux:menu.item class="cursor-pointer" icon="eye" wire:click="openUserFeedbackModal({{ $feedback }})">{{ __('View Details') }}</flux:menu.item>
-                                @if($feedback->is_finished === 1)
-                                    <flux:menu.item class="cursor-pointer" icon="arrow-path" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Reopen') }}</flux:menu.item>
+                                @if($feedback->is_finished)
+                                    <flux:menu.item class="cursor-pointer" icon="arrow-path" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Mark as Unresolved') }}</flux:menu.item>
                                 @else
                                     <flux:menu.item class="cursor-pointer" icon="check" wire:click="markAsResolved({{ $feedback->id }})">{{ __('Resolve') }}</flux:menu.item>
                                     <flux:menu.item class="cursor-pointer" icon="x-mark" wire:click="markAsRejected({{ $feedback->id }})">{{ __('Not Implementing') }}</flux:menu.item>
@@ -137,7 +137,7 @@
                             </a>
                         </div>
 
-                        <div class="flex items-center justify-between">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
                                 @if($feedback->is_rejected)
                                     <flux:badge color="red" variant="subtle">{{ __('Rejected') }}</flux:badge>
@@ -148,15 +148,15 @@
                                 @endif
                             </div>
 
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap gap-2">
                                 @if($feedback->is_finished)
-                                    <flux:button class="cursor-pointer" variant="filled" size="xs" icon="arrow-path" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Reopen') }}</flux:button>
+                                    <flux:button class="cursor-pointer" variant="filled" size="xs" icon="arrow-path" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Mark as Unresolved') }}</flux:button>
                                 @else
                                     <flux:button class="cursor-pointer" variant="primary" size="xs" icon="check" wire:click="markAsResolved({{ $feedback->id }})">{{ __('Resolve') }}</flux:button>
                                     <flux:button class="cursor-pointer" variant="ghost" size="xs" icon="x-mark" wire:click="markAsRejected({{ $feedback->id }})">{{ __('Not Implementing') }}</flux:button>
                                 @endif
 
-                                <flux:button class="cursor-pointer" variant="ghost" size="xs" icon="trash" wire:click="confirmDelete({{ $feedback->id }})" />
+                                <flux:button class="cursor-pointer sm:ml-auto" variant="ghost" size="xs" icon="trash" wire:click="confirmDelete({{ $feedback->id }})" />
                             </div>
 
                         </div>
@@ -205,10 +205,10 @@
         <div class="flex gap-2 justify-end">
             @if($this->selected_feedback)
                 @if($this->selected_feedback->is_finished)
-                    <flux:button wire:click="markAsUnresolved({{ $this->selected_feedback->id }})" variant="filled" class="mr-auto">{{ __('Reopen') }}</flux:button>
+                    <flux:button wire:click="markAsUnresolved({{ $this->selected_feedback->id }})" variant="filled" class="mr-auto">{{ __('Mark as Unresolved') }}</flux:button>
                 @else
                     <flux:button wire:click="markAsResolved({{ $this->selected_feedback->id }})" variant="filled" color="blue" class="mr-auto">{{ __('Resolve') }}</flux:button>
-                    <flux:button wire:click="markAsRejected({{ $this->selected_feedback->id }})" variant="filled" color="red" class="mr-auto">{{ __('Reject') }}</flux:button>
+                    <flux:button wire:click="markAsRejected({{ $this->selected_feedback->id }})" variant="filled" color="red" class="mr-auto">{{ __('Not Implementing') }}</flux:button>
                 @endif
             @endif
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\QrTagController;
 use App\Livewire\Admin\AdminFeedbackView;
+use App\Livewire\Admin\AdminGlobalLogs;
 use App\Livewire\Admin\AppConfigurationPage;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Events\EventShow as AdminShow;
@@ -52,6 +53,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/config', AppConfigurationPage::class)
         ->middleware('can:configure pages')->name('admin.app.config');
     Route::get('/admin/feedback', AdminFeedbackView::class)->name('admin.feedback');
+
+    Route::get('/admin/logs', AdminGlobalLogs::class)->middleware(['auth', 'can:view global logs'])->name('admin.logs');
 
     Route::middleware(['auth', 'can:impersonate users'])->group(function () {
         Route::get('/admin/user_impersonation', UserImpersonationPage::class)->name('admin.impersonation-page');

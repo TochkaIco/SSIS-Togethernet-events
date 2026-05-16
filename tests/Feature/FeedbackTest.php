@@ -155,3 +155,33 @@ test('admin can mark feedback as rejected', function () {
     expect($feedback->is_finished)->toBeTrue()
         ->and($feedback->is_rejected)->toBeTrue();
 });
+
+test('admin can mark feedback as resolved', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $feedback = Feedback::factory()->create(['is_finished' => false, 'is_rejected' => false]);
+
+    Livewire::test(AdminFeedbackView::class)
+        ->call('markAsResolved', $feedback->id);
+
+    $feedback->refresh();
+    expect($feedback->is_finished)->toBeTrue()
+        ->and($feedback->is_rejected)->toBeFalse();
+});
+
+test('admin can mark feedback as unresolved', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $feedback = Feedback::factory()->create(['is_finished' => true, 'is_rejected' => false]);
+
+    Livewire::test(AdminFeedbackView::class)
+        ->call('markAsUnresolved', $feedback->id);
+
+    $feedback->refresh();
+    expect($feedback->is_finished)->toBeFalse()
+        ->and($feedback->is_rejected)->toBeFalse();
+});

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Meetings;
 
+use App\Models\GlobalLog;
 use App\Models\Meeting;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\View\View;
@@ -22,6 +23,8 @@ class Index extends Component
             'title' => 'Togethernet möte '.$date,
             'meeting_starts_at' => now(),
         ]);
+
+        GlobalLog::log('Meeting Created', 'meeting', ['meeting_id' => $meeting->id, 'title' => $meeting->title]);
 
         return redirect()->route('admin.meetings.show', $meeting);
     }

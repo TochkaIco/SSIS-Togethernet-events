@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\EventType;
 use App\Models\Event;
+use App\Models\GlobalLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -48,6 +49,8 @@ class CreateEvent
 
         DB::transaction(function () use ($data, $attributes) {
             $event = Event::create($data);
+
+            GlobalLog::log('Event Created', 'event', ['event_id' => $event->id, 'title' => $event->title]);
 
             if ($attributes['one_hour_periods'] ?? false) {
                 $currentStart = Carbon::parse($data['event_starts_at']);

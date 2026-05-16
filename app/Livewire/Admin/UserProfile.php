@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
+use App\Models\GlobalLog;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
@@ -38,6 +39,8 @@ class UserProfile extends Component
             'name' => $this->name,
         ]);
 
+        GlobalLog::log('User Name Changed', 'user', ['target_user_id' => $this->user->id]);
+
         Flux::toast(text: __('Name updated.'), variant: 'success');
     }
 
@@ -53,6 +56,8 @@ class UserProfile extends Component
         $this->user->update([
             'class' => $class,
         ]);
+
+        GlobalLog::log('User Class Changed', 'user', ['target_user_id' => $this->user->id]);
 
         Flux::toast(text: __('Class updated.'), variant: 'success');
     }

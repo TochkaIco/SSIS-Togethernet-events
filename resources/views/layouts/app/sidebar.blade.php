@@ -97,7 +97,11 @@
                                 </flux:sidebar.item>
                             @endhaspermission
                             @hasanyrole(['admin', 'super-admin', 'maintainer'])
-                                <flux:sidebar.item icon="book-open" :href="route('admin.feedback')" :current="request()->routeIs('admin.feedback*')" wire:navigate>
+                                <flux:sidebar.item icon="clipboard-document-list" :href="route('admin.logs')" :current="request()->routeIs('admin.logs*')" wire:navigate>
+                                    {{ __('Global Logs') }}
+                                </flux:sidebar.item>
+
+                                <flux:sidebar.item icon="chat-bubble-left-right" :href="route('admin.feedback')" :current="request()->routeIs('admin.feedback*')" wire:navigate>
                                     {{ __('View Feedback') }}
                                 </flux:sidebar.item>
                             @endhasanyrole
@@ -138,7 +142,7 @@
 
             <flux:spacer />
 
-            <flux:sidebar.item icon="book-open" class="cursor-pointer" x-on:click="$flux.modal('feedback-modal').show()">{{ __('Give Feedback') }}</flux:sidebar.item>
+            <flux:sidebar.item icon="chat-bubble-left" class="cursor-pointer" x-on:click="$flux.modal('feedback-modal').show()">{{ __('Give Feedback') }}</flux:sidebar.item>
 
             @auth
                 <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />

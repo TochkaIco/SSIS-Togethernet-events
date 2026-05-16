@@ -384,7 +384,7 @@
     "Bug": "Bugg",
     "Resolved": "Löst",
     "Unresolved": "Olöst",
-    "Unresolve": "Markera som olöst",
+    "Mark as Unresolved": "Markera som olöst",
     "Resolve": "Markera som löst",
     "Feedback Details": "Feedbackdetaljer",
     "Feedback marked as resolved.": "Feedback markerad som löst.",
@@ -423,5 +423,17 @@
     "Avg. Monthly Meeting Attendance": "Genomsnittlig månatlig mötesnärvaro",
     "Meeting Duration Trends": "Trender för möteslängd",
     "Avg. Monthly Meeting Duration": "Genomsnittlig månatlig möteslängd",
-    "Total User Growth": "Total användartillväxt"
+    "Total User Growth": "Total användartillväxt",
+    "Clear Old Logs": "Rensa gamla loggar",
+    "Remove system logs older than a certain period. This action cannot be undone.": "Ta bort systemloggar äldre än en viss period. Denna åtgärd kan inte ångras.",
+    "Keep logs from the last": "Behåll loggar från de senaste",
+    "1 month": "1 månad",
+    "2 months": "2 månader",
+    "3 months": "3 månader",
+    "6 months": "6 månader",
+    "12 months": "12 månader",
+    "Clear Logs": "Rensa loggar",
+    ":count old logs cleared.": ":count gamla loggar rensade.",
+    "No logs found to clear for the selected period.": "Inga loggar hittades att rensa för den valda perioden.",
+    "Global Logs": "Globala Loggar"
 }

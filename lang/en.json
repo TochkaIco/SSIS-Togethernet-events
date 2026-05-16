@@ -217,5 +217,17 @@
     "Date": "Date",
     "Your Time": "Your Time",
     "Your Time (Waiting List)": "Your Time (Waiting List)",
-    "login_restriction": "If unchecked, only accounts from :hd can login."
+    "login_restriction": "If unchecked, only accounts from :hd can login.",
+    "Mark as Unresolved": "Mark as Unresolved",
+    "Clear Old Logs": "Clear Old Logs",
+    "Remove system logs older than a certain period. This action cannot be undone.": "Remove system logs older than a certain period. This action cannot be undone.",
+    "Keep logs from the last": "Keep logs from the last",
+    "1 month": "1 month",
+    "2 months": "2 months",
+    "3 months": "3 months",
+    "6 months": "6 months",
+    "12 months": "12 months",
+    "Clear Logs": "Clear Logs",
+    ":count old logs cleared.": ":count old logs cleared.",
+    "No logs found to clear for the selected period.": "No logs found to clear for the selected period."
 }

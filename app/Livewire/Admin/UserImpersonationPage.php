@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
+use App\Models\GlobalLog;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\View\Factory;
@@ -58,6 +59,7 @@ class UserImpersonationPage extends Component
         $user = User::findOrFail($userId);
 
         if ($user->canBeImpersonated()) {
+            GlobalLog::log('Impersonation Started', 'impersonation', ['target_user_id' => $user->id]);
             $this->redirect(route('impersonate', $user->id));
         } else {
             Flux::toast(

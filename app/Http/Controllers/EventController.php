@@ -8,6 +8,7 @@ use App\Actions\CreateEvent;
 use App\Actions\UpdateEvent;
 use App\Http\Requests\EventRequest;
 use App\Models\Event;
+use App\Models\GlobalLog;
 
 class EventController extends Controller
 {
@@ -39,6 +40,8 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
+        GlobalLog::log('Event Deleted', 'event', ['event_id' => $event->id, 'title' => $event->title]);
+
         $event->delete();
 
         return to_route('admin.events');

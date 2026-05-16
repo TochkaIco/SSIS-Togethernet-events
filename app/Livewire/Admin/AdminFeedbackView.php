@@ -6,6 +6,7 @@ namespace App\Livewire\Admin;
 
 use App\FeedbackType;
 use App\Models\Feedback;
+use App\Models\GlobalLog;
 use Flux\Flux;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -50,6 +51,8 @@ class AdminFeedbackView extends Component
             'is_rejected' => false,
         ]);
 
+        GlobalLog::log('Feedback marked as resolved', 'feedback', ['feedback_id' => $feedback->id]);
+
         $this->modal('feedback-modal-admin')->close();
 
         Flux::toast(__('Feedback marked as resolved.'), variant: 'success');
@@ -66,6 +69,8 @@ class AdminFeedbackView extends Component
             'is_rejected' => false,
         ]);
 
+        GlobalLog::log('Feedback marked as unresolved', 'feedback', ['feedback_id' => $feedback->id]);
+
         $this->modal('feedback-modal-admin')->close();
 
         Flux::toast(__('Feedback marked as unresolved.'), variant: 'success');
@@ -81,6 +86,8 @@ class AdminFeedbackView extends Component
             'is_finished' => true,
             'is_rejected' => true,
         ]);
+
+        GlobalLog::log('Feedback marked as rejected', 'feedback', ['feedback_id' => $feedback->id]);
 
         $this->modal('feedback-modal-admin')->close();
 
@@ -115,6 +122,8 @@ class AdminFeedbackView extends Component
             'type' => $this->feedback_type,
         ]);
 
+        GlobalLog::log('User feedback updated by admin', 'feedback', ['feedback_id' => $this->selected_feedback->id]);
+
         $this->modal('feedback-modal-admin')->close();
 
         Flux::toast(__('Feedback updated successfully.'), variant: 'success');
@@ -138,6 +147,8 @@ class AdminFeedbackView extends Component
 
         $feedback = Feedback::findOrFail($this->feedbackToDelete);
         $feedback->delete();
+
+        GlobalLog::log('Feedback deleted by admin', 'feedback', ['feedback_id' => $feedback->id]);
 
         $this->modal('confirm-feedback-deletion')->close();
 

@@ -21,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property-read EventUser $pivot
  */
-#[Fillable(['name', 'email', 'locale', 'class', 'profile_picture', 'last_activity_at', 'google_id', 'google_token', 'google_refresh_token'])]
+#[Fillable(['name', 'email', 'locale', 'class', 'profile_picture', 'last_activity_at', 'google_id', 'google_token', 'google_refresh_token', 'anonymized_at'])]
 #[Hidden(['two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -38,8 +38,37 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'last_activity_at' => 'datetime',
+            'anonymized_at' => 'datetime',
             // 'password' => 'hashed',
         ];
+    }
+
+    public function anonymize(): void
+    {
+        $this->update([
+            'name' => 'Anonymized',
+            'email' => 'anonymized_'.$this->id.'@anonymized.com',
+            'profile_picture' => null,
+            'google_id' => null,
+            'google_token' => null,
+            'google_refresh_token' => null,
+            'anonymized_at' => now(),
+        ]);
+
+        $this->syncRoles([]);
+        $this->syncPermissions([]);
+
+        $this->sessions()->delete();
+    }
+
+    public function scopeNotAnonymized($query)
+    {
+        return $query->whereNull('anonymized_at');
+    }
+
+    public function isAnonymized(): bool
+    {
+        return $this->anonymized_at !== null;
     }
 
     /**

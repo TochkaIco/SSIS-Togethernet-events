@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
+use App\Models\GlobalLog;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\View\Factory;
@@ -76,11 +77,13 @@ class UserManagement extends Component
             'createUserClass' => ['required', 'string'],
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $this->createUserName,
             'email' => $this->createUserEmail,
             'class' => $this->createUserClass,
         ]);
+
+        GlobalLog::log('User Created', 'user', ['user_id' => $user->id]);
 
         $this->reset(['createUserName', 'createUserEmail', 'createUserClass']);
 
@@ -183,8 +186,33 @@ class UserManagement extends Component
                 return;
             }
         }
+        $oldRoles = $user->roles->pluck('name')->toArray();
+        $oldPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
+
         $user->syncRoles($this->userRoles);
         $user->syncPermissions($this->userPermissions);
+
+        $addedRoles = array_values(array_diff($this->userRoles, $oldRoles));
+        $removedRoles = array_values(array_diff($oldRoles, $this->userRoles));
+        $addedPermissions = array_values(array_diff($this->userPermissions, $oldPermissions));
+        $removedPermissions = array_values(array_diff($oldPermissions, $this->userPermissions));
+
+        $details = ['target_user_id' => $user->id];
+
+        if ($addedRoles !== []) {
+            $details['added_roles'] = $addedRoles;
+        }
+        if ($removedRoles !== []) {
+            $details['removed_roles'] = $removedRoles;
+        }
+        if ($addedPermissions !== []) {
+            $details['added_permissions'] = $addedPermissions;
+        }
+        if ($removedPermissions !== []) {
+            $details['removed_permissions'] = $removedPermissions;
+        }
+
+        GlobalLog::log('User Permissions Updated', 'user', $details);
 
         $this->modal('edit-user-permissions')->close();
         Flux::toast(
@@ -216,11 +244,13 @@ class UserManagement extends Component
             return;
         }
 
-        $user->delete();
+        GlobalLog::log('User Deleted', 'user', ['target_user_id' => $user->id]);
+
+        $user->anonymize();
 
         $this->modal('confirm-user-deletion')->close();
 
-        Flux::toast(text: 'The account has been removed.', heading: 'User Deleted', variant: 'success');
+        Flux::toast(text: 'The account has been anonymized and removed from view.', heading: 'User Anonymized', variant: 'success');
     }
 
     public function viewUserProfile($userId)
@@ -234,6 +264,7 @@ class UserManagement extends Component
     public function render(): View|Factory|\Illuminate\View\View
     {
         $users = User::query()
+            ->notAnonymized()
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {
                     $sub->where('name', 'like', '%'.$this->search.'%')

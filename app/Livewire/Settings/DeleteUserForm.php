@@ -25,7 +25,8 @@ class DeleteUserForm extends Component
             'confirmation.in' => __('Please enter "DELETE" to confirm your account deletion.'),
         ]);
 
-        tap($user, $logout(...))->delete();
+        $user->anonymize();
+        $logout();
 
         $this->redirect('/', navigate: true);
     }

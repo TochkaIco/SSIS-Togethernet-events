@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin\Meetings;
 
 use App\Jobs\BackupMeetingToGoogleDrive;
+use App\Models\GlobalLog;
 use App\Models\Meeting;
 use Flux\Flux;
 use Illuminate\Contracts\View\Factory;
@@ -51,6 +52,8 @@ class Protocol extends Component
             'meeting_starts_at' => $this->meeting_starts_at,
             'meeting_ends_at' => $this->meeting_ends_at ?: null,
         ]);
+
+        GlobalLog::log('Meeting Protocol Updated', 'meeting', ['meeting_id' => $this->meeting->id, 'title' => $this->title]);
 
         BackupMeetingToGoogleDrive::dispatch($this->description, $this->title, $this->meeting_starts_at);
 

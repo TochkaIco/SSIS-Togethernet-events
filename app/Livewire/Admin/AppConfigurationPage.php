@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\AppConfig;
+use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
@@ -26,12 +27,16 @@ class AppConfigurationPage extends Component
     {
         AppConfig::updateOrCreate(['key' => 'allow_external_emails'], ['value' => $value ? 'true' : 'false', 'type' => 'boolean']);
 
+        GlobalLog::log('App Configuration Updated', 'config', ['key' => 'allow_external_emails', 'value' => $value ? 'true' : 'false']);
+
         Flux::toast(__('Setting saved.'), variant: 'success');
     }
 
     public function updatedAutomatedWaitingListMove($value): void
     {
         AppConfig::updateOrCreate(['key' => 'automated_waiting_list_move'], ['value' => $value ? 'true' : 'false', 'type' => 'boolean']);
+
+        GlobalLog::log('App Configuration Updated', 'config', ['key' => 'automated_waiting_list_move', 'value' => $value ? 'true' : 'false']);
 
         Flux::toast(__('Setting saved.'), variant: 'success');
     }
