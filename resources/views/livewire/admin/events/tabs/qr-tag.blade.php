@@ -76,6 +76,7 @@
         <flux:table.columns>
             <flux:table.column>{{ __('Participant') }}</flux:table.column>
             <flux:table.column>{{ __('Status') }}</flux:table.column>
+            <flux:table.column>{{ __('Tags') }}</flux:table.column>
             <flux:table.column>{{ __('Target') }}</flux:table.column>
             <flux:table.column>{{ __('Tagged By') }}</flux:table.column>
             <flux:table.column>{{ __('Tagged At') }}</flux:table.column>
@@ -86,19 +87,32 @@
             @foreach ($participants as $participant)
                 <flux:table.row>
                     <flux:table.cell class="flex items-center gap-2">
-                        <flux:avatar src="{{ $participant->user->profile_picture }}" :initials="$participant->user->initials()" size="sm" />
+                        <div class="relative">
+                            <flux:avatar src="{{ $participant->user->profile_picture }}" :initials="$participant->user->initials()" size="sm" />
+                            @if($participant->is_disabled)
+                                <div class="absolute -top-1 -right-1 size-4 bg-red-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
+                                    <flux:icon.x-mark class="size-2.5 text-white" />
+                                </div>
+                            @endif
+                        </div>
                         <div>
-                            <div class="font-medium">{{ $participant->user->name }}</div>
+                            <div @class(['font-medium', 'text-zinc-400 line-through' => $participant->is_disabled])>{{ $participant->user->name }}</div>
                             <div class="text-xs text-muted-foreground">{{ $participant->user->email }}</div>
                         </div>
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        @if ($participant->qr_tag_tagged_at)
+                        @if ($participant->is_disabled)
+                            <flux:badge color="red" size="sm">{{ __('Disabled') }}</flux:badge>
+                        @elseif ($participant->qr_tag_tagged_at)
                             <flux:badge color="red" size="sm">{{ __('Tagged') }}</flux:badge>
                         @else
                             <flux:badge color="green" size="sm">{{ __('Active') }}</flux:badge>
                         @endif
+                    </flux:table.cell>
+
+                    <flux:table.cell>
+                        <flux:badge variant="outline" size="sm">{{ $participant->qr_tag_count }}</flux:badge>
                     </flux:table.cell>
 
                     <flux:table.cell>
@@ -128,27 +142,49 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        @if ($participant->qr_tag_tagged_at)
-                            <flux:button wire:click="rebirthPlayer({{ $participant->id }})" variant="ghost" icon="sparkles" size="sm" class="text-purple-600 hover:text-purple-700" tooltip="{{ __('Rebirth Player') }}" />
-                        @endif
+                        <div class="flex items-center gap-2">
+                            @if ($participant->qr_tag_tagged_at && !$participant->is_disabled)
+                                <flux:button wire:click="rebirthPlayer({{ $participant->id }})" variant="ghost" icon="sparkles" size="sm" class="text-purple-600 hover:text-purple-700" tooltip="{{ __('Rebirth Player') }}" />
+                            @endif
+
+                            <flux:button
+                                wire:click="toggleDisabled({{ $participant->id }})"
+                                variant="ghost"
+                                :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
+                                size="sm"
+                                :class="$participant->is_disabled ? 'text-green-600' : 'text-zinc-400'"
+                                :tooltip="$participant->is_disabled ? __('Enable Player') : __('Disable Player')"
+                            />
+                        </div>
                     </flux:table.cell>
                 </flux:table.row>
             @endforeach
         </flux:table.rows>
     </flux:table>
 
+    <flux:pagination :paginator="$participants" scroll-to class="hidden lg:block mt-3" />
+
     {{-- Mobile/Tablet List --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
         @foreach ($participants as $participant)
             <flux:card class="relative overflow-hidden">
                 <div class="flex items-center gap-3 mb-4">
-                    <flux:avatar src="{{ $participant->user->profile_picture }}" :initials="$participant->user->initials()" size="md" />
+                    <div class="relative">
+                        <flux:avatar src="{{ $participant->user->profile_picture }}" :initials="$participant->user->initials()" size="md" />
+                        @if($participant->is_disabled)
+                            <div class="absolute -top-1 -right-1 size-5 bg-red-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
+                                <flux:icon.x-mark class="size-3 text-white" />
+                            </div>
+                        @endif
+                    </div>
                     <div class="min-w-0">
-                        <div class="font-bold truncate">{{ $participant->user->name }}</div>
+                        <div @class(['font-bold truncate', 'text-zinc-400 line-through' => $participant->is_disabled])>{{ $participant->user->name }}</div>
                         <div class="text-xs text-muted-foreground truncate">{{ $participant->user->email }}</div>
                     </div>
                     <div class="ml-auto">
-                        @if ($participant->qr_tag_tagged_at)
+                        @if ($participant->is_disabled)
+                            <flux:badge color="red" size="sm">{{ __('Disabled') }}</flux:badge>
+                        @elseif ($participant->qr_tag_tagged_at)
                             <flux:badge color="red" size="sm">{{ __('Tagged') }}</flux:badge>
                         @else
                             <flux:badge color="green" size="sm">{{ __('Active') }}</flux:badge>
@@ -157,6 +193,11 @@
                 </div>
 
                 <div class="space-y-3 text-sm">
+                    <div class="flex justify-between items-center py-2 border-b border-zinc-100 dark:border-zinc-800">
+                        <span class="text-muted-foreground">{{ __('Total Tags:') }}</span>
+                        <flux:badge variant="outline" size="sm">{{ $participant->qr_tag_count }}</flux:badge>
+                    </div>
+
                     <div class="flex justify-between items-center py-2 border-b border-zinc-100 dark:border-zinc-800">
                         <span class="text-muted-foreground">{{ __('Target:') }}</span>
                         @if ($participant->targetUser)
@@ -169,7 +210,7 @@
                         @endif
                     </div>
 
-                    @if($participant->qr_tag_tagged_at)
+                    @if($participant->qr_tag_tagged_at && !$participant->is_disabled)
                         <div class="flex justify-between items-center py-2 border-b border-zinc-100 dark:border-zinc-800">
                             <span class="text-muted-foreground">{{ __('Tagged By:') }}</span>
                             @if ($participant->taggedBy)
@@ -192,9 +233,23 @@
                             </flux:button>
                         </div>
                     @endif
+
+                    <div class="mt-2">
+                        <flux:button
+                            wire:click="toggleDisabled({{ $participant->id }})"
+                            variant="outline"
+                            :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
+                            size="sm"
+                            class="w-full"
+                        >
+                            {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
+                        </flux:button>
+                    </div>
                 </div>
             </flux:card>
         @endforeach
+
+        <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
     </div>
 
     <div class="mt-12">

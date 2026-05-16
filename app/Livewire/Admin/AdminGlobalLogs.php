@@ -41,7 +41,7 @@ class AdminGlobalLogs extends Component
         Flux::toast(__(':count old logs cleared.', ['count' => $count]), variant: 'success');
     }
 
-    #[Layout('layouts.app', ['title' => 'Global Logs'])]
+    #[Layout('layouts.app')]
     public function render(): View
     {
         $logs = GlobalLog::with('user')
@@ -57,6 +57,6 @@ class AdminGlobalLogs extends Component
         return view('livewire.admin.admin-global-logs', [
             'logs' => $logs,
             'targetUsers' => $targetUsers,
-        ]);
+        ])->title(__('Global Logs'));
     }
 }

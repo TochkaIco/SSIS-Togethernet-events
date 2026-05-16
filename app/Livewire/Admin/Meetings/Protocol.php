@@ -63,6 +63,6 @@ class Protocol extends Component
     public function render(): Factory|\Illuminate\Contracts\View\View|View
     {
         return view('livewire.admin.meetings.protocol')
-            ->layout('layouts.app', ['title' => 'Edit Protocol']);
+            ->layout('layouts.app', ['title' => __('Edit Protocol')]);
     }
 }

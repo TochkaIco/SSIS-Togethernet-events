@@ -28,7 +28,7 @@
 
             <flux:separator />
 
-            <h1 class="text-center">
+            <h1 class="text-center text-3xl">
                 {{ __('Rules') }}
             </h1>
             <x-faq.answer>

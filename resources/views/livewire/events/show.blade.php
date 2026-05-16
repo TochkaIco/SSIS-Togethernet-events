@@ -1,4 +1,4 @@
-<div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-8 max-w-xs md:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-6 flex flex-col gap-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('events') }}" icon="layout-grid">{{ __('Events') }}</flux:breadcrumbs.item>
@@ -126,6 +126,44 @@
                     </flux:card>
                 </div>
 
+                {{-- Leaderboard --}}
+                <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                    <div class="flex items-center gap-2 mb-6">
+                        <flux:icon.trophy class="text-orange-500" />
+                        <flux:heading size="lg">{{ __('Top 5 Players') }}</flux:heading>
+                    </div>
+
+                    <div class="space-y-4">
+                        @forelse($event->qrTagLeaderboard() as $index => $leader)
+                            <div class="flex items-center gap-4 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                <div @class([
+                                    'size-8 flex items-center justify-center rounded-full font-bold text-white shrink-0',
+                                    'bg-yellow-500' => $index === 0,
+                                    'bg-zinc-400' => $index === 1,
+                                    'bg-orange-700' => $index === 2,
+                                    'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300' => $index > 2,
+                                ])>
+                                    {{ $index + 1 }}
+                                </div>
+
+                                <flux:avatar src="{{ $leader->user->profile_picture }}" :initials="$leader->user->initials()" size="sm" class="shrink-0" />
+
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold truncate">{{ $leader->user->name }}</div>
+                                    <div class="text-xs text-muted-foreground">{{ $leader->user->class }}</div>
+                                </div>
+
+                                <div class="flex flex-col items-end shrink-0">
+                                    <div class="text-lg font-bold text-orange-500">{{ $leader->qr_tag_count }}</div>
+                                    <div class="text-[10px] uppercase tracking-tighter text-muted-foreground">{{ __('Tags') }}</div>
+                                </div>
+                            </div>
+                        @empty
+                            <flux:text class="italic">{{ __('No tags yet.') }}</flux:text>
+                        @endforelse
+                    </div>
+                </flux:card>
+
                 {{-- User Game Info (only if registered) --}}
                 @if($this->registration && !$this->registration->in_waitinglist)
                     <flux:card class="bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
@@ -145,6 +183,11 @@
                                                 'time' => $this->registration->qr_tag_tagged_at->format('H:i')
                                             ]) }}
                                         </p>
+                                    </div>
+                                @elseif($this->registration->is_disabled)
+                                    <div class="p-4 bg-zinc-100 dark:bg-zinc-900/30 text-zinc-800 dark:text-zinc-200 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                                        <p class="font-bold">{{ __('You are currently disabled.') }}</p>
+                                        <p class="text-sm">{{ __('An admin has disabled you for this event. You cannot tag or be tagged.') }}</p>
                                     </div>
                                 @elseif($this->registration->qr_tag_target_user_id)
                                     @if($this->registration->qr_tag_target_user_id === auth()->id())
@@ -167,7 +210,7 @@
                                 @endif
                             </div>
 
-                            @if(!$this->registration->qr_tag_tagged_at && $this->registration->qr_tag_token)
+                            @if(!$this->registration->qr_tag_tagged_at && !$this->registration->is_disabled && $this->registration->qr_tag_token)
                                 <div class="flex flex-col items-center gap-3 shrink-0 max-w-full">
                                     <flux:text class="font-medium">{{ __('Your QR Code') }}</flux:text>
                                     <div class="p-4 bg-white rounded-xl shadow-inner border-2 border-orange-400 max-w-full overflow-hidden">

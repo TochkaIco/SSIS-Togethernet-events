@@ -117,8 +117,8 @@ class UserManagement extends Component
             if (! Auth::user()->hasRole(['super-admin', 'maintainer'])) {
                 $this->modal('edit-user-permissions')->close();
                 Flux::toast(
-                    text: 'Only Super-Admins or Maintainers can grant Maintainer role.',
-                    heading: 'Error',
+                    text: __('Only Super-Admins or Maintainers can grant Maintainer role.'),
+                    heading: __('Error'),
                     variant: 'danger'
                 );
                 $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
@@ -129,8 +129,8 @@ class UserManagement extends Component
             if (! Auth::user()->hasAnyRole(['super-admin', 'maintainer'])) {
                 $this->modal('edit-user-permissions')->close();
                 Flux::toast(
-                    text: 'Only Super-Admins or Maintainers can grant Super-Admin role.',
-                    heading: 'Error',
+                    text: __('Only Super-Admins or Maintainers can grant Super-Admin role.'),
+                    heading: __('Error'),
                     variant: 'danger'
                 );
                 $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
@@ -141,8 +141,8 @@ class UserManagement extends Component
             if (! Auth::user()->hasAnyRole(['super-admin', 'maintainer'])) {
                 $this->modal('edit-user-permissions')->close();
                 Flux::toast(
-                    text: 'Only Super-Admins or Maintainers can grant Admin role.',
-                    heading: 'Error',
+                    text: __('Only Super-Admins or Maintainers can grant Admin role.'),
+                    heading: __('Error'),
                     variant: 'danger'
                 );
                 $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
@@ -153,8 +153,8 @@ class UserManagement extends Component
             if (! Auth::user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
                 $this->modal('edit-user-permissions')->close();
                 Flux::toast(
-                    text: 'Only Admins can grant permission to delete users..',
-                    heading: 'Error',
+                    text: __('Only Admins can grant permission to delete users.'),
+                    heading: __('Error'),
                     variant: 'danger'
                 );
                 $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
@@ -165,8 +165,8 @@ class UserManagement extends Component
             if (! Auth::user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
                 $this->modal('edit-user-permissions')->close();
                 Flux::toast(
-                    text: 'Only Admins can grant permission to configure pages.',
-                    heading: 'Error',
+                    text: __('Only Admins can grant permission to configure pages.'),
+                    heading: __('Error'),
                     variant: 'danger'
                 );
                 $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
@@ -177,8 +177,8 @@ class UserManagement extends Component
             if (! Auth::user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
                 $this->modal('edit-user-permissions')->close();
                 Flux::toast(
-                    text: 'Only Admins can grant permission to view dev-related components.',
-                    heading: 'Error',
+                    text: __('Only Admins can grant permission to view dev-related components.'),
+                    heading: __('Error'),
                     variant: 'danger'
                 );
                 $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
@@ -216,8 +216,8 @@ class UserManagement extends Component
 
         $this->modal('edit-user-permissions')->close();
         Flux::toast(
-            text: 'Permissions updated.',
-            heading: 'Saved',
+            text: __('Permissions updated.'),
+            heading: __('Saved'),
             variant: 'success'
         );
         $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
@@ -239,7 +239,7 @@ class UserManagement extends Component
         $user = User::findOrFail($this->userToDelete);
 
         if ($user->id === auth()->id()) {
-            Flux::toast(text: 'You cannot delete yourself.', heading: 'Error', variant: 'danger');
+            Flux::toast(text: __('You cannot delete yourself.'), heading: __('Error'), variant: 'danger');
 
             return;
         }
@@ -250,7 +250,7 @@ class UserManagement extends Component
 
         $this->modal('confirm-user-deletion')->close();
 
-        Flux::toast(text: 'The account has been anonymized and removed from view.', heading: 'User Anonymized', variant: 'success');
+        Flux::toast(text: __('The account has been anonymized and removed from view.'), heading: __('User Anonymized'), variant: 'success');
     }
 
     public function viewUserProfile($userId)
@@ -260,7 +260,7 @@ class UserManagement extends Component
         return redirect()->route('admin.user.profile', $userId);
     }
 
-    #[Layout('layouts.app', ['title' => 'Users'])]
+    #[Layout('layouts.app')]
     public function render(): View|Factory|\Illuminate\View\View
     {
         $users = User::query()
@@ -291,6 +291,6 @@ class UserManagement extends Component
                 'TE'.now()->subMonths(6)->subYear()->format('y'),
                 'TE'.now()->subMonths(6)->subYears(2)->format('y'),
             ],
-        ]);
+        ])->title(__('Users'));
     }
 }

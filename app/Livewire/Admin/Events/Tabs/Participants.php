@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin\Events\Tabs;
 
 use App\Actions\ProcessWaitingList;
+use App\EventType;
 use App\Models\Event;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,7 +76,7 @@ class Participants extends Component
             'has_paid' => ! $registration->has_paid,
         ]);
 
-        Flux::toast(__('Payment status updated.'));
+        Flux::toast(__('Payment status updated.'), variant: 'success');
     }
 
     /**
@@ -91,7 +92,21 @@ class Participants extends Component
             'has_arrived' => ! $registration->has_arrived,
         ]);
 
-        Flux::toast(__('Arrival status updated.'));
+        Flux::toast(__('Arrival status updated.'), variant: 'success');
+    }
+
+    /**
+     * Toggle the 'is_disabled' status on the registration.
+     */
+    public function toggleDisabled(int $registrationId): void
+    {
+        $this->authorize('manage users');
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        $registration->toggleDisabled();
+
+        Flux::toast(__('User status updated.'), variant: 'success');
     }
 
     /**
@@ -100,6 +115,12 @@ class Participants extends Component
     public function moveToWaitingList(int $registrationId, ProcessWaitingList $processAction): void
     {
         $this->authorize('manage users');
+
+        if ($this->event->event_type === EventType::QR_TAG) {
+            Flux::toast(__('Waiting list is not supported for QR-Tag events.'), variant: 'danger');
+
+            return;
+        }
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
         $periodId = $registration->event_period_id;
@@ -111,7 +132,7 @@ class Participants extends Component
 
         $processAction->handle($this->event, $periodId);
 
-        Flux::toast(__('Moved to waiting list.'));
+        Flux::toast(__('Moved to waiting list.'), variant: 'success');
     }
 
     public function participantIsWorking(int $registrationId): bool
@@ -139,7 +160,7 @@ class Participants extends Component
             'is_working' => ! $registration->is_working,
         ]);
 
-        Flux::toast(__('Worker status updated.'));
+        Flux::toast(__('Worker status updated.'), variant: 'success');
     }
 
     public function changePeriod(int $registrationId, ProcessWaitingList $processAction): void
@@ -163,7 +184,7 @@ class Participants extends Component
             $processAction->handle($this->event, $oldPeriodId);
         }
 
-        Flux::toast(__('Period updated.'));
+        Flux::toast(__('Period updated.'), variant: 'success');
     }
 
     /**

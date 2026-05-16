@@ -1,6 +1,6 @@
-<div class="max-w-full overflow-x-hidden">
+<div>
     {{-- Header & Search --}}
-    <div class="flex flex-col lg:flex-row gap-4 mb-6 lg:items-end">
+    <div class="flex flex-col lg:flex-row gap-4 m-1 mb-6 lg:items-end">
         <flux:input
             wire:model.live.debounce.300ms="search"
             icon="magnifying-glass"
@@ -61,10 +61,22 @@
                     {{-- Avatar & Name --}}
                     <flux:table.cell>
                         <div wire:click="viewUserProfile({{ $participant->id }})" class="flex items-center gap-x-3 cursor-pointer hover:text-orange-300 w-min">
-                            <flux:avatar class="size-10" circle :initials="$participant->user->initials()" :src="$participant->user->profile_picture" />
+                            <div class="relative">
+                                <flux:avatar class="size-10" circle :initials="$participant->user->initials()" :src="$participant->user->profile_picture" />
+                                @if($participant->is_disabled)
+                                    <div class="absolute -top-1 -right-1 size-4 bg-red-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
+                                        <flux:icon.x-mark class="size-2.5 text-white" />
+                                    </div>
+                                @endif
+                            </div>
                             <div class="flex flex-col">
-                                <span class="font-medium">{{ $participant->user->name }}</span>
-                                <span class="text-xs">{{ $participant->user->email }}</span>
+                                <div class="flex items-center gap-2">
+                                    <span @class(['font-medium', 'text-zinc-400 line-through' => $participant->is_disabled])>{{ $participant->user->name }}</span>
+                                    @if($participant->is_disabled)
+                                        <flux:badge size="xs" color="red" inset="top bottom">{{ __('Disabled') }}</flux:badge>
+                                    @endif
+                                </div>
+                                <span class="text-xs mt-1">{{ $participant->user->email }}</span>
                             </div>
                         </div>
                     </flux:table.cell>
@@ -133,12 +145,21 @@
                         <flux:dropdown class="mr-2">
                             <flux:button variant="subtle" icon="ellipsis-horizontal" size="sm" class="cursor-pointer" />
                             <flux:menu>
+                                @if($event->event_type !== \App\EventType::QR_TAG)
+                                    <flux:menu.item
+                                        wire:click="moveToWaitingList({{ $participant->id }})"
+                                        icon="list-bullet"
+                                        class="cursor-pointer"
+                                    >
+                                        {{ __('Move to Waiting List') }}
+                                    </flux:menu.item>
+                                @endif
                                 <flux:menu.item
-                                    wire:click="moveToWaitingList({{ $participant->id }})"
-                                    icon="list-bullet"
+                                    wire:click="toggleDisabled({{ $participant->id }})"
+                                    :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
                                     class="cursor-pointer"
                                 >
-                                    {{ __('Move to Waiting List') }}
+                                    {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
                                 </flux:menu.item>
                             </flux:menu>
                         </flux:dropdown>
@@ -165,25 +186,47 @@
                 {{-- Header: Avatar, Name, and Actions --}}
                 <div class="flex items-start justify-between gap-2">
                     <button wire:click="viewUserProfile({{ $participant->id }})" class="flex items-center gap-3 text-left min-w-0">
-                        <flux:avatar circle class="size-12 flex-shrink-0" :initials="$participant->user->initials()" :src="$participant->user->profile_picture" />
+                        <div class="relative">
+                            <flux:avatar circle class="size-12 flex-shrink-0" :initials="$participant->user->initials()" :src="$participant->user->profile_picture" />
+                            @if($participant->is_disabled)
+                                <div class="absolute -top-1 -right-1 size-5 bg-red-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
+                                    <flux:icon.x-mark class="size-3 text-white" />
+                                </div>
+                            @endif
+                        </div>
                         <div class="min-w-0">
-                            <div class="font-semibold text-zinc-800 dark:text-white truncate">{{ $participant->user->name }}</div>
+                            <div class="flex items-center gap-2">
+                                <div @class(['font-semibold text-zinc-800 dark:text-white truncate', 'text-zinc-400 line-through' => $participant->is_disabled])>{{ $participant->user->name }}</div>
+                                @if($participant->is_disabled)
+                                    <flux:badge size="xs" color="red" inset="top bottom">{{ __('Disabled') }}</flux:badge>
+                                @endif
+                            </div>
                             <div class="text-xs text-zinc-500 truncate">{{ $participant->user->email }}</div>
                             <div class="text-sm text-zinc-500">#{{ $participants->firstItem() + $loop->index }}</div>
                         </div>
                     </button>
 
-                    <div class="flex-shrink-0">
+                    <div class="shrink-0">
                         <flux:dropdown>
                             <flux:button variant="subtle" icon="ellipsis-horizontal" size="sm" class="cursor-pointer" />
                             <flux:menu>
-                                <flux:menu.item
-                                    wire:click="moveToWaitingList({{ $participant->id }})"
-                                    icon="list-bullet"
-                                    class="cursor-pointer"
-                                >
-                                    {{ __('Move to Waiting List') }}
-                                </flux:menu.item>
+                                @if($event->event_type !== \App\EventType::QR_TAG)
+                                    <flux:menu.item
+                                        wire:click="moveToWaitingList({{ $participant->id }})"
+                                        icon="list-bullet"
+                                        class="cursor-pointer"
+                                    >
+                                        {{ __('Move to Waiting List') }}
+                                    </flux:menu.item>
+                                @else
+                                    <flux:menu.item
+                                        wire:click="toggleDisabled({{ $participant->id }})"
+                                        :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
+                                        class="cursor-pointer"
+                                    >
+                                        {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
+                                    </flux:menu.item>
+                                @endif
                             </flux:menu>
                         </flux:dropdown>
                     </div>
@@ -266,5 +309,5 @@
         @endforelse
     </div>
 
-    <flux:pagination :paginator="$participants" scroll-to />
+    <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
 </div>

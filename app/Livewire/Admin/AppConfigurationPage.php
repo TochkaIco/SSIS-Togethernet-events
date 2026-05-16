@@ -41,9 +41,9 @@ class AppConfigurationPage extends Component
         Flux::toast(__('Setting saved.'), variant: 'success');
     }
 
-    #[Layout('layouts.app', ['title' => 'Config'])]
+    #[Layout('layouts.app')]
     public function render(): View
     {
-        return view('livewire.admin.app-configuration');
+        return view('livewire.admin.app-configuration')->title(__('App Configuration'));
     }
 }

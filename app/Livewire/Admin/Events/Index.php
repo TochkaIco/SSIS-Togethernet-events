@@ -17,11 +17,11 @@ class Index extends Component
         return $event->display_starts_at <= now() && $event->event_ends_at >= now();
     }
 
-    #[Layout('layouts.app', ['title' => 'Admin Events'])]
+    #[Layout('layouts.app')]
     public function render(): Factory|\Illuminate\Contracts\View\View|View
     {
         return view('livewire.admin.events.index', [
             'events' => Event::latest()->get(),
-        ]);
+        ])->title(__('Admin Events'));
     }
 }

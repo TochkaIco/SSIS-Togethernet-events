@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Appearance settings')]
+#[Title('Appearance Settings')]
 class Appearance extends Component
 {
     public string $locale;

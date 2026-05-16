@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -41,6 +43,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'event_id',
     'event_period_id',
     'in_waitinglist',
+    'is_disabled',
     'has_paid',
     'has_arrived',
     'is_working',
@@ -48,6 +51,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'qr_tag_target_user_id',
     'qr_tag_tagged_at',
     'qr_tag_tagged_by_user_id',
+    'qr_tag_count',
 ])]
 class EventUser extends Model
 {
@@ -60,6 +64,7 @@ class EventUser extends Model
     {
         return [
             'in_waitinglist' => 'boolean',
+            'is_disabled' => 'boolean',
             'has_paid' => 'boolean',
             'has_arrived' => 'boolean',
             'event_id' => 'integer',
@@ -69,6 +74,7 @@ class EventUser extends Model
             'qr_tag_target_user_id' => 'integer',
             'qr_tag_tagged_by_user_id' => 'integer',
             'qr_tag_tagged_at' => 'datetime',
+            'qr_tag_count' => 'integer',
         ];
     }
 
@@ -150,5 +156,80 @@ class EventUser extends Model
     public function scopeWaitingList(Builder $query): void
     {
         $query->where('in_waitinglist', true);
+    }
+
+    /**
+     * Toggle the disabled status of the player and repair/restore the game cycle.
+     */
+    public function toggleDisabled(): void
+    {
+        if ($this->is_disabled) {
+            $this->enable();
+        } else {
+            $this->disable();
+        }
+    }
+
+    /**
+     * Disable the player and repair the game cycle by connecting their hunter to their target.
+     */
+    public function disable(): void
+    {
+        if ($this->is_disabled) {
+            return;
+        }
+
+        DB::transaction(function () {
+            $this->update(['is_disabled' => true]);
+
+            if ($this->event->isQrTagGameStarted() && ! $this->qr_tag_tagged_at) {
+                // Find who was targeting this player
+                $hunter = self::where('event_id', $this->event_id)
+                    ->where('qr_tag_target_user_id', $this->user_id)
+                    ->first();
+
+                $targetId = $this->qr_tag_target_user_id;
+
+                if ($hunter) {
+                    $hunter->update(['qr_tag_target_user_id' => $targetId]);
+                }
+
+                $this->update(['qr_tag_target_user_id' => null]);
+            }
+        });
+    }
+
+    /**
+     * Enable the player and restore them into the game cycle if active.
+     */
+    public function enable(): void
+    {
+        if (! $this->is_disabled) {
+            return;
+        }
+
+        DB::transaction(function () {
+            $this->update([
+                'is_disabled' => false,
+                'qr_tag_token' => Str::random(32),
+            ]);
+
+            if ($this->event->isQrTagGameStarted() && ! $this->qr_tag_tagged_at) {
+                // Insert back into cycle
+                $activePlayers = $this->event->registrations()
+                    ->whereNull('qr_tag_tagged_at')
+                    ->where('is_disabled', false)
+                    ->where('user_id', '!=', $this->user_id)
+                    ->get();
+
+                if ($activePlayers->isNotEmpty()) {
+                    $host = $activePlayers->random();
+                    $oldTargetId = $host->qr_tag_target_user_id;
+
+                    $this->update(['qr_tag_target_user_id' => $oldTargetId]);
+                    $host->update(['qr_tag_target_user_id' => $this->user_id]);
+                }
+            }
+        });
     }
 }

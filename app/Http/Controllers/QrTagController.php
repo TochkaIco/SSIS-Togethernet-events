@@ -9,6 +9,7 @@ use App\Models\EventUser;
 use App\Models\QrTagLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class QrTagController extends Controller
 {
@@ -27,6 +28,11 @@ class QrTagController extends Controller
                 ->with('error', __('This user has already been tagged.'));
         }
 
+        if ($victimRegistration->is_disabled) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('This user is currently disabled.'));
+        }
+
         $assassinRegistration = EventUser::where('event_id', $victimRegistration->event_id)
             ->where('user_id', Auth::id())
             ->first();
@@ -41,6 +47,11 @@ class QrTagController extends Controller
                 ->with('error', __('You are already out of the game.'));
         }
 
+        if ($assassinRegistration->is_disabled) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('You are currently disabled.'));
+        }
+
         if ($assassinRegistration->qr_tag_target_user_id !== $victimRegistration->user_id) {
             return redirect()->route('event.show', $victimRegistration->event)
                 ->with('error', __('This is not your target.'));
@@ -53,6 +64,7 @@ class QrTagController extends Controller
             'qr_tag_tagged_at' => now(),
             'qr_tag_tagged_by_user_id' => Auth::id(),
             'qr_tag_target_user_id' => null,
+            'qr_tag_token' => Str::random(32),
         ]);
 
         QrTagLog::create([
@@ -66,6 +78,8 @@ class QrTagController extends Controller
             'has_arrived' => true,
             'qr_tag_target_user_id' => $newTargetId,
         ]);
+
+        $assassinRegistration->increment('qr_tag_count');
 
         return redirect()->route('event.show', $victimRegistration->event)
             ->with('success', __('Target tagged! You have a new target.'));

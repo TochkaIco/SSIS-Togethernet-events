@@ -273,3 +273,170 @@ test('shuffle button is visible if game not started', function () {
         ->assertDontSee(__('Reset Game'))
         ->assertDontSee(__('Rebirth All'));
 });
+
+test('it tracks tag counts and shows leaderboard', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
+    $u1 = User::factory()->create(['name' => 'Assassin']);
+    $u2 = User::factory()->create(['name' => 'Victim 1']);
+    $u3 = User::factory()->create(['name' => 'Victim 2']);
+    $u4 = User::factory()->create(['name' => 'Target 3']);
+
+    $r1 = EventUser::create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_token' => 't1', 'qr_tag_target_user_id' => $u2->id, 'qr_tag_count' => 0, 'in_waitinglist' => false]);
+    $r2 = EventUser::create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u3->id, 'qr_tag_count' => 0, 'in_waitinglist' => false]);
+    $r3 = EventUser::create(['user_id' => $u3->id, 'event_id' => $event->id, 'qr_tag_token' => 't3', 'qr_tag_target_user_id' => $u4->id, 'qr_tag_count' => 0, 'in_waitinglist' => false]);
+    $r4 = EventUser::create(['user_id' => $u4->id, 'event_id' => $event->id, 'qr_tag_token' => 't4', 'qr_tag_target_user_id' => $u1->id, 'qr_tag_count' => 0, 'in_waitinglist' => false]);
+
+    Auth::login($u1);
+
+    $event->refresh();
+
+    // Tag 1
+    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response->assertRedirect(route('event.show', $event));
+    $response->assertSessionHas('success', __('Target tagged! You have a new target.'));
+
+    $r1->refresh();
+    expect($r1->qr_tag_count)->toBe(1);
+    expect($r1->qr_tag_target_user_id)->toBe($u3->id);
+
+    // Check leaderboard
+    $event->refresh();
+    $leaderboard = $event->qrTagLeaderboard();
+    expect($leaderboard->first()->user_id)->toBe($u1->id);
+    expect($leaderboard->first()->qr_tag_count)->toBe(1);
+    // Victim 1 (u2) was tagged, so it should NOT be in the leaderboard
+    expect($leaderboard->pluck('user_id'))->not->toContain($u2->id);
+
+    // Give Target 3 (u4) some tags manually
+    $r4->update(['qr_tag_count' => 10]);
+    expect(EventUser::find($r4->id)->qr_tag_count)->toBe(10);
+    $event->refresh();
+    $leaderboard = $event->qrTagLeaderboard();
+    expect($leaderboard->pluck('qr_tag_count')->toArray())->toBe([10, 1, 0]);
+    expect($leaderboard->first()->user_id)->toBe($u4->id);
+
+    // Tag u3 (Victim 2) by u1
+    $this->get(route('qr_tag.scan', ['token' => 't3']));
+    $r1->refresh();
+    expect($r1->qr_tag_count)->toBe(2);
+    expect($r1->qr_tag_target_user_id)->toBe($u4->id);
+
+    // Now tag u4 (who has 10 tags)
+    $this->get(route('qr_tag.scan', ['token' => 't4']));
+    $r4->refresh();
+    expect($r4->qr_tag_tagged_at)->not->toBeNull();
+
+    // Now u4 should be gone from leaderboard despite having 10 tags
+    expect($event->qrTagLeaderboard()->pluck('user_id'))->not->toContain($u4->id);
+    expect($event->qrTagLeaderboard()->first()->user_id)->toBe($u1->id);
+    expect($event->qrTagLeaderboard()->first()->qr_tag_count)->toBe(3);
+
+    // Verify token was regenerated for victims
+    $r2->refresh();
+    $r3->refresh();
+    $r4->refresh();
+    expect($r2->qr_tag_token)->not->toBe('t2');
+    expect($r3->qr_tag_token)->not->toBe('t3');
+    expect($r4->qr_tag_token)->not->toBe('t4');
+
+    // Rebirth u2
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    Livewire::test(QrTag::class, ['event' => $event])
+        ->call('rebirthPlayer', $r2->id);
+
+    $r1->refresh();
+    // Count should NOT reset
+    expect($r1->qr_tag_count)->toBe(3);
+});
+
+test('it respects disabled players', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
+    $u1 = User::factory()->create(['name' => 'Active']);
+    $u2 = User::factory()->create(['name' => 'Disabled']);
+    $u3 = User::factory()->create(['name' => 'Active 2']);
+
+    $r1 = EventUser::create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_token' => 't1', 'qr_tag_target_user_id' => $u2->id, 'in_waitinglist' => false]);
+    $r2 = EventUser::create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u3->id, 'in_waitinglist' => false, 'is_disabled' => true]);
+    $r3 = EventUser::create(['user_id' => $u3->id, 'event_id' => $event->id, 'qr_tag_token' => 't3', 'qr_tag_target_user_id' => $u1->id, 'in_waitinglist' => false]);
+
+    Auth::login($u1);
+
+    // Cannot tag disabled victim
+    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response->assertRedirect(route('event.show', $event));
+    $response->assertSessionHas('error', __('This user is currently disabled.'));
+
+    // Assassin cannot tag if disabled
+    $r1->update(['is_disabled' => true]);
+    $r2->update(['is_disabled' => false]);
+    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response->assertSessionHas('error', __('You are currently disabled.'));
+
+    // Shuffle excludes disabled players
+    $r1->update(['is_disabled' => false]);
+    $r2->update(['is_disabled' => true]);
+
+    $action = new ShuffleQrTagTargets;
+    $action->handle($event);
+
+    $r2->refresh();
+    // r2 should NOT have a target or token because it was excluded from shuffle
+    // Wait, ShuffleQrTagTargets resets targets/tokens for those it processes.
+    // Let's check the code.
+    /*
+    foreach ($participants as $index => $participant) {
+        $participant->update([...]);
+    }
+    */
+    // If r2 is not in $participants, it won't be updated.
+
+    expect(EventUser::where('event_id', $event->id)->where('is_disabled', false)->whereNotNull('qr_tag_target_user_id')->count())->toBe(2);
+    expect($r2->qr_tag_target_user_id)->toBe($u3->id); // Remained from manual setup
+});
+
+test('it repairs cycle when a player is disabled during game', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
+    $u1 = User::factory()->create(['name' => 'A']);
+    $u2 = User::factory()->create(['name' => 'B']);
+    $u3 = User::factory()->create(['name' => 'C']);
+
+    // Cycle: A -> B -> C -> A
+    $r1 = EventUser::create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_target_user_id' => $u2->id, 'in_waitinglist' => false, 'qr_tag_token' => 't1']);
+    $r2 = EventUser::create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_target_user_id' => $u3->id, 'in_waitinglist' => false, 'qr_tag_token' => 't2']);
+    $r3 = EventUser::create(['user_id' => $u3->id, 'event_id' => $event->id, 'qr_tag_target_user_id' => $u1->id, 'in_waitinglist' => false, 'qr_tag_token' => 't3']);
+
+    // Disable B
+    $r2->disable();
+
+    $r1->refresh();
+    $r2->refresh();
+    $r3->refresh();
+
+    expect($r2->is_disabled)->toBeTrue();
+    expect($r2->qr_tag_target_user_id)->toBeNull();
+    // A should now target C (B's old target)
+    expect($r1->qr_tag_target_user_id)->toBe($u3->id);
+    // C still targets A
+    expect($r3->qr_tag_target_user_id)->toBe($u1->id);
+
+    // Re-enable B
+    $r2->enable();
+
+    $r1->refresh();
+    $r2->refresh();
+    $r3->refresh();
+
+    expect($r2->is_disabled)->toBeFalse();
+    expect($r2->qr_tag_target_user_id)->not->toBeNull();
+
+    // Check if cycle is consistent: everyone has a unique target and is targeted
+    $players = [$r1, $r2, $r3];
+    $targets = collect($players)->pluck('qr_tag_target_user_id');
+    expect($targets->unique()->count())->toBe(3);
+    expect($targets->contains($u1->id))->toBeTrue();
+    expect($targets->contains($u2->id))->toBeTrue();
+    expect($targets->contains($u3->id))->toBeTrue();
+});

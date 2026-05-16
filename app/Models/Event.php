@@ -187,4 +187,18 @@ class Event extends Model
     {
         return $this->registrations()->whereNotNull('qr_tag_token')->exists();
     }
+
+    /**
+     * @return Collection<int, EventUser>
+     */
+    public function qrTagLeaderboard(): Collection
+    {
+        return $this->participants()
+            ->with('user')
+            ->whereNull('qr_tag_tagged_at')
+            ->where('is_disabled', false)
+            ->orderByDesc('qr_tag_count')
+            ->take(5)
+            ->get();
+    }
 }

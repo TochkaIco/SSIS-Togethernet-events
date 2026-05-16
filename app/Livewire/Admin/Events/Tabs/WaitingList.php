@@ -21,7 +21,7 @@ class WaitingList extends Component
             'in_waitinglist' => false,
         ]);
 
-        Flux::toast(__('User moved to participants.'));
+        Flux::toast(__('User moved to participants.'), variant: 'success');
     }
 
     public function viewUserProfile($registrationId)

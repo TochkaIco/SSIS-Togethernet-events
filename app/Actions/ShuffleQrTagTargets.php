@@ -12,7 +12,10 @@ class ShuffleQrTagTargets
 {
     public function handle(Event $event, ?int $adminId = null): void
     {
-        $participants = $event->participants()->get()->shuffle();
+        $participants = $event->participants()
+            ->where('is_disabled', false)
+            ->get()
+            ->shuffle();
 
         if ($participants->count() < 2) {
             return;

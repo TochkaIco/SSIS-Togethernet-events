@@ -70,7 +70,7 @@ class UserImpersonationPage extends Component
         }
     }
 
-    #[Layout('layouts.app', ['title' => 'User Impersonation'])]
+    #[Layout('layouts.app')]
     public function render(): View|Factory|\Illuminate\View\View
     {
         $users = User::query()
@@ -99,6 +99,6 @@ class UserImpersonationPage extends Component
                 'TE'.now()->subMonths(6)->subYear()->format('y'),
                 'TE'.now()->subMonths(6)->subYears(2)->format('y'),
             ],
-        ]);
+        ])->title(__('User Impersonation'));
     }
 }

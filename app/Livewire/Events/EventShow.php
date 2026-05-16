@@ -12,6 +12,7 @@ use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -71,7 +72,7 @@ class EventShow extends Component
             'in_waitinglist' => false,
         ]);
 
-        Flux::toast(text: 'User moved to attendees.', variant: 'success');
+        Flux::toast(text: __('User moved to attendees.'), variant: 'success');
     }
 
     public function userIsRegistered($eventId): bool
@@ -158,10 +159,11 @@ class EventShow extends Component
         }
     }
 
+    #[Layout('layouts.app')]
     public function render(): View
     {
         return view('livewire.events.show', [
-            'event' => $this->event])
-            ->layout('layouts.app', ['title' => __('Event Show')]);
+            'event' => $this->event,
+        ])->title($this->event->title);
     }
 }

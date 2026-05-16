@@ -20,7 +20,7 @@ class Index extends Component
 
         $date = now()->format('Y-m-d');
         $meeting = Meeting::create([
-            'title' => 'Togethernet möte '.$date,
+            'title' => __('Togethernet Meeting :date', ['date' => $date]),
             'meeting_starts_at' => now(),
         ]);
 
@@ -35,6 +35,6 @@ class Index extends Component
             'meetings' => Meeting::query()
                 ->orderBy('meeting_starts_at')
                 ->paginate(10),
-        ])->layout('layouts.app', ['title' => 'Meetings']);
+        ])->layout('layouts.app', ['title' => __('Meetings')]);
     }
 }

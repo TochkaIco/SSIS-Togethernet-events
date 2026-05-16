@@ -1,7 +1,7 @@
 <div>
     <flux:modal name="feedback-modal" class="md:w-md" background-blur>
         <form wire:submit="save" class="space-y-6">
-            <flux:heading size="lg">Feedback</flux:heading>
+            <flux:heading size="lg">{{ __('Feedback') }}</flux:heading>
 
             <flux:radio.group wire:model="type" variant="segmented" class="w-full">
                 <flux:radio icon="bug-ant" value="bug" :label="\App\FeedbackType::BUG->label()" class="cursor-pointer" />

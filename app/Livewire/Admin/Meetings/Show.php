@@ -119,6 +119,6 @@ class Show extends Component
             'users' => $users,
             'allClasses' => $allClasses,
             'attendedUserIds' => $attendedUserIds,
-        ])->layout('layouts.app', ['title' => 'Meeting Details']);
+        ])->layout('layouts.app', ['title' => __('Meeting Details')]);
     }
 }

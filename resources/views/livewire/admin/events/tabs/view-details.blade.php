@@ -18,7 +18,7 @@
             </div>
         @else
             <flux:badge color="orange">
-                {{ __('This event is free') . $event->entry_fee }}
+                {{ __('This event is free') }}
             </flux:badge>
         @endif
     </div>
@@ -60,7 +60,7 @@
                 @if($item->type === 'period')
                     {{-- Period Row --}}
                     <flux:badge class="p-1 border flex items-center justify-between">
-                        <span class="font-medium px-2 italic">Period {{ $item->number }}</span>
+                        <span class="font-medium px-2 italic">{{ __('Period') }} {{ $item->number }}</span>
 
                         <span class="border-l-4 border-l-orange-300 border border-orange-300 p-1 font-bold tracking-wider rounded text-sm bg-orange-300/20">
                             {{ $item->label }}

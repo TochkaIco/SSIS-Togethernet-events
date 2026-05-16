@@ -8,10 +8,14 @@ use App\Actions\ShuffleQrTagTargets;
 use App\Models\Event;
 use App\Models\QrTagLog;
 use Flux\Flux;
+use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class QrTag extends Component
 {
+    use WithPagination;
+
     public Event $event;
 
     public function mount(Event $event): void
@@ -31,7 +35,7 @@ class QrTag extends Component
 
         $action->handle($this->event, auth()->id());
 
-        Flux::toast(__('Targets shuffled and tokens generated.'));
+        Flux::toast(__('Targets shuffled and tokens generated.'), variant: 'success');
     }
 
     public function resetGame(): void
@@ -43,6 +47,8 @@ class QrTag extends Component
             'qr_tag_target_user_id' => null,
             'qr_tag_tagged_at' => null,
             'qr_tag_tagged_by_user_id' => null,
+            'qr_tag_count' => 0,
+            'has_arrived' => false,
         ]);
 
         QrTagLog::create([
@@ -51,7 +57,7 @@ class QrTag extends Component
             'type' => 'reset',
         ]);
 
-        Flux::toast(__('Game reset.'));
+        Flux::toast(__('Game reset.'), variant: 'success');
     }
 
     public function rebirthPlayer(int $registrationId): void
@@ -60,14 +66,21 @@ class QrTag extends Component
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
+        if ($registration->is_disabled) {
+            Flux::toast(__('Cannot rebirth a disabled player.'), variant: 'danger');
+
+            return;
+        }
+
         if (! $registration->qr_tag_tagged_at) {
             return;
         }
 
         // To rebirth one player, we insert them into the cycle.
-        // We find an active player (not tagged) and put the rebirthed player after them.
+        // We find an active player (not tagged and not disabled) and put the rebirthed player after them.
         $activePlayers = $this->event->registrations()
             ->whereNull('qr_tag_tagged_at')
+            ->where('is_disabled', false)
             ->where('user_id', '!=', $registration->user_id)
             ->get();
 
@@ -86,6 +99,7 @@ class QrTag extends Component
             'qr_tag_tagged_at' => null,
             'qr_tag_tagged_by_user_id' => null,
             'qr_tag_target_user_id' => $oldTargetId,
+            'qr_tag_token' => Str::random(32),
         ]);
 
         $host->update([
@@ -99,7 +113,7 @@ class QrTag extends Component
             'type' => 'rebirth',
         ]);
 
-        Flux::toast(__('Player rebirthed and inserted into the cycle.'));
+        Flux::toast(__('Player rebirthed and inserted into the cycle.'), variant: 'success');
     }
 
     public function rebirthAll(ShuffleQrTagTargets $action): void
@@ -115,14 +129,25 @@ class QrTag extends Component
             'type' => 'rebirth_all',
         ]);
 
-        Flux::toast(__('All players rebirthed and targets reshuffled.'));
+        Flux::toast(__('All players rebirthed and targets reshuffled.'), variant: 'success');
+    }
+
+    public function toggleDisabled(int $registrationId): void
+    {
+        $this->authorize('manage users');
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        $registration->toggleDisabled();
+
+        Flux::toast(__('User status updated.'), variant: 'success');
     }
 
     public function render()
     {
         $participants = $this->event->participants()
             ->with(['user', 'targetUser', 'taggedBy'])
-            ->get();
+            ->paginate(10);
 
         $logs = $this->event->qrTagLogs()
             ->with(['user', 'targetUser', 'admin'])

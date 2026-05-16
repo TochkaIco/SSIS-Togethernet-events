@@ -92,7 +92,7 @@ class Index extends Component
             ->exists();
 
         if ($alreadyRegistered) {
-            Flux::toast(text: 'You are already registered for this event.', heading: 'Error', variant: 'danger');
+            Flux::toast(text: __('You are already registered for this event.'), heading: __('Error'), variant: 'danger');
 
             return;
         }
@@ -100,16 +100,17 @@ class Index extends Component
         $registration = $action->handle(Auth::user(), $event);
 
         if ($registration?->in_waitinglist) {
-            Flux::toast(text: 'You have been added to the waiting list.', heading: 'Success', variant: 'success');
+            Flux::toast(text: __('You have been added to the waiting list.'), heading: __('Success'), variant: 'success');
         } else {
-            Flux::toast(text: 'You have been registered for this event.', heading: 'Success', variant: 'success');
+            Flux::toast(text: __('You have been registered for this event.'), heading: __('Success'), variant: 'success');
         }
     }
 
-    #[Layout('layouts.app', ['title' => 'Events'])]
+    #[Layout('layouts.app')]
     public function render(): Factory|\Illuminate\Contracts\View\View|View
     {
         return view('livewire.events.index', [
-            'events' => $this->events]);
+            'events' => $this->events,
+        ])->title(__('Events'));
     }
 }

@@ -2,7 +2,7 @@
     @if(!$kiosk)
         <div class="flex flex-col items-center justify-center py-16 gap-6">
             <flux:icon.shopping-bag class="size-16 text-muted-foreground" />
-            <p class="text-muted-foreground text-lg">No kiosk configured for this event.</p>
+            <p class="text-muted-foreground text-lg">{{ __('No kiosk configured for this event.') }}</p>
             @can('manage kiosk')
                 <flux:button variant="primary" wire:click="createKiosk" class="cursor-pointer">
                     {{ __('Create Kiosk') }}
@@ -270,7 +270,7 @@
                         @if($cartCount > 0)
                             <flux:separator />
                             <div class="flex justify-between items-center">
-                                <span class="font-semibold">Total</span>
+                                <span class="font-semibold">{{ __('Total') }}</span>
                                 <span class="font-bold text-xl">{{ number_format($cartTotal) }} kr</span>
                             </div>
                             <flux:button variant="primary" class="w-full cursor-pointer" wire:click="recordPurchase">

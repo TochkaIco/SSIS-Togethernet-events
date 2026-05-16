@@ -411,7 +411,7 @@
     "was rebirthed by an admin.": "återföddes av en administratör.",
     "Manage players for QR-Tag.": "Hantera spelare för QR-Tag.",
     "QR-Tag Control": "QR-Tag Kontrol",
-    "Tagged By": "Tagged av",
+    "Tagged By": "Taggad av",
     "Tagged At": "Taggad vid",
     "The game was started and targets were shuffled by admin": "Spelet startades och målen blandades av administratören",
     "The game was reset by admin": "Spelet återställdes av administratören",
@@ -435,5 +435,6 @@
     "Clear Logs": "Rensa loggar",
     ":count old logs cleared.": ":count gamla loggar rensade.",
     "No logs found to clear for the selected period.": "Inga loggar hittades att rensa för den valda perioden.",
-    "Global Logs": "Globala Loggar"
+    "Global Logs": "Globala Loggar",
+    "Top 5 Players": "Topp 5 spelare"
 }

@@ -79,7 +79,7 @@ class Kiosk extends Component
         $this->authorize('manage kiosk');
 
         $this->event->kiosk()->create();
-        Flux::toast(__('Kiosk created successfully.'));
+        Flux::toast(__('Kiosk created successfully.'), variant: 'success');
         $this->dispatch('refreshKiosk');
     }
 
@@ -136,7 +136,7 @@ class Kiosk extends Component
                 'amount' => $this->articleAmount,
                 'image_url' => $this->articleImageUrl ?: null,
             ]);
-            Flux::toast(__('Article updated successfully.'));
+            Flux::toast(__('Article updated successfully.'), variant: 'success');
         } else {
             $kiosk->articles()->create([
                 'name' => $this->articleName,
@@ -145,7 +145,7 @@ class Kiosk extends Component
                 'amount' => $this->articleAmount,
                 'image_url' => $this->articleImageUrl ?: null,
             ]);
-            Flux::toast(__('Article created successfully.'));
+            Flux::toast(__('Article created successfully.'), variant: 'success');
         }
 
         $this->showArticleModal = false;
@@ -166,7 +166,7 @@ class Kiosk extends Component
 
         if ($this->deletingArticleId) {
             $this->event->kiosk?->articles()->findOrFail($this->deletingArticleId)->delete();
-            Flux::toast(__('Article deleted.'));
+            Flux::toast(__('Article deleted.'), variant: 'success');
             $this->deletingArticleId = null;
             $this->modal('delete-article-modal')->close();
             $this->dispatch('refreshKiosk');
@@ -209,12 +209,12 @@ class Kiosk extends Component
             EventKioskCategory::findOrFail($this->editingCategoryId)->update([
                 'name' => $this->categoryName,
             ]);
-            Flux::toast(__('Category updated.'));
+            Flux::toast(__('Category updated.'), variant: 'success');
         } else {
             $kiosk->categories()->create([
                 'name' => $this->categoryName,
             ]);
-            Flux::toast(__('Category created.'));
+            Flux::toast(__('Category created.'), variant: 'success');
         }
 
         $this->showCategoryModal = false;
@@ -251,7 +251,7 @@ class Kiosk extends Component
         }
 
         $category->delete();
-        Flux::toast(__('Category deleted.'));
+        Flux::toast(__('Category deleted.'), variant: 'success');
         $this->deletingCategoryId = null;
         $this->modal('delete-category-modal')->close();
         $this->dispatch('refreshKiosk');
@@ -310,7 +310,7 @@ class Kiosk extends Component
             }
         });
 
-        Flux::toast(__('Kiosk imported successfully.'));
+        Flux::toast(__('Kiosk imported successfully.'), variant: 'success');
         $this->showImportModal = false;
         $this->dispatch('refreshKiosk');
     }
@@ -404,7 +404,7 @@ class Kiosk extends Component
             }
         });
 
-        Flux::toast(__('Purchase recorded.'));
+        Flux::toast(__('Purchase recorded.'), variant: 'success');
         $this->cart = [];
         $this->dispatch('refreshKiosk');
     }
@@ -440,7 +440,7 @@ class Kiosk extends Component
                 $purchase->delete();
             });
 
-            Flux::toast(__('Purchase deleted and stock restored.'));
+            Flux::toast(__('Purchase deleted and stock restored.'), variant: 'success');
             $this->deletingPurchaseId = null;
             $this->modal('delete-purchase-modal')->close();
             $this->dispatch('refreshKiosk');
