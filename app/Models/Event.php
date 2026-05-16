@@ -61,6 +61,21 @@ class Event extends Model
     }
 
     /**
+     * @return HasMany<QrTagLog, $this>
+     */
+    public function qrTagLogs(): HasMany
+    {
+        return $this->hasMany(QrTagLog::class)->latest();
+    }
+
+    public function qrTagActiveParticipantsCount(): int
+    {
+        return $this->registrations()
+            ->whereNull('qr_tag_tagged_at')
+            ->count();
+    }
+
+    /**
      * @return HasMany<EventPeriod, $this>
      */
     public function periods(): HasMany
@@ -166,5 +181,10 @@ class Event extends Model
     {
         // QR-Tag specific: cannot unregister once started
         return ! ($this->event_type === EventType::QR_TAG && $this->event_starts_at <= now());
+    }
+
+    public function isQrTagGameStarted(): bool
+    {
+        return $this->registrations()->whereNotNull('qr_tag_token')->exists();
     }
 }

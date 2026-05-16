@@ -55,9 +55,11 @@
                                             </flux:sidebar.item>
                                         @endif
                                         @if($event->event_type === \App\EventType::QR_TAG)
-                                            <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'qr-tag'])" :current="request('tab') === 'qr-tag'" wire:navigate>
-                                                {{ __('QR Tag') }}
-                                            </flux:sidebar.item>
+                                            @can('manage qr-tag')
+                                                <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'qr-tag'])" :current="request('tab') === 'qr-tag'" wire:navigate>
+                                                    {{ __('QR Tag') }}
+                                                </flux:sidebar.item>
+                                            @endcan
                                         @endif
                                     @endcan
                                     @can('manage kiosk')

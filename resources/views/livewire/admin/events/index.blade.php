@@ -4,13 +4,16 @@
             variant="primary"
             x-data
             data-test="create-event-button"
-            class="cursor-pointer w-xl text-xl transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl"
+            class="cursor-pointer max-w-xl w-full text-xl transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl"
             x-on:click="$flux.modal('create-event').show()"
-        >{{ __('Create Event') }}</flux:button>
-    </div>
-    <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
+        >
+            {{ __('Create Event') }}
+        </flux:button>
+        </div>
+
+        <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
-            <flux:card :key="'card-'.$event->id" class="w-3xl h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <flux:card :key="'card-'.$event->id" class="max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 <div class="mb-auto">
                     @if($event->image_path)
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
@@ -25,7 +28,7 @@
                     @endif
 
                     <a href="{{ route('admin.event.show', $event) }}" class="text-accent-content font-semibold text-xl hover:underline hover:text-orange-300">{{ $event->title }}</a>
-                    <div class="mt-2 flex items-center gap-2">
+                    <div class="mt-2 flex-col space-y-2 md:flex-row md:space-y-0 items-center gap-2">
                         @if($event->event_type !== \App\EventType::QR_TAG)
                             <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
                             <flux:badge color="orange" size="sm">
@@ -50,7 +53,7 @@
                             </flux:badge>
                         @endif
                     </div>
-                    <p class="mt-5 line-clamp-4 overflow-hidden whitespace-pre-line">{{ strip_tags(Str::markdown($event->description)) }}</p>
+                    <p class="mt-5 line-clamp-4 overflow-hidden whitespace-pre-line">{{ html_entity_decode(strip_tags(Str::markdown($event->description)), ENT_QUOTES, 'UTF-8') }}</p>
                 </div>
                 <div class="mt-auto">
                     <flux:separator class="mt-2" />

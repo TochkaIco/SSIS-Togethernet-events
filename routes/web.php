@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::view('/', 'homepage')->name('home');
-Route::get('/tag/{token}', [QrTagController::class, 'scan'])->name('qr_tag.scan');
 Route::get('/events', PublicEvents::class)->name('events');
 Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
 Route::view('/faq', 'faq')->name('faq');
@@ -57,6 +56,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'can:impersonate users'])->group(function () {
         Route::get('/admin/user_impersonation', UserImpersonationPage::class)->name('admin.impersonation-page');
     });
+
+    Route::get('/tag/{token}', [QrTagController::class, 'scan'])->name('qr_tag.scan');
+
     Route::impersonate();
 });
 

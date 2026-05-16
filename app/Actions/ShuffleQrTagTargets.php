@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Models\Event;
+use App\Models\QrTagLog;
 use Illuminate\Support\Str;
 
 class ShuffleQrTagTargets
 {
-    public function handle(Event $event): void
+    public function handle(Event $event, ?int $adminId = null): void
     {
         $participants = $event->participants()->get()->shuffle();
 
@@ -28,5 +29,11 @@ class ShuffleQrTagTargets
                 'qr_tag_tagged_by_user_id' => null,
             ]);
         }
+
+        QrTagLog::create([
+            'event_id' => $event->id,
+            'admin_id' => $adminId,
+            'type' => 'started',
+        ]);
     }
 }

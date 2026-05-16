@@ -1,4 +1,4 @@
-<div class="md:min-w-5xl space-y-6" x-data="{ showArticleModal: false, showCategoryModal: false, showImportModal: false }">
+<div class="space-y-6" x-data="{ showArticleModal: false, showCategoryModal: false, showImportModal: false }">
     @if(!$kiosk)
         <div class="flex flex-col items-center justify-center py-16 gap-6">
             <flux:icon.shopping-bag class="size-16 text-muted-foreground" />

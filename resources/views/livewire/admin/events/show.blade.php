@@ -1,4 +1,4 @@
-<div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-8 max-w-7xl md:w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-6 flex flex-col gap-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('admin.events') }}" icon="layout-grid">{{ __('Events') }}</flux:breadcrumbs.item>
@@ -64,7 +64,9 @@
         @elseif($tab === 'waiting' && $event->event_type !== \App\EventType::QR_TAG)
             <livewire:admin.events.tabs.waiting-list :event="$event" :key="'wait-'.$event->id" />
         @elseif($tab === 'qr-tag' && $event->event_type === \App\EventType::QR_TAG)
-            <livewire:admin.events.tabs.qr-tag :event="$event" :key="'qrtag-'.$event->id" />
+            @can('manage qr-tag')
+                <livewire:admin.events.tabs.qr-tag :event="$event" :key="'qrtag-'.$event->id" />
+            @endcan
         @elseif($tab === 'kiosk' && $event->event_type !== \App\EventType::QR_TAG)
             <livewire:admin.events.tabs.kiosk.kiosk :event="$event" :key="'kiosk-'.$event->id" />
         @else

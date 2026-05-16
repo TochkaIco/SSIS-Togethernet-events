@@ -89,15 +89,24 @@ class Dashboard extends Component
     #[Computed]
     public function attendanceHistory(): array
     {
-        $events = Event::orderBy('event_starts_at', 'desc')
-            ->take(5)
+        // Only show events that have started, as attendance is 0 for future events
+        $events = Event::where('event_starts_at', '<=', now())
+            ->orderBy('event_starts_at', 'desc')
+            ->take(10)
             ->get()
-            ->reverse();
+            ->reverse()
+            ->values();
 
         return [
             'labels' => $events->pluck('title')->toArray(),
             'registrations' => $events->map(fn ($e) => EventUser::where('event_id', $e->id)->where('in_waitinglist', false)->count())->toArray(),
             'attendance' => $events->map(fn ($e) => EventUser::where('event_id', $e->id)->where('has_arrived', true)->count())->toArray(),
+            'rates' => $events->map(function ($e): float|int {
+                $regs = EventUser::where('event_id', $e->id)->where('in_waitinglist', false)->count();
+                $att = EventUser::where('event_id', $e->id)->where('has_arrived', true)->count();
+
+                return $regs > 0 ? round(($att / $regs) * 100) : 0;
+            })->toArray(),
         ];
     }
 
@@ -107,7 +116,7 @@ class Dashboard extends Component
         $revenue = EventKioskPurchase::selectRaw('SUM(cost) as total, DATE_FORMAT(created_at, "%Y-%m") as month')
             ->groupBy('month')
             ->orderBy('month', 'desc')
-            ->take(6)
+            ->take(12)
             ->get()
             ->reverse();
 
@@ -121,22 +130,25 @@ class Dashboard extends Component
     public function userGrowth(): array
     {
         $growthData = User::selectRaw('COUNT(*) as count, DATE_FORMAT(created_at, "%Y-%m-%d") as date')
-            ->where('created_at', '>=', now()->subYear())
+            ->where('created_at', '>=', now()->subMonths(3))
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get()
             ->pluck('count', 'date');
 
-        $period = now()->subYear()->daysUntil(now());
+        $period = now()->subMonths(3)->daysUntil(now());
 
         $labels = [];
         $data = [];
+        $currentTotal = User::where('created_at', '<', now()->subMonths(3))->count();
 
         foreach ($period as $date) {
             $formattedDate = $date->format('Y-m-d');
+            $count = $growthData->get($formattedDate, 0);
+            $currentTotal += $count;
 
             $labels[] = $formattedDate;
-            $data[] = $growthData->get($formattedDate, 0);
+            $data[] = $currentTotal;
         }
 
         return [
@@ -153,7 +165,7 @@ class Dashboard extends Component
             ->get();
 
         return [
-            'labels' => $distribution->pluck('class')->toArray(),
+            'labels' => $distribution->pluck('class')->map(fn ($c) => $c ?? __('Unknown'))->toArray(),
             'data' => $distribution->pluck('count')->toArray(),
             'colors' => $distribution->map(fn ($item) => '#'.substr(md5($item->class ?? 'Unknown'), 0, 6))->toArray(),
         ];
@@ -165,28 +177,75 @@ class Dashboard extends Component
         $meetings = Meeting::orderBy('meeting_starts_at', 'desc')
             ->take(10)
             ->get()
-            ->reverse();
+            ->reverse()
+            ->values();
 
         return [
             'labels' => $meetings->pluck('title')->toArray(),
             'data' => $meetings->map(fn ($m) => MeetingAttendant::where('meeting_id', $m->id)->where('has_attended', true)->count())->toArray(),
+            'rates' => $meetings->map(function ($m): float|int {
+                $attended = MeetingAttendant::where('meeting_id', $m->id)->where('has_attended', true)->count();
+
+                // Approximate members at that time by counting current members who were created before/on that date
+                $totalAtTime = User::role('tog-member')
+                    ->where('created_at', '<=', $m->meeting_starts_at)
+                    ->count();
+
+                return $totalAtTime > 0 ? round(($attended / $totalAtTime) * 100) : 0;
+            })->toArray(),
         ];
     }
 
     #[Computed]
     public function meetingAttendanceYearly(): array
     {
-        $attendance = MeetingAttendant::selectRaw('COUNT(*) as count, DATE_FORMAT(meetings.meeting_starts_at, "%Y-%m") as month')
-            ->join('meetings', 'meetings.id', '=', 'meeting_attendants.meeting_id')
-            ->where('meeting_attendants.has_attended', true)
-            ->where('meetings.meeting_starts_at', '>=', now()->subYear())
-            ->groupBy('month')
-            ->orderBy('month', 'asc')
+        // Calculate average attendance per meeting per month
+        $meetings = Meeting::where('meeting_starts_at', '>=', now()->subYear())
+            ->withCount(['attendants as attended_count' => function ($query) {
+                $query->where('has_attended', true);
+            }])
             ->get();
 
+        $monthlyData = $meetings->groupBy(fn ($m) => $m->meeting_starts_at->format('Y-m'))
+            ->map(fn ($group) => round($group->avg('attended_count'), 1));
+
         return [
-            'labels' => $attendance->pluck('month')->toArray(),
-            'data' => $attendance->pluck('count')->toArray(),
+            'labels' => $monthlyData->keys()->toArray(),
+            'data' => $monthlyData->values()->toArray(),
+        ];
+    }
+
+    #[Computed]
+    public function meetingDurationHistory(): array
+    {
+        $meetings = Meeting::whereNotNull('meeting_starts_at')
+            ->whereNotNull('meeting_ends_at')
+            ->orderBy('meeting_starts_at', 'desc')
+            ->take(10)
+            ->get()
+            ->reverse()
+            ->values();
+
+        return [
+            'labels' => $meetings->pluck('title')->toArray(),
+            'data' => $meetings->map(fn ($m) => $m->meeting_starts_at->diffInMinutes($m->meeting_ends_at))->toArray(),
+        ];
+    }
+
+    #[Computed]
+    public function meetingDurationYearly(): array
+    {
+        $meetings = Meeting::whereNotNull('meeting_starts_at')
+            ->whereNotNull('meeting_ends_at')
+            ->where('meeting_starts_at', '>=', now()->subYear())
+            ->get();
+
+        $monthlyData = $meetings->groupBy(fn ($m) => $m->meeting_starts_at->format('Y-m'))
+            ->map(fn ($group) => round($group->avg(fn ($m) => $m->meeting_starts_at->diffInMinutes($m->meeting_ends_at))));
+
+        return [
+            'labels' => $monthlyData->keys()->toArray(),
+            'data' => $monthlyData->values()->toArray(),
         ];
     }
 

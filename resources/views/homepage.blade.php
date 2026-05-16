@@ -52,7 +52,6 @@
                     <flux:text class="mt-2 grow">
                         {{ __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.') }}
                     </flux:text>
-                    <flux:button href="https://qrtag.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
                 </flux:card>
             </div>
         </div>

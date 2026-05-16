@@ -2,7 +2,7 @@
     <div class="mb-6 flex flex-col gap-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('home') }}" icon="home">{{ __('Home') }}</flux:breadcrumbs.item>
-            <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="chart-pie">{{ __('Dashboard Overview') }}</flux:breadcrumbs>
+            <flux:breadcrumbs.item href="{{ route('admin.dashboard') }}" icon="chart-pie">{{ __('Dashboard Overview') }}</flux:breadcrumbs.item>
         </flux:breadcrumbs>
     </div>
 
@@ -47,7 +47,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- Latest Event Stats --}}
         <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex-col space-y-2 md:flex-row md:space-y-0 items-center justify-between mb-4">
                 <h2 class="text-lg font-bold">{{ __('Latest Event Stats') }}</h2>
                 @if($this->latestEvent)
                     <flux:badge color="orange" variant="outline">{{ $this->latestEvent->title }}</flux:badge>
@@ -169,10 +169,6 @@
                         </flux:button>
                 @endcan
                 @can('dev')
-                    <flux:button href="{{ route('admin.feedback') }}" icon="book-open" variant="subtle" class="justify-start">
-                        {{ __('Manage Feedback') }}
-                    </flux:button>
-
                     <flux:button href="/admin/pulse" icon="command-line" variant="subtle" class="justify-start">
                         {{ __('Laravel Pulse') }}
                     </flux:button>
@@ -297,7 +293,10 @@
 
         {{-- Attendance History Chart --}}
         <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <h2 class="text-lg font-bold mb-4">{{ __('Attendance Trends') }}</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">{{ __('Event Attendance Trends') }}</h2>
+                <flux:badge color="zinc" variant="outline">{{ __('Past 10 Events') }}</flux:badge>
+            </div>
             <div
                 x-data="{
                     init() {
@@ -311,21 +310,156 @@
                                         data: @js($this->attendanceHistory['registrations']),
                                         backgroundColor: '#fb923c',
                                         borderRadius: 6,
+                                        order: 2
                                     },
                                     {
                                         label: '{{ __('Attendance') }}',
                                         data: @js($this->attendanceHistory['attendance']),
                                         backgroundColor: '#f87171',
                                         borderRadius: 6,
+                                        order: 3
+                                    },
+                                    {
+                                        label: '{{ __('Rate (%)') }}',
+                                        data: @js($this->attendanceHistory['rates']),
+                                        borderColor: '#3b82f6',
+                                        type: 'line',
+                                        yAxisID: 'y1',
+                                        order: 1,
+                                        tension: 0.3,
+                                        pointRadius: 4
                                     }
                                 ]
                             },
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { position: 'bottom' } },
+                                plugins: {
+                                    legend: { position: 'bottom' },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
                                 scales: {
-                                    y: { beginAtZero: true, grid: { display: false } },
+                                    y: {
+                                        beginAtZero: true,
+                                        title: { display: true, text: '{{ __('Count') }}' }
+                                    },
+                                    y1: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        position: 'right',
+                                        title: { display: true, text: '{{ __('Rate (%)') }}' },
+                                        grid: { drawOnChartArea: false }
+                                    },
+                                    x: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
+                }"
+                class="h-72"
+            >
+                <canvas x-ref="attendanceChart"></canvas>
+            </div>
+        </flux:card>
+
+        {{-- Meeting Attendance Trends --}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">{{ __('Meeting Attendance Trends') }}</h2>
+                <flux:badge color="zinc" variant="outline">{{ __('Past 10 Meetings') }}</flux:badge>
+            </div>
+            <div
+                x-data="{
+                    init() {
+                        new Chart(this.$refs.meetingChart, {
+                            type: 'bar',
+                            data: {
+                                labels: @js($this->meetingAttendanceHistory['labels']),
+                                datasets: [
+                                    {
+                                        label: '{{ __('Attendees') }}',
+                                        data: @js($this->meetingAttendanceHistory['data']),
+                                        backgroundColor: '#10b981',
+                                        borderRadius: 6,
+                                        order: 2
+                                    },
+                                    {
+                                        label: '{{ __('Rate (%)') }}',
+                                        data: @js($this->meetingAttendanceHistory['rates']),
+                                        borderColor: '#14b8a6',
+                                        type: 'line',
+                                        yAxisID: 'y1',
+                                        order: 1,
+                                        tension: 0.3
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'bottom' },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: { display: true, text: '{{ __('Count') }}' }
+                                    },
+                                    y1: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        position: 'right',
+                                        title: { display: true, text: '{{ __('Rate (%)') }}' },
+                                        grid: { drawOnChartArea: false }
+                                    },
+                                    x: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
+                }"
+                class="h-72"
+            >
+                <canvas x-ref="meetingChart"></canvas>
+            </div>
+        </flux:card>
+
+        {{-- Yearly Meeting Attendance --}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">{{ __('Avg. Monthly Meeting Attendance') }}</h2>
+                <flux:badge color="zinc" variant="outline">{{ __('Last 12 Months') }}</flux:badge>
+            </div>
+            <div
+                x-data="{
+                    init() {
+                        new Chart(this.$refs.yearlyMeetingChart, {
+                            type: 'line',
+                            data: {
+                                labels: @js($this->meetingAttendanceYearly['labels']),
+                                datasets: [{
+                                    label: '{{ __('Avg. Attendees') }}',
+                                    data: @js($this->meetingAttendanceYearly['data']),
+                                    borderColor: '#14b8a6',
+                                    backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointRadius: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
                                     x: { grid: { display: false } }
                                 }
                             }
@@ -334,13 +468,95 @@
                 }"
                 class="h-64"
             >
-                <canvas x-ref="attendanceChart"></canvas>
+                <canvas x-ref="yearlyMeetingChart"></canvas>
+            </div>
+        </flux:card>
+
+        {{-- Meeting Duration Trends --}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">{{ __('Meeting Duration Trends') }}</h2>
+                <flux:badge color="zinc" variant="outline">{{ __('Minutes') }}</flux:badge>
+            </div>
+            <div
+                x-data="{
+                    init() {
+                        new Chart(this.$refs.durationChart, {
+                            type: 'bar',
+                            data: {
+                                labels: @js($this->meetingDurationHistory['labels']),
+                                datasets: [{
+                                    label: '{{ __('Minutes') }}',
+                                    data: @js($this->meetingDurationHistory['data']),
+                                    backgroundColor: '#a855f7',
+                                    borderRadius: 6,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: { beginAtZero: true, title: { display: true, text: '{{ __('Minutes') }}' } },
+                                    x: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
+                }"
+                class="h-64"
+            >
+                <canvas x-ref="durationChart"></canvas>
+            </div>
+        </flux:card>
+
+        {{-- Yearly Meeting Duration --}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">{{ __('Avg. Monthly Meeting Duration') }}</h2>
+                <flux:badge color="zinc" variant="outline">{{ __('Last 12 Months') }}</flux:badge>
+            </div>
+            <div
+                x-data="{
+                    init() {
+                        new Chart(this.$refs.yearlyDurationChart, {
+                            type: 'line',
+                            data: {
+                                labels: @js($this->meetingDurationYearly['labels']),
+                                datasets: [{
+                                    label: '{{ __('Avg. Minutes') }}',
+                                    data: @js($this->meetingDurationYearly['data']),
+                                    borderColor: '#9333ea',
+                                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointRadius: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: { beginAtZero: true, title: { display: true, text: '{{ __('Minutes') }}' } },
+                                    x: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
+                }"
+                class="h-64"
+            >
+                <canvas x-ref="yearlyDurationChart"></canvas>
             </div>
         </flux:card>
 
         {{-- Kiosk Revenue Chart --}}
         <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <h2 class="text-lg font-bold mb-4">{{ __('Kiosk Revenue Trends') }}</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">{{ __('Kiosk Revenue Trends') }}</h2>
+                <flux:badge color="zinc" variant="outline">{{ __('Last 12 Months') }}</flux:badge>
+            </div>
             <div
                 x-data="{
                     init() {
@@ -377,7 +593,10 @@
 
         {{-- User Growth Chart --}}
         <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <h2 class="text-lg font-bold mb-4">{{ __('User Registrations (Last Year)') }}</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">{{ __('Total User Growth') }}</h2>
+                <flux:badge color="zinc" variant="outline">{{ __('Last 3 Months') }}</flux:badge>
+            </div>
             <div
                 x-data="{
                     init() {
@@ -386,7 +605,7 @@
                             data: {
                                 labels: @js($this->userGrowth['labels']),
                                 datasets: [{
-                                    label: '{{ __('New Users') }}',
+                                    label: '{{ __('Total Users') }}',
                                     data: @js($this->userGrowth['data']),
                                     borderColor: '#3b82f6',
                                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -401,7 +620,7 @@
                                 maintainAspectRatio: false,
                                 plugins: { legend: { display: false } },
                                 scales: {
-                                    y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                                    y: { beginAtZero: false, ticks: { stepSize: 5 } },
                                     x: { ticks: { maxTicksLimit: 7 }, grid: { display: false } }
                                 }
                             }
@@ -464,79 +683,6 @@
                 class="h-64"
             >
                 <canvas x-ref="classChart"></canvas>
-            </div>
-        </flux:card>
-
-        {{-- Meeting Attendance Trends --}}
-        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <h2 class="text-lg font-bold mb-4">{{ __('Meeting Attendance Trends') }}</h2>
-            <div
-                x-data="{
-                    init() {
-                        new Chart(this.$refs.meetingChart, {
-                            type: 'bar',
-                            data: {
-                                labels: @js($this->meetingAttendanceHistory['labels']),
-                                datasets: [{
-                                    label: '{{ __('Attendees') }}',
-                                    data: @js($this->meetingAttendanceHistory['data']),
-                                    backgroundColor: '#10b981',
-                                    borderRadius: 6,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    y: { beginAtZero: true, grid: { display: false } },
-                                    x: { grid: { display: false } }
-                                }
-                            }
-                        });
-                    }
-                }"
-                class="h-64"
-            >
-                <canvas x-ref="meetingChart"></canvas>
-            </div>
-        </flux:card>
-
-        {{-- Yearly Meeting Attendance --}}
-        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <h2 class="text-lg font-bold mb-4">{{ __('Meeting Attendance (Last Year)') }}</h2>
-            <div
-                x-data="{
-                    init() {
-                        new Chart(this.$refs.yearlyMeetingChart, {
-                            type: 'line',
-                            data: {
-                                labels: @js($this->meetingAttendanceYearly['labels']),
-                                datasets: [{
-                                    label: '{{ __('Total Monthly Attendees') }}',
-                                    data: @js($this->meetingAttendanceYearly['data']),
-                                    borderColor: '#14b8a6',
-                                    backgroundColor: 'rgba(20, 184, 166, 0.1)',
-                                    fill: true,
-                                    tension: 0.4,
-                                    pointRadius: 4
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                                    x: { grid: { display: false } }
-                                }
-                            }
-                        });
-                    }
-                }"
-                class="h-64"
-            >
-                <canvas x-ref="yearlyMeetingChart"></canvas>
             </div>
         </flux:card>
     </div>

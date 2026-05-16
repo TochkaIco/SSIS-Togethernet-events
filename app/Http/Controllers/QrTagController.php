@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\EventType;
 use App\Models\EventUser;
+use App\Models\QrTagLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +19,7 @@ class QrTagController extends Controller
             ->firstOrFail();
 
         if ($victimRegistration->event->event_type !== EventType::QR_TAG) {
-            return redirect()->route('homepage')->with('error', __('Invalid event type.'));
+            return redirect()->route('home')->with('error', __('Invalid event type.'));
         }
 
         if ($victimRegistration->qr_tag_tagged_at) {
@@ -45,15 +46,25 @@ class QrTagController extends Controller
                 ->with('error', __('This is not your target.'));
         }
 
+        $newTargetId = $victimRegistration->qr_tag_target_user_id;
+
         // Successful tag
         $victimRegistration->update([
             'qr_tag_tagged_at' => now(),
             'qr_tag_tagged_by_user_id' => Auth::id(),
+            'qr_tag_target_user_id' => null,
         ]);
 
-        // Transfer target
+        QrTagLog::create([
+            'event_id' => $victimRegistration->event_id,
+            'user_id' => Auth::id(),
+            'target_user_id' => $victimRegistration->user_id,
+            'type' => 'tagged',
+        ]);
+
         $assassinRegistration->update([
-            'qr_tag_target_user_id' => $victimRegistration->qr_tag_target_user_id,
+            'has_arrived' => true,
+            'qr_tag_target_user_id' => $newTargetId,
         ]);
 
         return redirect()->route('event.show', $victimRegistration->event)
