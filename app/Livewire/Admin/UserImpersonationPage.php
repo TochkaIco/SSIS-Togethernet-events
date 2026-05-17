@@ -97,6 +97,7 @@ class UserImpersonationPage extends Component
             'allPermissions' => Permission::all(),
             'allClassGroups' => [
                 'Personal',
+                'Alumni',
                 'TE'.now()->subMonths(6)->format('y'),
                 'TE'.now()->subMonths(6)->subYear()->format('y'),
                 'TE'.now()->subMonths(6)->subYears(2)->format('y'),

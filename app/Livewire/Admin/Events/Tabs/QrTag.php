@@ -148,7 +148,7 @@ class QrTag extends Component
 
     public function toggleDisabled(?int $registrationId = null): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage qr-tag');
 
         $id = $registrationId ?? $this->selectedRegistrationId;
 
@@ -202,6 +202,7 @@ class QrTag extends Component
             'validClasses' => (new User)->validClasses(),
             'allClassGroups' => [
                 'Personal',
+                'Alumni',
                 'TE'.now()->subMonths(6)->format('y'),
                 'TE'.now()->subMonths(6)->subYear()->format('y'),
                 'TE'.now()->subMonths(6)->subYears(2)->format('y'),

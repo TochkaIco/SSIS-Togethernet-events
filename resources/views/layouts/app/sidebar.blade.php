@@ -54,14 +54,14 @@
                                                 {{ __('Waiting List') }}
                                             </flux:sidebar.item>
                                         @endif
-                                        @if($event->event_type === \App\EventType::QR_TAG)
-                                            @can('manage qr-tag')
-                                                <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'qr-tag'])" :current="request('tab') === 'qr-tag'" wire:navigate>
-                                                    {{ __('QR Tag') }}
-                                                </flux:sidebar.item>
-                                            @endcan
-                                        @endif
                                     @endcan
+                                    @if($event->event_type === \App\EventType::QR_TAG)
+                                        @can('manage qr-tag')
+                                            <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'qr-tag'])" :current="request('tab') === 'qr-tag'" wire:navigate>
+                                                {{ __('QR Tag') }}
+                                            </flux:sidebar.item>
+                                        @endcan
+                                    @endif
                                     @can('manage kiosk')
                                         @if($event->event_type !== \App\EventType::QR_TAG)
                                             <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'kiosk'])" :current="request('tab') === 'kiosk'" wire:navigate>

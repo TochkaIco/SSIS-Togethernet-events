@@ -11,17 +11,6 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h1 class="font-bold text-2xl sm:text-3xl wrap-break-word min-w-0 flex-1">{{ $event->title }}</h1>
             <div class="flex space-x-3 items-center justify-between">
-                @haspermission('edit articles')
-                <flux:button
-                    variant="ghost"
-                    icon="pencil-square"
-                    class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl"
-                    data-test="edit-event-button"
-                    wire:click="eventEdit"
-                >
-                    {{ __('Edit') }}
-                </flux:button>
-
                 @if($event->event_type === \App\EventType::QR_TAG)
                     <flux:button
                         variant="ghost"
@@ -33,6 +22,17 @@
                         {{ __('TV View') }}
                     </flux:button>
                 @endif
+
+                @haspermission('edit articles')
+                <flux:button
+                    variant="ghost"
+                    icon="pencil-square"
+                    class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl"
+                    data-test="edit-event-button"
+                    wire:click="eventEdit"
+                >
+                    {{ __('Edit') }}
+                </flux:button>
 
                 <flux:modal.trigger name="delete-event">
                     <flux:button variant="danger" class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl">
