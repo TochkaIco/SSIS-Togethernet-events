@@ -52,7 +52,9 @@
                     </flux:table.cell>
 
                     <flux:table.cell class="max-w-40 truncate">
-                        {{ $feedback->comment }}
+                        <flux:button-or-div wire:click="openUserFeedbackModal({{ $feedback }})" class="hover:text-orange-300 hover:underline cursor-pointer">
+                            {{ $feedback->comment }}
+                        </flux:button-or-div>
                     </flux:table.cell>
 
                     <flux:table.cell>
@@ -203,15 +205,6 @@
         </flux:field>
 
         <div class="flex gap-2 justify-end">
-            @if($this->selected_feedback)
-                @if($this->selected_feedback->is_finished)
-                    <flux:button wire:click="markAsUnresolved({{ $this->selected_feedback->id }})" variant="filled" class="mr-auto">{{ __('Mark as Unresolved') }}</flux:button>
-                @else
-                    <flux:button wire:click="markAsResolved({{ $this->selected_feedback->id }})" variant="filled" color="blue" class="mr-auto">{{ __('Resolve') }}</flux:button>
-                    <flux:button wire:click="markAsRejected({{ $this->selected_feedback->id }})" variant="filled" color="red" class="mr-auto">{{ __('Not Implementing') }}</flux:button>
-                @endif
-            @endif
-
             <flux:modal.close>
                 <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
             </flux:modal.close>

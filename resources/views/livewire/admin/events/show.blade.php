@@ -21,6 +21,19 @@
                 >
                     {{ __('Edit') }}
                 </flux:button>
+
+                @if($event->event_type === \App\EventType::QR_TAG)
+                    <flux:button
+                        variant="ghost"
+                        icon="tv"
+                        href="{{ route('event.tv', $event) }}"
+                        target="_blank"
+                        class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl"
+                    >
+                        {{ __('TV View') }}
+                    </flux:button>
+                @endif
+
                 <flux:modal.trigger name="delete-event">
                     <flux:button variant="danger" class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl">
                         {{ __('Delete') }}

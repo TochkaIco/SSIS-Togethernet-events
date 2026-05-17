@@ -187,7 +187,9 @@ class Dashboard extends Component
                 $attended = MeetingAttendant::where('meeting_id', $m->id)->where('has_attended', true)->count();
 
                 // Approximate members at that time by counting current members who were created before/on that date
-                $totalAtTime = User::role('tog-member')
+                $totalAtTime = User::whereHas('roles', function ($q) {
+                    $q->where('name', 'tog-member');
+                })
                     ->where('created_at', '<=', $m->meeting_starts_at)
                     ->count();
 

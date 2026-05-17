@@ -20,12 +20,14 @@ use App\Livewire\Admin\UserManagement;
 use App\Livewire\Admin\UserProfile;
 use App\Livewire\Events\EventShow as PublicEventShow;
 use App\Livewire\Events\Index as PublicEvents;
+use App\Livewire\Events\QrTagTvView;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::view('/', 'homepage')->name('home');
 Route::get('/events', PublicEvents::class)->name('events');
 Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
+Route::get('/events/{event}/tv', QrTagTvView::class)->name('event.tv');
 Route::view('/faq', 'faq')->name('faq');
 
 Route::middleware(['auth', 'verified'])->group(function () {

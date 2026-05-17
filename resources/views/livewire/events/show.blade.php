@@ -235,8 +235,8 @@
                                         @case('tagged')
                                             <flux:icon.user-minus class="size-4 text-red-500" />
                                             @break
-                                        @case('rebirth')
-                                        @case('rebirth_all')
+                                        @case('respawn')
+                                        @case('respawn_all')
                                             <flux:icon.sparkles class="size-4 text-purple-500" />
                                             @break
                                         @case('started')
@@ -251,10 +251,10 @@
                                     <div class="leading-relaxed">
                                         @if($log->type === 'tagged')
                                             <span class="font-bold">{{ $log->user->name }}</span> {{ __('tagged') }} <span class="font-bold">{{ $log->targetUser->name }}</span>
-                                        @elseif($log->type === 'rebirth')
-                                            <span class="font-bold">{{ $log->user->name }}</span> {{ __('was rebirthed by an admin.') }}
-                                        @elseif($log->type === 'rebirth_all')
-                                            {{ __('All caught players were rebirthed!') }}
+                                        @elseif($log->type === 'respawn')
+                                            <span class="font-bold">{{ $log->user->name }}</span> {{ __('was respawned by an admin.') }}
+                                        @elseif($log->type === 'respawn_all')
+                                            {{ __('All caught players were respawned!') }}
                                         @elseif($log->type === 'started')
                                             {{ __('The game has started! Targets have been shuffled.') }}
                                         @elseif($log->type === 'reset')

@@ -12,9 +12,9 @@
                     </flux:button>
                 </flux:modal.trigger>
 
-                <flux:modal.trigger name="confirm-rebirth-all">
+                <flux:modal.trigger name="confirm-respawn-all">
                     <flux:button variant="primary" icon="sparkles" class="bg-purple-600 hover:bg-purple-700 text-white flex-1 sm:flex-none">
-                        {{ __('Rebirth All') }}
+                        {{ __('Respawn All') }}
                     </flux:button>
                 </flux:modal.trigger>
             @else
@@ -25,51 +25,26 @@
         </div>
     </div>
 
-    @if ($event->isQrTagGameStarted())
-        <flux:modal name="confirm-rebirth-all" class="min-w-[22rem]">
-            <div class="space-y-6">
-                <div>
-                    <flux:heading size="lg">{{ __('Rebirth All Players?') }}</flux:heading>
-                    <flux:subheading>
-                        {{ __('This will clear all "Tagged" statuses and reshuffle all participants into a new game.') }}
-                    </flux:subheading>
-                </div>
+    {{-- Header & Search --}}
+    <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="{{ __('Search by name or email...') }}" class="flex-1" />
 
-                <div class="flex gap-2">
-                    <flux:spacer />
-                    <flux:modal.close>
-                        <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
-                    </flux:modal.close>
-                    <flux:button wire:click="rebirthAll" variant="primary" x-on:click="$flux.modal('confirm-rebirth-all').close()" class="bg-purple-600 hover:bg-purple-700 text-white">
-                        {{ __('Confirm Rebirth All') }}
-                    </flux:button>
-                </div>
-            </div>
-        </flux:modal>
+        <div class="flex gap-2 md:gap-4">
+            <flux:select wire:model.live="filterClassGroup" placeholder="{{ __('Filter by Class') }}" class="md:w-64 flex-1">
+                <flux:select.option value="">{{ __('All Classes') }}</flux:select.option>
+                @foreach($allClassGroups as $classGroup)
+                    <flux:select.option :value="$classGroup">{{ ucfirst($classGroup) }}</flux:select.option>
+                @endforeach
+            </flux:select>
 
-        <flux:modal name="confirm-reset-game" class="min-w-[22rem]">
-            <div class="space-y-6">
-                <div>
-                    <flux:heading size="lg">{{ __('Reset QR Tag Game?') }}</flux:heading>
-                    <flux:subheading>
-                        {{ __('Are you sure you want to reset the game? All progress and targets will be lost. This action cannot be undone.') }}
-                    </flux:subheading>
-                </div>
-
-                <div class="flex gap-2">
-                    <flux:spacer />
-
-                    <flux:modal.close>
-                        <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
-                    </flux:modal.close>
-
-                    <flux:button wire:click="resetGame" variant="danger" x-on:click="$flux.modal('confirm-reset-game').close()">
-                        {{ __('Reset Game') }}
-                    </flux:button>
-                </div>
-            </div>
-        </flux:modal>
-    @endif
+            <flux:select wire:model.live="filterRole" placeholder="{{ __('Filter by Role') }}" class="md:w-64 flex-1">
+                <flux:select.option value="">{{ __('All Roles') }}</flux:select.option>
+                @foreach($allRoles as $role)
+                    <flux:select.option :value="$role->name">{{ ucfirst($role->name) }}</flux:select.option>
+                @endforeach
+            </flux:select>
+        </div>
+    </div>
 
     {{-- Desktop Table --}}
     <flux:table class="hidden lg:table">
@@ -144,17 +119,30 @@
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
                             @if ($participant->qr_tag_tagged_at && !$participant->is_disabled)
-                                <flux:button wire:click="rebirthPlayer({{ $participant->id }})" variant="ghost" icon="sparkles" size="sm" class="text-purple-600 hover:text-purple-700" tooltip="{{ __('Rebirth Player') }}" />
+                                <flux:button wire:click="respawnPlayer({{ $participant->id }})" variant="ghost" icon="sparkles" size="sm" class="text-purple-600 hover:text-purple-700" tooltip="{{ __('Respawn Player') }}" />
                             @endif
 
-                            <flux:button
-                                wire:click="toggleDisabled({{ $participant->id }})"
-                                variant="ghost"
-                                :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
-                                size="sm"
-                                :class="$participant->is_disabled ? 'text-green-600' : 'text-zinc-400'"
-                                :tooltip="$participant->is_disabled ? __('Enable Player') : __('Disable Player')"
-                            />
+                            @if($participant->is_disabled)
+                                <flux:button
+                                    wire:click="toggleDisabled({{ $participant->id }})"
+                                    variant="ghost"
+                                    icon="user-plus"
+                                    size="sm"
+                                    class="text-green-600"
+                                    :tooltip="__('Enable Player')"
+                                />
+                            @else
+                                <flux:modal.trigger name="confirm-disable-player">
+                                    <flux:button
+                                        wire:click="$set('selectedRegistrationId', {{ $participant->id }})"
+                                        variant="ghost"
+                                        icon="user-minus"
+                                        size="sm"
+                                        class="text-zinc-400"
+                                        :tooltip="__('Disable Player')"
+                                    />
+                                </flux:modal.trigger>
+                            @endif
                         </div>
                     </flux:table.cell>
                 </flux:table.row>
@@ -228,22 +216,36 @@
                         </div>
 
                         <div class="mt-4">
-                            <flux:button wire:click="rebirthPlayer({{ $participant->id }})" variant="primary" icon="sparkles" size="sm" class="w-full bg-purple-600 hover:bg-purple-700 text-white">
-                                {{ __('Rebirth Player') }}
+                            <flux:button wire:click="respawnPlayer({{ $participant->id }})" variant="primary" icon="sparkles" size="sm" class="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                                {{ __('Respawn Player') }}
                             </flux:button>
                         </div>
                     @endif
 
                     <div class="mt-2">
-                        <flux:button
-                            wire:click="toggleDisabled({{ $participant->id }})"
-                            variant="outline"
-                            :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
-                            size="sm"
-                            class="w-full"
-                        >
-                            {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
-                        </flux:button>
+                        @if($participant->is_disabled)
+                            <flux:button
+                                wire:click="toggleDisabled({{ $participant->id }})"
+                                variant="outline"
+                                icon="user-plus"
+                                size="sm"
+                                class="w-full"
+                            >
+                                {{ __('Enable Player') }}
+                            </flux:button>
+                        @else
+                            <flux:modal.trigger name="confirm-disable-player">
+                                <flux:button
+                                    wire:click="$set('selectedRegistrationId', {{ $participant->id }})"
+                                    variant="outline"
+                                    icon="user-minus"
+                                    size="sm"
+                                    class="w-full"
+                                >
+                                    {{ __('Disable Player') }}
+                                </flux:button>
+                            </flux:modal.trigger>
+                        @endif
                     </div>
                 </div>
             </flux:card>
@@ -263,8 +265,8 @@
                                 @case('tagged')
                                     <flux:icon.user-minus class="size-4 text-red-500" />
                                     @break
-                                @case('rebirth')
-                                @case('rebirth_all')
+                                @case('respawn')
+                                @case('respawn_all')
                                     <flux:icon.sparkles class="size-4 text-purple-500" />
                                     @break
                                 @case('started')
@@ -279,10 +281,10 @@
                             <div class="leading-relaxed">
                                 @if($log->type === 'tagged')
                                     <span class="font-bold">{{ $log->user->name }}</span> {{ __('tagged') }} <span class="font-bold">{{ $log->targetUser->name }}</span>
-                                @elseif($log->type === 'rebirth')
-                                    <span class="font-bold">{{ $log->user->name }}</span> {{ __('was rebirthed by admin') }} <span class="font-bold text-purple-600">{{ $log->admin?->name ?? __('Unknown Admin') }}</span>.
-                                @elseif($log->type === 'rebirth_all')
-                                    {{ __('All players were rebirthed and targets reshuffled by admin') }} <span class="font-bold text-purple-600">{{ $log->admin?->name ?? __('Unknown Admin') }}</span>.
+                                @elseif($log->type === 'respawn')
+                                    <span class="font-bold">{{ $log->user->name }}</span> {{ __('was respawned by admin') }} <span class="font-bold text-purple-600">{{ $log->admin?->name ?? __('Unknown Admin') }}</span>.
+                                @elseif($log->type === 'respawn_all')
+                                    {{ __('All players were respawned and targets reshuffled by admin') }} <span class="font-bold text-purple-600">{{ $log->admin?->name ?? __('Unknown Admin') }}</span>.
                                 @elseif($log->type === 'started')
                                     {{ __('The game was started and targets were shuffled by admin') }} <span class="font-bold text-purple-600">{{ $log->admin?->name ?? __('Unknown Admin') }}</span>.
                                 @elseif($log->type === 'reset')
@@ -302,4 +304,71 @@
             </div>
         </flux:card>
     </div>
+
+    <flux:modal name="confirm-disable-player" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Disable Player?') }}</flux:heading>
+                <flux:subheading>
+                    {{ __('Are you sure you want to disable this player? They will be removed from the game cycle and their hunter will be assigned to their target.') }}
+                </flux:subheading>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+                <flux:button wire:click="toggleDisabled" variant="danger" x-on:click="$flux.modal('confirm-disable-player').close()">
+                    {{ __('Confirm Disable') }}
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    @if ($event->isQrTagGameStarted())
+        <flux:modal name="confirm-respawn-all" class="min-w-[22rem]">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Respawn All Players?') }}</flux:heading>
+                    <flux:subheading>
+                        {{ __('This will clear all "Tagged" statuses and reshuffle all participants into a new game.') }}
+                    </flux:subheading>
+                </div>
+
+                <div class="flex gap-2">
+                    <flux:spacer />
+                    <flux:modal.close>
+                        <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                    </flux:modal.close>
+                    <flux:button wire:click="respawnAll" variant="primary" x-on:click="$flux.modal('confirm-respawn-all').close()" class="bg-purple-600 hover:bg-purple-700 text-white">
+                        {{ __('Confirm Respawn All') }}
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+
+        <flux:modal name="confirm-reset-game" class="min-w-[22rem]">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Reset QR Tag Game?') }}</flux:heading>
+                    <flux:subheading>
+                        {{ __('Are you sure you want to reset the game? All progress and targets will be lost. This action cannot be undone.') }}
+                    </flux:subheading>
+                </div>
+
+                <div class="flex gap-2">
+                    <flux:spacer />
+
+                    <flux:modal.close>
+                        <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button wire:click="resetGame" variant="danger" x-on:click="$flux.modal('confirm-reset-game').close()">
+                        {{ __('Reset Game') }}
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
 </div>

@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     Http::fake();
@@ -154,7 +155,7 @@ test('cannot unregister from qr-tag event after it started', function () {
     ]);
 });
 
-test('admin can rebirth a player', function () {
+test('admin can respawn a player', function () {
     $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
     $u1 = User::factory()->create();
     $u2 = User::factory()->create();
@@ -176,7 +177,7 @@ test('admin can rebirth a player', function () {
     $this->actingAs($admin);
 
     Livewire::test(QrTag::class, ['event' => $event])
-        ->call('rebirthPlayer', $r2->id);
+        ->call('respawnPlayer', $r2->id);
 
     $r1->refresh();
     $r2->refresh();
@@ -200,11 +201,11 @@ test('admin can rebirth a player', function () {
         'event_id' => $event->id,
         'user_id' => $u2->id,
         'admin_id' => $admin->id,
-        'type' => 'rebirth',
+        'type' => 'respawn',
     ]);
 });
 
-test('admin can rebirth all players', function () {
+test('admin can respawn all players', function () {
     $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
     $users = User::factory()->count(3)->create();
     foreach ($users as $user) {
@@ -216,14 +217,14 @@ test('admin can rebirth all players', function () {
     $this->actingAs($admin);
 
     Livewire::test(QrTag::class, ['event' => $event])
-        ->call('rebirthAll', app(ShuffleQrTagTargets::class));
+        ->call('respawnAll', app(ShuffleQrTagTargets::class));
 
     expect(EventUser::where('event_id', $event->id)->whereNull('qr_tag_tagged_at')->count())->toBe(3);
 
     $this->assertDatabaseHas('qr_tag_logs', [
         'event_id' => $event->id,
         'admin_id' => $admin->id,
-        'type' => 'rebirth_all',
+        'type' => 'respawn_all',
     ]);
 });
 
@@ -263,7 +264,7 @@ test('shuffle button is hidden if game started', function () {
     Livewire::test(QrTag::class, ['event' => $event])
         ->assertDontSee(__('Shuffle & Start'))
         ->assertSee(__('Reset Game'))
-        ->assertSee(__('Rebirth All'));
+        ->assertSee(__('Respawn All'));
 });
 
 test('shuffle button is visible if game not started', function () {
@@ -276,7 +277,7 @@ test('shuffle button is visible if game not started', function () {
     Livewire::test(QrTag::class, ['event' => $event])
         ->assertSee(__('Shuffle & Start'))
         ->assertDontSee(__('Reset Game'))
-        ->assertDontSee(__('Rebirth All'));
+        ->assertDontSee(__('Respawn All'));
 });
 
 test('it tracks tag counts and shows leaderboard', function () {
@@ -344,17 +345,57 @@ test('it tracks tag counts and shows leaderboard', function () {
     expect($r3->qr_tag_token)->not->toBe('t3');
     expect($r4->qr_tag_token)->not->toBe('t4');
 
-    // Rebirth u2
+    // Respawn u2
     $admin = User::factory()->create();
     $admin->assignRole('admin');
     $this->actingAs($admin);
 
     Livewire::test(QrTag::class, ['event' => $event])
-        ->call('rebirthPlayer', $r2->id);
+        ->call('respawnPlayer', $r2->id);
 
     $r1->refresh();
     // Count should NOT reset
     expect($r1->qr_tag_count)->toBe(3);
+});
+
+test('it can search and filter participants', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
+    $u1 = User::factory()->create(['name' => 'Alice Smith', 'email' => 'alice@example.com', 'class' => 'TE24A']);
+    $u2 = User::factory()->create(['name' => 'Bob Jones', 'email' => 'bob@example.com', 'class' => 'TE25B']);
+
+    $role = Role::create(['name' => 'test-role']);
+    $u1->assignRole($role);
+
+    EventUser::create(['user_id' => $u1->id, 'event_id' => $event->id, 'in_waitinglist' => false]);
+    EventUser::create(['user_id' => $u2->id, 'event_id' => $event->id, 'in_waitinglist' => false]);
+
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    // Search by name
+    Livewire::test(QrTag::class, ['event' => $event])
+        ->set('search', 'Alice')
+        ->assertSee('Alice Smith')
+        ->assertDontSee('Bob Jones');
+
+    // Search by email
+    Livewire::test(QrTag::class, ['event' => $event])
+        ->set('search', 'bob@example.com')
+        ->assertSee('Bob Jones')
+        ->assertDontSee('Alice Smith');
+
+    // Filter by role
+    Livewire::test(QrTag::class, ['event' => $event])
+        ->set('filterRole', 'test-role')
+        ->assertSee('Alice Smith')
+        ->assertDontSee('Bob Jones');
+
+    // Filter by class group
+    Livewire::test(QrTag::class, ['event' => $event])
+        ->set('filterClassGroup', 'TE24')
+        ->assertSee('Alice Smith')
+        ->assertDontSee('Bob Jones');
 });
 
 test('it respects disabled players', function () {

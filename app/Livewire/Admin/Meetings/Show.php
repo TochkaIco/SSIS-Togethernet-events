@@ -31,7 +31,7 @@ class Show extends Component
             ->toArray();
 
         // Pre-initialize attendance for all members to ensure stable wire:model binding
-        $this->attendance = User::role('tog-member')
+        $this->attendance = User::whereHas('roles', fn ($q) => $q->where('name', 'tog-member'))
             ->pluck('id')
             ->mapWithKeys(fn ($id) => [(string) $id => in_array($id, $attendedIds)])
             ->toArray();
@@ -94,7 +94,7 @@ class Show extends Component
 
     public function render(): Factory|\Illuminate\Contracts\View\View|View
     {
-        $query = User::role('tog-member');
+        $query = User::whereHas('roles', fn ($q) => $q->where('name', 'tog-member'));
 
         if ($this->selectedClasses !== []) {
             $query->whereIn('class', $this->selectedClasses);
@@ -102,7 +102,7 @@ class Show extends Component
 
         $users = $query->get();
 
-        $allClasses = User::role('tog-member')
+        $allClasses = User::whereHas('roles', fn ($q) => $q->where('name', 'tog-member'))
             ->whereNotNull('class')
             ->distinct()
             ->pluck('class')

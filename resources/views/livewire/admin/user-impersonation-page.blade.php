@@ -64,7 +64,7 @@
 
                             <flux:tooltip toggleable>
                                 <flux:button icon="information-circle" size="sm" variant="ghost" />
-                                <flux:tooltip.content class="max-w-[20rem] space-y-2">
+                                <flux:tooltip.content class="max-w-[20rem] space-y-2 bg-accent-foreground! text-accent-content! shadow-lg">
                                     <flux:label>{{ __('Roles') . ':' }}</flux:label>
                                     <div class="flex flex-wrap gap-1 max-w-60">
                                         @foreach ($user->getAllPermissions() as $permission)

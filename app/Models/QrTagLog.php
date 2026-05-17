@@ -68,8 +68,8 @@ class QrTagLog extends Model
                     $log->targetUser->name,
                     $log->event->qrTagActiveParticipantsCount()
                 ),
-                'rebirth' => "**Rebirth:** {$log->user->name} har återvänt till spelet av en administratör!",
-                'rebirth_all' => "**Alla spelare har återuppstått!** Måltavlor har blandats om i {$log->event->title}.",
+                'respawn' => "**Respawn:** {$log->user->name} har återvänt till spelet av en administratör!",
+                'respawn_all' => "**Alla spelare har återuppstått!** Måltavlor har blandats om i {$log->event->title}.",
                 'reset' => "**Spelet har återställts** för {$log->event->title}.",
                 default => null,
             };

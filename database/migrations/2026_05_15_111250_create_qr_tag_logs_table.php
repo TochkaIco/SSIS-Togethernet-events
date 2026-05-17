@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('target_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('admin_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('type'); // tagged, rebirth, rebirth_all, started, reset
+            $table->string('type'); // tagged, respawn, respawn_all, started, reset
             $table->json('data')->nullable();
             $table->timestamps();
         });

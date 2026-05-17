@@ -272,7 +272,9 @@ class UserManagement extends Component
                 });
             })
             ->when($this->filterRole, function ($q) {
-                $q->role($this->filterRole);
+                $q->whereHas('roles', function ($q) {
+                    $q->where('name', $this->filterRole);
+                });
             })
             ->when($this->filterClassGroup, function ($q) {
                 $q->where('class', 'like', $this->filterClassGroup.'%');

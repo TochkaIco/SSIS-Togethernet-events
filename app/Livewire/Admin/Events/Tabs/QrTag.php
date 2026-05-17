@@ -7,16 +7,30 @@ namespace App\Livewire\Admin\Events\Tabs;
 use App\Actions\ShuffleQrTagTargets;
 use App\Models\Event;
 use App\Models\QrTagLog;
+use App\Models\User;
 use Flux\Flux;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class QrTag extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
+    public $search = '';
+
+    #[Url]
+    public $filterRole = '';
+
+    public $filterClassGroup = '';
+
     public Event $event;
+
+    public ?int $selectedRegistrationId = null;
 
     public function mount(Event $event): void
     {
@@ -60,14 +74,14 @@ class QrTag extends Component
         Flux::toast(__('Game reset.'), variant: 'success');
     }
 
-    public function rebirthPlayer(int $registrationId): void
+    public function respawnPlayer(int $registrationId): void
     {
         $this->authorize('manage qr-tag');
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
         if ($registration->is_disabled) {
-            Flux::toast(__('Cannot rebirth a disabled player.'), variant: 'danger');
+            Flux::toast(__('Cannot respawn a disabled player.'), variant: 'danger');
 
             return;
         }
@@ -76,8 +90,8 @@ class QrTag extends Component
             return;
         }
 
-        // To rebirth one player, we insert them into the cycle.
-        // We find an active player (not tagged and not disabled) and put the rebirthed player after them.
+        // To respawn one player, we insert them into the cycle.
+        // We find an active player (not tagged and not disabled) and put the respawned player after them.
         $activePlayers = $this->event->registrations()
             ->whereNull('qr_tag_tagged_at')
             ->where('is_disabled', false)
@@ -86,8 +100,8 @@ class QrTag extends Component
 
         if ($activePlayers->isEmpty()) {
             // If no active players, just treat it like a fresh start for this player
-            // But they won't have a target until someone else is rebirthed or game is shuffled.
-            Flux::toast(__('No active players found to attach to. Try a full rebirth.'), variant: 'danger');
+            // But they won't have a target until someone else is respawned or game is shuffled.
+            Flux::toast(__('No active players found to attach to. Try a full respawn.'), variant: 'danger');
 
             return;
         }
@@ -110,35 +124,43 @@ class QrTag extends Component
             'event_id' => $this->event->id,
             'user_id' => $registration->user_id,
             'admin_id' => auth()->id(),
-            'type' => 'rebirth',
+            'type' => 'respawn',
         ]);
 
-        Flux::toast(__('Player rebirthed and inserted into the cycle.'), variant: 'success');
+        Flux::toast(__('Player respawned and inserted into the cycle.'), variant: 'success');
     }
 
-    public function rebirthAll(ShuffleQrTagTargets $action): void
+    public function respawnAll(ShuffleQrTagTargets $action): void
     {
         $this->authorize('manage qr-tag');
 
-        // Rebirth all just means reshuffling everyone who is registered.
+        // Respawn all just means reshuffling everyone who is registered.
         $action->handle($this->event, auth()->id());
 
         QrTagLog::create([
             'event_id' => $this->event->id,
             'admin_id' => auth()->id(),
-            'type' => 'rebirth_all',
+            'type' => 'respawn_all',
         ]);
 
-        Flux::toast(__('All players rebirthed and targets reshuffled.'), variant: 'success');
+        Flux::toast(__('All players respawned and targets reshuffled.'), variant: 'success');
     }
 
-    public function toggleDisabled(int $registrationId): void
+    public function toggleDisabled(?int $registrationId = null): void
     {
         $this->authorize('manage users');
 
-        $registration = $this->event->registrations()->findOrFail($registrationId);
+        $id = $registrationId ?? $this->selectedRegistrationId;
+
+        if (! $id) {
+            return;
+        }
+
+        $registration = $this->event->registrations()->findOrFail($id);
 
         $registration->toggleDisabled();
+
+        $this->selectedRegistrationId = null;
 
         Flux::toast(__('User status updated.'), variant: 'success');
     }
@@ -146,7 +168,25 @@ class QrTag extends Component
     public function render()
     {
         $participants = $this->event->participants()
-            ->with(['user', 'targetUser', 'taggedBy'])
+            ->when($this->search || $this->filterRole || $this->filterClassGroup, function ($q) {
+                $q->whereHas('user', function ($q) {
+                    $q->when($this->search, function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->where('name', 'like', '%'.$this->search.'%')
+                                ->orWhere('email', 'like', '%'.$this->search.'%');
+                        });
+                    })
+                        ->when($this->filterRole, function ($q) {
+                            $q->whereHas('roles', function ($q) {
+                                $q->where('name', $this->filterRole);
+                            });
+                        })
+                        ->when($this->filterClassGroup, function ($q) {
+                            $q->where('class', 'like', $this->filterClassGroup.'%');
+                        });
+                });
+            })
+            ->with(['user', 'targetUser', 'taggedBy', 'user.roles'])
             ->paginate(10);
 
         $logs = $this->event->qrTagLogs()
@@ -157,6 +197,15 @@ class QrTag extends Component
         return view('livewire.admin.events.tabs.qr-tag', [
             'participants' => $participants,
             'logs' => $logs,
+            'allRoles' => Role::all(),
+            'allPermissions' => Permission::all(),
+            'validClasses' => (new User)->validClasses(),
+            'allClassGroups' => [
+                'Personal',
+                'TE'.now()->subMonths(6)->format('y'),
+                'TE'.now()->subMonths(6)->subYear()->format('y'),
+                'TE'.now()->subMonths(6)->subYears(2)->format('y'),
+            ],
         ]);
     }
 }
