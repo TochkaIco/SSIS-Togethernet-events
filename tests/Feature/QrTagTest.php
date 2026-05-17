@@ -9,7 +9,12 @@ use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
+
+beforeEach(function () {
+    Http::fake();
+});
 
 test('it shuffles targets in a single cycle', function () {
     $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);

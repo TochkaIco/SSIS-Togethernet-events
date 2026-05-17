@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Jobs\SendDiscordQrtagNotification;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -52,5 +53,30 @@ class QrTagLog extends Model
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (QrTagLog $log) {
+            $log->load(['user', 'targetUser', 'admin', 'event']);
+
+            $message = match ($log->type) {
+                'started' => "# Spelet har börjat i {$log->event->title}!",
+                'tagged' => sprintf(
+                    "%s kullade %s!\nNu är det %d spelare kvar.",
+                    $log->user->name,
+                    $log->targetUser->name,
+                    $log->event->qrTagActiveParticipantsCount()
+                ),
+                'rebirth' => "**Rebirth:** {$log->user->name} har återvänt till spelet av en administratör!",
+                'rebirth_all' => "**Alla spelare har återuppstått!** Måltavlor har blandats om i {$log->event->title}.",
+                'reset' => "**Spelet har återställts** för {$log->event->title}.",
+                default => null,
+            };
+
+            if ($message) {
+                SendDiscordQrtagNotification::dispatch($message);
+            }
+        });
     }
 }

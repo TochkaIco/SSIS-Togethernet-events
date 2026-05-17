@@ -115,54 +115,16 @@
         @if($event->event_type === \App\EventType::QR_TAG)
             <div class="mt-6 space-y-6">
                 {{-- Player Stats Card --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <flux:card class="flex flex-col items-center justify-center py-8 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <div class="grid grid-cols-2 gap-4">
+                    <flux:card class="flex flex-col items-center justify-center md:py-8 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                         <flux:text size="lg" class="uppercase tracking-widest text-muted-foreground">{{ __('Active Players') }}</flux:text>
                         <flux:text size="xl" class="font-bold text-orange-500 mt-2">{{ $event->qrTagActiveParticipantsCount() }}</flux:text>
                     </flux:card>
-                    <flux:card class="flex flex-col items-center justify-center py-8 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                    <flux:card class="flex flex-col items-center justify-center md:py-8 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                         <flux:text size="lg" class="uppercase tracking-widest text-muted-foreground">{{ __('Total Players') }}</flux:text>
                         <flux:text size="xl" class="font-bold mt-2">{{ $event->participants()->count() }}</flux:text>
                     </flux:card>
                 </div>
-
-                {{-- Leaderboard --}}
-                <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                    <div class="flex items-center gap-2 mb-6">
-                        <flux:icon.trophy class="text-orange-500" />
-                        <flux:heading size="lg">{{ __('Top 5 Players') }}</flux:heading>
-                    </div>
-
-                    <div class="space-y-4">
-                        @forelse($event->qrTagLeaderboard() as $index => $leader)
-                            <div class="flex items-center gap-4 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                                <div @class([
-                                    'size-8 flex items-center justify-center rounded-full font-bold text-white shrink-0',
-                                    'bg-yellow-500' => $index === 0,
-                                    'bg-zinc-400' => $index === 1,
-                                    'bg-orange-700' => $index === 2,
-                                    'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300' => $index > 2,
-                                ])>
-                                    {{ $index + 1 }}
-                                </div>
-
-                                <flux:avatar src="{{ $leader->user->profile_picture }}" :initials="$leader->user->initials()" size="sm" class="shrink-0" />
-
-                                <div class="flex-1 min-w-0">
-                                    <div class="font-bold truncate">{{ $leader->user->name }}</div>
-                                    <div class="text-xs text-muted-foreground">{{ $leader->user->class }}</div>
-                                </div>
-
-                                <div class="flex flex-col items-end shrink-0">
-                                    <div class="text-lg font-bold text-orange-500">{{ $leader->qr_tag_count }}</div>
-                                    <div class="text-[10px] uppercase tracking-tighter text-muted-foreground">{{ __('Tags') }}</div>
-                                </div>
-                            </div>
-                        @empty
-                            <flux:text class="italic">{{ __('No tags yet.') }}</flux:text>
-                        @endforelse
-                    </div>
-                </flux:card>
 
                 {{-- User Game Info (only if registered) --}}
                 @if($this->registration && !$this->registration->in_waitinglist)
@@ -223,6 +185,44 @@
                         </div>
                     </flux:card>
                 @endif
+
+                {{-- Leaderboard --}}
+                <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                    <div class="flex items-center gap-2 mb-6">
+                        <flux:icon.trophy class="text-orange-500" />
+                        <flux:heading size="lg">{{ __('Top 5 Players') }}</flux:heading>
+                    </div>
+
+                    <div class="space-y-4">
+                        @forelse($event->qrTagLeaderboard() as $index => $leader)
+                            <div class="flex items-center gap-4 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                <div @class([
+                                    'size-8 flex items-center justify-center rounded-full font-bold text-white shrink-0',
+                                    'bg-yellow-500' => $index === 0,
+                                    'bg-zinc-400' => $index === 1,
+                                    'bg-orange-700' => $index === 2,
+                                    'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300' => $index > 2,
+                                ])>
+                                    {{ $index + 1 }}
+                                </div>
+
+                                <flux:avatar src="{{ $leader->user->profile_picture }}" :initials="$leader->user->initials()" size="sm" class="shrink-0" />
+
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold truncate">{{ $leader->user->name }}</div>
+                                    <div class="text-xs text-muted-foreground">{{ $leader->user->class }}</div>
+                                </div>
+
+                                <div class="flex flex-col items-end shrink-0">
+                                    <div class="text-lg font-bold text-orange-500">{{ $leader->qr_tag_count }}</div>
+                                    <div class="text-[10px] uppercase tracking-tighter text-muted-foreground">{{ __('Tags') }}</div>
+                                </div>
+                            </div>
+                        @empty
+                            <flux:text class="italic">{{ __('No tags yet.') }}</flux:text>
+                        @endforelse
+                    </div>
+                </flux:card>
 
                 {{-- Game Logs --}}
                 <flux:card class="p-0 sm:p-6 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">

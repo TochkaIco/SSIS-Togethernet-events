@@ -44,4 +44,8 @@ return [
         'hd' => env('GOOGLE_HD'),
     ],
 
+    'discord' => [
+        'webhook_url' => env('DISCORD_WEBHOOK_URL'),
+    ],
+
 ];

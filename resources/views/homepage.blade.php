@@ -40,18 +40,18 @@
                 </flux:card>
 
                 <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                    <flux:heading size="lg" icon="sparkles">{{ __('QR-Tag') }}</flux:heading>
+                    <flux:text class="mt-2 grow">
+                        {{ __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.') }}
+                    </flux:text>
+                </flux:card>
+
+                <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <flux:heading size="lg" icon="sparkles">{{ __('LAN') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}
                     </flux:text>
                     <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
-                </flux:card>
-
-                <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                    <flux:heading size="lg" icon="sparkles">{{ __('QR-Tag') }}</flux:heading>
-                    <flux:text class="mt-2 grow">
-                        {{ __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.') }}
-                    </flux:text>
                 </flux:card>
             </div>
         </div>
