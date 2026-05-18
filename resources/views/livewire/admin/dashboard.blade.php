@@ -84,6 +84,7 @@
                             <div
                                 x-data="{
                                 init() {
+                                    const isMobile = window.innerWidth < 768;
                                     const dist = @js($this->latestEventStats['class_distribution']);
                                     new Chart(this.$refs.eventClassChart, {
                                         type: 'doughnut',
@@ -105,8 +106,8 @@
                                                     position: 'bottom',
                                                     labels: {
                                                         usePointStyle: true,
-                                                        padding: 20,
-                                                        font: { size: 12 }
+                                                        padding: isMobile ? 10 : 20,
+                                                        font: { size: isMobile ? 10 : 12 }
                                                     }
                                                 },
                                                 tooltip: {
@@ -125,7 +126,7 @@
                                     });
                                 }
                             }"
-                                class="h-40"
+                                class="h-40 md:h-48"
                             >
                                 <canvas x-ref="eventClassChart"></canvas>
                             </div>
@@ -300,6 +301,7 @@
             <div
                 x-data="{
                     init() {
+                        const isMobile = window.innerWidth < 768;
                         new Chart(this.$refs.attendanceChart, {
                             type: 'bar',
                             data: {
@@ -326,7 +328,7 @@
                                         type: 'line',
                                         yAxisID: 'y1',
                                         order: 1,
-                                        tension: 0.3,
+                                        tension: 0,
                                         pointRadius: 4
                                     }
                                 ]
@@ -335,7 +337,10 @@
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {
-                                    legend: { position: 'bottom' },
+                                    legend: { 
+                                        position: 'bottom',
+                                        labels: { boxWidth: 12, padding: 15, font: { size: isMobile ? 10 : 12 } }
+                                    },
                                     tooltip: {
                                         mode: 'index',
                                         intersect: false
@@ -344,22 +349,30 @@
                                 scales: {
                                     y: {
                                         beginAtZero: true,
-                                        title: { display: true, text: '{{ __('Count') }}' }
+                                        title: { display: !isMobile, text: '{{ __('Count') }}' },
+                                        ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
                                     y1: {
                                         beginAtZero: true,
                                         max: 100,
                                         position: 'right',
-                                        title: { display: true, text: '{{ __('Rate (%)') }}' },
-                                        grid: { drawOnChartArea: false }
+                                        title: { display: !isMobile, text: '{{ __('Rate (%)') }}' },
+                                        grid: { drawOnChartArea: false },
+                                        ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
-                                    x: { grid: { display: false } }
+                                    x: { 
+                                        grid: { display: false },
+                                        ticks: { 
+                                            maxTicksLimit: isMobile ? 5 : 10,
+                                            font: { size: isMobile ? 10 : 12 }
+                                        }
+                                    }
                                 }
                             }
                         });
                     }
                 }"
-                class="h-72"
+                class="h-64 md:h-72"
             >
                 <canvas x-ref="attendanceChart"></canvas>
             </div>
@@ -374,6 +387,7 @@
             <div
                 x-data="{
                     init() {
+                        const isMobile = window.innerWidth < 768;
                         new Chart(this.$refs.meetingChart, {
                             type: 'bar',
                             data: {
@@ -393,7 +407,7 @@
                                         type: 'line',
                                         yAxisID: 'y1',
                                         order: 1,
-                                        tension: 0.3
+                                        tension: 0
                                     }
                                 ]
                             },
@@ -401,7 +415,10 @@
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {
-                                    legend: { position: 'bottom' },
+                                    legend: { 
+                                        position: 'bottom',
+                                        labels: { boxWidth: 12, padding: 15, font: { size: isMobile ? 10 : 12 } }
+                                    },
                                     tooltip: {
                                         mode: 'index',
                                         intersect: false
@@ -410,22 +427,30 @@
                                 scales: {
                                     y: {
                                         beginAtZero: true,
-                                        title: { display: true, text: '{{ __('Count') }}' }
+                                        title: { display: !isMobile, text: '{{ __('Count') }}' },
+                                        ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
                                     y1: {
                                         beginAtZero: true,
                                         max: 100,
                                         position: 'right',
-                                        title: { display: true, text: '{{ __('Rate (%)') }}' },
-                                        grid: { drawOnChartArea: false }
+                                        title: { display: !isMobile, text: '{{ __('Rate (%)') }}' },
+                                        grid: { drawOnChartArea: false },
+                                        ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
-                                    x: { grid: { display: false } }
+                                    x: { 
+                                        grid: { display: false },
+                                        ticks: { 
+                                            maxTicksLimit: isMobile ? 5 : 10,
+                                            font: { size: isMobile ? 10 : 12 }
+                                        }
+                                    }
                                 }
                             }
                         });
                     }
                 }"
-                class="h-72"
+                class="h-64 md:h-72"
             >
                 <canvas x-ref="meetingChart"></canvas>
             </div>
@@ -440,6 +465,7 @@
             <div
                 x-data="{
                     init() {
+                        const isMobile = window.innerWidth < 768;
                         new Chart(this.$refs.yearlyMeetingChart, {
                             type: 'line',
                             data: {
@@ -450,23 +476,44 @@
                                     borderColor: '#14b8a6',
                                     backgroundColor: 'rgba(20, 184, 166, 0.1)',
                                     fill: true,
-                                    tension: 0.4,
-                                    pointRadius: 4
+                                    tension: 0,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 6
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
+                                interaction: {
+                                    intersect: false,
+                                    mode: 'index',
+                                },
+                                plugins: { 
+                                    legend: { display: false },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
                                 scales: {
-                                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                                    x: { grid: { display: false } }
+                                    y: { 
+                                        beginAtZero: true, 
+                                        grid: { color: 'rgba(0,0,0,0.05)' },
+                                        ticks: { font: { size: isMobile ? 10 : 12 } }
+                                    },
+                                    x: { 
+                                        grid: { display: false },
+                                        ticks: { 
+                                            maxTicksLimit: isMobile ? 6 : 12,
+                                            font: { size: isMobile ? 10 : 12 }
+                                        }
+                                    }
                                 }
                             }
                         });
                     }
                 }"
-                class="h-64"
+                class="h-56 md:h-64"
             >
                 <canvas x-ref="yearlyMeetingChart"></canvas>
             </div>
@@ -481,6 +528,7 @@
             <div
                 x-data="{
                     init() {
+                        const isMobile = window.innerWidth < 768;
                         new Chart(this.$refs.durationChart, {
                             type: 'bar',
                             data: {
@@ -495,16 +543,32 @@
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
+                                plugins: { 
+                                    legend: { display: false },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
                                 scales: {
-                                    y: { beginAtZero: true, title: { display: true, text: '{{ __('Minutes') }}' } },
-                                    x: { grid: { display: false } }
+                                    y: { 
+                                        beginAtZero: true, 
+                                        title: { display: !isMobile, text: '{{ __('Minutes') }}' },
+                                        ticks: { font: { size: isMobile ? 10 : 12 } }
+                                    },
+                                    x: { 
+                                        grid: { display: false },
+                                        ticks: { 
+                                            maxTicksLimit: isMobile ? 5 : 10,
+                                            font: { size: isMobile ? 10 : 12 }
+                                        }
+                                    }
                                 }
                             }
                         });
                     }
                 }"
-                class="h-64"
+                class="h-56 md:h-64"
             >
                 <canvas x-ref="durationChart"></canvas>
             </div>
@@ -519,6 +583,7 @@
             <div
                 x-data="{
                     init() {
+                        const isMobile = window.innerWidth < 768;
                         new Chart(this.$refs.yearlyDurationChart, {
                             type: 'line',
                             data: {
@@ -529,23 +594,44 @@
                                     borderColor: '#9333ea',
                                     backgroundColor: 'rgba(147, 51, 234, 0.1)',
                                     fill: true,
-                                    tension: 0.4,
-                                    pointRadius: 4
+                                    tension: 0,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 6
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
+                                interaction: {
+                                    intersect: false,
+                                    mode: 'index',
+                                },
+                                plugins: { 
+                                    legend: { display: false },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
                                 scales: {
-                                    y: { beginAtZero: true, title: { display: true, text: '{{ __('Minutes') }}' } },
-                                    x: { grid: { display: false } }
+                                    y: { 
+                                        beginAtZero: true, 
+                                        title: { display: !isMobile, text: '{{ __('Minutes') }}' },
+                                        ticks: { font: { size: isMobile ? 10 : 12 } }
+                                    },
+                                    x: { 
+                                        grid: { display: false },
+                                        ticks: { 
+                                            maxTicksLimit: isMobile ? 6 : 12,
+                                            font: { size: isMobile ? 10 : 12 }
+                                        }
+                                    }
                                 }
                             }
                         });
                     }
                 }"
-                class="h-64"
+                class="h-56 md:h-64"
             >
                 <canvas x-ref="yearlyDurationChart"></canvas>
             </div>
@@ -560,6 +646,7 @@
             <div
                 x-data="{
                     init() {
+                        const isMobile = window.innerWidth < 768;
                         new Chart(this.$refs.revenueChart, {
                             type: 'line',
                             data: {
@@ -570,22 +657,44 @@
                                     borderColor: '#8b5cf6',
                                     backgroundColor: 'rgba(139, 92, 246, 0.1)',
                                     fill: true,
-                                    tension: 0.4
+                                    tension: 0,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 6
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
+                                interaction: {
+                                    intersect: false,
+                                    mode: 'index',
+                                },
+                                plugins: { 
+                                    legend: { display: false },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
                                 scales: {
-                                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                                    x: { grid: { display: false } }
+                                    y: { 
+                                        beginAtZero: true, 
+                                        grid: { color: 'rgba(0,0,0,0.05)' },
+                                        ticks: { font: { size: isMobile ? 10 : 12 } }
+                                    },
+                                    x: { 
+                                        grid: { display: false },
+                                        ticks: { 
+                                            maxTicksLimit: isMobile ? 6 : 12,
+                                            font: { size: isMobile ? 10 : 12 }
+                                        }
+                                    }
                                 }
                             }
                         });
                     }
                 }"
-                class="h-64"
+                class="h-56 md:h-64"
             >
                 <canvas x-ref="revenueChart"></canvas>
             </div>
@@ -600,6 +709,7 @@
             <div
                 x-data="{
                     init() {
+                        const isMobile = window.innerWidth < 768;
                         new Chart(this.$refs.growthChart, {
                             type: 'line',
                             data: {
@@ -610,24 +720,40 @@
                                     borderColor: '#3b82f6',
                                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
                                     fill: true,
-                                    tension: 0.4,
-                                    pointRadius: 0,
-                                    pointHoverRadius: 4,
+                                    tension: 0,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 6,
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
+                                interaction: {
+                                    intersect: false,
+                                    mode: 'index',
+                                },
+                                plugins: { 
+                                    legend: { display: false },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
                                 scales: {
                                     y: { beginAtZero: false, ticks: { stepSize: 5 } },
-                                    x: { ticks: { maxTicksLimit: 7 }, grid: { display: false } }
+                                    x: { 
+                                        ticks: { 
+                                            maxTicksLimit: isMobile ? 5 : 7,
+                                            font: { size: isMobile ? 10 : 12 }
+                                        }, 
+                                        grid: { display: false } 
+                                    }
                                 }
                             }
                         });
                     }
                 }"
-                class="h-64"
+                class="h-56 md:h-64"
             >
                 <canvas x-ref="growthChart"></canvas>
             </div>
@@ -638,49 +764,50 @@
             <h2 class="text-lg font-bold mb-4">{{ __('User Distribution by Class') }}</h2>
             <div
                 x-data="{
-                            init() {
-                                const distributionData = @js($this->userClassDistribution());
-                                new Chart(this.$refs.classChart, {
-                                    type: 'doughnut',
-                                    data: {
-                                        labels: distributionData.labels,
-                                        datasets: [{
-                                            data: distributionData.data,
-                                            backgroundColor: distributionData.colors,
-                                            borderWidth: 2,
-                                            hoverOffset: 5
-                                        }]
+                    init() {
+                        const isMobile = window.innerWidth < 768;
+                        const distributionData = @js($this->userClassDistribution());
+                        new Chart(this.$refs.classChart, {
+                            type: 'doughnut',
+                            data: {
+                                labels: distributionData.labels,
+                                datasets: [{
+                                    data: distributionData.data,
+                                    backgroundColor: distributionData.colors,
+                                    borderWidth: 2,
+                                    hoverOffset: 5
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                cutout: '0%',
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            usePointStyle: true,
+                                            padding: isMobile ? 10 : 20,
+                                            font: { size: isMobile ? 10 : 12 }
+                                        }
                                     },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        cutout: '0%',
-                                        plugins: {
-                                            legend: {
-                                                position: 'bottom',
-                                                labels: {
-                                                    usePointStyle: true,
-                                                    padding: 20,
-                                                    font: { size: 12 }
-                                                }
-                                            },
-                                            tooltip: {
-                                                callbacks: {
-                                                    label: function(context) {
-                                                        const label = context.label || '';
-                                                        const value = context.raw || 0;
-                                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                                        const percentage = Math.round((value / total) * 100);
-                                                        return `${label}: ${value} (${percentage}%)`;
-                                                    }
-                                                }
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.raw || 0;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = Math.round((value / total) * 100);
+                                                return `${label}: ${value} (${percentage}%)`;
                                             }
                                         }
                                     }
-                                });
+                                }
                             }
-                        }"
-                class="h-64"
+                        });
+                    }
+                }"
+                class="h-64 md:h-72"
             >
                 <canvas x-ref="classChart"></canvas>
             </div>

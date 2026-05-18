@@ -129,38 +129,69 @@ class Dashboard extends Component
     #[Computed]
     public function userGrowth(): array
     {
-        $growthData = User::selectRaw('COUNT(*) as count, DATE_FORMAT(created_at, "%Y-%m-%d") as date')
-            ->where('created_at', '>=', now()->subMonths(3))
+        $threeMonthsAgo = now()->subMonths(3);
+
+        // Get new users per day
+        $creations = User::selectRaw('COUNT(*) as count, DATE_FORMAT(created_at, "%Y-%m-%d") as date')
+            ->where('created_at', '>=', $threeMonthsAgo)
             ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get()
             ->pluck('count', 'date');
 
-        $period = now()->subMonths(3)->daysUntil(now());
+        // Get anonymizations per day
+        $anonymizations = User::selectRaw('COUNT(*) as count, DATE_FORMAT(anonymized_at, "%Y-%m-%d") as date')
+            ->whereNotNull('anonymized_at')
+            ->where('anonymized_at', '>=', $threeMonthsAgo)
+            ->groupBy('date')
+            ->pluck('count', 'date');
 
-        $labels = [];
-        $data = [];
-        $currentTotal = User::where('created_at', '<', now()->subMonths(3))->count();
+        $currentTotal = User::where('created_at', '<', $threeMonthsAgo)
+            ->where(function ($query) use ($threeMonthsAgo) {
+                $query->whereNull('anonymized_at')
+                    ->orWhere('anonymized_at', '>=', $threeMonthsAgo);
+            })
+            ->count();
 
+        $period = $threeMonthsAgo->daysUntil(now());
+
+        $fullTimeline = [];
         foreach ($period as $date) {
             $formattedDate = $date->format('Y-m-d');
-            $count = $growthData->get($formattedDate, 0);
-            $currentTotal += $count;
+            $newToday = $creations->get($formattedDate, 0);
+            $anonymizedToday = $anonymizations->get($formattedDate, 0);
 
-            $labels[] = $formattedDate;
-            $data[] = $currentTotal;
+            $currentTotal = ($currentTotal + $newToday) - $anonymizedToday;
+
+            $fullTimeline[] = [
+                'date' => $formattedDate,
+                'total' => $currentTotal,
+            ];
         }
 
-        return [
-            'labels' => $labels,
-            'data' => $data,
-        ];
+        // Filter the timeline to only keep the extreme data points
+        $labels = [];
+        $data = [];
+        $totalDays = count($fullTimeline);
+
+        foreach ($fullTimeline as $index => $point) {
+            $isFirst = ($index === 0);
+            $isLast = ($index === $totalDays - 1);
+            $changedFromPrev = ! $isFirst && ($point['total'] !== $fullTimeline[$index - 1]['total']);
+            $changesNext = ! $isLast && ($point['total'] !== $fullTimeline[$index + 1]['total']);
+
+            if ($isFirst || $isLast || $changedFromPrev || $changesNext) {
+                $labels[] = $point['date'];
+                $data[] = $point['total'];
+            }
+        }
+
+        return ['labels' => $labels, 'data' => $data];
     }
 
     #[Computed]
     public function userClassDistribution(): array
     {
         $distribution = User::selectRaw('class, COUNT(*) as count')
+            ->whereNull('anonymized_at')
             ->groupBy('class')
             ->get();
 
