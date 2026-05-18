@@ -15,6 +15,8 @@
 
     // Set the text padding based on size
     $padding = match ($size) {
+        'none' => '',
+        'xs' => 'p-0.5',
         'sm' => 'p-4',
         default => 'p-6',
     };

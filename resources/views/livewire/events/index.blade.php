@@ -21,23 +21,41 @@
                         @if(auth()->user())
                             @if(! $this->userIsRegistered($event->id))
                                 @if($event->canRegister())
-                                    <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
+                                    <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-350 hover:drop-shadow-[0_0_15px_rgba(255,176,74,0.6)]">{{ __('Register') }}</flux:button>
                                 @endif
                             @else
-                                <div class="flex flex-col items-start gap-2">
+                                <div class="flex flex-col items-start gap-3">
                                     @php
                                         $registration = auth()->user()->registrations()->where('event_id', $event->id)->first();
                                     @endphp
 
-                                    @if($registration->in_waitinglist)
-                                        <flux:badge color="yellow" icon="clock">{{ __('Waiting List') }}</flux:badge>
-                                    @else
-                                        <flux:badge color="green" icon="check">{{ __('Registered') }}</flux:badge>
-                                    @endif
+                                    {{-- Status Badge with soft "Status Light" --}}
+                                    <div class="relative">
+                                        @if($registration->in_waitinglist)
+                                            <div class="absolute -inset-1 bg-yellow-500/20 blur-lg rounded-full"></div>
+                                            <flux:badge size="sm" icon="clock" class="cursor-default relative bg-yellow-500/10! text-yellow-400! border-yellow-500/20 px-3 py-1">
+                                                {{ __('Waiting List') }}
+                                            </flux:badge>
+                                        @else
+                                            <div class="absolute -inset-1 bg-emerald-500/20 blur-lg rounded-full"></div>
+                                            <flux:badge size="sm" icon="check" class="cursor-default relative bg-emerald-500/10! text-emerald-400! border-emerald-500/20 px-3 py-1">
+                                                {{ __('Registered') }}
+                                            </flux:badge>
+                                        @endif
+                                    </div>
 
+                                    {{-- Unregister Button: Visible but Secondary --}}
                                     @if($event->canUnregister())
                                         <flux:modal.trigger name="unregister-confirmation">
-                                            <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="xs" class="cursor-pointer">{{ __('Unregister') }}</flux:button>
+                                            <flux:button
+                                                variant="ghost"
+                                                size="xs"
+                                                icon="x-mark"
+                                                wire:click="confirmUnregister({{ $event->id }})"
+                                                class="bg-white/5! text-zinc-300! border border-white/10 hover:bg-red-500/20! hover:!text-red-400 hover:border-red-500/30 transition-all"
+                                            >
+                                                {{ __('Unregister') }}
+                                            </flux:button>
                                         </flux:modal.trigger>
                                     @endif
                                 </div>

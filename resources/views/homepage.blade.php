@@ -1,10 +1,10 @@
 <x-layouts::app :title="__('Home')">
     <div class="flex mt-12 items-center justify-center w-full">
-        <div class="w-full max-w-4xl px-4 lg:px-0">
-            <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                <img src="{{ asset('/images/togethernet-feature.jpg') }}" alt="Image" class="w-full h-64 object-cover rounded-t-xl">
-                <div class="p-8">
-                    <flux:heading size="xl" class="mb-2 flex flex-wrap items-center gap-x-2 text-3xl lg:col-span-2">
+        <div class="w-full max-w-4xl px-2 lg:px-0">
+            <flux:card size="none" class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <img src="{{ asset('/images/togethernet-feature.jpg') }}" alt="Image" class="w-full h-48 md:h-64 object-cover rounded-t-xl">
+                <div class="p-6 md:p-8">
+                    <flux:heading size="xl" class="mb-2 flex flex-wrap items-center gap-x-2 text-2xl md:text-3xl lg:col-span-2">
                         <span>{{ __('Welcome to') }}</span>
                         <x-svg.app-logo.text.light class="hidden h-[1em] translate-y-0.75 w-auto dark:block" />
                         <x-svg.app-logo.text.dark class="h-[1em] w-auto translate-y-0.75 dark:hidden" />
@@ -12,7 +12,7 @@
                     <flux:text size="lg" class="mb-6">
                         {{ __('Togethernet is a 13-year-old organization founded and run by committed students at Stockholm Science & Innovation School to create fun events for all students.') }}
                     </flux:text>
-                    <div class="flex gap-4">
+                    <div class="w-fit transition-all duration-350 hover:drop-shadow-[0_0_15px_rgba(255,176,74,0.6)]">
                         @auth
                             <flux:button variant="primary" :href="route('events')" icon="layout-grid">{{ __('Browse Events') }}</flux:button>
                         @else
