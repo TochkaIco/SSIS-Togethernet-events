@@ -215,7 +215,7 @@
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">{{ __('Unregister from event?') }}</flux:heading>
-                <flux:subheading>{!! __('Are you sure you want to unregister from this event? You can always register again later if there are spots available, but you will be moved to the <span class="font-bold text-red-500">end of the queue</span>.') !!}</flux:subheading>
+                <flux:subheading>{!! __('Are you sure you want to unregister from this event? You can always register again later if there are spots available, but you will be moved to the end of the queue.') !!}</flux:subheading>
             </div>
 
             <div class="flex gap-2">
