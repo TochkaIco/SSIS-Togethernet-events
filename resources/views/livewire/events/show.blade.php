@@ -34,18 +34,36 @@
                                     <flux:badge color="orange" icon="clock" inset="top bottom">{{ __('Period') }}: {{ $periodLabel }}</flux:badge>
                                 @endif
 
-                                @if($this->registration->in_waitinglist)
-                                    <flux:badge color="yellow" icon="clock">{{ __('On Waiting List') }}</flux:badge>
-                                @else
-                                    <flux:badge color="green" icon="check" class="cursor-default">{{ __('Registered as Participant') }}</flux:badge>
-                                @endif
+                                <div class="flex-col space-y-2">
+                                    {{-- Status Badge with soft "Status Light" --}}
+                                    <div class="relative">
+                                        @if($this->registration->in_waitinglist)
+                                            <div class="absolute -inset-1 bg-yellow-500/20 blur-lg rounded-full"></div>
+                                            <flux:badge size="sm" icon="clock" class="cursor-default relative bg-yellow-500/10! text-yellow-400! border-yellow-500/20 px-3 py-1">
+                                                {{ __('On Waiting List') }}
+                                            </flux:badge>
+                                        @else
+                                            <div class="absolute -inset-1 bg-emerald-500/20 blur-lg rounded-full"></div>
+                                            <flux:badge size="sm" icon="check" class="cursor-default relative bg-emerald-500/10! text-emerald-400! border-emerald-500/20 px-3 py-1">
+                                                {{ __('Registered as Participant') }}
+                                            </flux:badge>
+                                        @endif
+                                    </div>
+                                    @if($event->canUnregister())
+                                        <flux:modal.trigger name="unregister-confirmation" class="flex justify-end">
+                                            <flux:button
+                                                variant="ghost"
+                                                size="xs"
+                                                icon="x-mark"
+                                                wire:click="confirmUnregister({{ $event->id }})"
+                                                class="cursor-pointer bg-white/5! text-zinc-300! border border-white/10 hover:bg-red-500/20! hover:!text-red-400 hover:border-red-500/30 transition-all"
+                                            >
+                                                {{ __('Unregister') }}
+                                            </flux:button>
+                                        </flux:modal.trigger>
+                                    @endif
+                                </div>
                             </div>
-
-                            @if($event->canUnregister())
-                                <flux:modal.trigger name="unregister-confirmation">
-                                    <flux:button icon="x-mark" wire:click="confirmUnregister({{ $event->id }})" variant="danger" size="sm" class="cursor-pointer">{{ __('Unregister') }}</flux:button>
-                                </flux:modal.trigger>
-                            @endif
                         </div>
                     @endif
                 @else

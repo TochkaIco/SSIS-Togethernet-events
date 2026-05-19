@@ -17,7 +17,7 @@
             <!-- 1. Upcoming & Ongoing Events -->
             @foreach($upcomingEvents as $event)
                 <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                    <div class="absolute top-4 left-4 z-20">
+                    <div class="absolute top-4 left-4 z-10">
                         @if(auth()->user())
                             @if(! $this->userIsRegistered($event->id))
                                 @if($event->canRegister())
@@ -52,7 +52,7 @@
                                                 size="xs"
                                                 icon="x-mark"
                                                 wire:click="confirmUnregister({{ $event->id }})"
-                                                class="bg-white/5! text-zinc-300! border border-white/10 hover:bg-red-500/20! hover:!text-red-400 hover:border-red-500/30 transition-all"
+                                                class="cursor-pointer bg-white/5! text-zinc-300! border border-white/10 hover:bg-red-500/20! hover:!text-red-400 hover:border-red-500/30 transition-all"
                                             >
                                                 {{ __('Unregister') }}
                                             </flux:button>
@@ -125,7 +125,7 @@
                 <!-- 3. Finished Events Loop -->
                 @foreach($pastEvents as $event)
                     <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl opacity-50 grayscale">
-                        <div class="absolute top-4 left-4 z-20">
+                        <div class="absolute top-4 left-4 z-10">
                             @if(auth()->user())
                                 @if(! $this->userIsRegistered($event->id))
                                     @if($event->canRegister())

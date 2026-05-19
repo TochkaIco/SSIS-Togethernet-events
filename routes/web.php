@@ -18,6 +18,7 @@ use App\Livewire\Admin\Meetings\Show;
 use App\Livewire\Admin\UserImpersonationPage;
 use App\Livewire\Admin\UserManagement;
 use App\Livewire\Admin\UserProfile;
+use App\Livewire\Documentation;
 use App\Livewire\Events\EventShow as PublicEventShow;
 use App\Livewire\Events\Index as PublicEvents;
 use App\Livewire\Events\QrTagTvView;
@@ -61,6 +62,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'can:impersonate users'])->group(function () {
         Route::get('/admin/user_impersonation', UserImpersonationPage::class)->name('admin.impersonation-page');
     });
+
+    Route::get('/docs/{page?}', Documentation::class)->middleware(['auth', 'can:dev'])->name('docs');
 
     Route::get('/tag/{token}', [QrTagController::class, 'scan'])->name('qr_tag.scan');
 

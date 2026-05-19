@@ -39,9 +39,24 @@
 }
 
 @layer base {
+    p code {
+        @apply bg-neutral-100 dark:bg-neutral-800 text-amber-600 dark:text-amber-500
+        px-1.5 py-0.5 rounded font-mono text-[0.9em] border border-neutral-200 dark:border-neutral-700;
+    }
+
+    pre {
+        @apply bg-neutral-800 dark:bg-neutral-900 text-neutral-200 p-4 rounded-lg overflow-x-auto
+        font-mono text-sm leading-6 my-4 shadow-lg border border-neutral-700;
+    }
+
+    pre code {
+        @apply bg-transparent p-0 border-none text-inherit;
+    }
+
     .img {
         image-rendering: crisp-edges;
     }
+
     /* Headings */
     .prose h1 {
         @apply text-2xl font-bold text-zinc-800 dark:text-zinc-100 my-3;

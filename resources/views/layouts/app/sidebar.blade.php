@@ -4,7 +4,7 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+        <flux:sidebar sticky collapsible="mobile" class="z-50 border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" :href="route('home')" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
@@ -125,16 +125,8 @@
                             {{ __('Dev Monitor') }}
                         </flux:sidebar.item>
 
-                        <flux:sidebar.item icon="folder-git-2" href="{{ config('app.dev_info.repo') }}" target="_blank">
-                            {{ __('Repository') }}
-                        </flux:sidebar.item>
-
-                        <flux:sidebar.item icon="folder-git-2" href="{{ config('app.dev_info.openshift_url') }}" target="_blank">
-                            {{ __('Openshift') }}
-                        </flux:sidebar.item>
-
-                        <flux:sidebar.item icon="chart-bar-square" href="{{ config('app.dev_info.jira_url') }}" target="_blank">
-                            {{ __('Jira') }}
+                        <flux:sidebar.item icon="book-open" :href="route('docs')" :current="request()->routeIs('docs*')">
+                            {{ __('Documentation') }}
                         </flux:sidebar.item>
                     </flux:sidebar.group>
                 </flux:sidebar.nav>
