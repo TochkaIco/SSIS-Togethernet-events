@@ -23,9 +23,9 @@ vendor/bin/sail npm run dev
 
 Detailed documentation is available in the `docs` directory:
 
-- **[Feature Overview](docs/FEATURES.md)**: What the application does.
 - **[System Architecture](docs/ARCHITECTURE.md)**: Technical stack and architectural decisions.
 - **[Development Guide](docs/DEVELOPMENT.md)**: Local setup, testing, and contribution workflows.
+- **[Feature Overview](docs/FEATURES.md)**: What the application does.
 
 ## Tech Stack
 
