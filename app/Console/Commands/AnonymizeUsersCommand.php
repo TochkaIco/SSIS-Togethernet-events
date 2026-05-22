@@ -37,10 +37,6 @@ class AnonymizeUsersCommand extends Command
 
     private function handleGraduatedUsers(): void
     {
-        if (now()->month !== 7) {
-            return;
-        }
-
         $this->info('Checking for graduated SSIS users...');
 
         $graduatedUsers = User::notAnonymized()
@@ -55,7 +51,7 @@ class AnonymizeUsersCommand extends Command
         }
 
         $this->info("Anonymized {$count} graduated users.");
-        GlobalLog::log('Anonymized graduated users', 'system');
+        GlobalLog::log('Anonymized graduated users', 'system', ['number of users:' => $count]);
     }
 
     private function handleInactiveUsers(): void

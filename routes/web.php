@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\QrTagController;
+use App\Livewire\AcceptTerms;
 use App\Livewire\Admin\AdminFeedbackView;
 use App\Livewire\Admin\AdminGlobalLogs;
 use App\Livewire\Admin\AppConfigurationPage;
@@ -22,16 +23,24 @@ use App\Livewire\Documentation;
 use App\Livewire\Events\EventShow as PublicEventShow;
 use App\Livewire\Events\Index as PublicEvents;
 use App\Livewire\Events\QrTagTvView;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
-Route::view('/', 'homepage')->name('home');
-Route::get('/events', PublicEvents::class)->name('events');
-Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
-Route::get('/events/{event}/tv', QrTagTvView::class)->name('event.tv');
-Route::view('/faq', 'faq')->name('faq');
+Route::get('/', function (): Factory|View {
+    return view('homepage');
+})->name('home')->middleware(['tos.accepted']);
+Route::get('/events', PublicEvents::class)->name('events')->middleware(['tos.accepted']);
+Route::get('/events/{event}', PublicEventShow::class)->name('event.show')->middleware(['tos.accepted']);
+Route::get('/events/{event}/tv', QrTagTvView::class)->name('event.tv')->middleware(['tos.accepted']);
+Route::get('/faq', function (): Factory|View {
+    return view('faq');
+})->name('faq')->middleware(['tos.accepted']);
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::get('/terms/accept', AcceptTerms::class)->name('terms.accept')->middleware(['auth']);
+
+Route::middleware(['auth', 'verified', 'tos.accepted'])->group(function () {
     Route::middleware(['auth', 'can:view articles'])->group(function () {
         Route::get('/admin/dashboard', Dashboard::class)->name('admin.dashboard');
         Route::get('/admin/events', AdminEventsIndex::class)->name('admin.events');

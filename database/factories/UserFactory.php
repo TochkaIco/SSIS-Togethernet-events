@@ -43,6 +43,7 @@ class UserFactory extends Factory
             ]),
             'google_id' => (string) fake()->numberBetween(200000, 999999),
             'email_verified_at' => now(),
+            'tos_accepted_at' => now(),
             'remember_token' => Str::random(10),
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,

@@ -20,8 +20,8 @@ test('security settings page can be rendered', function () {
     $this->actingAs($user)
         ->get(route('security.edit'))
         ->assertOk()
-        ->assertSee('Two-factor authentication')
-        ->assertSee('Enable 2FA');
+        ->assertSee(__('Two-factor authentication'))
+        ->assertSee(__('Enable 2FA'));
 });
 
 // test('security settings page requires password confirmation when enabled', function () {

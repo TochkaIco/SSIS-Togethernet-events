@@ -234,5 +234,16 @@
     "Hello :name,": "Hello :name,",
     "We noticed you haven't logged in for 6 months. To keep your account, please log in within one month.": "We noticed you haven't logged in for 6 months. To keep your account, please log in within one month.",
     "Otherwise, your account will be anonymized for privacy reasons.": "Otherwise, your account will be anonymized for privacy reasons.",
+    "Accept Terms of Service": "Accept Terms of Service",
+    "Action Required: Updated Terms of Service": "Action Required: Updated Terms of Service",
+    "Updated Terms of Service": "Updated Terms of Service",
+    "We have updated our Terms of Service to better reflect our current features and data privacy practices.": "We have updated our Terms of Service to better reflect our current features and data privacy practices.",
+    "What you need to do:": "What you need to do:",
+    "Please log in to TogethernetEvents and review the new terms. You will be prompted to accept them upon your next login.": "Please log in to TogethernetEvents and review the new terms. You will be prompted to accept them upon your next login.",
+    "Important Deadline:": "Important Deadline:",
+    "You must accept the new terms within **one month** from today.": "You must accept the new terms within **one month** from today.",
+    "What happens if I don't accept?": "What happens if I don't accept?",
+    "If the new terms are not accepted by **:date**, your account will be automatically anonymized for privacy and security reasons.": "If the new terms are not accepted by **:date**, your account will be automatically anonymized for privacy and security reasons.",
+    "Review and Accept Terms": "Review and Accept Terms",
     "Login Now": "Login Now"
 }

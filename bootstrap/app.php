@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsurePasswordIsConfirmed;
+use App\Http\Middleware\EnsureTosAccepted;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'password.confirm' => EnsurePasswordIsConfirmed::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
+            'tos.accepted' => EnsureTosAccepted::class,
         ]);
         $proxies = env('TRUSTED_PROXIES', '');
 
@@ -42,4 +44,5 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function ($schedule): void {
         $schedule->command('app:anonymize-users')->daily();
+        $schedule->command('app:notify-tos-update')->daily();
     })->create();

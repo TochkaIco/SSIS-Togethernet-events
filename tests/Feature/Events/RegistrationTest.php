@@ -23,9 +23,9 @@ test('user can register for an event', function () {
 
     Livewire::actingAs($user)
         ->test(EventShow::class, ['event' => $event])
-        ->assertSee('Register')
+        ->assertSee(__('Register'))
         ->call('registerUser', $event->id)
-        ->assertSee('Registered');
+        ->assertSee(__('Registered'));
 
     expect($event->registrations()->where('user_id', $user->id)->exists())->toBeTrue();
 });

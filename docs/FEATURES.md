@@ -40,7 +40,8 @@ TogethernetEvents is a comprehensive event management system designed for organi
 - **Role-Based Access Control (RBAC)**: Fine-grained permissions (Spatie Permission).
 - **Two-Factor Authentication (2FA)**: Enhanced security via Laravel Fortify.
 - **Impersonation**: Admins can impersonate users for support and debugging.
-- **Anonymization**: Support for GDPR-compliant user data anonymization.
+- **Anonymization**: Support for GDPR-compliant user data anonymization, including automated cleanup for graduated students and inactive accounts.
+- **Terms of Service Enforcement**: Mandatory TOS acceptance for all users with automated notifications and enforcement grace periods.
 
 ## Administrative Tools
 - **Global Logs**: Audit trail for all significant actions across the system.

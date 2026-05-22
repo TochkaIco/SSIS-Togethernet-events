@@ -75,7 +75,7 @@ test('admin can see anonymous feedback as Guest', function () {
     ]);
 
     Livewire::test(AdminFeedbackView::class)
-        ->assertSee('Guest')
+        ->assertSee(__('Guest'))
         ->assertSee('Anonymous feedback');
 });
 

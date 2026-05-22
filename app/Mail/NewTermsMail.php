@@ -12,9 +12,8 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 
-class InactivityWarningMail extends Mailable implements ShouldQueue
+class NewTermsMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -28,10 +27,8 @@ class InactivityWarningMail extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
-        App::setLocale($this->user->locale ?? 'sv');
-
         return new Envelope(
-            subject: __('Inactivity Warning'),
+            subject: __('Action Required: Updated Terms of Service'),
         );
     }
 
@@ -41,7 +38,7 @@ class InactivityWarningMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.inactivity-warning',
+            markdown: 'emails.new-terms',
         );
     }
 

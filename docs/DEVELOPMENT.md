@@ -99,6 +99,19 @@ php artisan app:make-superadmin 12abcd@stockholmscience.se
 
 Note: The user needs to have logged in to the website before the command will work.
 
+### Terms of Service Management
+
+When updating the Terms of Service:
+1. Edit the content in `resources/views/terms.md`.
+2. Run the reset command to force all users to re-accept:
+   ```bash
+   php artisan app:reset-tos
+   ```
+3. The automated system (running via `app:notify-tos-update` daily) will:
+   - Send notification emails to all users who haven't accepted the new terms.
+   - Automatically anonymize accounts that fail to accept within 30 days of the notification.
+   - Intercept users upon login via middleware to require acceptance before app access.
+
 ---
 
 Lastly, remember to use [dd()](https://laravel.com/docs/13.x/helpers#method-dd).
