@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Models\GlobalLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -40,6 +41,8 @@ class AcceptTerms extends Component
             'tos_accepted_at' => now(),
         ]);
 
+        GlobalLog::log('User accepted TOS', 'user', ['user_id' => Auth::id()]);
+
         $this->redirectIntended('/');
     }
 
@@ -50,6 +53,8 @@ class AcceptTerms extends Component
         Auth::logout();
 
         $user->anonymize();
+
+        GlobalLog::log('User declined TOS and had been anonymized', 'user', ['user_id' => Auth::id()]);
 
         $this->redirect('/');
     }
