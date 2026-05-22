@@ -26,7 +26,10 @@ class SetLocale
             $locale = $user->locale ?? $locale;
 
             if ($user->last_activity_at === null || $user->last_activity_at->diffInMinutes(now()) >= 5) { // @phpstan-ignore-line
-                $user->update(['last_activity_at' => now()]);
+                $user->update([
+                    'last_activity_at' => now(),
+                    'inactivity_warning_sent_at' => null,
+                ]);
             }
         } elseif (session()->has('locale')) {
             $locale = session()->get('locale');

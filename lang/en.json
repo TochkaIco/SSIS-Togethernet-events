@@ -229,5 +229,10 @@
     "12 months": "12 months",
     "Clear Logs": "Clear Logs",
     ":count old logs cleared.": ":count old logs cleared.",
-    "No logs found to clear for the selected period.": "No logs found to clear for the selected period."
+    "No logs found to clear for the selected period.": "No logs found to clear for the selected period.",
+    "Inactivity Warning": "Inactivity Warning",
+    "Hello :name,": "Hello :name,",
+    "We noticed you haven't logged in for 6 months. To keep your account, please log in within one month.": "We noticed you haven't logged in for 6 months. To keep your account, please log in within one month.",
+    "Otherwise, your account will be anonymized for privacy reasons.": "Otherwise, your account will be anonymized for privacy reasons.",
+    "Login Now": "Login Now"
 }

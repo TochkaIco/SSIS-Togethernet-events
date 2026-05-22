@@ -203,9 +203,9 @@ class QrTag extends Component
             'allClassGroups' => [
                 'Personal',
                 'Alumni',
-                'TE'.now()->subMonths(6)->format('y'),
-                'TE'.now()->subMonths(6)->subYear()->format('y'),
-                'TE'.now()->subMonths(6)->subYears(2)->format('y'),
+                'TE'.now()->subMonths(7)->format('y'),
+                'TE'.now()->subMonths(7)->subYear()->format('y'),
+                'TE'.now()->subMonths(7)->subYears(2)->format('y'),
             ],
         ]);
     }

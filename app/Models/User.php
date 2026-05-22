@@ -21,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property-read EventUser $pivot
  */
-#[Fillable(['name', 'email', 'locale', 'class', 'profile_picture', 'last_activity_at', 'google_id', 'google_token', 'google_refresh_token', 'anonymized_at'])]
+#[Fillable(['name', 'email', 'locale', 'class', 'profile_picture', 'last_activity_at', 'inactivity_warning_sent_at', 'google_id', 'google_token', 'google_refresh_token', 'anonymized_at'])]
 #[Hidden(['two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -38,6 +38,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'last_activity_at' => 'datetime',
+            'inactivity_warning_sent_at' => 'datetime',
             'anonymized_at' => 'datetime',
             // 'password' => 'hashed',
         ];
@@ -131,18 +132,18 @@ class User extends Authenticatable
         return [
             'Personal',
             'Alumni',
-            'TE'.now()->subMonths(6)->format('y').'A',
-            'TE'.now()->subMonths(6)->format('y').'B',
-            'TE'.now()->subMonths(6)->format('y').'C',
-            'TE'.now()->subMonths(6)->format('y').'D',
-            'TE'.now()->subMonths(6)->subYear()->format('y').'A',
-            'TE'.now()->subMonths(6)->subYear()->format('y').'B',
-            'TE'.now()->subMonths(6)->subYear()->format('y').'C',
-            'TE'.now()->subMonths(6)->subYear()->format('y').'D',
-            'TE'.now()->subMonths(6)->subYears(2)->format('y').'A',
-            'TE'.now()->subMonths(6)->subYears(2)->format('y').'B',
-            'TE'.now()->subMonths(6)->subYears(2)->format('y').'C',
-            'TE'.now()->subMonths(6)->subYears(2)->format('y').'D',
+            'TE'.now()->subMonths(7)->format('y').'A',
+            'TE'.now()->subMonths(7)->format('y').'B',
+            'TE'.now()->subMonths(7)->format('y').'C',
+            'TE'.now()->subMonths(7)->format('y').'D',
+            'TE'.now()->subMonths(7)->subYear()->format('y').'A',
+            'TE'.now()->subMonths(7)->subYear()->format('y').'B',
+            'TE'.now()->subMonths(7)->subYear()->format('y').'C',
+            'TE'.now()->subMonths(7)->subYear()->format('y').'D',
+            'TE'.now()->subMonths(7)->subYears(2)->format('y').'A',
+            'TE'.now()->subMonths(7)->subYears(2)->format('y').'B',
+            'TE'.now()->subMonths(7)->subYears(2)->format('y').'C',
+            'TE'.now()->subMonths(7)->subYears(2)->format('y').'D',
         ];
     }
 
