@@ -1,7 +1,7 @@
 @use('Illuminate\Support\Facades\File')
 @use('Illuminate\Support\Str')
 <x-layouts::app :title="__('FAQ')">
-    <div class="mx-auto grid max-w-5xl justify-center gap-12 p-6 grid-cols-1">
+    <div class="mx-auto grid max-w-5xl justify-center gap-12 p-4 md:p-6 grid-cols-1">
         <div class="flex flex-wrap items-center justify-center gap-x-2 text-4xl lg:col-span-2">
             <span>{{ __('Welcome to') }}</span>
             <x-svg.app-logo.text.light class="hidden h-[1em] translate-y-0.75 w-auto dark:block" />
@@ -34,7 +34,7 @@
                 {{ __('Terms of Service') }}
             </h1>
 
-            <flux:card class="p-0 overflow-hidden">
+            <flux:card size="none" class="overflow-hidden">
                 <details class="group">
                     <summary class="flex items-center justify-between p-4 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors list-none rounded-xl group-open:rounded-b-none [&::-webkit-details-marker]:hidden">
                         <flux:text size="lg" weight="medium" class="text-zinc-900 dark:text-zinc-100">
@@ -45,8 +45,8 @@
                         </span>
                     </summary>
 
-                    <div class="p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50">
-                        <div class="prose dark:prose-invert max-w-none">
+                    <div class="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50">
+                        <div class="p-6 prose dark:prose-invert max-w-none">
                             {!! Str::markdown(File::get(resource_path('views/terms.md'))) !!}
                         </div>
                     </div>

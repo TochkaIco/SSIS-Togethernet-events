@@ -4,7 +4,7 @@
         <x-svg.app-logo.text.dark class="w-auto h-10 md:h-22 dark:hidden" />
     </div>
 
-    <flux:card class="p-0 overflow-hidden space-y-0">
+    <flux:card size="none" class="overflow-hidden space-y-0">
         <details class="group">
             <summary class="flex items-center justify-between p-6 pb-0 md:pb-6 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors list-none rounded-xl group-open:rounded-b-none [&::-webkit-details-marker]:hidden">
                 <div class="pr-4">
@@ -23,7 +23,7 @@
 
         <flux:separator class="my-4 md:my-6" />
 
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+        <div class="p-6 pt-0 flex flex-col lg:flex-row items-center justify-between gap-6">
             <div class="flex items-start gap-3">
                 <flux:icon icon="information-circle" class="text-zinc-400 mt-0.5 shrink-0" />
                 <flux:text size="sm" class="max-w-md">
