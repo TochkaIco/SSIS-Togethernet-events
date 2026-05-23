@@ -20,7 +20,8 @@ class Dashboard extends Component
     #[Computed]
     public function totalUsers(): int
     {
-        return User::count();
+        return User::whereNull('anonymized_at')
+            ->count();
     }
 
     #[Computed]
