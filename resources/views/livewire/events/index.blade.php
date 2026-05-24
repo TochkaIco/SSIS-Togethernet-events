@@ -17,6 +17,10 @@
             <!-- 1. Upcoming & Ongoing Events -->
             @foreach($upcomingEvents as $event)
                 <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                    <a href="{{ route('event.show', $event) }}" class="absolute inset-0 z-0">
+                        <span class="sr-only">View {{ $event->title }}</span>
+                    </a>
+
                     <div class="absolute top-4 left-4 z-10">
                         @if(auth()->user())
                             @if(! $this->userIsRegistered($event->id))
@@ -78,7 +82,7 @@
                             </div>
                         @endif
 
-                        <a href="{{ route('event.show', $event) }}" class="text-accent-content font-semibold text-xl hover:underline hover:text-orange-300">{{ $event->title }}</a>
+                        <h2 class="text-accent-content font-semibold text-xl">{{ $event->title }}</h2>
                         <div class="mt-2 flex-col space-y-2 md:flex-row md:space-y-0 items-center gap-2">
                             @if($event->event_type !== \App\EventType::QR_TAG)
                                 <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
@@ -125,6 +129,10 @@
                 <!-- 3. Finished Events Loop -->
                 @foreach($pastEvents as $event)
                     <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl opacity-50 grayscale">
+                        <a href="{{ route('event.show', $event) }}" class="absolute inset-0 z-0">
+                            <span class="sr-only">View {{ $event->title }}</span>
+                        </a>
+
                         <div class="absolute top-4 left-4 z-10">
                             @if(auth()->user())
                                 @if(! $this->userIsRegistered($event->id))
@@ -168,7 +176,7 @@
                                 </div>
                             @endif
 
-                            <a href="{{ route('event.show', $event) }}" class="text-accent-content font-semibold text-xl hover:underline hover:text-orange-300">{{ $event->title }}</a>
+                            <h2 class="text-accent-content font-semibold text-xl">{{ $event->title }}</h2>
                             <div class="mt-2 flex-col space-y-2 md:flex-row md:space-y-0 items-center gap-2">
                                 @if($event->event_type !== \App\EventType::QR_TAG)
                                     <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
