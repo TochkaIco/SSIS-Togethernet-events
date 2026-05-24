@@ -13,7 +13,7 @@
 
         <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
-            <flux:card :key="'card-'.$event->id" class="max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <flux:card :key="'card-'.$event->id" class="relative max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 <a href="{{ route('event.show', $event) }}" class="absolute inset-0 z-0">
                     <span class="sr-only">View {{ $event->title }}</span>
                 </a>
