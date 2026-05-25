@@ -52,9 +52,14 @@ class AcceptTerms extends Component
 
         Auth::logout();
 
-        $user->anonymize();
+        $hasActivity = $user->hasActivity();
+        $user->remove();
 
-        GlobalLog::log('User declined TOS and had been anonymized', 'user', ['user_id' => Auth::id()]);
+        if ($hasActivity) {
+            GlobalLog::log('User declined TOS and had been anonymized', 'user', ['user_id' => $user->id]);
+        } else {
+            GlobalLog::log('User declined TOS and had been deleted', 'system', ['email' => $user->email]);
+        }
 
         $this->redirect('/');
     }

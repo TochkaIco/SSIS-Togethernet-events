@@ -33,6 +33,7 @@ use Illuminate\Support\Collection;
     'event_starts_at',
     'event_ends_at',
     'links',
+    'allow_external_domains',
 ])]
 class Event extends Model
 {
@@ -45,6 +46,7 @@ class Event extends Model
         'display_starts_at' => 'datetime',
         'event_starts_at' => 'datetime',
         'event_ends_at' => 'datetime',
+        'allow_external_domains' => 'boolean',
     ];
 
     protected function formattedDescription(): Attribute
@@ -181,6 +183,18 @@ class Event extends Model
     {
         // QR-Tag specific: cannot unregister once started
         return ! ($this->event_type === EventType::QR_TAG && $this->event_starts_at <= now());
+    }
+
+    /**
+     * Check if the given user is allowed to register for this event.
+     */
+    public function allowsUser(User $user): bool
+    {
+        if ($this->allow_external_domains) {
+            return true;
+        }
+
+        return ! $user->isExternal();
     }
 
     public function isQrTagGameStarted(): bool

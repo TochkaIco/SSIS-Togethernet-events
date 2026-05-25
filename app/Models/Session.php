@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Agent\Agent;
 
+#[WithoutIncrementing]
+#[WithoutTimestamps]
 class Session extends Model
 {
-    public $incrementing = false;
-
     protected $keyType = 'string';
-
-    public $timestamps = false;
 
     /**
      * Parse the user agent string into a readable Agent object.

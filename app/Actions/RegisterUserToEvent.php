@@ -36,14 +36,19 @@ class RegisterUserToEvent
                 return $alreadyRegistered;
             }
 
-            // 2. Determine target period
+            // 2. Check if external domains are allowed
+            if (! $event->allowsUser($user)) {
+                return null;
+            }
+
+            // 3. Determine target period
             $targetPeriod = $this->determineTargetPeriod($event, $periodId);
 
             if (! $targetPeriod instanceof EventPeriod) {
                 return null;
             }
 
-            // 3. Register using the period model
+            // 4. Register using the period model
             return $targetPeriod->register($user);
         });
     }

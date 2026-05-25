@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Mail\NewTermsMail;
+use App\Models\Feedback;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -39,13 +40,29 @@ test('it does not resend TOS notification if already sent', function () {
     Mail::assertNothingQueued();
 });
 
-test('it anonymizes users who did not accept TOS after one month', function () {
+test('it deletes users without activity who did not accept TOS after one month', function () {
     Carbon::setTestNow('2026-06-01 12:00:00');
 
     $user = User::factory()->create([
         'tos_accepted_at' => null,
         'tos_warning_sent_at' => now()->subMonth()->subDay(),
     ]);
+
+    artisan('app:notify-tos-update');
+
+    expect(User::find($user->id))->toBeNull();
+});
+
+test('it anonymizes users with activity who did not accept TOS after one month', function () {
+    Carbon::setTestNow('2026-06-01 12:00:00');
+
+    $user = User::factory()->create([
+        'tos_accepted_at' => null,
+        'tos_warning_sent_at' => now()->subMonth()->subDay(),
+    ]);
+
+    // Add activity
+    Feedback::factory()->create(['user_id' => $user->id]);
 
     artisan('app:notify-tos-update');
 

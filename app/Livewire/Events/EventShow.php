@@ -140,6 +140,12 @@ class EventShow extends Component
             return;
         }
 
+        if (! $this->event->allowsUser(Auth::user())) {
+            Flux::toast(text: __('This event is only open for accounts with an internal domain.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
         $action->handle(Auth::user(), $event, $this->period);
 
         $registration = EventUser::where('event_id', $eventId)

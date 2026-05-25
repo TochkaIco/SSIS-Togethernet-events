@@ -97,9 +97,21 @@ class Index extends Component
             return;
         }
 
+        if (! $event->allowsUser(Auth::user())) {
+            Flux::toast(text: __('This event is only open for accounts with an internal domain.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
         $registration = $action->handle(Auth::user(), $event);
 
-        if ($registration?->in_waitinglist) {
+        if (! $registration instanceof EventUser) {
+            Flux::toast(text: __('Registration failed. Please try again.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        if ($registration->in_waitinglist) {
             Flux::toast(text: __('You have been added to the waiting list.'), heading: __('Success'), variant: 'success');
         } else {
             Flux::toast(text: __('You have been registered for this event.'), heading: __('Success'), variant: 'success');

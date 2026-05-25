@@ -29,6 +29,7 @@ class EventFactory extends Factory
             'display_starts_at' => now(),
             'event_starts_at' => now()->addDay(),
             'event_ends_at' => now()->addDay()->addHours(2),
+            'allow_external_domains' => true,
         ];
     }
 

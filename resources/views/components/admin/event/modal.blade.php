@@ -81,6 +81,15 @@
                 >{{ old('description', $event->description) }}</flux:textarea>
             </div>
 
+            <flux:checkbox
+                x-data="{ allowExternalDomains: {{ old('allow_external_domains', $event->allow_external_domains) ? 'true' : 'false' }} }"
+                label="{{ __('Allow external domains (e.g. @gmail.com)') }}"
+                name="allow_external_domains"
+                class="whitespace-nowrap"
+                ::checked="allow_external_domains"
+                x-on:change="allowExternalDomains = $el.checked"
+            />
+
             {{-- Number of Seats --}}
             <template x-if="event_type !== '{{ App\EventType::QR_TAG->value }}'">
                 <flux:input

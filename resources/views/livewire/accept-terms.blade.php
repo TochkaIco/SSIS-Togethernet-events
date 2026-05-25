@@ -56,7 +56,7 @@
             <flux:modal.close>
                 <flux:button variant="subtle">{{ __('Cancel') }}</flux:button>
             </flux:modal.close>
-            <flux:button variant="danger" wire:click="decline">{{ __('Anonymize My Account') }}</flux:button>
+            <flux:button variant="danger" wire:click="decline">{{ __('Delete account') }}</flux:button>
         </div>
     </flux:modal>
 </div>

@@ -12,17 +12,21 @@
                 @if(auth()->user())
                     @if(! $this->registration)
                         @if($event->canRegister())
-                            @if($event->one_hour_periods)
-                                <flux:select wire:model="period" placeholder="{{ __('Select Period') }}" class="min-w-48">
-                                    <flux:select.option :value="null">{{ __('Any available period') }}</flux:select.option>
-                                    @foreach($event->eventPeriods() as $item)
-                                        @if($item->type === 'period')
-                                            <flux:select.option value="{{ $item->id }}">{{ $item->label }} ({{ $event->seatsTaken($item->id) }}/{{ $event->num_of_seats }})</flux:select.option>
-                                        @endif
-                                    @endforeach
-                                </flux:select>
+                            @if($event->allowsUser(auth()->user()))
+                                @if($event->one_hour_periods)
+                                    <flux:select wire:model="period" placeholder="{{ __('Select Period') }}" class="min-w-48">
+                                        <flux:select.option :value="null">{{ __('Any available period') }}</flux:select.option>
+                                        @foreach($event->eventPeriods() as $item)
+                                            @if($item->type === 'period')
+                                                <flux:select.option value="{{ $item->id }}">{{ $item->label }} ({{ $event->seatsTaken($item->id) }}/{{ $event->num_of_seats }})</flux:select.option>
+                                            @endif
+                                        @endforeach
+                                    </flux:select>
+                                @endif
+                                <flux:button wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Register') }}</flux:button>
+                            @else
+                                <flux:button disabled variant="ghost" class="cursor-not-allowed text-red-500! border-red-500/20 bg-red-500/5!">{{ __('Domain Restricted') }}</flux:button>
                             @endif
-                            <flux:button wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Register') }}</flux:button>
                         @endif
                     @else
                         <div class="flex flex-col sm:items-end gap-2">
@@ -35,7 +39,7 @@
                                 @endif
 
                                 <div class="flex-col space-y-2">
-                                    {{-- Status Badge with soft "Status Light" --}}
+                                    {{-- Status Badge --}}
                                     <div class="relative">
                                         @if($this->registration->in_waitinglist)
                                             <div class="absolute -inset-1 bg-yellow-500/20 blur-lg rounded-full"></div>

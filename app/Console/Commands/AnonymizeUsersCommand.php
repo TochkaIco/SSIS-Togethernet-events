@@ -7,25 +7,15 @@ namespace App\Console\Commands;
 use App\Mail\InactivityWarningMail;
 use App\Models\GlobalLog;
 use App\Models\User;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
+#[Description('Anonymize graduated Stockholm Science users in July and inactive other users after 7 months.')]
+#[Signature('app:anonymize-users')]
 class AnonymizeUsersCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:anonymize-users';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Anonymize graduated Stockholm Science users in July and inactive other users after 7 months.';
-
     /**
      * Execute the console command.
      */

@@ -25,6 +25,7 @@ class EventRequest extends FormRequest
             // Converts "on" to true, and missing/null to false
             'paid_entry' => $this->boolean('paid_entry'),
             'one_hour_periods' => $this->boolean('one_hour_periods'),
+            'allow_external_domains' => $this->boolean('allow_external_domains'),
         ]);
     }
 
@@ -65,6 +66,7 @@ class EventRequest extends FormRequest
             'links' => ['nullable', 'array'],
             'links.*' => ['url', 'max:255'],
             'image' => ['nullable', 'image', 'max:5120'],
+            'allow_external_domains' => ['boolean'],
         ];
     }
 }

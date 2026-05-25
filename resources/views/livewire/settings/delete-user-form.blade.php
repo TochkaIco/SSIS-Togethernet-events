@@ -27,11 +27,7 @@
 
             <flux:input wire:model="confirmation" :label="__('Confirmation')" placeholder="DELETE" />
 
-            <div
-                class="flex justify-end space-x-2 rtl:space-x-reverse"
-                x-data="{ canDelete: false, timer: 3 }"
-                x-on:modal-show.window="canDelete = false; timer = 3; let interval = setInterval(() => { if(timer > 0) { timer-- } else { canDelete = true; clearInterval(interval) } }, 1000)"
-            >
+            <div class="flex justify-end space-x-2">
                 <flux:modal.close>
                     <flux:button variant="filled" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
@@ -40,11 +36,9 @@
                     variant="danger"
                     type="submit"
                     class="cursor-pointer"
-                    x-bind:disabled="!canDelete"
-                    x-bind:class="!canDelete && 'opacity-50 grayscale'"
+                    loading="false"
                 >
-                    <span x-show="canDelete">{{ __('Delete account') }}</span>
-                    <span x-show="!canDelete">{{ __('Wait') }} (<span x-text="timer"></span>s)</span>
+                    {{ __('Delete account') }}
                 </flux:button>
             </div>
         </form>

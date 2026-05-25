@@ -25,7 +25,11 @@
                         @if(auth()->user())
                             @if(! $this->userIsRegistered($event->id))
                                 @if($event->canRegister())
-                                    <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-350 hover:drop-shadow-[0_0_15px_rgba(255,176,74,0.6)]">{{ __('Register') }}</flux:button>
+                                    @if($event->allowsUser(auth()->user()))
+                                        <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-350 hover:drop-shadow-[0_0_15px_rgba(255,176,74,0.6)]">{{ __('Register') }}</flux:button>
+                                    @else
+                                        <flux:button disabled variant="ghost" class="cursor-not-allowed text-red-500! border-red-500/20 bg-red-500/5!">{{ __('Domain Restricted') }}</flux:button>
+                                    @endif
                                 @endif
                             @else
                                 <div class="flex flex-col items-start gap-3">
@@ -137,7 +141,11 @@
                             @if(auth()->user())
                                 @if(! $this->userIsRegistered($event->id))
                                     @if($event->canRegister())
-                                        <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
+                                        @if($event->allowsUser(auth()->user()))
+                                            <flux:button class="cursor-pointer" wire:click="registerUser({{ $event->id }})" variant="primary">{{ __('Register') }}</flux:button>
+                                        @else
+                                            <flux:button disabled variant="ghost" class="cursor-not-allowed text-red-500! border-red-500/20 bg-red-500/5!">{{ __('Domain Restricted') }}</flux:button>
+                                        @endif
                                     @endif
                                 @else
                                     <div class="flex flex-col items-start gap-2">

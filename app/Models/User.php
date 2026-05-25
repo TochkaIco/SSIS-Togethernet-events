@@ -96,11 +96,63 @@ class User extends Authenticatable
         return $this->hasMany(EventUser::class);
     }
 
+    public function kioskPurchases(): HasMany
+    {
+        return $this->hasMany(EventKioskPurchase::class, 'operator_id');
+    }
+
+    public function meetingAttendances(): HasMany
+    {
+        return $this->hasMany(MeetingAttendant::class, 'attendant_id');
+    }
+
+    public function feedback(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
+
     public function events(): BelongsToMany
     {
         return $this->belongsToMany(Event::class, 'event_users')
             ->withPivot(['id', 'is_working', 'in_waitinglist', 'has_paid', 'has_arrived', 'event_period_id'])
             ->withTimestamps();
+    }
+
+    /**
+     * Check if the user has any activity in the system.
+     */
+    public function hasActivity(): bool
+    {
+        if ($this->registrations()->exists()) {
+            return true;
+        }
+        if ($this->kioskPurchases()->exists()) {
+            return true;
+        }
+        if ($this->meetingAttendances()->where('has_attended', true)->exists()) {
+            return true;
+        }
+
+        return $this->feedback()->exists();
+    }
+
+    /**
+     * Remove the user by either deleting them (if no activity) or anonymizing them.
+     */
+    public function remove(): void
+    {
+        if ($this->hasActivity()) {
+            $this->anonymize();
+
+            return;
+        }
+
+        $this->sessions()->delete();
+        $this->syncRoles([]);
+        $this->syncPermissions([]);
+        // Delete related meeting attendance records even if they didn't attend
+        $this->meetingAttendances()->delete();
+        $this->delete();
     }
 
     /**
@@ -157,5 +209,19 @@ class User extends Authenticatable
     public function canBeImpersonated(): bool
     {
         return ! $this->hasAnyRole('admin|super-admin|maintainer');
+    }
+
+    /**
+     * Check if the user has an external email domain.
+     */
+    public function isExternal(): bool
+    {
+        $hd = config('services.google.hd');
+
+        if (empty($hd)) {
+            return false;
+        }
+
+        return ! str_ends_with($this->email, '@'.$hd);
     }
 }

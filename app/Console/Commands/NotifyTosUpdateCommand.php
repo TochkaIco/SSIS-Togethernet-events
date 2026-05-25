@@ -6,32 +6,22 @@ namespace App\Console\Commands;
 
 use App\Mail\NewTermsMail;
 use App\Models\User;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
+#[Description('Notify users about the new Terms of Service and anonymize those who do not accept after 1 month.')]
+#[Signature('app:notify-tos-update')]
 class NotifyTosUpdateCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:notify-tos-update';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Notify users about the new Terms of Service and anonymize those who do not accept after 1 month.';
-
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
         $this->sendNotifications();
-        $this->anonymizeUnaccepted();
+        $this->removeUnaccepted();
     }
 
     private function sendNotifications(): void
@@ -49,24 +39,24 @@ class NotifyTosUpdateCommand extends Command
         }
     }
 
-    private function anonymizeUnaccepted(): void
+    private function removeUnaccepted(): void
     {
-        $anonymizeThreshold = now()->subMonth();
+        $removeThreshold = now()->subMonth();
 
-        $usersToAnonymize = User::notAnonymized()
+        $usersToRemove = User::notAnonymized()
             ->whereNull('tos_accepted_at')
             ->whereNotNull('tos_warning_sent_at')
-            ->where('tos_warning_sent_at', '<', $anonymizeThreshold)
+            ->where('tos_warning_sent_at', '<', $removeThreshold)
             ->get();
 
-        if ($usersToAnonymize->isEmpty()) {
+        if ($usersToRemove->isEmpty()) {
             return;
         }
 
-        $this->info("Anonymizing {$usersToAnonymize->count()} users who did not accept TOS in time...");
+        $this->info("Removing {$usersToRemove->count()} users who did not accept TOS in time...");
 
-        foreach ($usersToAnonymize as $user) {
-            $user->anonymize();
+        foreach ($usersToRemove as $user) {
+            $user->remove();
         }
     }
 }

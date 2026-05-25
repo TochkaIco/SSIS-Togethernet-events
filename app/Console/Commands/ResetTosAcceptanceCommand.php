@@ -6,24 +6,14 @@ namespace App\Console\Commands;
 
 use App\Models\GlobalLog;
 use App\Models\User;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
+#[Description('Reset TOS acceptance for all users to force them to review updated terms.')]
+#[Signature('app:reset-tos')]
 class ResetTosAcceptanceCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:reset-tos';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Reset TOS acceptance for all users to force them to review updated terms.';
-
     /**
      * Execute the console command.
      */
