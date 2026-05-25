@@ -36,7 +36,7 @@ class FeedbackModal extends Component
         $this->reset(['comment', 'type', 'anonymous']);
         Flux::modal('feedback-modal')->close();
         Flux::toast(__('Feedback submitted. Thanks!'), variant: 'success');
-        GlobalLog::log('New feedback submitted', 'system', ['feedback_id' => $feedback->id]);
+        GlobalLog::log('New feedback submitted', 'feedback', ['feedback_id' => $feedback->id]);
     }
 
     public function render()

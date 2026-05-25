@@ -103,7 +103,7 @@
     <div class="md:hidden space-y-4">
         @foreach ($feedbacks as $feedback)
             <div class="p-4 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl space-y-4">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between space-x-2">
                     <div>
                         @if($feedback->user)
                             <button href="{{ route('admin.user.profile', $feedback->user) }}" class="flex items-center gap-3 text-left">
