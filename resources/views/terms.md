@@ -1,9 +1,9 @@
 # Användarvillkor för TogethernetEvents
 
-Senast uppdaterad: 2026-05-22
+Senast uppdaterad: 2026-05-26
 
 ## 1. Allmänt
-Dessa användarvillkor ("Villkoren") reglerar din användning av TogethernetEvents ("Tjänsten") som drivs av Togethernet.
+Dessa användarvillkor ("Villkoren") reglerar din användning av TogethernetEvents ("Tjänsten") som drivs av Togethernet, organizationsnummer 8025534440.
 
 Genom att använda Tjänsten accepterar du dessa Villkor. Om du inte accepterar dessa Villkor, var god använd inte Tjänsten.
 
@@ -43,7 +43,7 @@ Tvister som uppstår i samband med dessa Villkor ska i första hand lösas genom
 
 # Integritetspolicy
 
-Senast uppdaterad: 2026-05-22
+Senast uppdaterad: 2026-05-26
 
 ## 1. Inledning
 Denna integritetspolicy beskriver hur Togethernet samlar in, använder och skyddar dina personuppgifter i TogethernetEvents. Vi följer EU:s dataskyddsförordning (GDPR).
@@ -83,4 +83,7 @@ Vi vidtar lämpliga tekniska åtgärder för att skydda dina uppgifter. All data
 
 ## 9. Kontakt
 Togethernet
+
+Organisationsnummer: 8025534440
+
 E-post: togethernet@stockholmscience.se
