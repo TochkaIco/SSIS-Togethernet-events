@@ -74,6 +74,7 @@ class UserImpersonationPage extends Component
     public function render(): View|Factory|\Illuminate\View\View
     {
         $users = User::query()
+            ->whereNull('anonymized_at')
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {
                     $sub->where('name', 'like', '%'.$this->search.'%')

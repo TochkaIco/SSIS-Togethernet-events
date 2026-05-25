@@ -244,13 +244,13 @@ class UserManagement extends Component
             return;
         }
 
-        GlobalLog::log('User Deleted', 'user', ['target_user_id' => $user->id]);
+        GlobalLog::log('User Deleted/Anonymized', 'user', ['target_user_id' => $user->id]);
 
-        $user->anonymize();
+        $user->remove();
 
         $this->modal('confirm-user-deletion')->close();
 
-        Flux::toast(text: __('The account has been anonymized and removed from view.'), heading: __('User Anonymized'), variant: 'success');
+        Flux::toast(text: __('The account has been removed.'), heading: __('User Deleted'), variant: 'success');
     }
 
     public function viewUserProfile($userId)

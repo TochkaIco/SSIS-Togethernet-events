@@ -132,8 +132,11 @@ class User extends Authenticatable
         if ($this->meetingAttendances()->where('has_attended', true)->exists()) {
             return true;
         }
+        if ($this->feedback()->exists()) {
+            return true;
+        }
 
-        return $this->feedback()->exists();
+        return $this->created_at < now()->subDays(30);
     }
 
     /**
@@ -153,32 +156,6 @@ class User extends Authenticatable
         // Delete related meeting attendance records even if they didn't attend
         $this->meetingAttendances()->delete();
         $this->delete();
-    }
-
-    /**
-     * Get the registration priority score for a given event.
-     * Higher score means higher priority.
-     * 2: Was on the waiting list in the previous event.
-     * 1: Did not register for the previous event.
-     * 0: Was a participant in the previous event.
-     */
-    public function registrationPriorityFor(Event $event): int
-    {
-        $previousEvent = $event->previous();
-
-        if (! $previousEvent instanceof Event) {
-            return 1;
-        }
-
-        $registration = EventUser::where('event_id', $previousEvent->id)
-            ->where('user_id', $this->id)
-            ->first();
-
-        if (! $registration) {
-            return 1;
-        }
-
-        return $registration->in_waitinglist ? 2 : 0;
     }
 
     public function validClasses(): array
