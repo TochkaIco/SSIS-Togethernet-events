@@ -20,7 +20,7 @@
         <flux:table.columns>
             <flux:table.column>{{ __('User') }}</flux:table.column>
             <flux:table.column>{{ __('Type') }}</flux:table.column>
-            <flux:table.column sortable>{{ __('Comment') }}</flux:table.column>
+            <flux:table.column>{{ __('Comment') }}</flux:table.column>
             <flux:table.column>{{ __('Status') }}</flux:table.column>
             <flux:table.column>{{ __('Date') }}</flux:table.column>
             <flux:table.column align="end">{{ __('Actions') }}</flux:table.column>

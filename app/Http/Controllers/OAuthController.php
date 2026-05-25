@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\AppConfig;
+use App\Models\GlobalLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -73,6 +74,7 @@ class OAuthController extends Controller
             }
         } catch (\Exception $e) {
             \Log::error('LDAP error: '.$e->getMessage());
+            GlobalLog::log('LDAP error encountered during user login', 'system', ['error_message' => $e->getMessage()]);
         }
 
         $user = User::firstOrCreate(

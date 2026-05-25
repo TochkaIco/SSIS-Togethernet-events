@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\Feedback;
+use App\Models\GlobalLog;
 use Flux\Flux;
 use Livewire\Component;
 
@@ -26,7 +27,7 @@ class FeedbackModal extends Component
     {
         $this->validate();
 
-        Feedback::create([
+        $feedback = Feedback::create([
             'type' => $this->type,
             'comment' => $this->comment,
             'user_id' => $this->anonymous ? null : auth()->id(),
@@ -35,6 +36,7 @@ class FeedbackModal extends Component
         $this->reset(['comment', 'type', 'anonymous']);
         Flux::modal('feedback-modal')->close();
         Flux::toast(__('Feedback submitted. Thanks!'), variant: 'success');
+        GlobalLog::log('New feedback submitted', 'system', ['feedback_id' => $feedback->id]);
     }
 
     public function render()

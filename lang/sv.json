@@ -379,6 +379,7 @@
     "Only Admins can grant permission to view dev-related components.": "Endast administratörer kan ge behörighet att se dev-relaterade komponenter.",
     "User Feedback": "Användarfeedback",
     "Review bug reports and feature requests.": "Granska felrapporter och funktionsförfrågningar.",
+    "Review bug reports and feature requests you've submitted.": "Granska felrapporter och funktionsförfrågningar som du har skickat in.",
     "Search by comment...": "Sök efter kommentar...",
     "Only unresolved": "Endast olösta",
     "Status": "Status",
@@ -493,5 +494,7 @@
     "Terms of Service": "Användarvillkor",
     "View our full Terms of Service & Privacy Policy": "Se våra fullständiga användarvillkor och integritetspolicy",
     "Decline Terms of Service?": "Avvisa användarvillkoren?",
-    "By declining, your account will be immediately anonymized. This action cannot be undone.": "Genom att avvisa kommer ditt konto att anonymiseras omedelbart. Denna åtgärd kan inte ångras."
+    "By declining, your account will be immediately anonymized. This action cannot be undone.": "Genom att avvisa kommer ditt konto att anonymiseras omedelbart. Denna åtgärd kan inte ångras.",
+    "My Feedback": "Min Feedback",
+    "Edit Feedback": "Redigera Feedback"
 }

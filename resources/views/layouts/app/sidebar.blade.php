@@ -23,6 +23,12 @@
                     <flux:sidebar.item icon="question-mark-circle" :href="route('faq')" :current="request()->routeIs('faq*')">
                         {{ __('FAQ') }}
                     </flux:sidebar.item>
+
+                    @if(auth()->user() && auth()->user()->feedback()->exists())
+                        <flux:sidebar.item icon="chat-bubble-left-right" :href="route('user.feedback')" :current="request()->routeIs('user.feedback*')" wire:navigate>
+                            {{ __('My Feedback') }}
+                        </flux:sidebar.item>
+                    @endif
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
