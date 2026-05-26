@@ -22,11 +22,14 @@ class UpdateEvent
             'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at', 'allow_external_domains',
         ])->toArray();
 
-        $newStartsAt = isset($data['event_starts_at']) ? Carbon::parse($data['event_starts_at']) : $event->event_starts_at;
+        // Fallback to existing model values if the fields aren't present in the attributes payload
+        $data['event_starts_at'] = isset($data['event_starts_at']) ? Carbon::parse($data['event_starts_at']) : $event->event_starts_at;
+        $data['event_ends_at'] = isset($data['event_ends_at']) ? Carbon::parse($data['event_ends_at']) : $event->event_ends_at;
+
         $periodsChanged = (bool) ($attributes['one_hour_periods'] ?? $event->one_hour_periods) !== (bool) $event->one_hour_periods
             || (int) ($attributes['one_hour_periods_number'] ?? $event->one_hour_periods_number) !== (int) $event->one_hour_periods_number
             || (int) ($attributes['interval_length'] ?? $event->interval_length) !== (int) $event->interval_length
-            || ! $event->event_starts_at->startOfMinute()->equalTo($newStartsAt->startOfMinute());
+            || ! $event->event_starts_at->startOfMinute()->equalTo($data['event_starts_at']->startOfMinute());
 
         if ($periodsChanged && ! $event->canEditCriticalFields()) {
             throw ValidationException::withMessages([
@@ -40,8 +43,8 @@ class UpdateEvent
             }
 
             // If the start date is being updated, also update the title to match the new date
-            if (! empty($data['event_starts_at'])) {
-                $newDate = Carbon::parse($data['event_starts_at'])->format('Y-m-d');
+            if (! empty($attributes['event_starts_at'])) {
+                $newDate = $data['event_starts_at']->format('Y-m-d');
                 $oldDatePattern = 'QR-Tag '.$event->event_starts_at->format('Y-m-d');
 
                 // If the user didn't change the title manually, or if it matches the old auto-generated pattern, update it
@@ -52,7 +55,7 @@ class UpdateEvent
         }
 
         if ($attributes['one_hour_periods'] ?? false) {
-            $startTime = Carbon::parse($data['event_starts_at']);
+            $startTime = $data['event_starts_at']->copy();
             $hoursToAdd = (int) ($attributes['one_hour_periods_number'] ?? 1);
             $totalIntervalLength = (int) ($attributes['interval_length'] ?? 0) * (max(0, (int) ($attributes['one_hour_periods_number'] ?? 1) - 1));
 
@@ -74,7 +77,7 @@ class UpdateEvent
                     // We always recreate periods for karaoke events to ensure correct sequence and breaks
                     $event->periods()->delete();
 
-                    $currentStart = Carbon::parse($data['event_starts_at']);
+                    $currentStart = $data['event_starts_at']->copy();
                     $interval = (int) ($attributes['interval_length'] ?? 0);
 
                     for ($i = 1; $i <= $numPeriods; $i++) {
@@ -101,22 +104,14 @@ class UpdateEvent
                 }
             } else {
                 // Non-karaoke event, should have exactly one period
-                $period = $event->periods()->first();
-                if ($period) {
-                    $period->update([
+                $event->periods()->updateOrCreate(
+                    ['number' => 1],
+                    [
                         'starts_at' => $data['event_starts_at'],
                         'ends_at' => $data['event_ends_at'],
                         'type' => 'period',
-                        'number' => 1,
-                    ]);
-                } else {
-                    $event->periods()->create([
-                        'starts_at' => $data['event_starts_at'],
-                        'ends_at' => $data['event_ends_at'],
-                        'type' => 'period',
-                        'number' => 1,
-                    ]);
-                }
+                    ]
+                );
             }
 
             // Process waiting list in case seats were added
