@@ -85,9 +85,11 @@
             <h3 class="font-bold text-xl mb-4">{{ __('Links') }}</h3>
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($event->links as $link)
-                    <flux:card :href="$link" class="flex items-center gap-3 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl hover:text-orange-300">
-                        <flux:icon.link class="size-4 text-zinc-400" />
-                        <span class="truncate text-sm font-medium">{{ $link }}</span>
+                    <flux:card :href="$link" class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl hover:text-orange-300 min-w-0" size="sm">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <flux:icon.link class="size-4 text-zinc-400 shrink-0" />
+                            <span class="truncate text-sm font-medium min-w-0">{{ $link }}</span>
+                        </div>
                     </flux:card>
                 @endforeach
             </div>

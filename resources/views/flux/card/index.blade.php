@@ -31,7 +31,7 @@
 @endif
 
 {{-- 2. The Content Section (Handles the padding) --}}
-<div class="{{ $padding }} flex-1 flex flex-col">
+<div class="{{ $padding }} flex-1 flex flex-col min-w-0">
     {{ $slot }}
 </div>
 </{{ $as }}>

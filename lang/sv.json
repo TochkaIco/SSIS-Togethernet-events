@@ -516,5 +516,6 @@
     "By declining, your account will be immediately anonymized. This action cannot be undone.": "Genom att avvisa kommer ditt konto att anonymiseras omedelbart. Denna åtgärd kan inte ångras.",
     "My Feedback": "Min Feedback",
     "Edit Feedback": "Redigera Feedback",
-    "here": "här"
+    "here": "här",
+    "Some fields are locked because this event has participants.": "Vissa fält är låsta eftersom det finns deltagare i det här evenemanget."
 }

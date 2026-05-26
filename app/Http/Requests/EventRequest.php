@@ -26,6 +26,7 @@ class EventRequest extends FormRequest
             'paid_entry' => $this->boolean('paid_entry'),
             'one_hour_periods' => $this->boolean('one_hour_periods'),
             'allow_external_domains' => $this->boolean('allow_external_domains'),
+            'links' => empty($this->links) ? [] : $this->links,
         ]);
     }
 

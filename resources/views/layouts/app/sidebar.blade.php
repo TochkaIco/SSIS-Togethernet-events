@@ -47,7 +47,7 @@
                             </flux:sidebar.item>
 
                             @if(request()->routeIs('admin.event.show') && $event = request()->route('event'))
-                                <flux:sidebar.group :heading="$event->title" expandable expanded class="ml-4">
+                                <flux:sidebar.group :heading="Str::limit($event->title, 20)" expandable expanded class="ml-4">
                                     <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'view'])" :current="request('tab', 'view') === 'view'" wire:navigate>
                                         {{ __('View') }}
                                     </flux:sidebar.item>

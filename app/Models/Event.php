@@ -43,6 +43,9 @@ class Event extends Model
     protected $casts = [
         'event_type' => EventType::class,
         'links' => AsArrayObject::class,
+        'one_hour_periods' => 'boolean',
+        'one_hour_periods_number' => 'integer',
+        'interval_length' => 'integer',
         'display_starts_at' => 'datetime',
         'event_starts_at' => 'datetime',
         'event_ends_at' => 'datetime',
@@ -200,6 +203,25 @@ class Event extends Model
     public function isQrTagGameStarted(): bool
     {
         return $this->registrations()->whereNotNull('qr_tag_token')->exists();
+    }
+
+    public function hasParticipants(): bool
+    {
+        return $this->registrations()->exists();
+    }
+
+    public function canDelete(): bool
+    {
+        if ($this->created_at > now()->subMinutes(30)) {
+            return true;
+        }
+
+        return ! $this->hasParticipants();
+    }
+
+    public function canEditCriticalFields(): bool
+    {
+        return ! $this->hasParticipants();
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\GlobalLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class UpdateEvent
 {
@@ -20,6 +21,18 @@ class UpdateEvent
         $data = collect($attributes)->only([
             'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at', 'allow_external_domains',
         ])->toArray();
+
+        $newStartsAt = Carbon::parse($data['event_starts_at']);
+        $periodsChanged = (bool) $event->one_hour_periods !== (bool) ($attributes['one_hour_periods'] ?? false)
+            || (int) $event->one_hour_periods_number !== (int) ($attributes['one_hour_periods_number'] ?? $event->one_hour_periods_number)
+            || (int) $event->interval_length !== (int) ($attributes['interval_length'] ?? $event->interval_length)
+            || ! $event->event_starts_at->startOfMinute()->equalTo($newStartsAt->startOfMinute());
+
+        if ($periodsChanged && ! $event->canEditCriticalFields()) {
+            throw ValidationException::withMessages([
+                'event_starts_at' => __('Cannot change event timing or periods after participants have registered.'),
+            ]);
+        }
 
         if ($data['event_type'] === EventType::QR_TAG->value) {
             if (array_key_exists('num_of_seats', $data) && is_null($data['num_of_seats'])) {
@@ -50,38 +63,40 @@ class UpdateEvent
             $data['image_path'] = $attributes['image']->store('events', 'public');
         }
 
-        DB::transaction(function () use ($event, $data, $attributes) {
+        DB::transaction(function () use ($event, $data, $attributes, $periodsChanged) {
             $event->update($data);
 
             GlobalLog::log('Event Updated', 'event', ['event_id' => $event->id, 'title' => $event->title]);
 
             if ($attributes['one_hour_periods'] ?? false) {
-                $numPeriods = (int) ($attributes['one_hour_periods_number'] ?? 1);
-                // We always recreate periods for karaoke events to ensure correct sequence and breaks
-                $event->periods()->delete();
+                if ($periodsChanged) {
+                    $numPeriods = (int) ($attributes['one_hour_periods_number'] ?? 1);
+                    // We always recreate periods for karaoke events to ensure correct sequence and breaks
+                    $event->periods()->delete();
 
-                $currentStart = Carbon::parse($data['event_starts_at']);
-                $interval = (int) ($attributes['interval_length'] ?? 0);
+                    $currentStart = Carbon::parse($data['event_starts_at']);
+                    $interval = (int) ($attributes['interval_length'] ?? 0);
 
-                for ($i = 1; $i <= $numPeriods; $i++) {
-                    $periodEnd = $currentStart->copy()->addHour();
+                    for ($i = 1; $i <= $numPeriods; $i++) {
+                        $periodEnd = $currentStart->copy()->addHour();
 
-                    $event->periods()->create([
-                        'starts_at' => $currentStart,
-                        'ends_at' => $periodEnd,
-                        'type' => 'period',
-                        'number' => $i,
-                    ]);
-
-                    $currentStart = $periodEnd->copy()->addMinutes($interval);
-
-                    // Add break if there's an interval and it's not the last period
-                    if ($interval > 0 && $i < $numPeriods) {
                         $event->periods()->create([
-                            'starts_at' => $periodEnd,
-                            'ends_at' => $currentStart,
-                            'type' => 'break',
+                            'starts_at' => $currentStart,
+                            'ends_at' => $periodEnd,
+                            'type' => 'period',
+                            'number' => $i,
                         ]);
+
+                        $currentStart = $periodEnd->copy()->addMinutes($interval);
+
+                        // Add break if there's an interval and it's not the last period
+                        if ($interval > 0 && $i < $numPeriods) {
+                            $event->periods()->create([
+                                'starts_at' => $periodEnd,
+                                'ends_at' => $currentStart,
+                                'type' => 'break',
+                            ]);
+                        }
                     }
                 }
             } else {

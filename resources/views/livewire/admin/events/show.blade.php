@@ -35,34 +35,51 @@
                 </flux:button>
 
                 <flux:modal.trigger name="delete-event">
-                    <flux:button variant="danger" class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl">
+                    <flux:button variant="danger" class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl" :disabled="!$event->canDelete()">
                         {{ __('Delete') }}
                     </flux:button>
                 </flux:modal.trigger>
 
                 <flux:modal name="delete-event" class="min-w-[22rem]">
-                    <form action="{{ route('admin.event.destroy', $event) }}" method="post">
-                        @csrf
-                        @method('DELETE')
+                    @if(!$event->canDelete())
                         <div class="space-y-6">
                             <div>
-                                <flux:heading size="lg">{{ __('Delete event?') }}</flux:heading>
-                                <flux:text class="mt-2">
-                                    {{ __("You're about to delete this event. This action cannot be reversed.") }}
+                                <flux:heading size="lg">{{ __('Cannot Delete Event') }}</flux:heading>
+                                <flux:text class="mt-2 text-red-500">
+                                    {{ __('This event has participants and was created more than 30 minutes ago.') }}
                                 </flux:text>
                             </div>
-
                             <div class="flex gap-2">
                                 <flux:spacer />
-
                                 <flux:modal.close>
-                                    <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                                    <flux:button variant="ghost">{{ __('Close') }}</flux:button>
                                 </flux:modal.close>
-
-                                <flux:button type="submit" variant="danger">{{ __('Delete event') }}</flux:button>
                             </div>
                         </div>
-                    </form>
+                    @else
+                        <form action="{{ route('admin.event.destroy', $event) }}" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <div class="space-y-6">
+                                <div>
+                                    <flux:heading size="lg">{{ __('Delete event?') }}</flux:heading>
+                                    <flux:text class="mt-2">
+                                        {{ __("You're about to delete this event. This action cannot be reversed.") }}
+                                    </flux:text>
+                                </div>
+
+                                <div class="flex gap-2">
+                                    <flux:spacer />
+
+                                    <flux:modal.close>
+                                        <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                                    </flux:modal.close>
+
+                                    <flux:button type="submit" variant="danger">{{ __('Delete event') }}</flux:button>
+                                </div>
+                            </div>
+                        </form>
+                    @endif
                 </flux:modal>
                 @endhaspermission
             </div>

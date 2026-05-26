@@ -20,6 +20,7 @@
             newLink: '',
             links: @js(old('links', $event->links ?? [])),
             hasImage: false,
+            canEditCritical: {{ $event->canEditCriticalFields() ? 'true' : 'false' }},
         }"
         action="{{ $event->exists ? route('admin.event.update', $event) : route('admin.event.store') }}"
         method="post"
@@ -28,6 +29,16 @@
         @csrf
         @if($event->exists)
             @method('PATCH')
+        @endif
+
+        @if(!$event->canEditCriticalFields())
+            <flux:badge
+                color="yellow"
+                icon="lock-closed"
+                class="mb-4 w-full h-auto! py-3! whitespace-normal! flex-wrap! justify-center text-center"
+            >
+                {{ __('Some fields are locked because this event has participants.') }}
+            </flux:badge>
         @endif
 
         <div class="space-y-6 max-h-[65vh] px-2 overflow-y-auto">
@@ -53,12 +64,14 @@
                     @foreach(App\EventType::cases() as $event_type)
                         <button
                             type="button"
-                            @click="event_type = @js($event_type->value)"
+                            @click="if (canEditCritical) { event_type = @js($event_type->value) }"
                             data-test="button-event-type-{{ $event_type->value }}"
-                            class="text-sm lg:text-lg flex-1 h-10 lg:h-12 px-2 lg:px-4 rounded-md font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-300/60 focus:ring-offset-2"
-                            :class="event_type === @js($event_type->value)
-                                ? 'bg-orange-300/90 text-accent-content font-bold shadow-sm'
-                                : 'bg-transparent text-gray-600 hover:bg-orange-300/60 hover:text-gray-900 transition-all duration-300 shadow-xs hover:-translate-y-1 hover:shadow-2xl'"
+                            class="text-sm lg:text-lg flex-1 h-10 lg:h-12 px-2 lg:px-4 rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-300/60 focus:ring-offset-2"
+                            :class="{
+                                'bg-orange-300/90 text-accent-content font-bold shadow-sm': event_type === @js($event_type->value),
+                                'bg-transparent text-gray-600 hover:bg-orange-300/60 hover:text-gray-900 transition-all duration-300 shadow-xs hover:-translate-y-1 hover:shadow-2xl': event_type !== @js($event_type->value) && canEditCritical,
+                                'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed opacity-50': event_type !== @js($event_type->value) && !canEditCritical
+                            }"
                         >
                             {{ $event_type->label() }}
                         </button>
@@ -159,7 +172,8 @@
                             name="one_hour_periods"
                             class="whitespace-nowrap"
                             ::checked="oneHourPeriods"
-                            x-on:change="oneHourPeriods = $el.checked"
+                            x-on:change="if (canEditCritical) { oneHourPeriods = $el.checked } else { $el.checked = oneHourPeriods }"
+                            ::disabled="!canEditCritical"
                         />
                         <flux:field
                             x-show="oneHourPeriods"
@@ -177,7 +191,7 @@
                                 type="number"
                                 min="1"
                                 x-bind:required="oneHourPeriods"
-                                x-bind:disabled="!oneHourPeriods"
+                                x-bind:disabled="!oneHourPeriods || !canEditCritical"
                             />
                             <flux:error name="interval_length" />
                         </flux:field>
@@ -190,6 +204,7 @@
                                 name="event_starts_at"
                                 data-test="event_starts_at"
                                 :value="old('event_starts_at', $event->event_starts_at?->format('Y-m-d\TH:i'))"
+                                ::disabled="!canEditCritical"
                             />
                             <flux:error name="event_starts_at" />
                         </flux:field>
@@ -207,7 +222,7 @@
                                 data-test="event_ends_at"
                                 :value="old('event_ends_at', $event->event_ends_at?->format('Y-m-d\TH:i'))"
                                 x-bind:required="!oneHourPeriods"
-                                x-bind:disabled="oneHourPeriods"
+                                x-bind:disabled="oneHourPeriods || !canEditCritical"
                             />
                             <flux:error name="event_ends_at" />
                         </flux:field>
@@ -228,7 +243,7 @@
                                 type="number"
                                 min="1"
                                 x-bind:required="oneHourPeriods"
-                                x-bind:disabled="!oneHourPeriods"
+                                x-bind:disabled="!oneHourPeriods || !canEditCritical"
                             />
                             <flux:error name="one_hour_periods_number" />
                         </flux:field>
@@ -244,6 +259,7 @@
                             name="event_starts_at"
                             data-test="event_starts_at"
                             :value="old('event_starts_at', $event->event_starts_at?->format('Y-m-d\TH:i'))"
+                            ::disabled="!canEditCritical"
                         />
                         <flux:error name="event_starts_at" />
                     </flux:field>
@@ -255,6 +271,7 @@
                             name="event_ends_at"
                             data-test="event_ends_at"
                             :value="old('event_ends_at', $event->event_ends_at?->format('Y-m-d\TH:i'))"
+                            ::disabled="!canEditCritical"
                         />
                         <flux:error name="event_ends_at" />
                     </flux:field>
@@ -301,6 +318,8 @@
             <flux:field class="mb-1">
                 <flux:label>{{ __('Links') }}</flux:label>
 
+                <input type="hidden" name="links" value="">
+
                 <div class="flex gap-x-2 items-center">
                     <flux:input
                         x-model="newLink"
@@ -323,7 +342,7 @@
                     />
                 </div>
 
-                <template x-for="(link, index) in links" :key="link">
+                <template x-for="(link, index) in links" :key="index">
                     <div class="flex gap-x-2 items-center">
                         <flux:input
                             type="text"

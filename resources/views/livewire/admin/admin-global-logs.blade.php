@@ -172,7 +172,7 @@
 
                     <div class="grid grid-cols-2 gap-x-3 gap-y-2 mt-2 text-sm">
                         <div class="text-zinc-500">{{ __('By') }}:</div>
-                        <div class="flex items-center gap-1">
+                        <div class="flex items-center gap-1 min-w-0">
                             @if($log->user)
                                 <flux:avatar :src="$log->user->profile_picture" :initials="$log->user->initials()" size="xs" />
                                 <flux:link :href="route('admin.user.profile', $log->user)" wire:navigate class="truncate">{{ $log->user->name }}</flux:link>
@@ -183,7 +183,7 @@
 
                         @if($targetUser)
                             <div class="text-zinc-500">{{ __('Target') }}:</div>
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 min-w-0">
                                 <flux:avatar :src="$targetUser->profile_picture" :initials="$targetUser->initials()" size="xs" />
                                 <flux:link :href="route('admin.user.profile', $targetUser)" wire:navigate class="truncate font-medium">{{ $targetUser->name }}</flux:link>
                             </div>

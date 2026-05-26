@@ -40,6 +40,10 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
+        if (! $event->canDelete()) {
+            return back()->with('error', __('Cannot delete an event with participants that was created more than 30 minutes ago.'));
+        }
+
         GlobalLog::log('Event Deleted', 'event', ['event_id' => $event->id, 'title' => $event->title]);
 
         $event->delete();
