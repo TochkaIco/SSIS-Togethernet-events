@@ -31,31 +31,6 @@
             <flux:separator />
 
             <h1 class="text-center text-3xl">
-                {{ __('Terms of Service') }}
-            </h1>
-
-            <flux:card size="none" class="overflow-hidden">
-                <details class="group">
-                    <summary class="flex items-center justify-between p-4 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors list-none rounded-xl group-open:rounded-b-none [&::-webkit-details-marker]:hidden">
-                        <flux:text size="lg" weight="medium" class="text-zinc-900 dark:text-zinc-100">
-                            {{ __('View our full Terms of Service & Privacy Policy') }}
-                        </flux:text>
-                        <span class="transition-transform duration-300 group-open:rotate-180">
-                            <flux:icon icon="chevron-down" variant="micro" class="text-zinc-400" />
-                        </span>
-                    </summary>
-
-                    <div class="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50">
-                        <div class="p-6 prose dark:prose-invert max-w-none">
-                            {!! Str::markdown(File::get(resource_path('views/terms.md'))) !!}
-                        </div>
-                    </div>
-                </details>
-            </flux:card>
-
-            <flux:separator />
-
-            <h1 class="text-center text-3xl">
                 {{ __('Rules') }}
             </h1>
 

@@ -1,16 +1,17 @@
-# Användarvillkor för TogethernetEvents
+<a name="tos"></a>
+# Användarvillkor för Togethernet Events
 
 Senast uppdaterad: 2026-05-26
 
 ## 1. Allmänt
-Dessa användarvillkor ("Villkoren") reglerar din användning av TogethernetEvents ("Tjänsten") som drivs av Togethernet, organizationsnummer 8025534440.
+Dessa användarvillkor ("Villkoren") reglerar din användning av Togethernet Events ("Tjänsten") som drivs av Togethernet, organizationsnummer 8025534440.
 
 Genom att använda Tjänsten accepterar du dessa Villkor. Om du inte accepterar dessa Villkor, var god använd inte Tjänsten.
 
 Togethernet förbehåller sig rätten att när som helst ändra dessa Villkor. Ändringar träder i kraft direkt vid publicering på Tjänsten. Vid betydande ändringar kommer användare att meddelas och ges en månad att acceptera de nya villkoren.
 
 ## 2. Beskrivning av Tjänsten
-TogethernetEvents är ett system för hantering av evenemang, QR-tag-spel och mötesadministration för organisationens medlemmar.
+Togethernet Events är ett system för hantering av evenemang, QR-tag-spel och mötesadministration för organisationens medlemmar.
 
 ## 3. Användarkonton
 - **Autentisering**: Inloggning sker via Google OAuth (och i förekommande fall LDAP).
@@ -41,12 +42,13 @@ Tvister som uppstår i samband med dessa Villkor ska i första hand lösas genom
 
 ---
 
+<a name="privacy"></a>
 # Integritetspolicy
 
 Senast uppdaterad: 2026-05-26
 
 ## 1. Inledning
-Denna integritetspolicy beskriver hur Togethernet samlar in, använder och skyddar dina personuppgifter i TogethernetEvents. Vi följer EU:s dataskyddsförordning (GDPR).
+Denna integritetspolicy beskriver hur Togethernet samlar in, använder och skyddar dina personuppgifter i Togethernet Events. Vi följer EU:s dataskyddsförordning (GDPR).
 
 ## 2. Personuppgiftsansvarig
 Togethernet är personuppgiftsansvarig för behandlingen av dina personuppgifter.

@@ -28,12 +28,13 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::view('/', 'homepage')->name('home');
+Route::view('/faq', 'faq')->name('faq');
+Route::view('/legal', 'legal')->name('legal');
 
 Route::middleware(['tos.accepted'])->group(function () {
     Route::get('/events', PublicEvents::class)->name('events');
     Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
     Route::get('/events/{event}/tv', QrTagTvView::class)->name('event.tv');
-    Route::view('/faq', 'faq')->name('faq');
 });
 
 Route::get('/terms/accept', AcceptTerms::class)->name('terms.accept')->middleware(['auth']);
