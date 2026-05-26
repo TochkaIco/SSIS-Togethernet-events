@@ -7,6 +7,7 @@ namespace App\Livewire\Admin\Events\Tabs;
 use App\Actions\ProcessWaitingList;
 use App\EventType;
 use App\Models\Event;
+use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
@@ -106,6 +107,7 @@ class Participants extends Component
 
         $registration->toggleDisabled();
 
+        GlobalLog::log('Event participant has been enabled/disabled by an admin', 'user', ['target_user_id' => $registration->user_id]);
         Flux::toast(__('User status updated.'), variant: 'success');
     }
 

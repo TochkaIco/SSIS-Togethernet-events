@@ -6,6 +6,7 @@ namespace App\Livewire\Admin\Events\Tabs;
 
 use App\Actions\ShuffleQrTagTargets;
 use App\Models\Event;
+use App\Models\GlobalLog;
 use App\Models\QrTagLog;
 use App\Models\User;
 use Flux\Flux;
@@ -162,6 +163,7 @@ class QrTag extends Component
 
         $this->selectedRegistrationId = null;
 
+        GlobalLog::log('QR-Tag player has been enabled/disabled by an admin', 'user', ['target_user_id' => $registration->user_id]);
         Flux::toast(__('User status updated.'), variant: 'success');
     }
 

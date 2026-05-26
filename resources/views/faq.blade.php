@@ -27,11 +27,18 @@
                     ]) !!}
                 </div>
             </x-faq.answer>
+            <x-faq.question>
+                {{ __('What is QR Tag?') }}
+            </x-faq.question>
+            <x-faq.answer>
+                {{ __('QR-Tag is a digital version of the game "Killer Game" and a great way to meet other students at school. The game is based on everyone having a target to knock down. You knock down your target by placing your hand on their shoulder and saying knock down. Then you scan the person\'s QR code to get points. When you tag someone, you inherit that person\'s target while your target is out of the game.') }}
+            </x-faq.answer>
 
             <flux:separator />
 
+            <a name="general-rules"></a>
             <h1 class="text-center text-3xl">
-                {{ __('Rules') }}
+                {{ __('General Rules') }}
             </h1>
 
             <x-faq.answer>
@@ -72,6 +79,35 @@
             </x-faq.answer>
             <x-faq.answer>
                 {!! __('<b>Togethernet reserves the right to change and possibly violate the rules above to the extent that it is reasonable.</b>') !!}
+            </x-faq.answer>
+
+            <flux:separator />
+
+            <a name="qrtag-rules"></a>
+            <h1 class="text-center text-3xl">
+                {{ __('QR-Tag Rules') }}
+            </h1>
+
+            <x-faq.answer>
+                {{ __('You must not use force. Only a light touch on the shoulder.') }}
+            </x-faq.answer>
+            <x-faq.question>
+                {{ __('When can you tag?') }}
+            </x-faq.question>
+            <x-faq.answer>
+                {{ __('Only during breaks. You may not tag someone who is in class or eating lunch.') }}
+            </x-faq.answer>
+            <x-faq.answer>
+                {{ __('Camping outside a classroom and waiting for your goal is unsportsmanlike and prohibited.') }}
+            </x-faq.answer>
+            <x-faq.answer>
+                {{ __('Take it easy in the corridors. No running or chaos.') }}
+            </x-faq.answer>
+            <x-faq.answer>
+                {{ __('You may use schedules or friends to find the target, but you must physically locate the person before scanning the code.') }}
+            </x-faq.answer>
+            <x-faq.answer>
+                {!! __('The school\'s rules of conduct always apply (they can be found :link).', ['link' => '<a href="https://ssis.nu" class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground" type="blank">'.__('here').'</a>']) !!}
             </x-faq.answer>
         </div>
     </div>

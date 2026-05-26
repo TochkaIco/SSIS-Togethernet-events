@@ -55,7 +55,7 @@
                             type="button"
                             @click="event_type = @js($event_type->value)"
                             data-test="button-event-type-{{ $event_type->value }}"
-                            class="flex-1 h-12 px-4 rounded-md font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-300/60 focus:ring-offset-2"
+                            class="text-sm lg:text-lg flex-1 h-10 lg:h-12 px-2 lg:px-4 rounded-md font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-300/60 focus:ring-offset-2"
                             :class="event_type === @js($event_type->value)
                                 ? 'bg-orange-300/90 text-accent-content font-bold shadow-sm'
                                 : 'bg-transparent text-gray-600 hover:bg-orange-300/60 hover:text-gray-900 transition-all duration-300 shadow-xs hover:-translate-y-1 hover:shadow-2xl'"
