@@ -1,4 +1,4 @@
-<div class="py-8 max-w-xs md:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-8 max-w-md md:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-6 flex flex-col gap-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('events') }}" icon="layout-grid">{{ __('Events') }}</flux:breadcrumbs.item>
@@ -8,7 +8,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h1 class="font-bold text-2xl md:text-3xl">{{ $event->title }}</h1>
 
-            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
                 @if(auth()->user())
                     @if(! $this->registration)
                         @if($event->canRegister())
@@ -23,56 +23,55 @@
                                         @endforeach
                                     </flux:select>
                                 @endif
-                                <flux:button wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Register') }}</flux:button>
+                                <flux:button wire:click="registerUser({{ $event->id }})" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl w-full sm:w-auto">{{ __('Register') }}</flux:button>
                             @else
-                                <flux:button disabled variant="ghost" class="cursor-not-allowed text-red-500! border-red-500/20 bg-red-500/5!">{{ __('Domain Restricted') }}</flux:button>
+                                <flux:button disabled variant="ghost" class="cursor-not-allowed text-red-500! border-red-500/20 bg-red-500/5! w-full sm:w-auto">{{ __('Domain Restricted') }}</flux:button>
                             @endif
                         @endif
                     @else
-                        <div class="flex flex-col sm:items-end gap-2">
-                            <div class="flex flex-wrap sm:flex-nowrap gap-2 items-center justify-end">
+                        <div class="flex flex-col sm:items-end gap-2 w-full sm:w-auto">
+                            <div class="flex flex-col items-stretch sm:items-end gap-2 w-full">
                                 @if($event->one_hour_periods && $this->registration->event_period_id)
                                     @php
                                         $periodLabel = $this->registration->eventPeriod?->label;
                                     @endphp
-                                    <flux:badge color="orange" icon="clock" inset="top bottom">{{ __('Period') }}: {{ $periodLabel }}</flux:badge>
+                                    <flux:badge color="orange" icon="clock" class="justify-center sm:justify-start">{{ __('Period') }}: {{ $periodLabel }}</flux:badge>
                                 @endif
 
-                                <div class="flex-col space-y-2">
-                                    {{-- Status Badge --}}
-                                    <div class="relative">
-                                        @if($this->registration->in_waitinglist)
-                                            <div class="absolute -inset-1 bg-yellow-500/20 blur-lg rounded-full"></div>
-                                            <flux:badge size="sm" icon="clock" class="cursor-default relative bg-yellow-500/10! text-yellow-400! border-yellow-500/20 px-3 py-1">
-                                                {{ __('On Waiting List') }}
-                                            </flux:badge>
-                                        @else
-                                            <div class="absolute -inset-1 bg-emerald-500/20 blur-lg rounded-full"></div>
-                                            <flux:badge size="sm" icon="check" class="cursor-default relative bg-emerald-500/10! text-emerald-400! border-emerald-500/20 px-3 py-1">
-                                                {{ __('Registered as Participant') }}
-                                            </flux:badge>
-                                        @endif
-                                    </div>
-                                    @if($event->canUnregister())
-                                        <flux:modal.trigger name="unregister-confirmation" class="flex justify-end">
-                                            <flux:button
-                                                variant="ghost"
-                                                size="xs"
-                                                icon="x-mark"
-                                                wire:click="confirmUnregister({{ $event->id }})"
-                                                class="cursor-pointer bg-white/5! text-zinc-300! border border-white/10 hover:bg-red-500/20! hover:!text-red-400 hover:border-red-500/30 transition-all"
-                                            >
-                                                {{ __('Unregister') }}
-                                            </flux:button>
-                                        </flux:modal.trigger>
+                                {{-- Status Badge --}}
+                                <div class="relative w-full flex sm:justify-end">
+                                    @if($this->registration->in_waitinglist)
+                                        <div class="absolute -inset-1 bg-yellow-500/20 blur-lg rounded-full"></div>
+                                        <flux:badge size="sm" icon="clock" class="cursor-default relative bg-yellow-500/10! text-yellow-400! border-yellow-500/20 px-3 py-1 w-full sm:w-auto justify-center">
+                                            {{ __('On Waiting List') }}
+                                        </flux:badge>
+                                    @else
+                                        <div class="absolute -inset-1 bg-emerald-500/20 blur-lg rounded-full"></div>
+                                        <flux:badge size="sm" icon="check" class="cursor-default relative bg-emerald-500/10! text-emerald-400! border-emerald-500/20 px-3 py-1 w-full sm:w-auto justify-center">
+                                            {{ __('Registered as Participant') }}
+                                        </flux:badge>
                                     @endif
                                 </div>
+
+                                @if($event->canUnregister())
+                                    <flux:modal.trigger name="unregister-confirmation" class="flex justify-stretch sm:justify-end w-full">
+                                        <flux:button
+                                            variant="ghost"
+                                            size="xs"
+                                            icon="x-mark"
+                                            wire:click="confirmUnregister({{ $event->id }})"
+                                            class="cursor-pointer bg-white/5! text-zinc-300! border border-white/10 hover:bg-red-500/20! hover:!text-red-400 hover:border-red-500/30 transition-all w-full sm:w-auto"
+                                        >
+                                            {{ __('Unregister') }}
+                                        </flux:button>
+                                    </flux:modal.trigger>
+                                @endif
                             </div>
                         </div>
                     @endif
                 @else
                     @if($event->canRegister())
-                        <flux:button href="{{ route('login') }}" icon="user-plus" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl">{{ __('Login to register') }}</flux:button>
+                        <flux:button href="{{ route('login') }}" icon="user-plus" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl w-full sm:w-auto">{{ __('Login to register') }}</flux:button>
                     @endif
                 @endif
             </div>
