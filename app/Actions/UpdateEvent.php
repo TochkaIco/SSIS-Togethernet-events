@@ -22,10 +22,10 @@ class UpdateEvent
             'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at', 'allow_external_domains',
         ])->toArray();
 
-        $newStartsAt = Carbon::parse($data['event_starts_at']);
-        $periodsChanged = (bool) $event->one_hour_periods !== (bool) ($attributes['one_hour_periods'] ?? false)
-            || (int) $event->one_hour_periods_number !== (int) ($attributes['one_hour_periods_number'] ?? $event->one_hour_periods_number)
-            || (int) $event->interval_length !== (int) ($attributes['interval_length'] ?? $event->interval_length)
+        $newStartsAt = isset($data['event_starts_at']) ? Carbon::parse($data['event_starts_at']) : $event->event_starts_at;
+        $periodsChanged = (bool) ($attributes['one_hour_periods'] ?? $event->one_hour_periods) !== (bool) $event->one_hour_periods
+            || (int) ($attributes['one_hour_periods_number'] ?? $event->one_hour_periods_number) !== (int) $event->one_hour_periods_number
+            || (int) ($attributes['interval_length'] ?? $event->interval_length) !== (int) $event->interval_length
             || ! $event->event_starts_at->startOfMinute()->equalTo($newStartsAt->startOfMinute());
 
         if ($periodsChanged && ! $event->canEditCriticalFields()) {

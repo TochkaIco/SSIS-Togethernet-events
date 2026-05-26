@@ -52,12 +52,13 @@ class EventRequest extends FormRequest
             'entry_fee' => ['nullable', 'required_if:paid_entry,true', 'integer', 'min:5'],
 
             'one_hour_periods' => ['boolean'],
-            'one_hour_periods_number' => ['required_if:one_hour_periods,true', 'integer', 'min:1'],
-            'interval_length' => ['required_if:one_hour_periods,true', 'integer', 'min:0'],
+            'one_hour_periods_number' => ['sometimes', 'required_if:one_hour_periods,true', 'integer', 'min:1'],
+            'interval_length' => ['sometimes', 'required_if:one_hour_periods,true', 'integer', 'min:0'],
 
             'display_starts_at' => ['required', 'date'],
-            'event_starts_at' => ['required', 'date'],
+            'event_starts_at' => ['sometimes', 'required', 'date'],
             'event_ends_at' => [
+                'sometimes',
                 'required_if:one_hour_periods,false',
                 'nullable',
                 'date',
