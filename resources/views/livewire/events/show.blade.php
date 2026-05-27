@@ -231,7 +231,6 @@
 
                                 <div class="flex-1 min-w-0">
                                     <div class="font-bold truncate">{{ $leader->user->name }}</div>
-                                    <div class="text-xs text-muted-foreground">{{ $leader->user->class }}</div>
                                 </div>
 
                                 <div class="flex flex-col items-end shrink-0">
