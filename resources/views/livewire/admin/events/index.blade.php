@@ -13,7 +13,7 @@
 
         <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
-            <flux:card :key="'card-'.$event->id" class="relative max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <flux:card :key="'card-'.$event->id" class="relative max-w-3xl w-full h-min flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 <a href="{{ route('admin.event.show', $event) }}" class="absolute inset-0 z-0">
                     <span class="sr-only">View {{ $event->title }}</span>
                 </a>
@@ -21,11 +21,11 @@
                 <div class="mb-auto">
                     @if($event->image_path)
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                            <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-60 object-cover mb-2">
+                            <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                         </div>
                     @else
                         <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                            <x-placeholder-pattern class="stroke-gray-900/20 dark:stroke-neutral-100/20 w-full h-60 object-cover mb-2">
+                            <x-placeholder-pattern class="stroke-gray-900/20 dark:stroke-neutral-100/20 w-full h-36 md:h-60 object-cover mb-2">
                                 <flux:text class="text-4xl ml-3 text-center cursor-default">{{ __('No Image Specified') }}</flux:text>
                             </x-placeholder-pattern>
                         </div>

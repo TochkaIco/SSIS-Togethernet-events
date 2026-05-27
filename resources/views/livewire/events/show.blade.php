@@ -1,4 +1,4 @@
-<div class="py-8 max-w-md md:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-8 max-w-md md:max-w-7xl mx-auto px-0 sm:px-6 lg:px-8">
     <div class="mb-6 flex flex-col gap-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('events') }}" icon="layout-grid">{{ __('Events') }}</flux:breadcrumbs.item>
@@ -171,7 +171,7 @@
                                             <flux:text>{{ __('Your current target is:') }}</flux:text>
                                             <div class="flex items-center gap-3 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden min-w-0">
                                                 <flux:avatar :initials="$this->registration->targetUser->initials()" size="sm" class="shrink-0" />
-                                                <span class="font-bold text-lg truncate">{{ $this->registration->targetUser->name }}</span>
+                                                <span class="font-bold text-lg truncate">{{ Str::limit($this->registration->targetUser->name, 18) }}</span>
                                             </div>
                                             <flux:text size="sm" class="italic">{{ __('Find them and scan their QR-code to tag them.') }}</flux:text>
                                         </div>
