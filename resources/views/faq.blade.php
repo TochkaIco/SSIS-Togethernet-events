@@ -109,6 +109,12 @@
             <x-faq.answer>
                 {!! __('The school\'s rules of conduct always apply (they can be found :link).', ['link' => '<a href="https://ssis.nu" class="hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground" type="blank">'.__('here').'</a>']) !!}
             </x-faq.answer>
+            <x-faq.question>
+                {{ __('What happens if I or my target is absent during the game?') }}
+            </x-faq.question>
+            <x-faq.answer>
+                {{ __('If you or your target isn\'t present during any of the days during the duration of a qr-tag game, please contact one of the qr-tag organisers from Togethernet.') }}
+            </x-faq.answer>
         </div>
     </div>
 </x-layouts::app>
