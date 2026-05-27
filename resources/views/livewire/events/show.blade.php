@@ -135,18 +135,6 @@
 
         @if($event->event_type === \App\EventType::QR_TAG)
             <div class="mt-6 space-y-6">
-                {{-- Player Stats Card --}}
-                <div class="grid grid-cols-2 gap-4">
-                    <flux:card class="flex flex-col items-center justify-center md:py-8 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                        <flux:text size="lg" class="uppercase tracking-widest text-muted-foreground">{{ __('Active Players') }}</flux:text>
-                        <flux:text size="xl" class="font-bold text-orange-500 mt-2">{{ $event->qrTagActiveParticipantsCount() }}</flux:text>
-                    </flux:card>
-                    <flux:card class="flex flex-col items-center justify-center md:py-8 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                        <flux:text size="lg" class="uppercase tracking-widest text-muted-foreground">{{ __('Total Players') }}</flux:text>
-                        <flux:text size="xl" class="font-bold mt-2">{{ $event->participants()->count() }}</flux:text>
-                    </flux:card>
-                </div>
-
                 {{-- User Game Info (only if registered) --}}
                 @if($this->registration && !$this->registration->in_waitinglist)
                     <flux:card class="bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
@@ -207,6 +195,18 @@
                     </flux:card>
                 @endif
 
+                {{-- Player Stats Card --}}
+                <div class="grid grid-cols-2 gap-4">
+                    <flux:card class="flex flex-col items-center justify-center md:py-8 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <flux:text size="lg" class="uppercase tracking-widest text-muted-foreground">{{ __('Active Players') }}</flux:text>
+                        <flux:text size="xl" class="font-bold text-orange-500 mt-2">{{ $event->qrTagActiveParticipantsCount() }}</flux:text>
+                    </flux:card>
+                    <flux:card class="flex flex-col items-center justify-center md:py-8 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <flux:text size="lg" class="uppercase tracking-widest text-muted-foreground">{{ __('Total Players') }}</flux:text>
+                        <flux:text size="xl" class="font-bold mt-2">{{ $event->participants()->count() }}</flux:text>
+                    </flux:card>
+                </div>
+
                 {{-- Leaderboard --}}
                 <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <div class="flex items-center gap-2 mb-6">
@@ -230,7 +230,7 @@
                                 <flux:avatar src="{{ $leader->user->profile_picture }}" :initials="$leader->user->initials()" size="sm" class="shrink-0" />
 
                                 <div class="flex-1 min-w-0">
-                                    <div class="font-bold truncate">{{ $leader->user->name }}</div>
+                                    <div class="text-xs md:text-lg font-bold truncate">{{ Str::limit($leader->user->name, 15) }}</div>
                                 </div>
 
                                 <div class="flex flex-col items-end shrink-0">
