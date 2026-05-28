@@ -187,7 +187,7 @@
                 <div class="flex items-start justify-between gap-2">
                     <button wire:click="viewUserProfile({{ $participant->id }})" class="flex items-center gap-3 text-left min-w-0">
                         <div class="relative">
-                            <flux:avatar circle class="size-12 flex-shrink-0" :initials="$participant->user->initials()" :src="$participant->user->profile_picture" />
+                            <flux:avatar circle class="size-12 shrink-0" :initials="$participant->user->initials()" :src="$participant->user->profile_picture" />
                             @if($participant->is_disabled)
                                 <div class="absolute -top-1 -right-1 size-5 bg-red-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
                                     <flux:icon.x-mark class="size-3 text-white" />
@@ -196,9 +196,11 @@
                         </div>
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
-                                <div @class(['font-semibold text-zinc-800 dark:text-white truncate', 'text-zinc-400 line-through' => $participant->is_disabled])>{{ $participant->user->name }}</div>
                                 @if($participant->is_disabled)
+                                    <div class="font-semibold text-zinc-400 truncate line-through">{{ Str::limit($participant->user->name, 15) }}</div>
                                     <flux:badge size="xs" color="red" inset="top bottom">{{ __('Disabled') }}</flux:badge>
+                                @else
+                                    <div class="font-semibold text-zinc-800 dark:text-white truncate">{{ Str::limit($participant->user->name, 20) }}</div>
                                 @endif
                             </div>
                             <div class="text-xs text-zinc-500 truncate">{{ $participant->user->email }}</div>

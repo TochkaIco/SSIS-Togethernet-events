@@ -16,7 +16,7 @@
         @else
             <!-- 1. Upcoming & Ongoing Events -->
             @foreach($upcomingEvents as $event)
-                <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-min flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <a href="{{ route('event.show', $event) }}" class="absolute inset-0 z-0">
                         <span class="sr-only">View {{ $event->title }}</span>
                     </a>
@@ -77,12 +77,12 @@
 
                     <div class="mb-auto">
                         @if($event->image_path)
-                            <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                                <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-60 object-cover mb-2">
+                            <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                                <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                             </div>
                         @else
-                            <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                                <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-60 object-cover mb-2">
+                            <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                                <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                             </div>
                         @endif
 
@@ -132,7 +132,7 @@
 
                 <!-- 3. Finished Events Loop -->
                 @foreach($pastEvents as $event)
-                    <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-135 flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl opacity-50 grayscale">
+                    <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-min flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl opacity-50 grayscale">
                         <a href="{{ route('event.show', $event) }}" class="absolute inset-0 z-0">
                             <span class="sr-only">View {{ $event->title }}</span>
                         </a>
@@ -175,12 +175,12 @@
 
                         <div class="mb-auto">
                             @if($event->image_path)
-                                <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                                    <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-60 object-cover mb-2">
+                                <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                                    <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                                 </div>
                             @else
-                                <div class="mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                                    <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-60 object-cover mb-2">
+                                <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                                    <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                                 </div>
                             @endif
 

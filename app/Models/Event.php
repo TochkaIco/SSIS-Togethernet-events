@@ -184,8 +184,7 @@ class Event extends Model
 
     public function canUnregister(): bool
     {
-        // QR-Tag specific: cannot unregister once started
-        return ! ($this->event_type === EventType::QR_TAG && $this->event_starts_at <= now());
+        return $this->event_starts_at > now();
     }
 
     /**
