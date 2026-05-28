@@ -18,7 +18,7 @@
         'none' => '',
         'xs' => 'p-0.5',
         'sm' => 'p-4',
-        default => 'p-6',
+        default => 'p-5 pt-4 md:p-6 md:pt-5',
     };
 @endphp
 

@@ -1,4 +1,4 @@
-<div class="p-6">
+<div class="p-4 md:p-6">
     <div class="mb-6 flex flex-col gap-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('home') }}" icon="home">{{ __('Home') }}</flux:breadcrumbs.item>
@@ -337,7 +337,7 @@
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {
-                                    legend: { 
+                                    legend: {
                                         position: 'bottom',
                                         labels: { boxWidth: 12, padding: 15, font: { size: isMobile ? 10 : 12 } }
                                     },
@@ -360,9 +360,9 @@
                                         grid: { drawOnChartArea: false },
                                         ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
-                                    x: { 
+                                    x: {
                                         grid: { display: false },
-                                        ticks: { 
+                                        ticks: {
                                             maxTicksLimit: isMobile ? 5 : 10,
                                             font: { size: isMobile ? 10 : 12 }
                                         }
@@ -415,7 +415,7 @@
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {
-                                    legend: { 
+                                    legend: {
                                         position: 'bottom',
                                         labels: { boxWidth: 12, padding: 15, font: { size: isMobile ? 10 : 12 } }
                                     },
@@ -438,9 +438,9 @@
                                         grid: { drawOnChartArea: false },
                                         ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
-                                    x: { 
+                                    x: {
                                         grid: { display: false },
-                                        ticks: { 
+                                        ticks: {
                                             maxTicksLimit: isMobile ? 5 : 10,
                                             font: { size: isMobile ? 10 : 12 }
                                         }
@@ -488,7 +488,7 @@
                                     intersect: false,
                                     mode: 'index',
                                 },
-                                plugins: { 
+                                plugins: {
                                     legend: { display: false },
                                     tooltip: {
                                         mode: 'index',
@@ -496,14 +496,14 @@
                                     }
                                 },
                                 scales: {
-                                    y: { 
-                                        beginAtZero: true, 
+                                    y: {
+                                        beginAtZero: true,
                                         grid: { color: 'rgba(0,0,0,0.05)' },
                                         ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
-                                    x: { 
+                                    x: {
                                         grid: { display: false },
-                                        ticks: { 
+                                        ticks: {
                                             maxTicksLimit: isMobile ? 6 : 12,
                                             font: { size: isMobile ? 10 : 12 }
                                         }
@@ -543,7 +543,7 @@
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { 
+                                plugins: {
                                     legend: { display: false },
                                     tooltip: {
                                         mode: 'index',
@@ -551,14 +551,14 @@
                                     }
                                 },
                                 scales: {
-                                    y: { 
-                                        beginAtZero: true, 
+                                    y: {
+                                        beginAtZero: true,
                                         title: { display: !isMobile, text: '{{ __('Minutes') }}' },
                                         ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
-                                    x: { 
+                                    x: {
                                         grid: { display: false },
-                                        ticks: { 
+                                        ticks: {
                                             maxTicksLimit: isMobile ? 5 : 10,
                                             font: { size: isMobile ? 10 : 12 }
                                         }
@@ -606,7 +606,7 @@
                                     intersect: false,
                                     mode: 'index',
                                 },
-                                plugins: { 
+                                plugins: {
                                     legend: { display: false },
                                     tooltip: {
                                         mode: 'index',
@@ -614,14 +614,14 @@
                                     }
                                 },
                                 scales: {
-                                    y: { 
-                                        beginAtZero: true, 
+                                    y: {
+                                        beginAtZero: true,
                                         title: { display: !isMobile, text: '{{ __('Minutes') }}' },
                                         ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
-                                    x: { 
+                                    x: {
                                         grid: { display: false },
-                                        ticks: { 
+                                        ticks: {
                                             maxTicksLimit: isMobile ? 6 : 12,
                                             font: { size: isMobile ? 10 : 12 }
                                         }
@@ -669,7 +669,7 @@
                                     intersect: false,
                                     mode: 'index',
                                 },
-                                plugins: { 
+                                plugins: {
                                     legend: { display: false },
                                     tooltip: {
                                         mode: 'index',
@@ -677,14 +677,14 @@
                                     }
                                 },
                                 scales: {
-                                    y: { 
-                                        beginAtZero: true, 
+                                    y: {
+                                        beginAtZero: true,
                                         grid: { color: 'rgba(0,0,0,0.05)' },
                                         ticks: { font: { size: isMobile ? 10 : 12 } }
                                     },
-                                    x: { 
+                                    x: {
                                         grid: { display: false },
-                                        ticks: { 
+                                        ticks: {
                                             maxTicksLimit: isMobile ? 6 : 12,
                                             font: { size: isMobile ? 10 : 12 }
                                         }
@@ -732,7 +732,7 @@
                                     intersect: false,
                                     mode: 'index',
                                 },
-                                plugins: { 
+                                plugins: {
                                     legend: { display: false },
                                     tooltip: {
                                         mode: 'index',
@@ -741,12 +741,12 @@
                                 },
                                 scales: {
                                     y: { beginAtZero: false, ticks: { stepSize: 5 } },
-                                    x: { 
-                                        ticks: { 
+                                    x: {
+                                        ticks: {
                                             maxTicksLimit: isMobile ? 5 : 7,
                                             font: { size: isMobile ? 10 : 12 }
-                                        }, 
-                                        grid: { display: false } 
+                                        },
+                                        grid: { display: false }
                                     }
                                 }
                             }

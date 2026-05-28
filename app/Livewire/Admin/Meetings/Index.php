@@ -33,7 +33,7 @@ class Index extends Component
     {
         return view('livewire.admin.meetings.index', [
             'meetings' => Meeting::query()
-                ->orderBy('meeting_starts_at')
+                ->orderBy('meeting_starts_at', 'desc')
                 ->paginate(10),
         ])->layout('layouts.app', ['title' => __('Meetings')]);
     }

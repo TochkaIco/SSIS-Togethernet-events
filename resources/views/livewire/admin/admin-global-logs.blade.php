@@ -1,6 +1,6 @@
 <div>
     <div class="flex items-center justify-between">
-        <flux:heading size="xl" level="1">{{ __('Global Logs') }}</flux:heading>
+        <h1 class="text-xl md:text-2xl font-semibold">{{ __('Global Logs') }}</h1>
 
         <flux:modal.trigger name="confirm-log-clearing">
             <flux:button variant="filled" color="red" icon="trash" size="sm" class="cursor-pointer">{{ __('Clear Old Logs') }}</flux:button>

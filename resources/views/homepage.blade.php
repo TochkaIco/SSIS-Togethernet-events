@@ -3,7 +3,7 @@
         <div class="w-full max-w-4xl px-2 lg:px-0">
             <flux:card size="none" class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 <img src="{{ asset('/images/togethernet-feature.jpg') }}" alt="Image" class="w-full h-48 md:h-64 object-cover rounded-t-xl">
-                <div class="p-6 md:p-8">
+                <div class="p-4 pt-3 md:p-6 md:pt-5">
                     <flux:heading size="xl" class="mb-2 flex flex-wrap items-center gap-x-2 text-2xl md:text-3xl lg:col-span-2">
                         <span>{{ __('Welcome to') }}</span>
                         <x-svg.app-logo.text.light class="hidden h-[1em] translate-y-0.75 w-auto dark:block" />
@@ -51,7 +51,7 @@
                     <flux:text class="mt-2 grow">
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}
                     </flux:text>
-                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
+                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-2 md:mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
                 </flux:card>
             </div>
         </div>
