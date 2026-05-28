@@ -20,11 +20,11 @@
 
                 <div class="mb-auto">
                     @if($event->image_path)
-                        <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                        <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                             <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                         </div>
                     @else
-                        <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                        <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                             <x-placeholder-pattern class="stroke-gray-900/20 dark:stroke-neutral-100/20 w-full h-36 md:h-60 object-cover mb-2">
                                 <flux:text class="text-4xl ml-3 text-center cursor-default">{{ __('No Image Specified') }}</flux:text>
                             </x-placeholder-pattern>

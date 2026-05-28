@@ -77,11 +77,11 @@
 
                     <div class="mb-auto">
                         @if($event->image_path)
-                            <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                            <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                                 <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                             </div>
                         @else
-                            <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                            <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                                 <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                             </div>
                         @endif
@@ -175,11 +175,11 @@
 
                         <div class="mb-auto">
                             @if($event->image_path)
-                                <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                                <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                                     <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                                 </div>
                             @else
-                                <div class="mb-1 md:mb-6 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
+                                <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
                                     <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                                 </div>
                             @endif
