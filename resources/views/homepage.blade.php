@@ -9,7 +9,7 @@
                         <x-svg.app-logo.text.light class="hidden h-[1em] translate-y-0.75 w-auto dark:block" />
                         <x-svg.app-logo.text.dark class="h-[1em] w-auto translate-y-0.75 dark:hidden" />
                     </flux:heading>
-                    <flux:text size="lg" class="mb-6">
+                    <flux:text size="lg" class="mb-3 md:mb-6">
                         {{ __('Togethernet is a 13-year-old organization founded and run by committed students at Stockholm Science & Innovation School to create fun events for all students.') }}
                     </flux:text>
                     <div class="w-fit transition-all duration-350 hover:drop-shadow-[0_0_15px_rgba(255,176,74,0.6)]">
