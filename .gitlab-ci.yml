@@ -8,6 +8,7 @@ stages:
   - secret-detection
   - test
   - analysis
+  - deploy
 
 image: docker:dind
 
@@ -172,3 +173,56 @@ code style:
     GIT_DEPTH: 1
   script:
     - ./vendor/bin/pint --test
+
+.gitops-deploy:
+  stage: deploy
+  image: gitregistry.ssis.nu/ssis/php-images:deployer
+  variables:
+    DOCKER_TLS_CERTDIR: ''
+    REASON: ''
+  rules:
+    - if: $DEPLOY_KEY == null || $DEPLOY_KEY == ""
+      when: never
+    - when: manual
+      allow_failure: true
+  needs:
+    - Build
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir ~/.ssh && echo $GIT_SSH_FINGERPRINT >> ~/.ssh/known_hosts
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - git clone ssh://git@git.ssis.nu:822/Togethernet/togethernet-events-deploy.git
+    - git config --global user.name "GitLab Pipeline"
+    - git config --global user.email "noreply@ssis.nu"
+    - cd teachgpt-deploy
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA
+    - cd $ENV_FOLDER
+    - yq ".spec.template.spec.containers[0].image = \"$CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA\"" -i $DEPLOYMENT_PATH
+    - yq ".spec.template.spec.initContainers[0].image = \"$CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA\"" -i $DEPLOYMENT_PATH
+    - git diff
+    - git add .
+    - git commit -m "Deploy Togethernet Events - $CI_COMMIT_SHA to $ENV_NAME"
+    - git push
+
+deploy-test:
+  extends: .gitops-deploy
+  variables:
+    ENV_NAME: test
+    ENV_FOLDER: test
+    DEPLOYMENT_PATH: deployment-togethernet-events.yaml
+  environment:
+    name: TEST
+    url: https://togethernet-events-test.apps.okd.ssis.nu
+
+deploy-prod:
+  extends: .gitops-deploy
+  variables:
+    ENV_NAME: prod
+    ENV_FOLDER: prod
+    DEPLOYMENT_PATH: deployment-togethernet-events.yaml
+  environment:
+    name: PROD
+    url: https://togethernet.ssis.nu
