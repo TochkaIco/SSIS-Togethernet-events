@@ -22,6 +22,7 @@
         "livewire/flux": "^2.12.0",
         "livewire/livewire": "^4.1",
         "masbug/flysystem-google-drive-ext": "^2.5",
+        "sentry/sentry-laravel": "^4.25",
         "spatie/laravel-permission": "^7.2",
         "tijsverkoyen/css-to-inline-styles": "^2.4"
     },

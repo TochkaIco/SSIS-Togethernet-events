@@ -129,6 +129,7 @@ return [
         'repo' => env('REPOSITORY_URL'),
         'openshift_url' => env('OPENSHIFT_URL', 'https://console-openshift-console.apps.okd.ssis.nu/'),
         'jira_url' => env('JIRA_URL', 'https://togethernet.atlassian.net/'),
+        'sentry_url' => env('SENTRY_URL', 'https://sentry.ssis.nu/organizations/ssis/'),
         'maintainer_email' => env('MAINTAINER_EMAIL'),
     ],
 

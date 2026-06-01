@@ -33,6 +33,12 @@
                         {{ __('Jira') }}
                     </flux:sidebar.item>
                 @endif
+
+                @if(config('app.dev_info.sentry_url'))
+                    <flux:sidebar.item icon="chart-bar-square" href="{{ config('app.dev_info.sentry_url') }}" target="_blank">
+                        {{ __('Sentry') }}
+                    </flux:sidebar.item>
+                @endif
             </nav>
         </aside>
 
