@@ -208,91 +208,95 @@
                 </div>
 
                 {{-- Leaderboard --}}
-                <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                    <div class="flex items-center gap-2 mb-6">
-                        <flux:icon.trophy class="text-orange-500" />
-                        <flux:heading size="lg">{{ __('Top 5 Players') }}</flux:heading>
-                    </div>
+                @auth
+                    <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <div class="flex items-center gap-2 mb-6">
+                            <flux:icon.trophy class="text-orange-500" />
+                            <flux:heading size="lg">{{ __('Top 5 Players') }}</flux:heading>
+                        </div>
 
-                    <div class="space-y-4">
-                        @forelse($event->qrTagLeaderboard() as $index => $leader)
-                            <div class="flex items-center gap-4 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                                <div @class([
+                        <div class="space-y-4">
+                            @forelse($event->qrTagLeaderboard() as $index => $leader)
+                                <div class="flex items-center gap-4 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                    <div @class([
                                     'size-8 flex items-center justify-center rounded-full font-bold text-white shrink-0',
                                     'bg-yellow-500' => $index === 0,
                                     'bg-zinc-400' => $index === 1,
                                     'bg-orange-700' => $index === 2,
                                     'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300' => $index > 2,
                                 ])>
-                                    {{ $index + 1 }}
-                                </div>
+                                        {{ $index + 1 }}
+                                    </div>
 
-                                <flux:avatar src="{{ $leader->user->profile_picture }}" :initials="$leader->user->initials()" size="sm" class="shrink-0" />
+                                    <flux:avatar src="{{ $leader->user->profile_picture }}" :initials="$leader->user->initials()" size="sm" class="shrink-0" />
 
-                                <div class="flex-1 min-w-0">
-                                    <div class="text-xs md:text-lg font-bold truncate">{{ Str::limit($leader->user->name, 15) }}</div>
-                                </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-xs md:text-lg font-bold truncate">{{ Str::limit($leader->user->name, 15) }}</div>
+                                    </div>
 
-                                <div class="flex flex-col items-end shrink-0">
-                                    <div class="text-lg font-bold text-orange-500">{{ $leader->qr_tag_count }}</div>
-                                    <div class="text-[10px] uppercase tracking-tighter text-muted-foreground">{{ __('Tags') }}</div>
+                                    <div class="flex flex-col items-end shrink-0">
+                                        <div class="text-lg font-bold text-orange-500">{{ $leader->qr_tag_count }}</div>
+                                        <div class="text-[10px] uppercase tracking-tighter text-muted-foreground">{{ __('Tags') }}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        @empty
-                            <flux:text class="italic">{{ __('No tags yet.') }}</flux:text>
-                        @endforelse
-                    </div>
-                </flux:card>
+                            @empty
+                                <flux:text class="italic">{{ __('No tags yet.') }}</flux:text>
+                            @endforelse
+                        </div>
+                    </flux:card>
+                @endauth
 
                 {{-- Game Logs --}}
-                <flux:card class="p-0 sm:p-6 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                    <flux:heading size="lg" class="m-4 sm:m-0 mb-4 sm:mb-6">{{ __('Game Log') }}</flux:heading>
-                    <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
-                        @forelse($event->qrTagLogs()->with(['user', 'targetUser'])->take(60)->get() as $log)
-                            <div class="flex items-start gap-3 text-sm p-4 sm:px-0 first:pt-0 last:pb-0">
-                                <div class="mt-1 shrink-0">
-                                    @switch($log->type)
-                                        @case('tagged')
-                                            <flux:icon.user-minus class="size-4 text-red-500" />
-                                            @break
-                                        @case('respawn')
-                                        @case('respawn_all')
-                                            <flux:icon.sparkles class="size-4 text-purple-500" />
-                                            @break
-                                        @case('started')
-                                            <flux:icon.play class="size-4 text-green-500" />
-                                            @break
-                                        @case('reset')
-                                            <flux:icon.arrow-path class="size-4 text-zinc-500" />
-                                            @break
-                                    @endswitch
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="leading-relaxed">
-                                        @if($log->type === 'tagged')
-                                            <span class="font-bold">{{ $log->user->name }}</span> {{ __('tagged') }} <span class="font-bold">{{ $log->targetUser->name }}</span>
-                                        @elseif($log->type === 'respawn')
-                                            <span class="font-bold">{{ $log->user->name }}</span> {{ __('was respawned by an admin.') }}
-                                        @elseif($log->type === 'respawn_all')
-                                            {{ __('All caught players were respawned!') }}
-                                        @elseif($log->type === 'started')
-                                            {{ __('The game has started! Targets have been shuffled.') }}
-                                        @elseif($log->type === 'reset')
-                                            {{ __('The game was reset by an admin.') }}
-                                        @endif
+                @auth
+                    <flux:card class="p-0 sm:p-6 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <flux:heading size="lg" class="m-4 sm:m-0 mb-4 sm:mb-6">{{ __('Game Log') }}</flux:heading>
+                        <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                            @forelse($event->qrTagLogs()->with(['user', 'targetUser'])->take(60)->get() as $log)
+                                <div class="flex items-start gap-3 text-sm p-4 sm:px-0 first:pt-0 last:pb-0">
+                                    <div class="mt-1 shrink-0">
+                                        @switch($log->type)
+                                            @case('tagged')
+                                                <flux:icon.user-minus class="size-4 text-red-500" />
+                                                @break
+                                            @case('respawn')
+                                            @case('respawn_all')
+                                                <flux:icon.sparkles class="size-4 text-purple-500" />
+                                                @break
+                                            @case('started')
+                                                <flux:icon.play class="size-4 text-green-500" />
+                                                @break
+                                            @case('reset')
+                                                <flux:icon.arrow-path class="size-4 text-zinc-500" />
+                                                @break
+                                        @endswitch
                                     </div>
-                                    <div class="text-xs text-muted-foreground mt-1">
-                                        {{ $log->created_at->diffForHumans() }}
+                                    <div class="flex-1 min-w-0">
+                                        <div class="leading-relaxed">
+                                            @if($log->type === 'tagged')
+                                                <span class="font-bold">{{ $log->user->name }}</span> {{ __('tagged') }} <span class="font-bold">{{ $log->targetUser->name }}</span>
+                                            @elseif($log->type === 'respawn')
+                                                <span class="font-bold">{{ $log->user->name }}</span> {{ __('was respawned by an admin.') }}
+                                            @elseif($log->type === 'respawn_all')
+                                                {{ __('All caught players were respawned!') }}
+                                            @elseif($log->type === 'started')
+                                                {{ __('The game has started! Targets have been shuffled.') }}
+                                            @elseif($log->type === 'reset')
+                                                {{ __('The game was reset by an admin.') }}
+                                            @endif
+                                        </div>
+                                        <div class="text-xs text-muted-foreground mt-1">
+                                            {{ $log->created_at->diffForHumans() }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @empty
-                            <div class="p-4 sm:px-0">
-                                <flux:text class="italic">{{ __('No logs yet.') }}</flux:text>
-                            </div>
-                        @endforelse
-                    </div>
-                </flux:card>
+                            @empty
+                                <div class="p-4 sm:px-0">
+                                    <flux:text class="italic">{{ __('No logs yet.') }}</flux:text>
+                                </div>
+                            @endforelse
+                        </div>
+                    </flux:card>
+                @endauth
             </div>
         @endif
 
