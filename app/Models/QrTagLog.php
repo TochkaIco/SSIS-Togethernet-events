@@ -69,7 +69,7 @@ class QrTagLog extends Model
                     $log->event->qrTagActiveParticipantsCount()
                 ),
                 'respawn' => "**Respawn:** {$log->user->name} har återvänt till spelet av en administratör!",
-                'respawn_all' => "**Alla spelare har återuppstått!** Måltavlor har blandats om i {$log->event->title}.",
+                'respawn_all' => "**Alla spelare har återuppstått!** Målen har blandats om i {$log->event->title}.",
                 'reset' => "**Spelet har återställts** för {$log->event->title}.",
                 default => null,
             };

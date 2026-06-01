@@ -8,6 +8,7 @@ use App\Actions\RegisterUserToEvent;
 use App\Actions\UnregisterUserFromEvent;
 use App\Models\Event;
 use App\Models\EventUser;
+use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Collection;
@@ -68,6 +69,7 @@ class Index extends Component
             Flux::toast(text: __('You have been unregistered from this event.'), heading: __('Success'), variant: 'success');
             $this->eventIdToUnregister = null;
             $this->modal('unregister-confirmation')->close();
+            GlobalLog::log('User unregistered from an event', 'user', ['event_id' => $event->id]);
         } else {
             Flux::toast(text: __('Failed to remove your registration.'), heading: __('Error'), variant: 'danger');
         }
@@ -116,6 +118,8 @@ class Index extends Component
         } else {
             Flux::toast(text: __('You have been registered for this event.'), heading: __('Success'), variant: 'success');
         }
+
+        GlobalLog::log('User registered to an event', 'user', ['event_id' => $event->id]);
     }
 
     #[Layout('layouts.app')]

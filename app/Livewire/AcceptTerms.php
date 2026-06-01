@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\GlobalLog;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -18,6 +19,8 @@ class AcceptTerms extends Component
 
     /**
      * Mount the component.
+     *
+     * @throws FileNotFoundException
      */
     public function mount(): mixed
     {
