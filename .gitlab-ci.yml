@@ -22,7 +22,6 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_TLS_CERTDIR: ""
-  COMPOSER_PROCESS_TIMEOUT: "2000"
   PLAYWRIGHT_BROWSERS_PATH: $CI_PROJECT_DIR/pw-browsers
 
 composer:
@@ -36,7 +35,7 @@ composer:
     - docker-php-ext-install sockets pcntl pdo_mysql ldap
     - php --version
     - cp .env.example .env
-    - time composer install --no-progress --no-scripts --prefer-dist
+    - time composer install --no-progress --no-scripts
   artifacts:
     expire_in: 1 hour
     paths:
