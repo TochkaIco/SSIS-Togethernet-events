@@ -10,6 +10,7 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesourc
 RUN apt-get update && apt-get install nodejs -y && apt-get clean && rm -r /var/lib/apt/lists/*
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 ENV APACHE_HTTP_PORT=8080
+ENV COMPOSER_PROCESS_TIMEOUT=600
 EXPOSE 8080
 WORKDIR /var/www/html
 
@@ -19,7 +20,8 @@ RUN mkdir -p /.config storage && \
     chmod 777 /.config && \
     chmod 777 /var/www/html/storage && \
     chmod 777 /var/www/html/public/ && \
-    composer install --no-dev && \
+    composer config preferred-install source && \
+    composer install --no-dev --no-interaction --prefer-source && \
     npm install && \
     npm run build && \
     php artisan storage:link && \

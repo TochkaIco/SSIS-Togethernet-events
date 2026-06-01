@@ -2,9 +2,9 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
 
 stages:
+  - prepare
   - build
   - push
-  - prepare
   - secret-detection
   - test
   - analysis
@@ -41,9 +41,11 @@ composer:
       - vendor/
 
 Build:
+  stage: build
+  needs:
+    - composer
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
-  stage: build
   except:
     variables:
       - $DOCKER_NO_CACHE
