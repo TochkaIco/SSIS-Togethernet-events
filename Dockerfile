@@ -11,7 +11,8 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesourc
 RUN apt-get update && apt-get install nodejs -y && apt-get clean && rm -r /var/lib/apt/lists/*
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 ENV APACHE_HTTP_PORT=8080
-ENV COMPOSER_PROCESS_TIMEOUT=600
+ENV COMPOSER_PROCESS_TIMEOUT=2000
+ENV COMPOSER_IPRESOLVE=6
 EXPOSE 8080
 WORKDIR /var/www/html
 

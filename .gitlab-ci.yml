@@ -18,6 +18,8 @@ services:
     command: ["--tls=false"]
 
 variables:
+  COMPOSER_IPRESOLVE: 6
+  COMPOSER_PROCESS_TIMEOUT: 2000
   BUILDIMAGE: gitregistry.ssis.nu/ssis/php-images:8.5-build
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://docker:2375/
