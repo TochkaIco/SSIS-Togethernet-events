@@ -23,6 +23,7 @@ RUN mkdir -p /.config storage && \
     chmod 777 /var/www/html/public/ && \
     composer config preferred-install source && \
     composer install --no-dev --no-interaction --prefer-source && \
+    npm config set registry https://registry.npmjs.org/ && \
     npm install && \
     npm run build && \
     php artisan storage:link && \

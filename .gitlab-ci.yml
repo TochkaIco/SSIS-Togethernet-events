@@ -127,6 +127,7 @@ test:
     - docker-php-ext-install sockets pcntl pdo_mysql ldap
     - cp -n .env.example .env
     - php -r "while(!@fsockopen('mysql', 3306)) { echo 'Waiting for mysql...\n'; sleep(1); }"
+    - npm config set registry https://registry.npmjs.org/
     - npm install
     - npx playwright install --with-deps
     - npm run build
