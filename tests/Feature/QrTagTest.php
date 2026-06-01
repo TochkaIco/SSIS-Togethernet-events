@@ -318,7 +318,7 @@ test('it tracks tag counts and shows leaderboard', function () {
     expect(EventUser::find($r4->id)->qr_tag_count)->toBe(10);
     $event->refresh();
     $leaderboard = $event->qrTagLeaderboard();
-    expect($leaderboard->pluck('qr_tag_count')->toArray())->toBe([10, 1, 0]);
+    expect($leaderboard->pluck('qr_tag_count')->toArray())->toBe([10, 1]);
     expect($leaderboard->first()->user_id)->toBe($u4->id);
 
     // Tag u3 (Victim 2) by u1

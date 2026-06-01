@@ -233,6 +233,7 @@ class Event extends Model
             ->whereNull('qr_tag_tagged_at')
             ->where('is_disabled', false)
             ->orderByDesc('qr_tag_count')
+            ->where('qr_tag_count', '>', 0)
             ->take(5)
             ->get();
     }
