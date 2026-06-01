@@ -198,7 +198,7 @@ code style:
     - git clone ssh://git@git.ssis.nu:822/Togethernet/togethernet-events-deploy.git
     - git config --global user.name "GitLab Pipeline"
     - git config --global user.email "noreply@ssis.nu"
-    - cd teachgpt-deploy
+    - cd togethernet-events-deploy
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA
     - cd $ENV_FOLDER
