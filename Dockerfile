@@ -1,5 +1,6 @@
 FROM php:8.5-apache-trixie
 ENV DEBIAN_FRONTEND=noninteractive
+RUN sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
 RUN apt-get update && apt-get install -y ca-certificates curl gnupg libkrb5-dev nmap inetutils-ping net-tools libpng-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev zip unzip git libfreetype6-dev libjpeg62-turbo-dev libpng-dev libldap-dev && rm -r /var/lib/apt/lists/*
 RUN a2enmod rewrite
 RUN docker-php-ext-install pdo_mysql gettext xsl pcntl ldap && docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install gd

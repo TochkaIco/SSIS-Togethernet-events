@@ -31,6 +31,7 @@ composer:
     paths:
       - vendor/
   script:
+    - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
     - docker-php-ext-install sockets pcntl pdo_mysql ldap
     - php --version
     - cp .env.example .env
@@ -122,6 +123,7 @@ test:
       - node_modules/
       - $PLAYWRIGHT_BROWSERS_PATH
   script:
+    - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
     - docker-php-ext-install sockets pcntl pdo_mysql ldap
     - cp -n .env.example .env
     - php -r "while(!@fsockopen('mysql', 3306)) { echo 'Waiting for mysql...\n'; sleep(1); }"
@@ -158,6 +160,7 @@ static analysis:
   variables:
     GIT_DEPTH: 1
   script:
+    - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
     - docker-php-ext-install sockets pcntl pdo_mysql ldap
     - ./vendor/bin/phpstan analyse --memory-limit=2G --error-format=gitlab > gl-code-quality-report.json
   artifacts:
