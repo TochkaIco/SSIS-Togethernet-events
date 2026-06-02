@@ -43,7 +43,7 @@
 
                         @can('view articles')
                             <flux:sidebar.item icon="layout-grid" :href="route('admin.events')" :current="request()->routeIs('admin.events')" wire:navigate>
-                                {{ __('Events') }}
+                                {{ __('Manage Events') }}
                             </flux:sidebar.item>
 
                             @if(request()->routeIs('admin.event.show') && $event = request()->route('event'))

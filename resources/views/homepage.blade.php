@@ -51,7 +51,7 @@
                     <flux:text class="mt-2 grow">
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}
                     </flux:text>
-                    <flux:button target="_blank" variant="ghost" size="sm" class="mt-2 md:mt-4 self-start cursor-pointer" icon="link">{{ __('Learn more') }}</flux:button>
+                    <flux:button type="button" variant="ghost" size="sm" class="mt-2 md:mt-4 self-start cursor-pointer" icon="link">{{ __('Learn more') }}</flux:button>
                 </flux:card>
             </div>
         </div>

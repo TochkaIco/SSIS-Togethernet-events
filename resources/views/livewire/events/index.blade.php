@@ -6,7 +6,7 @@
         @endphp
 
         @if($events->isEmpty())
-            <!-- Your empty placeholder state -->
+            <!-- Empty placeholder state -->
             <div class="flex mx-auto my-auto relative h-120 w-240 flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
                 <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
                     <flux:icon.calendar class="hidden md:block" />
@@ -15,7 +15,7 @@
             </div>
         @else
             <!-- 1. Upcoming & Ongoing Events -->
-            @foreach($upcomingEvents as $event)
+            @forelse($upcomingEvents as $event)
                 <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-min flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <a href="{{ route('event.show', $event) }}" class="absolute inset-0 z-0">
                         <span class="sr-only">View {{ $event->title }}</span>
@@ -124,7 +124,15 @@
                         </div>
                     </div>
                 </flux:card>
-            @endforeach
+
+            @empty
+                <div class="flex mx-auto my-auto relative h-60 md:h-120 max-w-3xl flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
+                    <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
+                        <flux:icon.calendar class="hidden md:block" />
+                        <flux:text class="text-2xl md:text-4xl ml-3 cursor-default">{{ __('No Upcoming Events Found') }}</flux:text>
+                    </x-placeholder-pattern>
+                </div>
+            @endforelse
 
             <!-- 2. Section Divider for Past Events (Only shows if past events exist) -->
             @if($pastEvents->isNotEmpty())
