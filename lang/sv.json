@@ -470,6 +470,8 @@
     "Active": "Aktiv",
     "Game Active": "Spelet är aktivt",
     "You are currently disabled.": "Du är för närvarande inaktiverad.",
+    "You have been tagged!": "Du har blivit taggad!",
+    "Tagged by :name at :time": "Taggad av :name kl. :time",
     "An admin has disabled you for this event. You cannot tag or be tagged.": "En administratör har inaktiverat dig för det här evenemanget. Du kan inte tagga eller bli taggad.",
     "Congratulations!": "Grattis!",
     "No tags yet.": "Inga taggar än.",
