@@ -230,7 +230,6 @@ class Event extends Model
     {
         return $this->participants()
             ->with('user')
-            ->whereNull('qr_tag_tagged_at')
             ->where('is_disabled', false)
             ->orderByDesc('qr_tag_count')
             ->where('qr_tag_count', '>', 0)
