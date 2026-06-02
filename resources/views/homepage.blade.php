@@ -25,33 +25,33 @@
             <flux:separator class="my-12 w-full" />
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card href="{{ route('events') }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <flux:heading size="lg" icon="musical-note">{{ __('Karaoke') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __('Sing your heart out at our karaoke sessions. No talent required, just enthusiasm!') }}
                     </flux:text>
                 </flux:card>
 
-                <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card href="{{ route('events') }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <flux:heading size="lg" icon="film">{{ __('Film Nights') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __('Relax and enjoy a film session with your fellow students.') }}
                     </flux:text>
                 </flux:card>
 
-                <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card href="{{ route('events') }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <flux:heading size="lg" icon="sparkles">{{ __('QR-Tag') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.') }}
                     </flux:text>
                 </flux:card>
 
-                <flux:card class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card href="https://lan.ssis.nu/" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <flux:heading size="lg" icon="sparkles">{{ __('LAN') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}
                     </flux:text>
-                    <flux:button href="https://lan.ssis.nu/" target="_blank" variant="ghost" size="sm" class="mt-2 md:mt-4 self-start" icon="link">{{ __('Learn more') }}</flux:button>
+                    <flux:button target="_blank" variant="ghost" size="sm" class="mt-2 md:mt-4 self-start cursor-pointer" icon="link">{{ __('Learn more') }}</flux:button>
                 </flux:card>
             </div>
         </div>
