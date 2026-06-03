@@ -103,6 +103,12 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
+        if ($this->event->event_type !== EventType::QR_TAG) {
+            Flux::toast(__('You cannot disable a player outside qr-tag.'), variant: 'danger');
+
+            return;
+        }
+
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
         $registration->toggleDisabled();

@@ -1,4 +1,5 @@
 <div>
+    @haspermission('manage users')
     {{-- Header & Search --}}
     <div class="flex flex-col lg:flex-row gap-4 m-1 mb-6 lg:items-end">
         <flux:input
@@ -153,14 +154,16 @@
                                     >
                                         {{ __('Move to Waiting List') }}
                                     </flux:menu.item>
+
+                                @else
+                                    <flux:menu.item
+                                        wire:click="toggleDisabled({{ $participant->id }})"
+                                        :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
+                                        class="cursor-pointer"
+                                    >
+                                        {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
+                                    </flux:menu.item>
                                 @endif
-                                <flux:menu.item
-                                    wire:click="toggleDisabled({{ $participant->id }})"
-                                    :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
-                                    class="cursor-pointer"
-                                >
-                                    {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
-                                </flux:menu.item>
                             </flux:menu>
                         </flux:dropdown>
                     </flux:table.cell>
@@ -312,4 +315,5 @@
     </div>
 
     <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
+    @endhaspermission
 </div>

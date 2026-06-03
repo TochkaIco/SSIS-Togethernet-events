@@ -31,7 +31,7 @@
                 Flux.toast({
                     variant: 'danger',
                     heading: 'Access Denied',
-                    text: "{{ session('error') }}",
+                    text: "{{ session('error') }}"
                 });
             });
         </script>
