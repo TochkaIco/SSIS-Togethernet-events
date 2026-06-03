@@ -144,7 +144,7 @@ test('can register to qr-tag event after it started and is inserted into cycle',
 
     // Check if inserted into cycle
     expect($result->qr_tag_target_user_id)->not->toBeNull();
-    
+
     // Find who targets the new user
     $hunter = EventUser::where('event_id', $event->id)->where('qr_tag_target_user_id', $user->id)->first();
     expect($hunter)->not->toBeNull();

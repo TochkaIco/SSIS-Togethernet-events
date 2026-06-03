@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\EventType;
 use App\Models\Event;
 use App\Models\EventPeriod;
 use App\Models\EventUser;
@@ -51,7 +52,7 @@ class RegisterUserToEvent
             // 4. Register using the period model
             $registration = $targetPeriod->register($user);
 
-            if ($event->event_type === \App\EventType::QR_TAG && $event->isQrTagGameStarted()) {
+            if ($event->event_type === EventType::QR_TAG && $event->isQrTagGameStarted()) {
                 $registration->insertIntoCycle();
             }
 

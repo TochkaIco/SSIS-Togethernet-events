@@ -525,5 +525,15 @@
     "My Feedback": "Min Feedback",
     "Edit Feedback": "Redigera Feedback",
     "here": "här",
-    "Some fields are locked because this event has participants.": "Vissa fält är låsta eftersom det finns deltagare i det här evenemanget."
+    "Some fields are locked because this event has participants.": "Vissa fält är låsta eftersom det finns deltagare i det här evenemanget.",
+    "Invalid event type.": "Ogiltig evenemangstyp.",
+    "This user has already been tagged.": "Denna användare har redan blivit taggad.",
+    "This user is currently disabled.": "Denna användare är för närvarande inaktiverad.",
+    "You are not registered for this event.": "Du är inte anmäld till detta evenemang.",
+    "You are already out of the game.": "Du är redan ute ur spelet.",
+    "This is not your target.": "Detta är inte ditt mål.",
+    "Target tagged! A loop was detected and targets have been re-shuffled.": "Mål taggat! En loop upptäcktes och målen har blandats om.",
+    "Target tagged! You are the last one standing!": "Mål taggat! Du är den sista kvarvarande!",
+    "Target tagged! You have a new target.": "Mål taggat! Du har ett nytt mål.",
+    "A loop was detected and targets have been re-shuffled.": "En loop upptäcktes och målen har blandats om."
 }

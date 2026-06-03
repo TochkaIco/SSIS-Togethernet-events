@@ -199,7 +199,7 @@ class EventUser extends Model
                         $activeCount = $this->event->qrTagActiveParticipantsCount();
 
                         if ($activeCount > 1) {
-                            app(ShuffleQrTagTargets::class)->handle($this->event, null, 'reshuffled');
+                            app(ShuffleQrTagTargets::class)->handle($this->event, auth()->id(), 'reshuffled');
                         } else {
                             $hunter->update(['qr_tag_target_user_id' => null]);
                         }

@@ -268,6 +268,9 @@
                                             @case('reset')
                                                 <flux:icon.arrow-path class="size-4 text-zinc-500" />
                                                 @break
+                                            @case('reshuffled')
+                                                <flux:icon.arrow-path class="size-4 text-orange-500" />
+                                                @break
                                         @endswitch
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -282,6 +285,8 @@
                                                 {{ __('The game has started! Targets have been shuffled.') }}
                                             @elseif($log->type === 'reset')
                                                 {{ __('The game was reset by an admin.') }}
+                                            @elseif($log->type === 'reshuffled')
+                                                {{ __('A loop was detected and targets have been re-shuffled.') }}
                                             @endif
                                         </div>
                                         <div class="text-xs text-muted-foreground mt-1">
