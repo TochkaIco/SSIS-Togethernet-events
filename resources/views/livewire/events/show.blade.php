@@ -158,7 +158,10 @@
                                 @elseif($this->registration->is_disabled)
                                     <div class="p-4 bg-zinc-100 dark:bg-zinc-900/30 text-zinc-800 dark:text-zinc-200 rounded-lg border border-zinc-200 dark:border-zinc-800">
                                         <p class="font-bold">{{ __('You are currently disabled.') }}</p>
-                                        <p class="text-sm">{{ __('An admin has disabled you for this event. You cannot tag or be tagged.') }}</p>
+                                        <span class="flex-col md:flex space-x-1">
+                                            <p class="text-sm">{{ __('An admin has disabled you for this event. You cannot tag or be tagged.') }}</p>
+                                            <a href="{{ route('faq') . '#qrtag-rules-disabled-player' }}" class="text-sm underline hover:text-orange-300">{{ __('Learn more...') }}</a>
+                                        </span>
                                     </div>
                                 @elseif($this->registration->qr_tag_target_user_id)
                                     @if($this->registration->qr_tag_target_user_id === auth()->id())

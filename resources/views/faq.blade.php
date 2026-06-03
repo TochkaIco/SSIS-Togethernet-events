@@ -115,6 +115,13 @@
             <x-faq.answer>
                 {{ __('If you or your target isn\'t present during any of the days during the duration of a qr-tag game, please contact one of the qr-tag organisers from Togethernet.') }}
             </x-faq.answer>
+            <a name="qrtag-rules-disabled-player"></a>
+            <x-faq.question>
+                {{ __('It says that I am disabled for the event, what happened?') }}
+            </x-faq.question>
+            <x-faq.answer>
+                {{ __('Most commonly a qr-tag player would be disabled due to them not being at school, if that\'s the case - contact a qr-tag organizer from Togethernet. It is also possible that you\'ve been banned from this event for breaking rules, but that is more of a rare instance.') }}
+            </x-faq.answer>
         </div>
     </div>
 </x-layouts::app>
