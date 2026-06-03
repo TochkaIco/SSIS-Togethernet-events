@@ -546,5 +546,6 @@
     "Finished": "Avslutade",
     "Search events...": "Sök evenemang...",
     "Try adjusting your filters or check back later.": "Prova att justera dina filter eller kom tillbaka senare.",
-    "Learn more...": "Läs mer..."
+    "Learn more...": "Läs mer...",
+    "You cannot tag yourself.": "Du får inte tagga dig själv."
 }

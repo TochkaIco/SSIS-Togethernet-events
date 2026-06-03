@@ -75,7 +75,7 @@ Route::middleware(['auth', 'verified', 'tos.accepted'])->group(function () {
 
     Route::get('/docs/{page?}', Documentation::class)->middleware(['auth', 'can:dev'])->name('docs');
 
-    Route::get('/tag/{token}', [QrTagController::class, 'scan'])->name('qr_tag.scan');
+    Route::post('/tag/{token}', [QrTagController::class, 'scan'])->name('qr_tag.scan');
 
     Route::impersonate();
 });

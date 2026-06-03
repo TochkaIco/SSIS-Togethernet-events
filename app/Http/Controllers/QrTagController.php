@@ -62,6 +62,11 @@ class QrTagController extends Controller
                     ->with('error', __('This is not your target.'));
             }
 
+            if ($assassinRegistration->user_id === $victimRegistration->user_id) {
+                return redirect()->route('event.show', $victimRegistration->event)
+                    ->with('error', __('You cannot tag yourself.'));
+            }
+
             $newTargetId = $victimRegistration->qr_tag_target_user_id;
 
             // Successful tag

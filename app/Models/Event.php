@@ -77,6 +77,7 @@ class Event extends Model
     {
         return $this->registrations()
             ->whereNull('qr_tag_tagged_at')
+            ->where('is_disabled', false)
             ->count();
     }
 

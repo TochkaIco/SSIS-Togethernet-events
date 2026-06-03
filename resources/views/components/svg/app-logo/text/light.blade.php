@@ -1,12 +1,12 @@
 <svg
-    width="87.49939mm"
-    height="14.000574mm"
+    width="330.70637"
+    height="52.915556"
     viewBox="0 0 330.70637 52.915556"
     version="1.1"
     id="svg1"
     xmlns="http://www.w3.org/2000/svg"
     xmlns:svg="http://www.w3.org/2000/svg"
-    {{ $attributes->merge(['class' => '']) }}
+    {{ $attributes }}
     >
     <defs
         id="defs1" />

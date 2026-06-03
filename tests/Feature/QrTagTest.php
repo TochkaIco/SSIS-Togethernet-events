@@ -72,7 +72,7 @@ test('assassin can tag victim and inherit target', function () {
 
     Auth::login($u1);
 
-    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response = $this->post(route('qr_tag.scan', ['token' => 't2']));
 
     $response->assertRedirect(route('event.show', $event));
 
@@ -105,7 +105,7 @@ test('cannot tag if not your target', function () {
     Auth::login($u1);
 
     // U1 targets U2. Trying to tag U3 (who targets U1)
-    $response = $this->get(route('qr_tag.scan', ['token' => 't3']));
+    $response = $this->post(route('qr_tag.scan', ['token' => 't3']));
 
     $response->assertSessionHas('error', __('This is not your target.'));
 
@@ -314,7 +314,7 @@ test('it tracks tag counts and shows leaderboard', function () {
     $event->refresh();
 
     // Tag 1
-    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response = $this->post(route('qr_tag.scan', ['token' => 't2']));
     $response->assertRedirect(route('event.show', $event));
     $response->assertSessionHas('success', __('Target tagged! You have a new target.'));
 
@@ -339,13 +339,13 @@ test('it tracks tag counts and shows leaderboard', function () {
     expect($leaderboard->first()->user_id)->toBe($u4->id);
 
     // Tag u3 (Victim 2) by u1
-    $this->get(route('qr_tag.scan', ['token' => 't3']));
+    $this->post(route('qr_tag.scan', ['token' => 't3']));
     $r1->refresh();
     expect($r1->qr_tag_count)->toBe(2);
     expect($r1->qr_tag_target_user_id)->toBe($u4->id);
 
     // Now tag u4 (who has 10 tags)
-    $this->get(route('qr_tag.scan', ['token' => 't4']));
+    $this->post(route('qr_tag.scan', ['token' => 't4']));
     $r4->refresh();
     expect($r4->qr_tag_tagged_at)->not->toBeNull();
 
@@ -423,14 +423,14 @@ test('it respects disabled players', function () {
     Auth::login($u1);
 
     // Cannot tag disabled victim
-    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response = $this->post(route('qr_tag.scan', ['token' => 't2']));
     $response->assertRedirect(route('event.show', $event));
     $response->assertSessionHas('error', __('This user is currently disabled.'));
 
     // Assassin cannot tag if disabled
     $r1->update(['is_disabled' => true]);
     $r2->update(['is_disabled' => false]);
-    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response = $this->post(route('qr_tag.scan', ['token' => 't2']));
     $response->assertSessionHas('error', __('You are currently disabled.'));
 
     // Shuffle excludes disabled players
@@ -512,7 +512,7 @@ it('automatically re-shuffles when a loop of 1 is detected', function () {
     $r3 = EventUser::factory()->create(['user_id' => $u3->id, 'event_id' => $event->id, 'qr_tag_token' => 't3', 'qr_tag_target_user_id' => $u3->id]);
 
     $this->actingAs($u1);
-    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response = $this->post(route('qr_tag.scan', ['token' => 't2']));
 
     $response->assertRedirect();
     $response->assertSessionHas('success', __('Target tagged! A loop was detected and targets have been re-shuffled.'));
@@ -542,7 +542,7 @@ it('ends game when only one player remains', function () {
     $r2 = EventUser::factory()->create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u1->id]);
 
     $this->actingAs($u1);
-    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+    $response = $this->post(route('qr_tag.scan', ['token' => 't2']));
 
     $response->assertRedirect();
     $response->assertSessionHas('success', __('Target tagged! You are the last one standing!'));

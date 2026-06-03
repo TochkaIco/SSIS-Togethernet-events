@@ -16,7 +16,7 @@ class ShuffleQrTagTargets
             ->where('is_disabled', false);
 
         if (! $respawnAll) {
-            $query->whereNull('qr_tag_tagged_at');
+            $query = $query->whereNull('qr_tag_tagged_at');
         }
 
         $participants = $query->get()->shuffle();
