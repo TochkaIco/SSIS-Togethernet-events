@@ -113,7 +113,7 @@ test('cannot tag if not your target', function () {
     expect($r3->qr_tag_tagged_at)->toBeNull();
 });
 
-test('cannot register to qr-tag event after it started', function () {
+test('can register to qr-tag event after it started and is inserted into cycle', function () {
     $event = Event::factory()->create([
         'event_type' => EventType::QR_TAG,
         'event_starts_at' => now()->subHour(),
@@ -121,16 +121,33 @@ test('cannot register to qr-tag event after it started', function () {
         'event_ends_at' => now()->addDay(),
     ]);
 
+    // Create some existing players in a cycle
+    $u1 = User::factory()->create();
+    $u2 = User::factory()->create();
+    $r1 = EventUser::factory()->create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_target_user_id' => $u2->id, 'qr_tag_token' => 't1']);
+    $r2 = EventUser::factory()->create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_target_user_id' => $u1->id, 'qr_tag_token' => 't2']);
+
     $user = User::factory()->create();
 
     $action = app(RegisterUserToEvent::class);
     $result = $action->handle($user, $event);
 
-    expect($result)->toBeNull();
-    $this->assertDatabaseMissing('event_users', [
+    expect($result)->not->toBeNull();
+    $this->assertDatabaseHas('event_users', [
         'user_id' => $user->id,
         'event_id' => $event->id,
     ]);
+
+    $result->refresh();
+    $r1->refresh();
+    $r2->refresh();
+
+    // Check if inserted into cycle
+    expect($result->qr_tag_target_user_id)->not->toBeNull();
+    
+    // Find who targets the new user
+    $hunter = EventUser::where('event_id', $event->id)->where('qr_tag_target_user_id', $user->id)->first();
+    expect($hunter)->not->toBeNull();
 });
 
 test('cannot unregister from qr-tag event after it started', function () {
@@ -480,4 +497,59 @@ test('it repairs cycle when a player is disabled during game', function () {
     expect($targets->contains($u1->id))->toBeTrue();
     expect($targets->contains($u2->id))->toBeTrue();
     expect($targets->contains($u3->id))->toBeTrue();
+});
+
+it('automatically re-shuffles when a loop of 1 is detected', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG, 'event_starts_at' => now()->subDay()]);
+    $u1 = User::factory()->create();
+    $u2 = User::factory()->create();
+    $u3 = User::factory()->create();
+
+    // Create a loop of 2: u1 -> u2, u2 -> u1
+    // And an outsider: u3 -> u3 (broken state, but we want to see if u1 tagging u2 triggers re-shuffle of {u1, u3})
+    $r1 = EventUser::factory()->create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_token' => 't1', 'qr_tag_target_user_id' => $u2->id]);
+    $r2 = EventUser::factory()->create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u1->id]);
+    $r3 = EventUser::factory()->create(['user_id' => $u3->id, 'event_id' => $event->id, 'qr_tag_token' => 't3', 'qr_tag_target_user_id' => $u3->id]);
+
+    $this->actingAs($u1);
+    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success', __('Target tagged! A loop was detected and targets have been re-shuffled.'));
+
+    $r1->refresh();
+    $r2->refresh();
+    $r3->refresh();
+
+    expect($r2->qr_tag_tagged_at)->not->toBeNull();
+    // After re-shuffle of {u1, u3}: u1 -> u3 and u3 -> u1
+    expect($r1->qr_tag_target_user_id)->toBe($u3->id);
+    expect($r3->qr_tag_target_user_id)->toBe($u1->id);
+
+    $this->assertDatabaseHas('qr_tag_logs', [
+        'event_id' => $event->id,
+        'type' => 'reshuffled',
+    ]);
+});
+
+it('ends game when only one player remains', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG, 'event_starts_at' => now()->subDay()]);
+    $u1 = User::factory()->create();
+    $u2 = User::factory()->create();
+
+    // Loop of 2: u1 -> u2, u2 -> u1. u1 tags u2.
+    $r1 = EventUser::factory()->create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_token' => 't1', 'qr_tag_target_user_id' => $u2->id]);
+    $r2 = EventUser::factory()->create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u1->id]);
+
+    $this->actingAs($u1);
+    $response = $this->get(route('qr_tag.scan', ['token' => 't2']));
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success', __('Target tagged! You are the last one standing!'));
+
+    $r1->refresh();
+    $r2->refresh();
+
+    expect($r2->qr_tag_tagged_at)->not->toBeNull();
+    expect($r1->qr_tag_target_user_id)->toBeNull();
 });

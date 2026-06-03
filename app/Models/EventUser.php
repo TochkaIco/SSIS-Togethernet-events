@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Actions\ShuffleQrTagTargets;
 use BaconQrCode\Renderer\Color\Rgb;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
@@ -192,6 +193,17 @@ class EventUser extends Model
 
                 if ($hunter) {
                     $hunter->update(['qr_tag_target_user_id' => $targetId]);
+
+                    // If the hunter is now targeting themselves, re-shuffle or clear target
+                    if ($targetId === $hunter->user_id) {
+                        $activeCount = $this->event->qrTagActiveParticipantsCount();
+
+                        if ($activeCount > 1) {
+                            app(ShuffleQrTagTargets::class)->handle($this->event, null, 'reshuffled');
+                        } else {
+                            $hunter->update(['qr_tag_target_user_id' => null]);
+                        }
+                    }
                 }
 
                 $this->update(['qr_tag_target_user_id' => null]);
@@ -215,21 +227,31 @@ class EventUser extends Model
             ]);
 
             if ($this->event->isQrTagGameStarted() && ! $this->qr_tag_tagged_at) {
-                // Insert back into cycle
-                $activePlayers = $this->event->registrations()
-                    ->whereNull('qr_tag_tagged_at')
-                    ->where('is_disabled', false)
-                    ->where('user_id', '!=', $this->user_id)
-                    ->get();
-
-                if ($activePlayers->isNotEmpty()) {
-                    $host = $activePlayers->random();
-                    $oldTargetId = $host->qr_tag_target_user_id;
-
-                    $this->update(['qr_tag_target_user_id' => $oldTargetId]);
-                    $host->update(['qr_tag_target_user_id' => $this->user_id]);
-                }
+                $this->insertIntoCycle();
             }
         });
+    }
+
+    /**
+     * Insert the player into the active QR tag game cycle.
+     */
+    public function insertIntoCycle(): void
+    {
+        $activePlayers = $this->event->registrations()
+            ->whereNull('qr_tag_tagged_at')
+            ->where('is_disabled', false)
+            ->where('user_id', '!=', $this->user_id)
+            ->get();
+
+        if ($activePlayers->isNotEmpty()) {
+            $host = $activePlayers->random();
+            $oldTargetId = $host->qr_tag_target_user_id;
+
+            $this->update([
+                'qr_tag_target_user_id' => $oldTargetId,
+                'qr_tag_token' => $this->qr_tag_token ?? Str::random(32),
+            ]);
+            $host->update(['qr_tag_target_user_id' => $this->user_id]);
+        }
     }
 }

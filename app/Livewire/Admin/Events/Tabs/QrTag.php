@@ -136,13 +136,7 @@ class QrTag extends Component
         $this->authorize('manage qr-tag');
 
         // Respawn all just means reshuffling everyone who is registered.
-        $action->handle($this->event, auth()->id());
-
-        QrTagLog::create([
-            'event_id' => $this->event->id,
-            'admin_id' => auth()->id(),
-            'type' => 'respawn_all',
-        ]);
+        $action->handle($this->event, auth()->id(), 'respawn_all', true);
 
         Flux::toast(__('All players respawned and targets reshuffled.'), variant: 'success');
     }

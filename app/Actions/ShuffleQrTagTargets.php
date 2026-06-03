@@ -10,12 +10,16 @@ use Illuminate\Support\Str;
 
 class ShuffleQrTagTargets
 {
-    public function handle(Event $event, ?int $adminId = null): void
+    public function handle(Event $event, ?int $adminId = null, string $type = 'started', bool $respawnAll = false): void
     {
-        $participants = $event->participants()
-            ->where('is_disabled', false)
-            ->get()
-            ->shuffle();
+        $query = $event->participants()
+            ->where('is_disabled', false);
+
+        if (! $respawnAll) {
+            $query->whereNull('qr_tag_tagged_at');
+        }
+
+        $participants = $query->get()->shuffle();
 
         if ($participants->count() < 2) {
             return;
@@ -36,7 +40,7 @@ class ShuffleQrTagTargets
         QrTagLog::create([
             'event_id' => $event->id,
             'admin_id' => $adminId,
-            'type' => 'started',
+            'type' => $type,
         ]);
     }
 }

@@ -49,7 +49,13 @@ class RegisterUserToEvent
             }
 
             // 4. Register using the period model
-            return $targetPeriod->register($user);
+            $registration = $targetPeriod->register($user);
+
+            if ($event->event_type === \App\EventType::QR_TAG && $event->isQrTagGameStarted()) {
+                $registration->insertIntoCycle();
+            }
+
+            return $registration;
         });
     }
 

@@ -174,12 +174,7 @@ class Event extends Model
 
     public function canRegister(): bool
     {
-        if ($this->display_starts_at > now() || $this->event_ends_at < now()) {
-            return false;
-        }
-
-        // QR-Tag specific: cannot register once started
-        return ! ($this->event_type === EventType::QR_TAG && $this->event_starts_at <= now());
+        return $this->display_starts_at <= now() && $this->event_ends_at >= now();
     }
 
     public function canUnregister(): bool
