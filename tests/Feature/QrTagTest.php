@@ -107,7 +107,7 @@ test('cannot tag if not your target', function () {
     // U1 targets U2. Trying to tag U3 (who targets U1)
     $response = $this->get(route('qr_tag.scan', ['token' => 't3']));
 
-    $response->assertSessionHas('error', 'This is not your target.');
+    $response->assertSessionHas('error', __('This is not your target.'));
 
     $r3->refresh();
     expect($r3->qr_tag_tagged_at)->toBeNull();

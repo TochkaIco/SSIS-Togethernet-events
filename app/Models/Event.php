@@ -231,4 +231,30 @@ class Event extends Model
             ->take(5)
             ->get();
     }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('event_starts_at', '>', now());
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('event_starts_at', '<=', now())
+            ->where('event_ends_at', '>=', now());
+    }
+
+    public function scopeFinished($query)
+    {
+        return $query->where('event_ends_at', '<', now());
+    }
+
+    public function scopeOfType($query, string|EventType $type)
+    {
+        return $query->where('event_type', $type);
+    }
+
+    public function scopeSearch($query, string $search)
+    {
+        return $query->where('title', 'like', '%'.$search.'%');
+    }
 }

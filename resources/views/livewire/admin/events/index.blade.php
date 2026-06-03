@@ -1,17 +1,37 @@
 <div>
-    <div class="flex items-center justify-center mb-10">
+    {{-- Search & Filters --}}
+    <div class="flex flex-col md:flex-row gap-4 mb-8">
         <flux:button
             variant="primary"
             x-data
+            icon="plus-circle"
             data-test="create-event-button"
-            class="cursor-pointer max-w-xl w-full text-xl transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl"
+            class="cursor-pointer max-w-xl text-xl transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl"
             x-on:click="$flux.modal('create-event').show()"
         >
             {{ __('Create Event') }}
         </flux:button>
-        </div>
 
-        <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
+        <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="{{ __('Search events...') }}" class="flex-1" />
+
+        <div class="flex gap-2 md:gap-4 flex-1">
+            <flux:select wire:model.live="filterType" placeholder="{{ __('Filter by Type') }}" class="flex-1">
+                <flux:select.option value="">{{ __('All Types') }}</flux:select.option>
+                @foreach(\App\EventType::cases() as $type)
+                    <flux:select.option :value="$type->value">{{ $type->label() }}</flux:select.option>
+                @endforeach
+            </flux:select>
+
+            <flux:select wire:model.live="filterStatus" placeholder="{{ __('Filter by Status') }}" class="flex-1">
+                <flux:select.option value="">{{ __('All Statuses') }}</flux:select.option>
+                <flux:select.option value="upcoming">{{ __('Upcoming') }}</flux:select.option>
+                <flux:select.option value="active">{{ __('Active') }}</flux:select.option>
+                <flux:select.option value="finished">{{ __('Finished') }}</flux:select.option>
+            </flux:select>
+        </div>
+    </div>
+
+    <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @forelse($events as $event)
             <flux:card :key="'card-'.$event->id" class="relative max-w-3xl w-full h-min flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 <a href="{{ route('admin.event.show', $event) }}" class="absolute inset-0 z-0">
@@ -77,6 +97,10 @@
                 </x-placeholder-pattern>
             </div>
         @endforelse
+    </div>
+
+    <div class="mt-8">
+        <flux:pagination :paginator="$events" scroll-to />
     </div>
 
     <x-admin.event.modal />

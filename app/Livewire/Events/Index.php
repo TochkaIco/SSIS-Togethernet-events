@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 /**
@@ -25,10 +26,26 @@ class Index extends Component
 {
     public ?int $eventIdToUnregister = null;
 
+    #[Url]
+    public $filterType = '';
+
+    #[Url]
+    public $filterStatus = '';
+
     #[Computed]
     public function events(): Collection
     {
-        return Event::where('display_starts_at', '<=', now())
+        return Event::query()
+            ->where('display_starts_at', '<=', now())
+            ->when($this->filterType, fn ($q) => $q->ofType($this->filterType))
+            ->when($this->filterStatus, function ($q) {
+                match ($this->filterStatus) {
+                    'upcoming' => $q->upcoming(),
+                    'active' => $q->active(),
+                    'finished' => $q->finished(),
+                    default => $q,
+                };
+            })
             ->latest()
             ->get();
     }

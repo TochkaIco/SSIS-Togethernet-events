@@ -1,21 +1,37 @@
 <div>
     <flux:text class="text-4xl font-bold text-center mb-6">{{ __("Togethernet's Events") }}</flux:text>
+
+    {{-- Filters --}}
+    <div class="flex flex-col md:flex-row gap-4 mb-8 max-w-3xl mx-auto">
+        <flux:select wire:model.live="filterType" placeholder="{{ __('Filter by Type') }}" class="flex-1">
+            <flux:select.option value="">{{ __('All Types') }}</flux:select.option>
+            @foreach(\App\EventType::cases() as $type)
+                <flux:select.option :value="$type->value">{{ $type->label() }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
+        <flux:select wire:model.live="filterStatus" placeholder="{{ __('Filter by Status') }}" class="flex-1">
+            <flux:select.option value="">{{ __('All Statuses') }}</flux:select.option>
+            <flux:select.option value="upcoming">{{ __('Upcoming') }}</flux:select.option>
+            <flux:select.option value="active">{{ __('Active') }}</flux:select.option>
+            <flux:select.option value="finished">{{ __('Finished') }}</flux:select.option>
+        </flux:select>
+    </div>
+
     <div class="text-muted-foreground flex flex-wrap items-center justify-center md:grid-cols-2 gap-6">
         @php
             [$upcomingEvents, $pastEvents] = $events->partition(fn($event) => $event->event_ends_at >= now());
         @endphp
 
         @if($events->isEmpty())
-            <!-- Empty placeholder state -->
-            <div class="flex mx-auto my-auto relative h-120 w-240 flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
-                    <flux:icon.calendar class="hidden md:block" />
-                    <flux:text class="text-2xl md:text-4xl ml-3 cursor-default">{{ __('No Events Found') }}</flux:text>
-                </x-placeholder-pattern>
+            <div class="flex flex-col items-center justify-center py-12 px-4 text-center bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl w-full max-w-3xl mx-auto">
+                <flux:icon.calendar class="size-12 text-zinc-300 dark:text-zinc-600 mb-4" />
+                <flux:heading size="lg">{{ __('No Events Found') }}</flux:heading>
+                <flux:subheading>{{ __('Try adjusting your filters or check back later.') }}</flux:subheading>
             </div>
         @else
             <!-- 1. Upcoming & Ongoing Events -->
-            @forelse($upcomingEvents as $event)
+            @foreach($upcomingEvents as $event)
                 <flux:card :key="'event-'.$event->id" class="relative max-w-3xl w-full h-min flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                     <a href="{{ route('event.show', $event) }}" class="absolute inset-0 z-0">
                         <span class="sr-only">View {{ $event->title }}</span>
@@ -124,15 +140,14 @@
                         </div>
                     </div>
                 </flux:card>
+            @endforeach
 
-            @empty
-                <div class="flex mx-auto my-auto relative h-60 md:h-120 max-w-3xl flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                    <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20">
-                        <flux:icon.calendar class="hidden md:block" />
-                        <flux:text class="text-2xl md:text-4xl ml-3 cursor-default">{{ __('No Upcoming Events Found') }}</flux:text>
-                    </x-placeholder-pattern>
+            @if($upcomingEvents->isEmpty() && $filterStatus !== 'finished' && $filterStatus !== 'active')
+                <div class="flex flex-col items-center justify-center py-6 px-4 text-center w-full max-w-3xl mx-auto opacity-80">
+                    <flux:icon.calendar class="size-12 text-zinc-300 dark:text-zinc-600 mb-2" />
+                    <flux:text class="text-xl">{{ __('No Upcoming Events Found') }}</flux:text>
                 </div>
-            @endforelse
+            @endif
 
             <!-- 2. Section Divider for Past Events (Only shows if past events exist) -->
             @if($pastEvents->isNotEmpty())
