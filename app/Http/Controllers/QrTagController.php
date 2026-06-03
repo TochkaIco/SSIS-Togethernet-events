@@ -8,6 +8,7 @@ use App\Actions\ShuffleQrTagTargets;
 use App\EventType;
 use App\Models\EventUser;
 use App\Models\QrTagLog;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,57 @@ use Illuminate\Support\Str;
 
 class QrTagController extends Controller
 {
+    public function confirm(string $token): View|RedirectResponse
+    {
+        $victimRegistration = EventUser::where('qr_tag_token', $token)
+            ->with(['event', 'user'])
+            ->firstOrFail();
+
+        if ($victimRegistration->event->event_type !== EventType::QR_TAG) {
+            return redirect()->route('home')->with('error', __('Invalid event type.'));
+        }
+
+        if ($victimRegistration->qr_tag_tagged_at) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('This user has already been tagged.'));
+        }
+
+        if ($victimRegistration->is_disabled) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('This user is currently disabled.'));
+        }
+
+        $assassinRegistration = EventUser::where('event_id', $victimRegistration->event_id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (! $assassinRegistration) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('You are not registered for this event.'));
+        }
+
+        if ($assassinRegistration->qr_tag_tagged_at) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('You are already out of the game.'));
+        }
+
+        if ($assassinRegistration->is_disabled) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('You are currently disabled.'));
+        }
+
+        if ($assassinRegistration->qr_tag_target_user_id !== $victimRegistration->user_id) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('This is not your target.'));
+        }
+
+        return view('qr_tag.confirm', [
+            'victim' => $victimRegistration->user,
+            'event' => $victimRegistration->event,
+            'token' => $token,
+        ]);
+    }
+
     public function scan(string $token, ShuffleQrTagTargets $shuffleAction): RedirectResponse
     {
         return DB::transaction(function () use ($token, $shuffleAction) {

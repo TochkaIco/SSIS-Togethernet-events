@@ -128,7 +128,7 @@ class EventUser extends Model
             return '';
         }
 
-        $url = route('qr_tag.scan', ['token' => $this->qr_tag_token]);
+        $url = route('qr_tag.confirm', ['token' => $this->qr_tag_token]);
 
         $svg = (new Writer(
             new ImageRenderer(

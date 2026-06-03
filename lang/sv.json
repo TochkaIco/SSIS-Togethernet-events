@@ -542,10 +542,12 @@
     "All Types": "Alla typer",
     "Filter by Status": "Filtrera efter status",
     "Upcoming": "Kommande",
-    "Active": "Aktiva",
     "Finished": "Avslutade",
     "Search events...": "Sök evenemang...",
     "Try adjusting your filters or check back later.": "Prova att justera dina filter eller kom tillbaka senare.",
     "Learn more...": "Läs mer...",
-    "You cannot tag yourself.": "Du får inte tagga dig själv."
+    "You cannot tag yourself.": "Du får inte tagga dig själv.",
+    "Tag :name?": "Tagga :name?",
+    "You are about to tag :name in the event :event.": "Du håller på att tagga :name i evenemanget :event.",
+    "Confirm Tag": "Bekräfta tagg"
 }

@@ -553,3 +553,41 @@ it('ends game when only one player remains', function () {
     expect($r2->qr_tag_tagged_at)->not->toBeNull();
     expect($r1->qr_tag_target_user_id)->toBeNull();
 });
+
+test('it shows the confirmation page for a valid token', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
+    $u1 = User::factory()->create();
+    $u2 = User::factory()->create();
+
+    $r1 = EventUser::create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_token' => 't1', 'qr_tag_target_user_id' => $u2->id]);
+    $r2 = EventUser::create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u1->id]);
+
+    $this->actingAs($u1);
+
+    $response = $this->get(route('qr_tag.confirm', ['token' => 't2']));
+
+    $response->assertStatus(200);
+    $response->assertViewIs('qr_tag.confirm');
+    $response->assertSee($u2->name);
+    $response->assertSee($event->title);
+});
+
+test('confirmation page redirects if not your target', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
+    $u1 = User::factory()->create();
+    $u2 = User::factory()->create();
+    $u3 = User::factory()->create();
+
+    $r1 = EventUser::create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_token' => 't1', 'qr_tag_target_user_id' => $u2->id]);
+    $r2 = EventUser::create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u3->id]);
+
+    $this->actingAs($u1);
+
+    // u1's target is u2. u3 is not u1's target.
+    $r3 = EventUser::create(['user_id' => $u3->id, 'event_id' => $event->id, 'qr_tag_token' => 't3', 'qr_tag_target_user_id' => $u1->id]);
+
+    $response = $this->get(route('qr_tag.confirm', ['token' => 't3']));
+
+    $response->assertRedirect(route('event.show', $event));
+    $response->assertSessionHas('error', __('This is not your target.'));
+});
