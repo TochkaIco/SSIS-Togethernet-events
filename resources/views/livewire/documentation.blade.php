@@ -29,7 +29,7 @@
                 @endif
 
                 @if(config('app.dev_info.jira_url'))
-                    <flux:sidebar.item icon="chart-bar-square" href="{{ config('app.dev_info.jira_url') }}" target="_blank">
+                    <flux:sidebar.item icon="clipboard-document-list" href="{{ config('app.dev_info.jira_url') }}" target="_blank">
                         {{ __('Jira') }}
                     </flux:sidebar.item>
                 @endif
@@ -37,6 +37,12 @@
                 @if(config('app.dev_info.sentry_url'))
                     <flux:sidebar.item icon="chart-bar-square" href="{{ config('app.dev_info.sentry_url') }}" target="_blank">
                         {{ __('Sentry') }}
+                    </flux:sidebar.item>
+                @endif
+
+                @if(config('app.dev_info.argocd_url'))
+                    <flux:sidebar.item icon="arrow-path" href="{{ config('app.dev_info.argocd_url') }}" target="_blank">
+                        {{ __('ArgoCD') }}
                     </flux:sidebar.item>
                 @endif
             </nav>

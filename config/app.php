@@ -130,6 +130,7 @@ return [
         'openshift_url' => env('OPENSHIFT_URL', 'https://console-openshift-console.apps.okd.ssis.nu/'),
         'jira_url' => env('JIRA_URL', 'https://togethernet.atlassian.net/'),
         'sentry_url' => env('SENTRY_URL', 'https://sentry.ssis.nu/organizations/ssis/'),
+        'argocd_url' => env('ARGOCD_URL', 'https://argocd-server-openshift-operators.apps.okd.ssis.nu/applications/'),
         'maintainer_email' => env('MAINTAINER_EMAIL'),
     ],
 

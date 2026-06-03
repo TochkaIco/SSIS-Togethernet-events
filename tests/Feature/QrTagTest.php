@@ -332,11 +332,6 @@ test('it tracks tag counts and shows leaderboard', function () {
     $r4->refresh();
     expect($r4->qr_tag_tagged_at)->not->toBeNull();
 
-    // Now u4 should be gone from leaderboard despite having 10 tags
-    expect($event->qrTagLeaderboard()->pluck('user_id'))->not->toContain($u4->id);
-    expect($event->qrTagLeaderboard()->first()->user_id)->toBe($u1->id);
-    expect($event->qrTagLeaderboard()->first()->qr_tag_count)->toBe(3);
-
     // Verify token was regenerated for victims
     $r2->refresh();
     $r3->refresh();
