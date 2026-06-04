@@ -27,7 +27,7 @@
                     <flux:separator class="my-12 w-full" />
 
                     <div class="mb-12">
-                        <flux:card class="flex flex-col md:flex-row items-center gap-6 p-6 shadow-lg border-2 border-primary/20 bg-linear-to-br from-white to-orange-50 dark:from-zinc-900 dark:to-orange-950/20">
+                        <flux:card class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                             <div class="flex-none bg-white p-2 rounded-lg shadow-inner w-full lg:w-64 h-auto lg:h-64 flex items-center justify-center overflow-hidden">
                                 {!! $qrTagRegistration->qrTagQrCodeSvg() !!}
                             </div>
