@@ -16,11 +16,35 @@
                         @auth
                             <flux:button variant="primary" :href="route('events')" icon="layout-grid">{{ __('Browse Events') }}</flux:button>
                         @else
-                            <flux:button variant="primary" :href="route('login')" icon="user-plus">{{ __('Join Us') }}</flux:button>
+                            <flux:button variant="primary" :href="route('auth.google')" icon="user-plus">{{ __('Join Us') }}</flux:button>
                         @endauth
                     </div>
                 </div>
             </flux:card>
+
+            @auth
+                @if ($qrTagRegistration = auth()->user()->activeQrTagRegistration())
+                    <flux:separator class="my-12 w-full" />
+
+                    <div class="mb-12">
+                        <flux:card class="flex flex-col md:flex-row items-center gap-6 p-6 shadow-lg border-2 border-primary/20 bg-linear-to-br from-white to-orange-50 dark:from-zinc-900 dark:to-orange-950/20">
+                            <div class="flex-none bg-white p-2 rounded-lg shadow-inner w-full lg:w-64 h-auto lg:h-64 flex items-center justify-center overflow-hidden">
+                                {!! $qrTagRegistration->qrTagQrCodeSvg() !!}
+                            </div>
+                            <div class="flex-1 text-center md:text-left mt-3">
+                                <flux:text size="lg" class="mb-4">
+                                    {{ __('Show this QR code to your hunter if you get tagged, or scan others to tag them.') }}
+                                </flux:text>
+                                <div class="flex flex-wrap justify-center md:justify-start gap-2">
+                                    <flux:button variant="primary" :href="route('event.show', $qrTagRegistration->event)" icon="calendar-days">
+                                        {{ __('View Event: :event', ['event' => $qrTagRegistration->event->title]) }}
+                                    </flux:button>
+                                </div>
+                            </div>
+                        </flux:card>
+                    </div>
+                @endif
+            @endauth
 
             <flux:separator class="my-12 w-full" />
 

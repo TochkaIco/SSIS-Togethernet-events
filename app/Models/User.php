@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\EventType;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -94,6 +95,20 @@ class User extends Authenticatable
     public function registrations(): HasMany
     {
         return $this->hasMany(EventUser::class);
+    }
+
+    public function activeQrTagRegistration(): ?EventUser
+    {
+        return $this->registrations()
+            ->whereHas('event', function ($query) {
+                $query->where('event_type', EventType::QR_TAG)
+                    ->where('event_ends_at', '>=', now());
+            })
+            ->whereNull('qr_tag_tagged_at')
+            ->where('is_disabled', false)
+            ->whereNotNull('qr_tag_token')
+            ->latest()
+            ->first();
     }
 
     public function kioskPurchases(): HasMany

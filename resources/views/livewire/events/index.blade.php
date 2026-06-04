@@ -86,7 +86,7 @@
                             @endif
                         @else
                             @if($event->canRegister())
-                                <flux:button href="{{ route('login') }}" icon="user-plus" class="cursor-pointer" variant="primary">{{ __('Login to register for the event') }}</flux:button>
+                                <flux:button href="{{ route('auth.google') }}" icon="user-plus" class="cursor-pointer" variant="primary">{{ __('Login to register for the event') }}</flux:button>
                             @endif
                         @endif
                     </div>
@@ -191,7 +191,7 @@
                                 @endif
                             @else
                                 @if($event->canRegister())
-                                    <flux:button href="{{ route('login') }}" icon="user-plus" class="cursor-pointer" variant="primary">{{ __('Login to register for the event') }}</flux:button>
+                                    <flux:button href="{{ route('auth.google') }}" icon="user-plus" class="cursor-pointer" variant="primary">{{ __('Login to register for the event') }}</flux:button>
                                 @endif
                             @endif
                         </div>

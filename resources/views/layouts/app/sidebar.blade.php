@@ -146,7 +146,7 @@
                 <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
             @endauth
             @guest
-                <flux:button variant="primary" :href="route('login')" icon="user-plus">{{ __('Sign In') }}</flux:button>
+                <flux:button variant="primary" :href="route('auth.google')" icon="user-plus">{{ __('Sign In') }}</flux:button>
             @endguest
         </flux:sidebar>
 
