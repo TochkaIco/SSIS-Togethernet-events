@@ -111,115 +111,59 @@ class UserManagement extends Component
         $this->authorize('manage users');
         $user = User::findOrFail($this->editingUserId);
 
-        // protectedRoles => ['admin', 'super-admin', 'maintainer']
+        $currentRoles = $user->roles->pluck('name')->toArray();
+        $currentPerms = $user->getDirectPermissions()->pluck('name')->toArray();
 
-        if (in_array('maintainer', $this->userRoles)) {
-            if (! Auth::user()->hasRole(['super-admin', 'maintainer'])) {
-                $this->modal('edit-user-permissions')->close();
-                Flux::toast(
-                    text: __('Only Super-Admins or Maintainers can grant Maintainer role.'),
-                    heading: __('Error'),
-                    variant: 'danger'
-                );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
+        $addedRoles = array_diff($this->userRoles, $currentRoles);
+        $removedRoles = array_diff($currentRoles, $this->userRoles);
+        $addedPerms = array_diff($this->userPermissions, $currentPerms);
+        $removedPerms = array_diff($currentPerms, $this->userPermissions);
 
-                return;
-            }
-        } elseif (in_array('super-admin', $this->userRoles)) {
-            if (! Auth::user()->hasAnyRole(['super-admin', 'maintainer'])) {
-                $this->modal('edit-user-permissions')->close();
-                Flux::toast(
-                    text: __('Only Super-Admins or Maintainers can grant Super-Admin role.'),
-                    heading: __('Error'),
-                    variant: 'danger'
-                );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
+        $isHighLevel = Auth::user()->hasAnyRole(['super-admin', 'maintainer']);
+        $isAdmin = Auth::user()->hasRole('admin') || $isHighLevel;
 
-                return;
-            }
-        } elseif (in_array('admin', $this->userRoles)) {
-            if (! Auth::user()->hasAnyRole(['super-admin', 'maintainer'])) {
-                $this->modal('edit-user-permissions')->close();
-                Flux::toast(
-                    text: __('Only Super-Admins or Maintainers can grant Admin role.'),
-                    heading: __('Error'),
-                    variant: 'danger'
-                );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
+        // Check for high-level role changes (Admin, Super-Admin, Maintainer)
+        $protectedRoles = ['admin', 'super-admin', 'maintainer'];
+        $modifyingProtected = array_intersect($protectedRoles, array_merge($addedRoles, $removedRoles));
 
-                return;
-            }
-        } elseif (in_array('delete users', $this->userPermissions)) {
-            if (! Auth::user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
-                $this->modal('edit-user-permissions')->close();
-                Flux::toast(
-                    text: __('Only Admins can grant permission to delete users.'),
-                    heading: __('Error'),
-                    variant: 'danger'
-                );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
+        if (! empty($modifyingProtected) && ! $isHighLevel) {
+            $this->failWithToast(__('Only Super-Admins or Maintainers can modify administrative roles.'));
 
-                return;
-            }
-        } elseif (in_array('configure pages', $this->userPermissions)) {
-            if (! Auth::user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
-                $this->modal('edit-user-permissions')->close();
-                Flux::toast(
-                    text: __('Only Admins can grant permission to configure pages.'),
-                    heading: __('Error'),
-                    variant: 'danger'
-                );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
-
-                return;
-            }
-        } elseif (in_array('dev', $this->userPermissions)) {
-            if (! Auth::user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
-                $this->modal('edit-user-permissions')->close();
-                Flux::toast(
-                    text: __('Only Admins can grant permission to view dev-related components.'),
-                    heading: __('Error'),
-                    variant: 'danger'
-                );
-                $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
-
-                return;
-            }
+            return;
         }
-        $oldRoles = $user->roles->pluck('name')->toArray();
-        $oldPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
+
+        // Check for permission changes
+        if ((! empty($addedPerms) || ! empty($removedPerms)) && ! $isAdmin) {
+            $this->failWithToast(__('Only Admins can grant or revoke permissions.'));
+
+            return;
+        }
 
         $user->syncRoles($this->userRoles);
         $user->syncPermissions($this->userPermissions);
 
-        $addedRoles = array_values(array_diff($this->userRoles, $oldRoles));
-        $removedRoles = array_values(array_diff($oldRoles, $this->userRoles));
-        $addedPermissions = array_values(array_diff($this->userPermissions, $oldPermissions));
-        $removedPermissions = array_values(array_diff($oldPermissions, $this->userPermissions));
+        $details = [
+            'target_user_id' => $user->id,
+            'added_roles' => array_values($addedRoles),
+            'removed_roles' => array_values($removedRoles),
+            'added_permissions' => array_values($addedPerms),
+            'removed_permissions' => array_values($removedPerms),
+        ];
 
-        $details = ['target_user_id' => $user->id];
-
-        if ($addedRoles !== []) {
-            $details['added_roles'] = $addedRoles;
-        }
-        if ($removedRoles !== []) {
-            $details['removed_roles'] = $removedRoles;
-        }
-        if ($addedPermissions !== []) {
-            $details['added_permissions'] = $addedPermissions;
-        }
-        if ($removedPermissions !== []) {
-            $details['removed_permissions'] = $removedPermissions;
-        }
-
-        GlobalLog::log('User Permissions Updated', 'user', $details);
+        GlobalLog::log('User Permissions Updated', 'user', array_filter($details));
 
         $this->modal('edit-user-permissions')->close();
-        Flux::toast(
-            text: __('Permissions updated.'),
-            heading: __('Saved'),
-            variant: 'success'
-        );
+        Flux::toast(text: __('Permissions updated.'), heading: __('Saved'), variant: 'success');
+        $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
+    }
+
+    /**
+     * Helper to reduce boilerplate code
+     */
+    private function failWithToast(string $message): void
+    {
+        $this->modal('edit-user-permissions')->close();
+        Flux::toast(text: $message, heading: __('Error'), variant: 'danger');
         $this->reset(['editingUserId', 'editingUserName', 'userRoles', 'userPermissions']);
     }
 
