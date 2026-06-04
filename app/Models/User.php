@@ -97,7 +97,7 @@ class User extends Authenticatable
         return $this->hasMany(EventUser::class);
     }
 
-    public function activeQrTagRegistration(): ?EventUser
+    public function activeQrTagRegistration()
     {
         return $this->registrations()
             ->whereHas('event', function ($query) {

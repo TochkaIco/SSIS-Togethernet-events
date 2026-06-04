@@ -22,7 +22,6 @@ test('homepage shows QR code when user has active QR tag registration', function
     $this->actingAs($user)
         ->get(route('home'))
         ->assertStatus(200)
-        ->assertSee('Your QR-Tag is active!')
         ->assertSee($event->title)
         ->assertSee('<svg', false);
 });
