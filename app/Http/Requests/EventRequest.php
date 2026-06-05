@@ -8,6 +8,7 @@ use App\EventType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 
 class EventRequest extends FormRequest
 {
@@ -67,7 +68,11 @@ class EventRequest extends FormRequest
 
             'links' => ['nullable', 'array'],
             'links.*' => ['url', 'max:255'],
-            'image' => ['nullable', 'image', 'max:5120'],
+            'image' => [
+                'nullable',
+                File::types(['avif', 'jpeg', 'jpg', 'png', 'webp'])
+                    ->max(12288),
+            ],
             'allow_external_domains' => ['boolean'],
         ];
     }

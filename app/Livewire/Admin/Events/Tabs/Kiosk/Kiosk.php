@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -154,7 +155,11 @@ class Kiosk extends Component
             'articleCost' => 'required|integer|min:0',
             'articleAmount' => 'required|integer|min:0',
             'articleImageUrl' => 'nullable|url|string|max:500',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:12288',
+            'image' => [
+                'nullable',
+                File::types(['avif', 'jpeg', 'jpg', 'png', 'webp'])
+                    ->max(12288),
+            ],
         ]);
 
         if ($this->image) {
