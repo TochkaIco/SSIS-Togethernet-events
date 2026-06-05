@@ -143,9 +143,19 @@
                                 <div class="flex items-center gap-2">
                                     <flux:icon.sparkles class="text-orange-500" />
                                     <flux:heading size="lg">{{ __('Your Game Status') }}</flux:heading>
+                                    <flux:badge color="orange" size="sm" inset="top bottom" class="ml-auto">
+                                        {{ __('Spot :rank', ['rank' => $this->registration->qrTagRank()]) }}
+                                    </flux:badge>
                                 </div>
 
-                                @if($this->registration->qr_tag_tagged_at)
+                                @if($event->isFinished())
+                                    <div class="p-4 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 rounded-lg border border-orange-200 dark:border-orange-800">
+                                        <p class="font-bold text-lg">{{ __('The event has finished!') }}</p>
+                                        <p class="text-sm">
+                                            {{ __('You finished on spot :rank', ['rank' => $this->registration->qrTagRank()]) }}
+                                        </p>
+                                    </div>
+                                @elseif($this->registration->qr_tag_tagged_at)
                                     <div class="p-4 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800">
                                         <p class="font-bold">{{ __('You have been tagged!') }}</p>
                                         <p class="text-sm">
@@ -184,7 +194,7 @@
                                 @endif
                             </div>
 
-                            @if(!$this->registration->qr_tag_tagged_at && !$this->registration->is_disabled && $this->registration->qr_tag_token)
+                            @if(!$this->registration->qr_tag_tagged_at && !$this->registration->is_disabled && $this->registration->qr_tag_token && !$event->isFinished())
                                 <div class="flex flex-col items-center gap-3 shrink-0 max-w-full">
                                     <flux:text class="font-medium">{{ __('Your QR Code') }}</flux:text>
                                     <div class="p-4 bg-white rounded-xl shadow-inner border-2 border-orange-400 max-w-full overflow-hidden">

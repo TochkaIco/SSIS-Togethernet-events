@@ -219,6 +219,11 @@ class Event extends Model
         return ! $this->hasParticipants();
     }
 
+    public function isFinished(): bool
+    {
+        return $this->event_ends_at < now();
+    }
+
     /**
      * @return Collection<int, EventUser>
      */

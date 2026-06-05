@@ -31,6 +31,11 @@ class QrTagController extends Controller
                 ->with('error', __('This user has already been tagged.'));
         }
 
+        if ($victimRegistration->event->isFinished()) {
+            return redirect()->route('event.show', $victimRegistration->event)
+                ->with('error', __('The event has already ended.'));
+        }
+
         if ($victimRegistration->is_disabled) {
             return redirect()->route('event.show', $victimRegistration->event)
                 ->with('error', __('This user is currently disabled.'));
@@ -82,6 +87,11 @@ class QrTagController extends Controller
             if ($victimRegistration->qr_tag_tagged_at) {
                 return redirect()->route('event.show', $victimRegistration->event)
                     ->with('error', __('This user has already been tagged.'));
+            }
+
+            if ($victimRegistration->event->isFinished()) {
+                return redirect()->route('event.show', $victimRegistration->event)
+                    ->with('error', __('The event has already ended.'));
             }
 
             if ($victimRegistration->is_disabled) {

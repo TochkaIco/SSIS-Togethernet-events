@@ -591,3 +591,27 @@ test('confirmation page redirects if not your target', function () {
     $response->assertRedirect(route('event.show', $event));
     $response->assertSessionHas('error', __('This is not your target.'));
 });
+
+test('cannot tag after event ends', function () {
+    $event = Event::factory()->create([
+        'event_type' => EventType::QR_TAG,
+        'event_ends_at' => now()->subMinute(),
+    ]);
+    $u1 = User::factory()->create();
+    $u2 = User::factory()->create();
+
+    EventUser::create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_token' => 't1', 'qr_tag_target_user_id' => $u2->id]);
+    EventUser::create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u1->id]);
+
+    $this->actingAs($u1);
+
+    // Try confirm
+    $response = $this->get(route('qr_tag.confirm', ['token' => 't2']));
+    $response->assertRedirect(route('event.show', $event));
+    $response->assertSessionHas('error', __('The event has already ended.'));
+
+    // Try scan (manually skipping CSRF check in this thought process as it might still 419, but standard code is better)
+    $response = $this->post(route('qr_tag.scan', ['token' => 't2']));
+    $response->assertRedirect(route('event.show', $event));
+    $response->assertSessionHas('error', __('The event has already ended.'));
+});

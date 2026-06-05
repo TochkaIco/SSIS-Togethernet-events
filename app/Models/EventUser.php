@@ -140,6 +140,19 @@ class EventUser extends Model
         return trim(substr($svg, strpos($svg, "\n") + 1));
     }
 
+    public function qrTagRank(): int
+    {
+        if (! $this->event_id) {
+            return 0;
+        }
+
+        return self::where('event_id', $this->event_id)
+            ->where('is_disabled', false)
+            ->participants()
+            ->where('qr_tag_count', '>', $this->qr_tag_count)
+            ->count() + 1;
+    }
+
     /**
      * @param  Builder<EventUser>  $query
      */
