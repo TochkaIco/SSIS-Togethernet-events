@@ -4,15 +4,10 @@ use App\Livewire\Events\EventShow;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
-
-beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
-});
 
 test('registered period is highlighted on event show page', function () {
     $user = User::factory()->create();

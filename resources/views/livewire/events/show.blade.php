@@ -140,12 +140,9 @@
                     <flux:card class="bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                         <div class="flex flex-col lg:flex-row gap-6 md:gap-8 items-center lg:items-start">
                             <div class="flex-1 space-y-4 w-full">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-start gap-2">
                                     <flux:icon.sparkles class="text-orange-500" />
                                     <flux:heading size="lg">{{ __('Your Game Status') }}</flux:heading>
-                                    <flux:badge color="orange" size="sm" inset="top bottom" class="ml-auto">
-                                        {{ __('Spot :rank', ['rank' => $this->registration->qrTagRank()]) }}
-                                    </flux:badge>
                                 </div>
 
                                 @if($event->isFinished())

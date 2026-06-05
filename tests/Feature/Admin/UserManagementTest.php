@@ -2,14 +2,7 @@
 
 use App\Livewire\Admin\UserManagement;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
 use Livewire\Livewire;
-
-use function Pest\Laravel\seed;
-
-beforeEach(function () {
-    seed(RolesAndPermissionsSeeder::class);
-});
 
 test('admin can view user management page', function () {
     $admin = User::factory()->create();

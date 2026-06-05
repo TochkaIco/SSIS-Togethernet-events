@@ -9,15 +9,28 @@ Togethernet Events is a Laravel application built with Livewire and Flux UI, des
 ```bash
 # Clone and setup
 git clone ssh://git@git.ssis.nu:822/togethernet/Togethernet-Events.git
-composer install
+composer install // might need to run composer install --ignore-platform-req=ext-ldap
 cp .env.example .env
 vendor/bin/sail up -d
 
 # Initialize app
 vendor/bin/sail artisan key:generate
+vendor/bin/sail composer install
 vendor/bin/sail npm install
+vendor/bin/sail artisan migrate:fresh --seed
 vendor/bin/sail npm run dev
 ```
+
+## Seeding Data
+
+For local development, the application includes a `DevSeeder` that populates the database with test users, events, and game data.
+
+**Test Credentials:**
+- **Super Admin**: `superadmin@stockholmscience.se`
+- **Admin**: `admin@stockholmscience.se`
+- **Member**: `member@stockholmscience.se`
+
+The default password (if applicable) is determined by your local environment, but since this app uses OAuth/Fortify, you can use these emails to simulate authenticated sessions in tests or local dev.
 
 ## Documentation
 

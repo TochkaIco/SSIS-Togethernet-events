@@ -3,14 +3,12 @@
 use App\Actions\RegisterUserToEvent;
 use App\Models\Event;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
     Config::set('services.google.hd', 'ssis.nu');
 });
 

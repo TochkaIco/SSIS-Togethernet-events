@@ -5,16 +5,11 @@ use App\Livewire\Events\EventShow;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
-
-beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
-});
 
 test('flexible registration assigns the first available period', function () {
     $event = Event::factory()->create([

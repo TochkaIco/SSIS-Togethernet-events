@@ -2,19 +2,7 @@
 
 use App\Livewire\Admin\UserImpersonationPage;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
 use Livewire\Livewire;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-
-beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
-    // Add impersonate users permission as it might not be in the seeder yet if it's in a recent migration
-    Permission::firstOrCreate(['name' => 'impersonate users']);
-    Role::whereIn('name', ['super-admin', 'maintainer'])->get()->each(function ($role) {
-        $role->givePermissionTo('impersonate users');
-    });
-});
 
 test('unauthorized users cannot access impersonation page', function () {
     $user = User::factory()->create();

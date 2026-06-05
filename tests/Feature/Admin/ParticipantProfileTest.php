@@ -4,15 +4,10 @@ use App\Livewire\Admin\Events\ParticipantProfile;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
-
-beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
-});
 
 test('unauthorized users cannot view participant profile', function () {
     $user = User::factory()->create();

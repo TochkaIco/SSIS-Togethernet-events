@@ -15,9 +15,9 @@ This guide provides instructions for setting up the development environment, run
 ├── bootstrap // Define trusted proxies, aliases or middleware
 ├── config // Connect .env values with your application
 ├── database
-│   ├── factories // Here you define how a certain model can be generated for testing
+│   ├── factories // Here you define how a certain model can be generated for testing (e.g. User, Event, QrTagLog)
 │   ├── migrations
-│   └── seeders // An alternative to using factories
+│   └── seeders // System seeders (migrations) and development seeders
 ├── lang // Translations
 │   └── sv
 ├── public
@@ -42,12 +42,12 @@ This guide provides instructions for setting up the development environment, run
 ### Clone the repository
 ```bash
 git clone ssh://git@git.ssis.nu:822/togethernet/Togethernet-Events.git
-cd TogethernetEvents
+cd Togethernet-Events
 ```
 
 ### Install dependencies
 ```bash
-composer install
+composer install // might need to run composer install --ignore-platform-req=ext-ldap
 npm install
 ```
 
@@ -64,8 +64,33 @@ php artisan key:generate
 ### Start up a dev server
 ```bash
 vendor/bin/sail up -d
+vendor/bin/sail composer install
+vendor/bin/sail npm install
+vendor/bin/sail artisan migrate
+```
+
+### Later you can simply use
+```bash
+vendor/bin/sail up -d
 vendor/bin/sail npm run dev
 ```
+
+## Seeding Data
+
+To populate your local database with representative data for development and testing, run:
+
+```bash
+vendor/bin/sail artisan db:seed
+```
+
+This will run the `DevSeeder` (if in a local environment), which creates:
+- **Test Accounts**:
+    - `superadmin@stockholmscience.se` (Full access)
+    - `admin@stockholmscience.se` (Administrative access)
+    - `member@stockholmscience.se` (Standard member access)
+- **Sample Events**: Multiple event types (Karaoke, QR-Tag, etc.) in various states (Upcoming, Ongoing, Finished).
+- **QR-Tag Data**: Fake QR-Tag logs and registrations.
+- **Feedback**: Sample user feedback entries.
 
 ## Testing
 
