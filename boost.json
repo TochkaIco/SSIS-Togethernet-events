@@ -19,7 +19,6 @@
         "fluxui-development",
         "livewire-development",
         "pest-testing",
-        "tailwindcss-development",
         "laravel-permission-development"
     ]
 }
