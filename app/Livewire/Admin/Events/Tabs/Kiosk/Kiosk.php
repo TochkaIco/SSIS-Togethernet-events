@@ -7,25 +7,35 @@ namespace App\Livewire\Admin\Events\Tabs\Kiosk;
 use App\Models\Event;
 use App\Models\EventKioskArticle;
 use App\Models\EventKioskCategory;
+use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class Kiosk extends Component
 {
-    use WithPagination;
+    use WithFileUploads, WithPagination;
 
     public Event $event;
 
     #[Url]
     public string $subTab = 'articles';
 
+    public string $imagePath = '';
+
+    public $image;
+
     public bool $showArticleModal = false;
 
     public bool $showCategoryModal = false;
+
+    public bool $storeArticleImageUrl = false;
 
     public bool $showImportModal = false;
 
@@ -87,7 +97,7 @@ class Kiosk extends Component
     {
         $this->authorize('manage kiosk');
 
-        $this->reset(['articleName', 'articleCategoryId', 'articleCost', 'articleAmount', 'articleImageUrl']);
+        $this->reset(['articleName', 'articleCategoryId', 'articleCost', 'articleAmount', 'articleImageUrl', 'imagePath', 'storeArticleImageUrl']);
         $this->editingArticleId = $articleId;
 
         if ($articleId) {
@@ -98,10 +108,28 @@ class Kiosk extends Component
                 $this->articleCost = $article->cost;
                 $this->articleAmount = $article->amount;
                 $this->articleImageUrl = $article->image_url ?? '';
+                $this->imagePath = $article->image_path ?? '';
+                $this->storeArticleImageUrl = ! empty($article->image_url);
             }
         }
 
         $this->showArticleModal = true;
+    }
+
+    public function removeImage(): void
+    {
+        $this->authorize('manage kiosk');
+
+        if ($this->editingArticleId) {
+            $article = $this->event->kiosk?->articles()->find($this->editingArticleId);
+            if ($article && $article->image_path && Storage::disk('public')->exists($article->image_path)) {
+                Storage::disk('public')->delete($article->image_path);
+            }
+        }
+
+        $this->image = null;
+        $this->imagePath = '';
+        $this->articleImageUrl = '';
     }
 
     public function saveArticle(): void
@@ -126,15 +154,27 @@ class Kiosk extends Component
             'articleCost' => 'required|integer|min:0',
             'articleAmount' => 'required|integer|min:0',
             'articleImageUrl' => 'nullable|url|string|max:500',
+            'image' => 'nullable|image|max:5120',
         ]);
 
+        if ($this->image) {
+            $this->imagePath = $this->image->store('kiosk', 'public');
+        }
+
         if ($this->editingArticleId) {
-            $kiosk->articles()->findOrFail($this->editingArticleId)->update([
+            $article = $kiosk->articles()->findOrFail($this->editingArticleId);
+
+            if ($this->image && $article->image_path && Storage::disk('public')->exists($article->image_path)) {
+                Storage::disk('public')->delete($article->image_path);
+            }
+
+            $article->update([
                 'name' => $this->articleName,
                 'category_id' => $this->articleCategoryId,
                 'cost' => $this->articleCost,
                 'amount' => $this->articleAmount,
                 'image_url' => $this->articleImageUrl ?: null,
+                'image_path' => $this->imagePath ?: null,
             ]);
             Flux::toast(__('Article updated successfully.'), variant: 'success');
         } else {
@@ -144,6 +184,7 @@ class Kiosk extends Component
                 'cost' => $this->articleCost,
                 'amount' => $this->articleAmount,
                 'image_url' => $this->articleImageUrl ?: null,
+                'image_path' => $this->imagePath ?: null,
             ]);
             Flux::toast(__('Article created successfully.'), variant: 'success');
         }
@@ -165,7 +206,15 @@ class Kiosk extends Component
         $this->authorize('manage kiosk');
 
         if ($this->deletingArticleId) {
-            $this->event->kiosk?->articles()->findOrFail($this->deletingArticleId)->delete();
+            $article = $this->event->kiosk?->articles()->findOrFail($this->deletingArticleId);
+            $imagePath = $article->image_path;
+
+            $article->delete();
+
+            if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
             Flux::toast(__('Article deleted.'), variant: 'success');
             $this->deletingArticleId = null;
             $this->modal('delete-article-modal')->close();
@@ -300,12 +349,27 @@ class Kiosk extends Component
             }
 
             foreach ($sourceEvent->kiosk->articles as $sourceArticle) {
+                $newImagePath = null;
+
+                if ($sourceArticle->image_path && Storage::disk('public')->exists($sourceArticle->image_path)) {
+                    $extension = pathinfo($sourceArticle->image_path, PATHINFO_EXTENSION);
+
+                    $newFileName = Str::uuid().'.'.$extension;
+                    $newImagePath = 'kiosk/'.$newFileName;
+
+                    if (! Storage::disk('public')->copy($sourceArticle->image_path, $newImagePath)) {
+                        // Fallback to null if the disk copy fails
+                        $newImagePath = null;
+                    }
+                }
+
                 $kiosk->articles()->create([
                     'name' => $sourceArticle->name,
                     'category_id' => $sourceArticle->category_id ? ($categoryMapping[$sourceArticle->category_id] ?? null) : null,
                     'cost' => $sourceArticle->cost,
                     'amount' => $sourceArticle->amount,
                     'image_url' => $sourceArticle->image_url,
+                    'image_path' => $newImagePath,
                 ]);
             }
         });
@@ -441,6 +505,7 @@ class Kiosk extends Component
             });
 
             Flux::toast(__('Purchase deleted and stock restored.'), variant: 'success');
+            GlobalLog::log('Purchase deleted and stock restored.', 'kiosk', ['event_id' => $this->event->id, 'event_title' => $this->event->title]);
             $this->deletingPurchaseId = null;
             $this->modal('delete-purchase-modal')->close();
             $this->dispatch('refreshKiosk');

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'name',
     'image_url',
+    'image_path',
     'cost',
     'amount',
     'category_id',

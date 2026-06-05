@@ -59,7 +59,12 @@
                                 @if($article->image_url)
                                     <div class="absolute inset-0 z-0">
                                         <img src="{{ $article->image_url }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                        <div class="absolute inset-0 bg-black/60 dark:bg-black/80"></div>
+                                        <div class="absolute inset-0 bg-black/40 dark:bg-black/65"></div>
+                                    </div>
+                                @elseif($article->image_path)
+                                    <div class="absolute inset-0 z-0">
+                                        <img src="{{ asset('storage/' . $article->image_path) }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <div class="absolute inset-0 bg-black/40 dark:bg-black/65"></div>
                                     </div>
                                 @endif
 
@@ -74,16 +79,16 @@
                                 </div>
 
                                 <div class="relative z-10 flex justify-between items-center text-sm">
-                                    <span class="px-2 py-0.5 rounded-full {{ $article->image_url ? 'bg-white/10 backdrop-blur-md' : 'bg-zinc-100 dark:bg-zinc-800' }} {{ $article->amount > 0 ? ($article->image_url ? 'text-green-300' : 'text-green-600') : 'text-red-500' }}">
+                                    <span class="px-2 py-0.5 rounded-full {{ $article->image_url || $article->image_path ? 'bg-white/10 backdrop-blur-md' : 'bg-zinc-100 dark:bg-zinc-800' }} {{ $article->amount > 0 ? ($article->image_url ? 'text-green-300' : 'text-green-600') : 'text-red-500' }}">
                                         {{ __(':amount in stock', ['amount' => $article->amount]) }}
                                     </span>
                                     @can('manage kiosk')
                                         <div class="flex gap-1">
                                             <flux:button size="xs" variant="ghost" wire:click="openArticleModal({{ $article->id }})" class="cursor-pointer {{ $article->image_url ? 'text-white hover:bg-white/20' : '' }}">
-                                                <flux:icon.pencil class="size-3" />
+                                                <flux:icon.pencil class="size-3" color="orange" />
                                             </flux:button>
                                             <flux:button size="xs" variant="ghost" wire:click="confirmDeleteArticle({{ $article->id }})" class="cursor-pointer {{ $article->image_url ? 'text-white hover:bg-white/20' : '' }}">
-                                                <flux:icon.trash class="size-3 {{ $article->image_url ? 'text-red-400' : 'text-red-500' }}" />
+                                                <flux:icon.trash class="size-3 {{ $article->image_url || $article->image_path ? 'text-red-400' : 'text-red-500' }}" />
                                             </flux:button>
                                         </div>
                                     @endcan
@@ -201,7 +206,12 @@
                                     @if($article->image_url)
                                         <div class="absolute inset-0 z-0">
                                             <img src="{{ $article->image_url }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                            <div class="absolute inset-0 bg-black/60 dark:bg-black/80"></div>
+                                            <div class="absolute inset-0 bg-black/40 dark:bg-black/65"></div>
+                                        </div>
+                                    @elseif($article->image_path)
+                                        <div class="absolute inset-0 z-0">
+                                            <img src="{{ asset('storage/' . $article->image_path) }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                            <div class="absolute inset-0 bg-black/40 dark:bg-black/65"></div>
                                         </div>
                                     @endif
 
@@ -216,7 +226,7 @@
                                     </div>
 
                                     <div class="relative z-10 flex justify-between items-center text-sm">
-                                        <span class="px-2 py-0.5 rounded-full {{ $article->image_url ? 'bg-white/10 backdrop-blur-md' : 'bg-zinc-100 dark:bg-zinc-800' }} {{ $article->amount > 0 ? ($article->image_url ? 'text-green-300' : 'text-green-600') : 'text-red-500' }}">
+                                        <span class="px-2 py-0.5 rounded-full {{ $article->image_url || $article->image_path ? 'bg-white/10 backdrop-blur-md' : 'bg-zinc-100 dark:bg-zinc-800' }} {{ $article->amount > 0 ? ($article->image_url ? 'text-green-300' : 'text-green-600') : 'text-red-500' }}">
                                             {{ __(':amount in stock', ['amount' => $article->amount]) }}
                                         </span>
 
@@ -314,11 +324,72 @@
                         <flux:error name="articleAmount" />
                     </flux:field>
                 </div>
-                <flux:field>
-                    <flux:label>{{ __('Image URL') }}</flux:label>
-                    <flux:input type="url" wire:model="articleImageUrl" placeholder="https://..." />
-                    <flux:error name="articleImageUrl" />
+                <flux:field variant="inline">
+                    <flux:label>{{ __('Enter Image URL') }}</flux:label>
+
+                    <flux:switch wire:model.live="storeArticleImageUrl" />
+
+                    <flux:error name="storeArticleImageUrl" />
                 </flux:field>
+                <div x-data="{ storeImageUrl: @entangle('storeArticleImageUrl') }">
+                    <div
+                        x-show="storeImageUrl"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 transform scale-65"
+                        x-transition:enter-end="opacity-100 transform scale-100"
+                    >
+                        <flux:field>
+                            <flux:label>{{ __('Image URL') }}</flux:label>
+                            <div class="flex gap-2">
+                                <flux:input type="url" wire:model="articleImageUrl" placeholder="https://..." />
+                                @if($articleImageUrl)
+                                    <flux:button variant="ghost" icon="x-mark" wire:click="removeImage" class="cursor-pointer" />
+                                @endif
+                            </div>
+                            <flux:error name="articleImageUrl" />
+                        </flux:field>
+                    </div>
+                    <div
+                        x-show="!storeImageUrl"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 transform scale-65"
+                        x-transition:enter-end="opacity-100 transform scale-100"
+                        class="relative w-full"
+                    >
+                        @if($this->imagePath || $this->image)
+                            <img
+                                src="{{ $this->image ? $this->image->temporaryUrl() : asset('storage/' . $this->imagePath) }}"
+                                alt="{{ __('Current featured image') }}"
+                                class="w-full h-auto max-h-60 object-cover rounded-lg"
+                            />
+
+                            <div class="absolute top-3 right-3">
+                                <flux:button
+                                    size="xs"
+                                    variant="danger"
+                                    icon="trash"
+                                    wire:click="removeImage"
+                                    class="cursor-pointer shadow-lg opacity-80"
+                                >
+                                    {{ __('Delete') }}
+                                </flux:button>
+                            </div>
+                        @endif
+
+                        <flux:input.file
+                            type="file"
+                            name="image"
+                            wire:model="image"
+                            id="image"
+                            data-test="image-field"
+                            accept="image/*"
+                            class="mt-3"
+                        />
+                        <flux:error name="image" />
+                    </div>
+                </div>
             </div>
             <flux:separator class="my-4" />
             <div class="flex justify-end gap-2">

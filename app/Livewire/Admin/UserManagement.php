@@ -126,14 +126,14 @@ class UserManagement extends Component
         $protectedRoles = ['admin', 'super-admin', 'maintainer'];
         $modifyingProtected = array_intersect($protectedRoles, array_merge($addedRoles, $removedRoles));
 
-        if (! empty($modifyingProtected) && ! $isHighLevel) {
+        if ($modifyingProtected !== [] && ! $isHighLevel) {
             $this->failWithToast(__('Only Super-Admins or Maintainers can modify administrative roles.'));
 
             return;
         }
 
         // Check for permission changes
-        if ((! empty($addedPerms) || ! empty($removedPerms)) && ! $isAdmin) {
+        if (($addedPerms !== [] || $removedPerms !== []) && ! $isAdmin) {
             $this->failWithToast(__('Only Admins can grant or revoke permissions.'));
 
             return;

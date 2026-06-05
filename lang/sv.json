@@ -552,5 +552,6 @@
     "Confirm Tag": "Bekräfta tagg",
     "Show this QR code to your hunter if you get tagged, or scan others to tag them.": "Visa denna QR-kod för din jägare om du blir taggad, eller skanna andra för att tagga dem.",
     "View Event: :event": "Visa händelse: :event",
-    "Only Admins can grant permissions.": "Endast administratörer kan bevilja behörigheter."
+    "Only Admins can grant permissions.": "Endast administratörer kan bevilja behörigheter.",
+    "Enter Image URL": "Ange bild-URL"
 }

@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\GlobalLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class UpdateEvent
@@ -63,6 +64,9 @@ class UpdateEvent
         }
 
         if ($attributes['image'] ?? false) {
+            if ($event->image_path && Storage::disk('public')->exists($event->image_path)) {
+                Storage::disk('public')->delete($event->image_path);
+            }
             $data['image_path'] = $attributes['image']->store('events', 'public');
         }
 

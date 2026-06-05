@@ -9,6 +9,7 @@ use App\Actions\UpdateEvent;
 use App\Http\Requests\EventRequest;
 use App\Models\Event;
 use App\Models\GlobalLog;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -46,6 +47,9 @@ class EventController extends Controller
 
         GlobalLog::log('Event Deleted', 'event', ['event_id' => $event->id, 'title' => $event->title]);
 
+        if ($event->image_path && Storage::disk('public')->exists($event->image_path)) {
+            Storage::disk('public')->delete($event->image_path);
+        }
         $event->delete();
 
         return to_route('admin.events');
