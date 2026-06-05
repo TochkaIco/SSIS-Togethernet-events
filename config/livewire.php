@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 return [
 
     /*
@@ -138,7 +136,7 @@ return [
         'preview_mimes' => [                                  // Supported file types for temporary pre-signed file URLs...
             'png', 'gif', 'bmp', 'svg', 'wav', 'mp4',
             'mov', 'avi', 'wmv', 'mp3', 'm4a',
-            'jpg', 'jpeg', 'mpga', 'webp', 'wma',
+            'jpg', 'jpeg', 'mpga', 'webp', 'wma', 'avif',
         ],
         'max_upload_time' => 5, // Max duration (in minutes) before an upload is invalidated...
         'cleanup' => true, // Should cleanup temporary uploads older than 24 hrs...
@@ -276,9 +274,9 @@ return [
     */
 
     'payload' => [
-        'max_size' => 1024 * 1024 * 10,   // 10MB - maximum request payload size in bytes
+        'max_size' => 1024 * 1024,   // 1MB - maximum request payload size in bytes
         'max_nesting_depth' => 10,   // Maximum depth of dot-notation property paths
         'max_calls' => 50,           // Maximum method calls per request
-        'max_components' => 20,      // Maximum components per batch request
+        'max_components' => 200,     // Maximum components per batch request
     ],
 ];
