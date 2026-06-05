@@ -154,7 +154,7 @@ class Kiosk extends Component
             'articleCost' => 'required|integer|min:0',
             'articleAmount' => 'required|integer|min:0',
             'articleImageUrl' => 'nullable|url|string|max:500',
-            'image' => 'nullable|image|max:12288',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:12288',
         ]);
 
         if ($this->image) {
