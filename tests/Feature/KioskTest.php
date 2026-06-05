@@ -31,7 +31,7 @@ it('does not crash when updating an article with no existing image path', functi
     Livewire::actingAs($user)
         ->test(Kiosk::class, ['event' => $event])
         ->call('openArticleModal', $article->id)
-        ->set('image', UploadedFile::fake()->image('new-image.jpg'))
+        ->set('image', UploadedFile::fake()->image('large-image.jpg')->size(10000)) // 10MB
         ->call('saveArticle')
         ->assertHasNoErrors();
 

@@ -154,7 +154,7 @@ class Kiosk extends Component
             'articleCost' => 'required|integer|min:0',
             'articleAmount' => 'required|integer|min:0',
             'articleImageUrl' => 'nullable|url|string|max:500',
-            'image' => 'nullable|image|max:5120',
+            'image' => 'nullable|image|max:12288',
         ]);
 
         if ($this->image) {
@@ -190,6 +190,7 @@ class Kiosk extends Component
         }
 
         $this->showArticleModal = false;
+        $this->reset('image');
         $this->dispatch('refreshKiosk');
     }
 
