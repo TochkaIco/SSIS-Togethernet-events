@@ -42,6 +42,12 @@ class QrTag extends Component
     {
         $this->authorize('manage qr-tag');
 
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
+
         if ($this->event->isQrTagGameStarted()) {
             Flux::toast(__('Game already started.'), variant: 'danger');
 
@@ -56,6 +62,12 @@ class QrTag extends Component
     public function resetGame(): void
     {
         $this->authorize('manage qr-tag');
+
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
 
         $this->event->registrations()->update([
             'qr_tag_token' => null,
@@ -78,6 +90,12 @@ class QrTag extends Component
     public function respawnPlayer(int $registrationId): void
     {
         $this->authorize('manage qr-tag');
+
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
@@ -135,6 +153,12 @@ class QrTag extends Component
     {
         $this->authorize('manage qr-tag');
 
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
+
         // Respawn all just means reshuffling everyone who is registered.
         $action->handle($this->event, auth()->id(), 'respawn_all', true);
 
@@ -144,6 +168,12 @@ class QrTag extends Component
     public function toggleDisabled(?int $registrationId = null): void
     {
         $this->authorize('manage qr-tag');
+
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
 
         $id = $registrationId ?? $this->selectedRegistrationId;
 

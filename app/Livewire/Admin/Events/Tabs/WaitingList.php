@@ -16,6 +16,12 @@ class WaitingList extends Component
     {
         $this->authorize('manage users');
 
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended.'), variant: 'danger');
+
+            return;
+        }
+
         $registration = $this->event->registrations()->findOrFail($registrationId);
         $registration->update([
             'in_waitinglist' => false,

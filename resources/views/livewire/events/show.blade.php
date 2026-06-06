@@ -6,7 +6,14 @@
         </flux:breadcrumbs>
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h1 class="font-bold text-2xl md:text-3xl">{{ $event->title }}</h1>
+            <div class="flex flex-col md:flex-row items-start md:items-center space-y-1 md:space-x-3">
+                <h1 class="font-bold text-2xl sm:text-3xl wrap-break-word min-w-0 flex-1">{{ $event->title }}</h1>
+                @if($event->isFinished())
+                    <flux:badge size="sm" icon="flag" class="cursor-default bg-red-500/40! border-zinc-500/20 px-3 py-1 justify-center shrink-0">
+                        {{ __('Event Finished') }}
+                    </flux:badge>
+                @endif
+            </div>
 
             <div class="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
                 @if(auth()->user())

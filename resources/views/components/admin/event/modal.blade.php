@@ -139,6 +139,7 @@
                     name="paid_entry"
                     class="whitespace-nowrap"
                     ::checked="isPaid"
+                    ::disabled="!canEditCritical"
                     x-on:change="isPaid = $el.checked"
                 />
 
@@ -158,7 +159,7 @@
                         type="number"
                         min="1"
                         x-bind:required="isPaid"
-                        x-bind:disabled="!isPaid"
+                        x-bind:disabled="!isPaid || !canEditCritical"
                     />
                     <flux:error name="entry_fee" />
                 </flux:field>

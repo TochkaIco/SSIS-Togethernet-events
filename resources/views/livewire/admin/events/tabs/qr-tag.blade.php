@@ -7,18 +7,34 @@
         <div class="flex flex-wrap gap-2 w-full sm:w-auto">
             @if ($event->isQrTagGameStarted())
                 <flux:modal.trigger name="confirm-reset-game">
-                    <flux:button variant="outline" icon="trash" class="flex-1 sm:flex-none">
+                    <flux:button
+                        variant="outline"
+                        icon="trash"
+                        class="flex-1 sm:flex-none"
+                        :disabled="$event->isFinished()"
+                    >
                         {{ __('Reset Game') }}
                     </flux:button>
                 </flux:modal.trigger>
 
                 <flux:modal.trigger name="confirm-respawn-all">
-                    <flux:button variant="primary" icon="sparkles" class="bg-purple-600 hover:bg-purple-700 text-white flex-1 sm:flex-none">
+                    <flux:button
+                        variant="primary"
+                        icon="sparkles"
+                        class="bg-purple-600 hover:bg-purple-700 text-white flex-1 sm:flex-none"
+                        :disabled="$event->isFinished()"
+                    >
                         {{ __('Respawn All') }}
                     </flux:button>
                 </flux:modal.trigger>
             @else
-                <flux:button wire:click="startShuffle" variant="primary" icon="arrow-path" class="flex-1 sm:flex-none">
+                <flux:button
+                    wire:click="startShuffle"
+                    variant="primary"
+                    icon="arrow-path"
+                    class="flex-1 sm:flex-none"
+                    :disabled="$event->isFinished()"
+                >
                     {{ __('Shuffle & Start') }}
                 </flux:button>
             @endif
@@ -119,7 +135,15 @@
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
                             @if ($participant->qr_tag_tagged_at && !$participant->is_disabled)
-                                <flux:button wire:click="respawnPlayer({{ $participant->id }})" variant="ghost" icon="sparkles" size="sm" class="text-purple-600 hover:text-purple-700" tooltip="{{ __('Respawn Player') }}" />
+                                <flux:button
+                                    wire:click="respawnPlayer({{ $participant->id }})"
+                                    variant="ghost"
+                                    icon="sparkles"
+                                    size="sm"
+                                    class="text-purple-600 hover:text-purple-700"
+                                    :disabled="$event->isFinished()"
+                                    tooltip="{{ __('Respawn Player') }}"
+                                />
                             @endif
 
                             @if($participant->is_disabled)
@@ -129,6 +153,7 @@
                                     icon="user-plus"
                                     size="sm"
                                     class="text-green-600"
+                                    :disabled="$event->isFinished()"
                                     :tooltip="__('Enable Player')"
                                 />
                             @else
@@ -139,6 +164,7 @@
                                         icon="user-minus"
                                         size="sm"
                                         class="text-zinc-400"
+                                        :disabled="$event->isFinished()"
                                         :tooltip="__('Disable Player')"
                                     />
                                 </flux:modal.trigger>
@@ -149,8 +175,6 @@
             @endforeach
         </flux:table.rows>
     </flux:table>
-
-    <flux:pagination :paginator="$participants" scroll-to class="hidden lg:block mt-3" />
 
     {{-- Mobile/Tablet List --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
@@ -216,7 +240,15 @@
                         </div>
 
                         <div class="mt-4">
-                            <flux:button wire:click="respawnPlayer({{ $participant->id }})" variant="primary" icon="sparkles" size="sm" class="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                            <flux:button
+                                wire:click="respawnPlayer({{ $participant->id }})"
+                                variant="primary"
+                                icon="sparkles"
+                                size="sm"
+                                class="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                                :disabled="$event->isFinished()"
+                                :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                            >
                                 {{ __('Respawn Player') }}
                             </flux:button>
                         </div>
@@ -230,6 +262,8 @@
                                 icon="user-plus"
                                 size="sm"
                                 class="w-full"
+                                :disabled="$event->isFinished()"
+                                :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                             >
                                 {{ __('Enable Player') }}
                             </flux:button>
@@ -241,6 +275,8 @@
                                     icon="user-minus"
                                     size="sm"
                                     class="w-full"
+                                    :disabled="$event->isFinished()"
+                                    :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                                 >
                                     {{ __('Disable Player') }}
                                 </flux:button>
@@ -250,9 +286,9 @@
                 </div>
             </flux:card>
         @endforeach
-
-        <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
     </div>
+
+    <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
 
     <div class="mt-12">
         <flux:heading size="lg" class="mb-4">{{ __('Game Log') }}</flux:heading>

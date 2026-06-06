@@ -94,6 +94,8 @@
                                 wire:change="changePeriod({{ $participant->id }})"
                                 size="sm"
                                 class="w-32"
+                                :disabled="$event->isFinished()"
+                                :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                             >
                                 @foreach($event->eventPeriods() as $item)
                                     @if($item->type === 'period')
@@ -112,12 +114,26 @@
                     <flux:table.cell>
                         @if($this->participantIsWorking($participant->id))
                             <div class="flex items-center space-x-1">
-                                <flux:button wire:click="updateParticipantWorkingStatus({{ $participant->id }})" variant="ghost" icon="chevron-double-down" size="xs" />
+                                <flux:button
+                                    wire:click="updateParticipantWorkingStatus({{ $participant->id }})"
+                                    variant="ghost"
+                                    icon="chevron-double-down"
+                                    size="xs"
+                                    :disabled="$event->isFinished()"
+                                    :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                />
                                 <flux:badge size="sm" color="orange">{{ __('Worker') }}</flux:badge>
                             </div>
                         @else
                             <div class="flex items-center space-x-1">
-                                <flux:button wire:click="updateParticipantWorkingStatus({{ $participant->id }})" variant="ghost" icon="chevron-double-up" size="xs" />
+                                <flux:button
+                                    wire:click="updateParticipantWorkingStatus({{ $participant->id }})"
+                                    variant="ghost"
+                                    icon="chevron-double-up"
+                                    size="xs"
+                                    :disabled="$event->isFinished()"
+                                    :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                />
                                 <span class="text-xs">{{ __('Attendee') }}</span>
                             </div>
                         @endif
@@ -129,6 +145,8 @@
                             <flux:checkbox
                                 wire:change="togglePaid({{ $participant->id }})"
                                 :checked="(bool) $participant->has_paid"
+                                :disabled="$event->isFinished()"
+                                :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                             />
                         </flux:table.cell>
                     @endif
@@ -138,6 +156,8 @@
                         <flux:checkbox
                             wire:change="toggleArrived({{ $participant->id }})"
                             :checked="(bool) $participant->has_arrived"
+                            :disabled="$event->isFinished()"
+                            :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                         />
                     </flux:table.cell>
 
@@ -151,6 +171,8 @@
                                         wire:click="moveToWaitingList({{ $participant->id }})"
                                         icon="list-bullet"
                                         class="cursor-pointer"
+                                        :disabled="$event->isFinished()"
+                                        :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                                     >
                                         {{ __('Move to Waiting List') }}
                                     </flux:menu.item>
@@ -160,6 +182,8 @@
                                         wire:click="toggleDisabled({{ $participant->id }})"
                                         :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
                                         class="cursor-pointer"
+                                        :disabled="$event->isFinished()"
+                                        :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                                     >
                                         {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
                                     </flux:menu.item>
@@ -220,6 +244,8 @@
                                         wire:click="moveToWaitingList({{ $participant->id }})"
                                         icon="list-bullet"
                                         class="cursor-pointer"
+                                        :disabled="$event->isFinished()"
+                                        :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                                     >
                                         {{ __('Move to Waiting List') }}
                                     </flux:menu.item>
@@ -228,6 +254,8 @@
                                         wire:click="toggleDisabled({{ $participant->id }})"
                                         :icon="$participant->is_disabled ? 'user-plus' : 'user-minus'"
                                         class="cursor-pointer"
+                                        :disabled="$event->isFinished()"
+                                        :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                                     >
                                         {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
                                     </flux:menu.item>
@@ -253,12 +281,26 @@
                         <div>
                             @if($this->participantIsWorking($participant->id))
                                 <div class="flex items-center space-x-1">
-                                    <flux:button wire:click="updateParticipantWorkingStatus({{ $participant->id }})" variant="ghost" icon="chevron-double-down" size="xs" />
+                                    <flux:button
+                                        wire:click="updateParticipantWorkingStatus({{ $participant->id }})"
+                                        variant="ghost"
+                                        icon="chevron-double-down"
+                                        size="xs"
+                                        :disabled="$event->isFinished()"
+                                        :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                    />
                                     <flux:badge size="sm" color="orange">{{ __('Worker') }}</flux:badge>
                                 </div>
                             @else
                                 <div class="flex items-center space-x-1">
-                                    <flux:button wire:click="updateParticipantWorkingStatus({{ $participant->id }})" variant="ghost" icon="chevron-double-up" size="xs" />
+                                    <flux:button
+                                        wire:click="updateParticipantWorkingStatus({{ $participant->id }})"
+                                        variant="ghost"
+                                        icon="chevron-double-up"
+                                        size="xs"
+                                        :disabled="$event->isFinished()"
+                                        :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                    />
                                     <span class="text-xs">{{ __('Attendee') }}</span>
                                 </div>
                             @endif
@@ -273,6 +315,8 @@
                                 wire:change="changePeriod({{ $participant->id }})"
                                 size="sm"
                                 class="w-full"
+                                :disabled="$event->isFinished()"
+                                :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                             >
                                 @foreach($event->eventPeriods() as $item)
                                     @if($item->type === 'period')
@@ -292,6 +336,8 @@
                                     wire:change="togglePaid({{ $participant->id }})"
                                     :checked="(bool) $participant->has_paid"
                                     :label="__('Paid')"
+                                    :disabled="$event->isFinished()"
+                                    :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                                 />
                             </div>
                         @endif
@@ -301,6 +347,8 @@
                                 wire:change="toggleArrived({{ $participant->id }})"
                                 :checked="(bool) $participant->has_arrived"
                                 :label="__('Arrived')"
+                                :disabled="$event->isFinished()"
+                                :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                             />
                         </div>
                     </div>

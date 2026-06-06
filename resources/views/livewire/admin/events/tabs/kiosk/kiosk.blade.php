@@ -172,7 +172,15 @@
                                     <flux:table.cell align="end">
                                         <div class="flex gap-x-1 justify-end">
                                             <flux:button size="xs" class="cursor-pointer" icon="eye" variant="ghost" wire:click="viewPurchase({{ $purchase->id }})" x-on:click="$flux.modal('purchase-modal').show()" />
-                                            <flux:button size="xs" class="cursor-pointer" icon="trash" variant="ghost" wire:click="confirmDeletePurchase({{ $purchase->id }})" />
+                                            <flux:button
+                                                size="xs"
+                                                class="cursor-pointer"
+                                                icon="trash"
+                                                variant="ghost"
+                                                wire:click="confirmDeletePurchase({{ $purchase->id }})"
+                                                :disabled="$event->isFinished()"
+                                                :tooltip="$event->isFinished() ? 'Cannot delete purchases from already finished events' : null"
+                                            />
                                         </div>
                                     </flux:table.cell>
                                 </flux:table.row>
@@ -283,7 +291,13 @@
                                 <span class="font-semibold">{{ __('Total') }}</span>
                                 <span class="font-bold text-xl">{{ number_format($cartTotal) }} kr</span>
                             </div>
-                            <flux:button variant="primary" class="w-full cursor-pointer" wire:click="recordPurchase">
+                            <flux:button
+                                variant="primary"
+                                class="w-full cursor-pointer"
+                                wire:click="recordPurchase"
+                                :tooltip="$event->isFinished() ? 'Cannot create purchases in already finished events.' : null"
+                                :disabled="$event->isFinished()"
+                            >
                                 {{ __('Complete Purchase') }}
                             </flux:button>
                         @endif

@@ -71,6 +71,12 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
+
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
         $registration->update([
@@ -87,6 +93,12 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
+
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
         $registration->update([
@@ -102,6 +114,12 @@ class Participants extends Component
     public function toggleDisabled(int $registrationId): void
     {
         $this->authorize('manage users');
+
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
 
         if ($this->event->event_type !== EventType::QR_TAG) {
             Flux::toast(__('You cannot disable a player outside qr-tag.'), variant: 'danger');
@@ -123,6 +141,12 @@ class Participants extends Component
     public function moveToWaitingList(int $registrationId, ProcessWaitingList $processAction): void
     {
         $this->authorize('manage users');
+
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
 
         if ($this->event->event_type === EventType::QR_TAG) {
             Flux::toast(__('Waiting list is not supported for QR-Tag events.'), variant: 'danger');
@@ -163,6 +187,12 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
+
         $registration = $this->event->registrations()->findOrFail($registrationId);
         $registration->update([
             'is_working' => ! $registration->is_working,
@@ -174,6 +204,12 @@ class Participants extends Component
     public function changePeriod(int $registrationId, ProcessWaitingList $processAction): void
     {
         $this->authorize('manage users');
+
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
 
         $periodId = $this->participantPeriods[$registrationId] ?? null;
 

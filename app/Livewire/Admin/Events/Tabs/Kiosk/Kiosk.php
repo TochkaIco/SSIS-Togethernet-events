@@ -488,6 +488,12 @@ class Kiosk extends Component
     {
         $this->authorize('manage kiosk');
 
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
+
         $this->deletingPurchaseId = $purchaseId;
         $this->modal('delete-purchase-modal')->show();
     }
@@ -498,6 +504,12 @@ class Kiosk extends Component
     public function deletePurchase(): void
     {
         $this->authorize('manage kiosk');
+
+        if ($this->event->isFinished()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
 
         if ($this->deletingPurchaseId) {
             $purchase = $this->event->kiosk?->purchases()->findOrFail($this->deletingPurchaseId);

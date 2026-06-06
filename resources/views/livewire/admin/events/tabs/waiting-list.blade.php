@@ -43,7 +43,14 @@
                     <flux:table.cell>{{ $waiting->created_at->diffForHumans() }}</flux:table.cell>
 
                     <flux:table.cell align="end">
-                        <flux:button wire:click="moveToParticipants({{ $waiting->id }})" size="sm" variant="primary" class="cursor-pointer">
+                        <flux:button
+                            wire:click="moveToParticipants({{ $waiting->id }})"
+                            size="sm"
+                            variant="primary"
+                            class="cursor-pointer"
+                            :disabled="$event->isFinished()"
+                            :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                        >
                             {{ __('Move to Participants') }}
                         </flux:button>
                     </flux:table.cell>
