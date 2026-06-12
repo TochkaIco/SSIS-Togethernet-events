@@ -11,6 +11,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Show extends Component
@@ -20,6 +21,37 @@ class Show extends Component
     public array $selectedClasses = [];
 
     public array $attendance = [];
+
+    #[Computed]
+    public function stats(): array
+    {
+        $totalMembers = User::whereHas('roles', fn ($q) => $q->where('name', 'tog-member'))->count();
+
+        $attendedCount = MeetingAttendant::where('meeting_id', $this->meeting->id)
+            ->where('has_attended', true)
+            ->count();
+
+        $attendedUserIds = MeetingAttendant::where('meeting_id', $this->meeting->id)
+            ->where('has_attended', true)
+            ->pluck('attendant_id');
+
+        $classData = User::whereIn('id', $attendedUserIds)
+            ->selectRaw('class, COUNT(*) as count')
+            ->groupBy('class')
+            ->get();
+
+        return [
+            'total_members' => $totalMembers,
+            'attended' => $attendedCount,
+            'absent' => max(0, $totalMembers - $attendedCount),
+            'attendance_rate' => $totalMembers > 0 ? (int) round(($attendedCount / $totalMembers) * 100) : 0,
+            'class_distribution' => [
+                'labels' => $classData->pluck('class')->map(fn ($c) => $c ?? __('Unknown'))->toArray(),
+                'data' => $classData->pluck('count')->toArray(),
+                'colors' => $classData->map(fn ($item) => '#'.substr(md5($item->class ?? 'Unknown'), 0, 6))->toArray(),
+            ],
+        ];
+    }
 
     public function mount(Meeting $meeting): void
     {

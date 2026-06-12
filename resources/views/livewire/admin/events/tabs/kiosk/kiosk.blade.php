@@ -24,6 +24,9 @@
                 <flux:navbar.item wire:click="setSubTab('sell')" :current="$subTab === 'sell'" class="cursor-pointer">
                     {{ __('Sell') }}
                 </flux:navbar.item>
+                <flux:navbar.item wire:click="setSubTab('stats')" :current="$subTab === 'stats'" class="cursor-pointer">
+                    {{ __('Stats') }}
+                </flux:navbar.item>
             </flux:navbar>
 
             <div class="flex gap-2">
@@ -302,6 +305,178 @@
                             </flux:button>
                         @endif
                     </div>
+                </div>
+            </div>
+        @elseif($subTab === 'stats')
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <div class="flex items-center gap-3">
+                            <flux:icon.banknotes variant="outline" class="size-6" />
+                            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Total Revenue') }}</span>
+                        </div>
+                        <div class="text-3xl mt-1 font-bold">{{ number_format($this->stats['total_revenue']) }} kr</div>
+                    </flux:card>
+
+                    <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <div class="flex items-center gap-3">
+                            <flux:icon.shopping-cart variant="outline" class="size-6" />
+                            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Transactions') }}</span>
+                        </div>
+                        <div class="text-3xl mt-1 font-bold">{{ $purchases->total() }}</div>
+                    </flux:card>
+
+                    <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <div class="flex items-center gap-3">
+                            <flux:icon.archive-box variant="outline" class="size-6" />
+                            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Items Sold') }}</span>
+                        </div>
+                        <div class="text-3xl mt-1 font-bold">{{ array_sum($this->stats['top_articles']['quantities']) }}</div>
+                    </flux:card>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {{-- Revenue by Category --}}
+                    <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <h2 class="text-lg font-bold mb-4">{{ __('Revenue by Category') }}</h2>
+                        @if(!empty($this->stats['category_distribution']['data']))
+                            <div
+                                x-data="{
+                                    init() {
+                                        const isMobile = window.innerWidth < 768;
+                                        const dist = @js($this->stats['category_distribution']);
+                                        new Chart(this.$refs.kioskCategoryChart, {
+                                            type: 'doughnut',
+                                            data: {
+                                                labels: dist.labels,
+                                                datasets: [{
+                                                    data: dist.data,
+                                                    backgroundColor: dist.colors,
+                                                    borderWidth: 2,
+                                                    hoverOffset: 5
+                                                }]
+                                            },
+                                            options: {
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                plugins: {
+                                                    legend: {
+                                                        position: 'bottom',
+                                                        labels: { usePointStyle: true, padding: 15, font: { size: isMobile ? 10 : 12 } }
+                                                    },
+                                                    tooltip: {
+                                                        callbacks: {
+                                                            label: function(context) {
+                                                                return `${context.label}: ${context.raw.toLocaleString()} kr`;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }"
+                                class="h-64"
+                            >
+                                <canvas x-ref="kioskCategoryChart"></canvas>
+                            </div>
+                        @else
+                            <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                                <flux:icon.chart-pie class="size-12 mb-4 opacity-20" />
+                                <p>{{ __('No data available.') }}</p>
+                            </div>
+                        @endif
+                    </flux:card>
+
+                    {{-- Top Selling Articles --}}
+                    <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <h2 class="text-lg font-bold mb-4">{{ __('Top Selling Articles') }}</h2>
+                        @if(!empty($this->stats['top_articles']['labels']))
+                            <div
+                                x-data="{
+                                    init() {
+                                        const isMobile = window.innerWidth < 768;
+                                        new Chart(this.$refs.topArticlesChart, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: @js($this->stats['top_articles']['labels']),
+                                                datasets: [{
+                                                    label: '{{ __('Quantity Sold') }}',
+                                                    data: @js($this->stats['top_articles']['quantities']),
+                                                    backgroundColor: '#fb923c',
+                                                    borderRadius: 6
+                                                }]
+                                            },
+                                            options: {
+                                                indexAxis: 'y',
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                plugins: {
+                                                    legend: { display: false }
+                                                },
+                                                scales: {
+                                                    x: { beginAtZero: true, ticks: { precision: 0 } }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }"
+                                class="h-64"
+                            >
+                                <canvas x-ref="topArticlesChart"></canvas>
+                            </div>
+                        @else
+                            <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                                <flux:icon.shopping-bag class="size-12 mb-4 opacity-20" />
+                                <p>{{ __('No data available.') }}</p>
+                            </div>
+                        @endif
+                    </flux:card>
+
+                    {{-- Hourly Sales Trend --}}
+                    <flux:card class="lg:col-span-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <h2 class="text-lg font-bold mb-4">{{ __('Hourly Sales Trend') }}</h2>
+                        @if(!empty($this->stats['hourly_sales']['labels']))
+                            <div
+                                x-data="{
+                                    init() {
+                                        const isMobile = window.innerWidth < 768;
+                                        new Chart(this.$refs.hourlySalesChart, {
+                                            type: 'line',
+                                            data: {
+                                                labels: @js($this->stats['hourly_sales']['labels']),
+                                                datasets: [{
+                                                    label: '{{ __('Revenue (kr)') }}',
+                                                    data: @js($this->stats['hourly_sales']['data']),
+                                                    borderColor: '#8b5cf6',
+                                                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                                                    fill: true,
+                                                    tension: 0.3,
+                                                    pointRadius: 4
+                                                }]
+                                            },
+                                            options: {
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                scales: {
+                                                    y: { beginAtZero: true },
+                                                    x: { grid: { display: false } }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }"
+                                class="h-64"
+                            >
+                                <canvas x-ref="hourlySalesChart"></canvas>
+                            </div>
+                        @else
+                            <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                                <flux:icon.clock class="size-12 mb-4 opacity-20" />
+                                <p>{{ __('No data available.') }}</p>
+                            </div>
+                        @endif
+                    </flux:card>
                 </div>
             </div>
         @endif

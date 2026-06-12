@@ -23,6 +23,115 @@
         @endif
     </div>
 
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {{-- Event Stats Overview --}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <h2 class="text-lg font-bold mb-4">{{ __('Attendance Overview') }}</h2>
+
+            <div class="space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                        <span class="block text-sm text-zinc-500 dark:text-zinc-400 mb-1">{{ __('Registrations') }}</span>
+                        <span class="text-2xl font-bold">{{ $this->stats['registrations'] }}</span>
+                    </div>
+                    <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                        <span class="block text-sm text-zinc-500 dark:text-zinc-400 mb-1">{{ __('Attendance') }}</span>
+                        <span class="text-2xl font-bold">{{ $this->stats['attendance'] }}</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium">{{ __('Attendance Rate') }}</span>
+                        <span class="text-sm font-bold text-orange-500">{{ $this->stats['attendance_rate'] }}%</span>
+                    </div>
+                    <div class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2.5">
+                        <div class="bg-orange-500 h-2.5 rounded-full" style="width: {{ $this->stats['attendance_rate'] }}%"></div>
+                    </div>
+                </div>
+
+                @if($event->num_of_seats > 0)
+                    @php
+                        $fillRate = round(($this->stats['registrations'] / $event->num_of_seats) * 100);
+                    @endphp
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium">{{ __('Capacity Usage') }}</span>
+                            <span class="text-sm font-bold text-blue-500">{{ $fillRate }}%</span>
+                        </div>
+                        <div class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2.5">
+                            <div class="bg-blue-500 h-2.5 rounded-full" style="width: {{ min(100, $fillRate) }}%"></div>
+                        </div>
+                        <p class="text-[10px] text-zinc-500 mt-1 text-right">
+                            {{ $this->stats['registrations'] }} / {{ $event->num_of_seats }} {{ __('seats taken') }}
+                        </p>
+                    </div>
+                @endif
+            </div>
+        </flux:card>
+
+        {{-- Class Distribution Chart --}}
+        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <h2 class="text-lg font-bold mb-4">{{ __('Class Breakdown') }}</h2>
+            @if($this->stats['registrations'] > 0)
+                <div
+                    x-data="{
+                        init() {
+                            const isMobile = window.innerWidth < 768;
+                            const dist = @js($this->stats['class_distribution']);
+                            new Chart(this.$refs.eventClassChart, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: dist.labels,
+                                    datasets: [{
+                                        data: dist.data,
+                                        backgroundColor: dist.colors,
+                                        borderWidth: 2,
+                                        hoverOffset: 5
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    cutout: '0%',
+                                    plugins: {
+                                        legend: {
+                                            position: 'bottom',
+                                            labels: {
+                                                usePointStyle: true,
+                                                padding: isMobile ? 10 : 20,
+                                                font: { size: isMobile ? 10 : 12 }
+                                            }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    const label = context.label || '';
+                                                    const value = context.raw || 0;
+                                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                    const percentage = Math.round((value / total) * 100);
+                                                    return `${label}: ${value} (${percentage}%)`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }"
+                    class="h-64"
+                >
+                    <canvas x-ref="eventClassChart"></canvas>
+                </div>
+            @else
+                <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                    <flux:icon.users class="size-12 mb-4 opacity-20" />
+                    <p>{{ __('No participants yet.') }}</p>
+                </div>
+            @endif
+        </flux:card>
+    </div>
+
     @if($event->image_path)
         <div class="rounded-lg overflow-hidden mb-6 group relative">
             <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-128 object-cover">

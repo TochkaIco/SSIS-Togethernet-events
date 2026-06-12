@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -27,6 +28,61 @@ class Kiosk extends Component
 
     #[Url]
     public string $subTab = 'articles';
+
+    #[Computed]
+    public function stats(): array
+    {
+        $kiosk = $this->event->kiosk;
+        if (! $kiosk) {
+            return [];
+        }
+
+        $totalRevenue = $kiosk->purchases()->sum('cost');
+
+        $salesByCategory = DB::table('event_kiosk_purchase_items')
+            ->join('event_kiosk_articles', 'event_kiosk_purchase_items.article_id', '=', 'event_kiosk_articles.id')
+            ->join('event_kiosk_categories', 'event_kiosk_articles.category_id', '=', 'event_kiosk_categories.id')
+            ->join('event_kiosk_purchases', 'event_kiosk_purchase_items.purchase_id', '=', 'event_kiosk_purchases.id')
+            ->where('event_kiosk_purchases.kiosk_id', $kiosk->id)
+            ->selectRaw('event_kiosk_categories.name as category_name, SUM(event_kiosk_purchase_items.cost) as total')
+            ->groupBy('event_kiosk_categories.name')
+            ->get();
+
+        $topSellingArticles = DB::table('event_kiosk_purchase_items')
+            ->join('event_kiosk_articles', 'event_kiosk_purchase_items.article_id', '=', 'event_kiosk_articles.id')
+            ->join('event_kiosk_purchases', 'event_kiosk_purchase_items.purchase_id', '=', 'event_kiosk_purchases.id')
+            ->where('event_kiosk_purchases.kiosk_id', $kiosk->id)
+            ->selectRaw('event_kiosk_articles.name as article_name, SUM(event_kiosk_purchase_items.amount) as total_quantity, SUM(event_kiosk_purchase_items.cost) as total_revenue')
+            ->groupBy('event_kiosk_articles.name')
+            ->orderByDesc('total_quantity')
+            ->take(10)
+            ->get();
+
+        $hourlySales = DB::table('event_kiosk_purchases')
+            ->where('kiosk_id', $kiosk->id)
+            ->selectRaw('DATE_FORMAT(created_at, "%H:00") as hour, SUM(cost) as total')
+            ->groupBy('hour')
+            ->orderBy('hour')
+            ->get();
+
+        return [
+            'total_revenue' => (int) $totalRevenue,
+            'category_distribution' => [
+                'labels' => $salesByCategory->pluck('category_name')->toArray(),
+                'data' => $salesByCategory->pluck('total')->map(fn ($t) => (int) $t)->toArray(),
+                'colors' => $salesByCategory->map(fn ($item) => '#'.substr(md5($item->category_name), 0, 6))->toArray(),
+            ],
+            'top_articles' => [
+                'labels' => $topSellingArticles->pluck('article_name')->toArray(),
+                'quantities' => $topSellingArticles->pluck('total_quantity')->map(fn ($t) => (int) $t)->toArray(),
+                'revenues' => $topSellingArticles->pluck('total_revenue')->map(fn ($t) => (int) $t)->toArray(),
+            ],
+            'hourly_sales' => [
+                'labels' => $hourlySales->pluck('hour')->toArray(),
+                'data' => $hourlySales->pluck('total')->map(fn ($t) => (int) $t)->toArray(),
+            ],
+        ];
+    }
 
     public string $imagePath = '';
 
