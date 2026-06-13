@@ -206,6 +206,8 @@
     "Click here to join our Discord! <a href=\"https://discord.gg/WDYR8DP9gc\" class=\"hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground\">https://discord.gg/WDYR8DP9gc</a>": "Klicka här för att gå med i vår Discord! <a href=\"https://discord.gg/WDYR8DP9gc\" class=\"hover:underline hover:text-orange-300 cursor-pointer text-muted-foreground\">https://discord.gg/WDYR8DP9gc</a>",
     "The website is not working correctly, what do I do?": "Webbplatsen fungerar inte som den ska, vad gör jag?",
     "If you discover any issues – please leave :feedback or contact our current maintainer at :email": "Om du upptäcker några fel – skriv gärna :feedback eller kontakta vår nuvarande maintainer på :email",
+    "I can no longer access my account after graduating. Why is that?": "Jag kan inte längre komma åt mitt konto efter jag blev alumn. Varför är det så?",
+    "Togethernet is currently focused on serving the active SSIS student community, so accounts are automatically deactivated upon graduation. However, we value our alumni! If you would like to keep your account, please contact us, and we will gladly help you get that set up.": "Togethernet fokuserar för närvarande på att betjäna de aktiva SSIS studenter, så konton inaktiveras automatiskt när man blir alumn. Vi värdesätter dock våra alumner! Om du vill behålla ditt konto, vänligen kontakta oss, så hjälper vi dig gärna att konfigurera det.",
     "Rules": "Regler",
     "General Rules": "Generella Regler",
     "QR-Tag Rules": "QR-Tag Regler",

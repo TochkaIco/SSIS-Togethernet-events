@@ -28,6 +28,12 @@
                 </div>
             </x-faq.answer>
             <x-faq.question>
+                {{ __('I can no longer access my account after graduating. Why is that?') }}
+            </x-faq.question>
+            <x-faq.answer>
+                {{ __('Togethernet is currently focused on serving the active SSIS student community, so accounts are automatically deactivated upon graduation. However, we value our alumni! If you would like to keep your account, please contact us, and we will gladly help you get that set up.') }}
+            </x-faq.answer>
+            <x-faq.question>
                 {{ __('What is QR Tag?') }}
             </x-faq.question>
             <x-faq.answer>
