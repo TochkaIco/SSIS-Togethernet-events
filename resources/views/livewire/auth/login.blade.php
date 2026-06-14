@@ -9,11 +9,17 @@
         <x-auth-session-status class="text-center" :status="session('status')" />
 
         <div class="flex flex-col gap-3 items-center">
-            <flux:description>
-                {{ __('Only Google OAuth logins are supported.') }}
-            </flux:description>
+            @if(AppConfig::get('active_auth_provider', 'google') === 'google')
+                <flux:description>
+                    {{ __('Only Google OAuth logins are supported.') }}
+                </flux:description>
+            @endif
             <flux:button type="button" variant="primary" href="{{ route('auth.login') }}" class="w-full h-16" data-test="google-login-button">
-                {{ __('Log in via Google') }}
+                @if(AppConfig::get('active_auth_provider', 'google') === 'google')
+                    {{ __('Log in via Google') }}
+                @else
+                    {{ __('Log in') }}
+                @endif
             </flux:button>
             <flux:separator />
             <flux:button type="button" :href="route('home')" class="w-full" data-test="back-button">

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\LdapService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\AbstractProvider;
@@ -53,7 +54,7 @@ class OAuthController extends Controller
 
             return $this->handleProviderCallback($user, $provider);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("OAuth Callback Error ({$provider}): ".$e->getMessage(), [
+            Log::error("OAuth Callback Error ({$provider}): ".$e->getMessage(), [
                 'exception' => $e,
                 'provider' => $provider,
             ]);

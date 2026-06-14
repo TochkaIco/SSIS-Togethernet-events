@@ -48,6 +48,7 @@ return [
         'client_id' => env('ELEVKAR_CLIENT_ID'),
         'client_secret' => env('ELEVKAR_CLIENT_SECRET'),
         'redirect' => env('ELEVKAR_REDIRECT_URI'),
+        'base_url' => env('ELEVKAR_BASE_URL', 'https://elevkar-auth.ssis.nu'),
     ],
 
     'discord' => [
