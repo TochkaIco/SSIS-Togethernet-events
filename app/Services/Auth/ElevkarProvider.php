@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Auth;
 
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
 use Laravel\Socialite\Two\User;
@@ -50,20 +51,19 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
         $fields = [
             'grant_type' => 'authorization_code',
             'code' => $code,
-            'code_verifier' => $this->request->session()->pull('code_verifier'),
+            'code_verifier' => $this->request->session()->get('code_verifier'),
             'redirect_uri' => $this->redirectUrl,
             'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
         ];
 
-        $response = $this->getHttpClient()->post($this->getTokenUrl(), [
-            'headers' => [
+        return Http::asForm()
+            ->withHeaders([
                 'Accept' => 'application/json',
                 'X-Requested-With' => 'XMLHttpRequest',
-            ],
-            'form_params' => $fields,
-        ]);
-
-        return json_decode($response->getBody()->getContents(), true);
+            ])
+            ->post($this->getTokenUrl(), $fields)
+            ->json();
     }
 
     protected function mapUserToObject(array $user): User
