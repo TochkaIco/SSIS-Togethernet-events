@@ -68,9 +68,9 @@ class OAuthController extends Controller
     {
         /** @var \Laravel\Socialite\Two\User $oauthUser */
         if ($provider === 'elevkar') {
-            $name = $oauthUser->user['name'] ?? $oauthUser->getName() ?? 'Unknown';
-            $class = $oauthUser->user['user_class'] ?? 'Unknown';
-            $avatar = $oauthUser->user['picture'] ?? $oauthUser->getAvatar();
+            $name = $oauthUser->getName() ?? 'Unknown';
+            $class = $oauthUser->user['user_class'] ?? $oauthUser->user['class'] ?? 'Unknown';
+            $avatar = $oauthUser->getAvatar();
         } else {
             $ldapData = $this->ldapService->fetchUserData($oauthUser->getEmail());
             $name = $ldapData['name'];

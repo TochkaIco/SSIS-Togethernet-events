@@ -183,11 +183,10 @@ class User extends Authenticatable
         $tokenToRevoke = $this->elevkar_refresh_token ?? $this->elevkar_token;
 
         if ($tokenToRevoke) {
-            $response = Http::withHeaders([
-                'Accept' => 'application/json',
-                'X-Requested-With' => 'XMLHttpRequest',
-            ])
-                ->asForm()
+            $response = Http::asForm()
+                ->withHeaders([
+                    'Origin' => 'https://elevkar-auth.ssis.nu',
+                ])
                 ->post('https://elevkar-auth.ssis.nu/api/auth/oauth2/revoke', [
                     'token' => $tokenToRevoke,
                     'client_id' => config('services.elevkar.client_id'),

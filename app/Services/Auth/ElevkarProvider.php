@@ -36,42 +36,54 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
 
     protected function getUserByToken($token)
     {
-        return Http::withHeaders([
-            'Authorization' => 'Bearer '.$token,
-            'Accept' => 'application/json',
-            'X-Requested-With' => 'XMLHttpRequest',
-        ])
-            ->get($this->getBaseUrl().'/api/auth/oauth2/userinfo')
-            ->json();
+        $response = Http::withToken($token)
+            ->get($this->getBaseUrl().'/api/auth/oauth2/userinfo');
+
+        if ($response->failed()) {
+            throw new \RuntimeException("Failed to retrieve user info: {$response->body()} (Status: {$response->status()})");
+        }
+
+        return $response->json();
     }
 
     public function getAccessTokenResponse($code)
     {
+        $verifier = $this->request->session()->get('code_verifier');
+
+        if (! $verifier) {
+            throw new \RuntimeException('PKCE code_verifier missing from session. Ensure session is working and not cleared.');
+        }
+
         $fields = [
             'grant_type' => 'authorization_code',
             'code' => $code,
-            'code_verifier' => $this->request->session()->get('code_verifier'),
+            'code_verifier' => $verifier,
             'redirect_uri' => $this->redirectUrl,
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
         ];
 
-        return Http::asForm()
+        $response = Http::asForm()
             ->withHeaders([
-                'Accept' => 'application/json',
-                'X-Requested-With' => 'XMLHttpRequest',
+                'Origin' => $this->getBaseUrl(),
             ])
-            ->post($this->getTokenUrl(), $fields)
-            ->json();
+            ->post($this->getTokenUrl(), $fields);
+
+        if ($response->failed()) {
+            throw new \RuntimeException("Failed to retrieve access token: {$response->body()} (Status: {$response->status()})");
+        }
+
+        return $response->json();
     }
 
     protected function mapUserToObject(array $user): User
     {
         return (new User)->setRaw($user)->map([
-            'id' => $user['sub'] ?? null,
+            'id' => $user['sub'] ?? $user['id'] ?? null,
             'name' => $user['name'] ?? null,
             'email' => $user['email'] ?? null,
             'user_class' => $user['user_class'] ?? $user['class'] ?? null,
+            'avatar' => $user['picture'] ?? $user['avatar'] ?? null,
         ]);
     }
 }
