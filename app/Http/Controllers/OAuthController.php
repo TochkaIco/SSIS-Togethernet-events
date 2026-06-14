@@ -56,6 +56,7 @@ class OAuthController extends Controller
         } catch (\Exception $e) {
             Log::error("OAuth Callback Error ({$provider}): ".$e->getMessage(), [
                 'exception' => $e,
+                'trace' => $e->getTraceAsString(),
                 'provider' => $provider,
             ]);
 

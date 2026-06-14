@@ -36,14 +36,13 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
 
     protected function getUserByToken($token)
     {
-        $response = $this->getHttpClient()->get($this->getBaseUrl().'/api/auth/oauth2/userinfo', [
-            'headers' => [
-                'Authorization' => 'Bearer '.$token,
-                'Accept' => 'application/json',
-            ],
-        ]);
-
-        return json_decode($response->getBody()->getContents(), true);
+        return Http::withHeaders([
+            'Authorization' => 'Bearer '.$token,
+            'Accept' => 'application/json',
+            'X-Requested-With' => 'XMLHttpRequest',
+        ])
+            ->get($this->getBaseUrl().'/api/auth/oauth2/userinfo')
+            ->json();
     }
 
     public function getAccessTokenResponse($code)
