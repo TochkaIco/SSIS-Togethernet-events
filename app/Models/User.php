@@ -182,11 +182,8 @@ class User extends Authenticatable
     {
         if ($this->elevkar_token) {
             $response = Http::withHeaders([
-                'Origin' => 'https://elevkar-auth.ssis.nu',
-                'Referer' => 'https://elevkar-auth.ssis.nu/',
-                'Accept' => 'application/x-www-form-urlencoded',
+                'Accept' => 'application/json',
             ])
-                ->asForm()
                 ->post('https://elevkar-auth.ssis.nu/api/auth/oauth2/revoke', [
                     'token' => $this->elevkar_token,
                     'client_id' => config('services.elevkar.client_id'),

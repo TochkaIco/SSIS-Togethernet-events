@@ -45,6 +45,18 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
         return json_decode($response->getBody()->getContents(), true);
     }
 
+    public function getAccessTokenResponse($code)
+    {
+        $response = $this->getHttpClient()->post($this->getTokenUrl(), [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'json' => $this->getTokenFields($code),
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
     protected function mapUserToObject(array $user): User
     {
         return (new User)->setRaw($user)->map([
@@ -53,13 +65,5 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
             'email' => $user['email'] ?? null,
             'user_class' => $user['user_class'] ?? $user['class'] ?? null,
         ]);
-    }
-
-    protected function getTokenHeaders($token)
-    {
-        return [
-            'Accept' => 'application/json',
-            'Origin' => config('app.url'),
-        ];
     }
 }
