@@ -184,6 +184,7 @@ class User extends Authenticatable
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
             ])
+                ->asForm()
                 ->post('https://elevkar-auth.ssis.nu/api/auth/oauth2/revoke', [
                     'token' => $this->elevkar_token,
                     'client_id' => config('services.elevkar.client_id'),

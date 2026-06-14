@@ -51,7 +51,7 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
             'headers' => [
                 'Accept' => 'application/json',
             ],
-            'json' => $this->getTokenFields($code),
+            'form_params' => $this->getTokenFields($code),
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
