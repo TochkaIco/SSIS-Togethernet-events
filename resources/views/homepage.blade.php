@@ -16,7 +16,7 @@
                         @auth
                             <flux:button variant="primary" :href="route('events')" icon="layout-grid">{{ __('Browse Events') }}</flux:button>
                         @else
-                            <flux:button variant="primary" :href="route('auth.google')" icon="user-plus">{{ __('Join Us') }}</flux:button>
+                            <flux:button variant="primary" :href="route('auth.login')" icon="user-plus">{{ __('Join Us') }}</flux:button>
                         @endauth
                     </div>
                 </div>

@@ -25,7 +25,6 @@ use App\Livewire\Events\Index as PublicEvents;
 use App\Livewire\Events\QrTagTvView;
 use App\Livewire\UserFeedbackView;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 
 Route::view('/', 'homepage')->name('home');
 Route::view('/faq', 'faq')->name('faq');
@@ -82,12 +81,8 @@ Route::middleware(['auth', 'verified', 'tos.accepted'])->group(function () {
 });
 
 Route::middleware(['guest'])->group(function () {
-    Route::get('/auth/redirect', function () {
-        return Socialite::driver('google')
-            ->with(['prompt' => 'select_account'])
-            ->redirect();
-    })->name('auth.google');
-    Route::get('/api/auth/callback/google', [OAuthController::class, 'store'])->name('login.oauth');
+    Route::get('/auth/redirect', [OAuthController::class, 'redirect'])->name('auth.login');
+    Route::get('/api/auth/callback', [OAuthController::class, 'callback'])->name('login.callback');
 });
 
 require __DIR__.'/settings.php';

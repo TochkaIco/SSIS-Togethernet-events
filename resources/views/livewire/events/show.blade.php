@@ -78,7 +78,7 @@
                     @endif
                 @else
                     @if($event->canRegister())
-                        <flux:button href="{{ route('auth.google') }}" icon="user-plus" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl w-full sm:w-auto">{{ __('Login to register') }}</flux:button>
+                        <flux:button href="{{ route('auth.login') }}" icon="user-plus" variant="primary" class="cursor-pointer transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-2xl w-full sm:w-auto">{{ __('Login to register') }}</flux:button>
                     @endif
                 @endif
             </div>

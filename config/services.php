@@ -44,6 +44,12 @@ return [
         'hd' => env('GOOGLE_HD'),
     ],
 
+    'elevkar' => [
+        'client_id' => env('ELEVKAR_CLIENT_ID'),
+        'client_secret' => env('ELEVKAR_CLIENT_SECRET'),
+        'redirect' => env('ELEVKAR_REDIRECT_URI'),
+    ],
+
     'discord' => [
         'webhook_url' => env('DISCORD_WEBHOOK_URL'),
     ],

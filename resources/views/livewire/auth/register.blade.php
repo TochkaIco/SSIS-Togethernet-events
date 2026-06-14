@@ -60,7 +60,7 @@
         </form>
 
         <div class="flex items-center justify-end">
-            <flux:button :href="route('auth.google')" class="w-full" data-test="google-login-button">
+            <flux:button :href="route('auth.login')" class="w-full" data-test="google-login-button">
                 {{ __('Log in via Google') }}
             </flux:button>
         </div>

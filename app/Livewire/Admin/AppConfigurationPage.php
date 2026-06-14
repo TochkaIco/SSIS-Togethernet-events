@@ -13,14 +13,26 @@ use Livewire\Component;
 
 class AppConfigurationPage extends Component
 {
+    public bool $useElevkarAuth;
+
     public bool $allowExternal;
 
     public bool $automatedWaitingListMove;
 
     public function mount(): void
     {
+        $this->useElevkarAuth = AppConfig::get('active_auth_provider', 'google') === 'elevkar';
         $this->allowExternal = AppConfig::get('allow_external_emails', false);
         $this->automatedWaitingListMove = AppConfig::get('automated_waiting_list_move', true);
+    }
+
+    public function updatedUseElevkarAuth($value): void
+    {
+        AppConfig::updateOrCreate(['key' => 'active_auth_provider'], ['value' => $value ? 'elevkar' : 'google', 'type' => 'string']);
+
+        GlobalLog::log('App Configuration updated', 'config', ['key' => 'active_auth_provider', 'value' => $value ? 'elevkar' : 'google']);
+
+        Flux::toast(__('Setting saved.'), variant: 'success');
     }
 
     public function updatedAllowExternal($value): void

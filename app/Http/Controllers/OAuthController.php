@@ -5,98 +5,101 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\AppConfig;
-use App\Models\GlobalLog;
 use App\Models\User;
+use App\Services\LdapService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use Laravel\Socialite\Facades\Socialite;
-use Laravel\Socialite\Two\User as GoogleUser;
-use LdapRecord\Connection;
+use Laravel\Socialite\Two\AbstractProvider;
 
 class OAuthController extends Controller
 {
-    public function store()
+    public function __construct(
+        private readonly LdapService $ldapService
+    ) {}
+
+    public function redirect(): RedirectResponse
     {
-        $allowExternal = AppConfig::get('allow_external_emails', false);
-        try {
-            /** @var GoogleUser $googleUser */
-            $googleUser = Socialite::driver('google')->user();
-            if (! $allowExternal && (! empty(config('services.google.hd')) && data_get($googleUser->user, 'hd') !== config('services.google.hd')) && (! User::where('email', $googleUser->getEmail())->first())) {
-                abort(403);
-            }
-        } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Failed to fetch your data from Google, likely because you used an email not affiliated with SSIS');
+        $provider = AppConfig::get('active_auth_provider', 'google');
+
+        if ($provider === 'elevkar') {
+            /** @var AbstractProvider $driver */
+            $driver = Socialite::driver('elevkar');
+
+            return $driver->redirect();
         }
 
-        $ldapName = $googleUser->name;
-        $ldapClass = 'Unknown';
+        /** @var AbstractProvider $driver */
+        $driver = Socialite::driver('google');
+
+        return $driver->with(['prompt' => 'select_account'])->redirect();
+    }
+
+    public function callback(): RedirectResponse
+    {
+        $provider = AppConfig::get('active_auth_provider', 'google');
 
         try {
-            $usertag = str($googleUser->email)->before('@')->toString();
+            /** @var AbstractProvider $driver */
+            $driver = Socialite::driver($provider);
 
-            $connection = new Connection([
-                'hosts' => config('ldap.connections.default.hosts'),
-                'port' => config('ldap.connections.default.port'),
-                'use_ssl' => config('ldap.connections.default.use_ssl'),
-                'use_tls' => config('ldap.connections.default.use_tls'),
-                'base_dn' => config('ldap.connections.default.base_dn'),
-            ]);
-
-            $connection->auth()->attempt(
-                config('ldap.connections.default.username'),
-                config('ldap.connections.default.password'),
-                stayBound: true
-            );
-
-            $ldapUser = $connection->query()
-                ->in(config('ldap.connections.default.base_dn'))
-                ->where('sAMAccountName', '=', $usertag)
-                ->first();
-
-            if ($ldapUser) {
-                $givenName = $ldapUser['givenname'][0] ?? null;
-                $sn = $ldapUser['sn'][0] ?? null;
-
-                if ($givenName && $sn) {
-                    $ldapName = "$givenName $sn";
-                }
-                if (str_contains($ldapUser['dn'], 'OU=Personal')) {
-                    $ldapClass = 'Personal';
-                } else {
-                    $memberOf = array_filter($ldapUser['memberof'] ?? [], 'is_string');
-                    foreach ($memberOf as $group) {
-                        if (str_contains($group, 'OU=Klass')) {
-                            preg_match('/^CN=([^,]+)/', $group, $matches);
-                            $ldapClass = $matches[1] ?? 'Unknown';
-                            break;
-                        }
-                    }
-                }
+            if ($provider === 'elevkar') {
+                $driver->stateless();
             }
+
+            /** @var \Laravel\Socialite\Two\User $user */
+            $user = $driver->user();
+
+            return $this->handleProviderCallback($user, $provider);
         } catch (\Exception $e) {
-            \Log::error('LDAP error: '.$e->getMessage());
-            GlobalLog::log('LDAP error encountered during user login', 'system', ['error_message' => $e->getMessage()]);
+            return redirect('/login')->with('error', "Failed to fetch your data from {$provider}.");
+        }
+    }
+
+    private function handleProviderCallback(SocialiteUserContract $oauthUser, string $provider): RedirectResponse
+    {
+        /** @var \Laravel\Socialite\Two\User $oauthUser */
+        if ($provider === 'elevkar') {
+            $name = $oauthUser->user['name'] ?? $oauthUser->getName() ?? 'Unknown';
+            $class = $oauthUser->user['user_class'] ?? 'Unknown';
+            $avatar = $oauthUser->user['picture'] ?? $oauthUser->getAvatar();
+        } else {
+            $ldapData = $this->ldapService->fetchUserData($oauthUser->getEmail());
+            $name = $ldapData['name'];
+            $class = $ldapData['class'];
+            $avatar = $oauthUser->getAvatar();
+
+            $this->validateGoogleHd($oauthUser);
         }
 
-        $user = User::firstOrCreate(
-            ['email' => $googleUser->email],
+        $user = User::updateOrCreate(
+            ['email' => $oauthUser->getEmail()],
             [
-                'name' => $ldapName,
-                'class' => $ldapClass,
-                'google_id' => $googleUser->id,
-                'profile_picture' => $googleUser->getAvatar(),
+                'name' => $name,
+                'class' => $class,
+                'profile_picture' => $avatar,
+                "{$provider}_id" => $oauthUser->getId(),
+                "{$provider}_token" => $oauthUser->token,
+                "{$provider}_refresh_token" => $oauthUser->refreshToken,
             ]
         );
-
-        $user->update([
-            'google_token' => $googleUser->token,
-            'google_refresh_token' => $googleUser->refreshToken,
-        ]);
-        if (! $user->profile_picture) {
-            $user->update(['profile_picture' => $googleUser->getAvatar()]);
-        }
 
         Auth::login($user);
 
         return redirect('/');
+    }
+
+    private function validateGoogleHd(SocialiteUserContract $oauthUser): void
+    {
+        /** @var \Laravel\Socialite\Two\User $oauthUser */
+        $hd = config('services.google.hd');
+
+        if (! AppConfig::get('allow_external_emails', false) &&
+            ! empty($hd) &&
+            data_get($oauthUser->user, 'hd') !== $hd &&
+            ! User::where('email', $oauthUser->getEmail())->exists()) {
+            abort(403);
+        }
     }
 }

@@ -12,7 +12,7 @@
             <flux:description>
                 {{ __('Only Google OAuth logins are supported.') }}
             </flux:description>
-            <flux:button type="button" variant="primary" href="{{ route('auth.google') }}" class="w-full h-16" data-test="google-login-button">
+            <flux:button type="button" variant="primary" href="{{ route('auth.login') }}" class="w-full h-16" data-test="google-login-button">
                 {{ __('Log in via Google') }}
             </flux:button>
             <flux:separator />

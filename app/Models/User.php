@@ -13,7 +13,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -22,7 +24,24 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property-read EventUser $pivot
  */
-#[Fillable(['name', 'email', 'locale', 'class', 'profile_picture', 'last_activity_at', 'inactivity_warning_sent_at', 'google_id', 'google_token', 'google_refresh_token', 'anonymized_at', 'tos_accepted_at', 'tos_warning_sent_at'])]
+#[Fillable([
+    'name',
+    'email',
+    'locale',
+    'class',
+    'profile_picture',
+    'last_activity_at',
+    'inactivity_warning_sent_at',
+    'google_id',
+    'google_token',
+    'google_refresh_token',
+    'elevkar_id',
+    'elevkar_token',
+    'elevkar_refresh_token',
+    'anonymized_at',
+    'tos_accepted_at',
+    'tos_warning_sent_at',
+])]
 #[Hidden(['two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -156,9 +175,29 @@ class User extends Authenticatable
 
     /**
      * Remove the user by either deleting them (if no activity) or anonymizing them.
+     *
+     * @throws ConnectionException
      */
     public function remove(): void
     {
+        if ($this->elevkar_token) {
+            $response = Http::withHeaders([
+                'Origin' => 'https://elevkar-auth.ssis.nu',
+                'Referer' => 'https://elevkar-auth.ssis.nu/',
+                'Accept' => 'application/x-www-form-urlencoded',
+            ])
+                ->asForm()
+                ->post('https://elevkar-auth.ssis.nu/api/auth/oauth2/revoke', [
+                    'token' => $this->elevkar_token,
+                    'client_id' => config('services.elevkar.client_id'),
+                    'client_secret' => config('services.elevkar.client_secret'),
+                ]);
+
+            if (! $response->successful()) {
+                GlobalLog::log('Failed revoking elevkar-auth token for removed user', 'system', [$response->body(), $response->status()]);
+            }
+        }
+
         if ($this->hasActivity()) {
             $this->anonymize();
 
