@@ -180,13 +180,16 @@ class User extends Authenticatable
      */
     public function remove(): void
     {
-        if ($this->elevkar_token) {
+        $tokenToRevoke = $this->elevkar_refresh_token ?? $this->elevkar_token;
+
+        if ($tokenToRevoke) {
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
+                'X-Requested-With' => 'XMLHttpRequest',
             ])
                 ->asForm()
                 ->post('https://elevkar-auth.ssis.nu/api/auth/oauth2/revoke', [
-                    'token' => $this->elevkar_token,
+                    'token' => $tokenToRevoke,
                     'client_id' => config('services.elevkar.client_id'),
                     'client_secret' => config('services.elevkar.client_secret'),
                 ]);

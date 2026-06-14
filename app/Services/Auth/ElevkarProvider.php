@@ -47,11 +47,20 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
 
     public function getAccessTokenResponse($code)
     {
+        $fields = [
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+            'code_verifier' => $this->request->session()->pull('code_verifier'),
+            'redirect_uri' => $this->redirectUrl,
+            'client_id' => $this->clientId,
+        ];
+
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
             'headers' => [
                 'Accept' => 'application/json',
+                'X-Requested-With' => 'XMLHttpRequest',
             ],
-            'form_params' => $this->getTokenFields($code),
+            'form_params' => $fields,
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
