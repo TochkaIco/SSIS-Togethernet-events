@@ -58,12 +58,13 @@ Kontakt: togethernet@stockholmscience.se
 - **Kontaktuppgifter**: Namn och e-postadress.
 - **Profiluppgifter**: Klass och profilbild (synkroniseras ofta från organisationens katalog).
 - **Aktivitetsdata**: Evenemangsanmälningar, loggar för QR-tag-spel och mötesnärvaro.
-- **Systemloggar**: Administrativa åtgärder loggas för systemets säkerhet och integritet.
+- **Systemloggar och Metadata**: Administrativa åtgärder loggas för systemets säkerhet. Vi sparar även information om din **senaste inloggning** för att kunna hantera inaktiva konton och upprätthålla systemsäkerheten.
 
 ## 4. Syfte med behandling
 - **Order- och anmälanshantering**: För att administrera ditt deltagande i evenemang.
 - **Spelintegritet**: För att säkerställa att QR-tag-spel sker på ett rättvist sätt.
 - **Mötesadministration**: För att föra protokoll och närvarolistor vid möten.
+- **Säkerhet och Administration**: För att skydda tjänsten mot missbruk och för att hantera livscykeln för användarkonton (t.ex. identifiera inaktiva konton via metadata om senaste inloggning).
 - **Anonymisering**: För att automatiskt rensa data enligt våra gallringsregler. Detta inkluderar:
     - Konton tillhörande utexaminerade elever (anonymiseras årligen i juli).
     - Konton som varit inaktiva i mer än 7 månader.
@@ -89,3 +90,30 @@ Togethernet
 Organisationsnummer: 8025534440
 
 E-post: togethernet@stockholmscience.se
+
+---
+
+<a name="cookies"></a>
+# Cookiepolicy
+
+Senast uppdaterad: 2026-06-15
+
+Togethernet Events använder endast nödvändiga kakor (cookies) för att tjänsten ska fungera korrekt.
+
+## Vad är cookies?
+En cookie är en liten textfil som sparas på din dator eller mobila enhet när du besöker en webbplats.
+
+## Hur vi använder cookies
+Vi använder cookies uteslutande för att:
+- **Hantera din session**: För att veta vem du är när du navigerar mellan sidor.
+- **Säkerhet**: För att skydda ditt konto, förhindra obehörig åtkomst och möjliggöra för administratörer att övervaka kontosäkerhet (t.ex. via metadata om senaste inloggning).
+- **Inloggning**: För att hålla dig inloggad på tjänsten.
+
+## Ingen spårning eller marknadsföring
+Vi använder **inte** cookies för:
+- Marknadsföring eller reklam.
+- Spårning av ditt beteende på andra webbplatser.
+- Analys av din användning via tredjepartstjänster (såsom Google Analytics).
+
+## Hantering av cookies
+Eftersom vi endast använder nödvändiga cookies krävs inte ditt samtycke för dessa enligt lag. Om du väljer att stänga av cookies i din webbläsare kommer Tjänsten inte att fungera korrekt då vi inte kan identifiera din inloggning.

@@ -36,8 +36,16 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
 
     protected function getUserByToken($token)
     {
+        $baseUrl = $this->getBaseUrl();
+
         $response = Http::withToken($token)
-            ->get($this->getBaseUrl().'/api/auth/oauth2/userinfo');
+            ->withHeaders([
+                'Origin' => $baseUrl,
+                'Referer' => $baseUrl.'/',
+                'Accept' => '*/*',
+            ])
+            ->withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+            ->get($baseUrl.'/api/auth/oauth2/userinfo');
 
         if ($response->failed()) {
             throw new \RuntimeException("Failed to retrieve user info: {$response->body()} (Status: {$response->status()})");
@@ -48,10 +56,14 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
 
     public function getAccessTokenResponse($code)
     {
+        if (! $this->request->hasSession()) {
+            throw new \RuntimeException('Session store not set on request. Ensure the callback route is in the "web" middleware group.');
+        }
+
         $verifier = $this->request->session()->get('code_verifier');
 
         if (! $verifier) {
-            throw new \RuntimeException('PKCE code_verifier missing from session. Ensure session is working and not cleared.');
+            throw new \RuntimeException('PKCE code_verifier missing from session. If this only happens in production, check your SESSION_DOMAIN, SESSION_SECURE_COOKIE, and TRUSTED_PROXIES settings.');
         }
 
         $fields = [
@@ -59,18 +71,24 @@ class ElevkarProvider extends AbstractProvider implements ProviderInterface
             'code' => $code,
             'code_verifier' => $verifier,
             'redirect_uri' => $this->redirectUrl,
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
+            'client_id' => config('services.elevkar.client_id'),
+            'client_secret' => config('services.elevkar.client_secret'),
         ];
+
+        $url = $this->getTokenUrl();
+        $baseUrl = $this->getBaseUrl();
 
         $response = Http::asForm()
             ->withHeaders([
-                'Origin' => $this->getBaseUrl(),
+                'Origin' => $baseUrl,
+                'Referer' => $baseUrl.'/',
+                'Accept' => '*/*',
             ])
-            ->post($this->getTokenUrl(), $fields);
+            ->withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+            ->post($url, $fields);
 
         if ($response->failed()) {
-            throw new \RuntimeException("Failed to retrieve access token: {$response->body()} (Status: {$response->status()})");
+            throw new \RuntimeException("Failed to retrieve access token from {$url}: {$response->body()} (Status: {$response->status()})");
         }
 
         return $response->json();
