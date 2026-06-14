@@ -589,5 +589,6 @@
     "Attendees": "Närvarande",
     "Minutes": "Minuter",
     "Count": "Antal",
-    "Rate (%)": "Grad (%)"
+    "Rate (%)": "Grad (%)",
+    "You cannot delete a user with a higher role than yours.": "Du kan inte ta bort en användare med en högre roll än din."
 }

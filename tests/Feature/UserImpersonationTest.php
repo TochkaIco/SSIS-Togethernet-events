@@ -60,3 +60,26 @@ test('searching for users works', function () {
             return $users->count() === 1 && $users->first()->name === 'John Doe';
         });
 });
+
+test('maintainer can impersonate an admin', function () {
+    $maintainer = User::factory()->create();
+    $maintainer->assignRole('maintainer');
+
+    $admin = User::factory()->create(['name' => 'Admin User']);
+    $admin->assignRole('admin');
+
+    Livewire::actingAs($maintainer)
+        ->test(UserImpersonationPage::class)
+        ->call('impersonate', $admin->id)
+        ->assertRedirect(route('impersonate', $admin->id));
+});
+
+test('maintainer cannot impersonate themselves', function () {
+    $maintainer = User::factory()->create();
+    $maintainer->assignRole('maintainer');
+
+    Livewire::actingAs($maintainer)
+        ->test(UserImpersonationPage::class)
+        ->call('impersonate', $maintainer->id)
+        ->assertNoRedirect();
+});

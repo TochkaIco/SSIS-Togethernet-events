@@ -75,6 +75,9 @@ class User extends Authenticatable
             'google_id' => null,
             'google_token' => null,
             'google_refresh_token' => null,
+            'elevkar_id' => null,
+            'elevkar_token' => null,
+            'elevkar_refresh_token' => null,
             'anonymized_at' => now(),
         ]);
 
@@ -239,6 +242,11 @@ class User extends Authenticatable
 
     public function canBeImpersonated(): bool
     {
+        // Let maintainer impersonate whoever besides themselve
+        if (auth()->check() && auth()->user()->hasRole('maintainer')) {
+            return $this->id !== auth()->id();
+        }
+
         return ! $this->hasAnyRole('admin|super-admin|maintainer');
     }
 

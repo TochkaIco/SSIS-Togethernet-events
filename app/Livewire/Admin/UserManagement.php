@@ -172,6 +172,14 @@ class UserManagement extends Component
         // 1. Check permission immediately
         $this->authorize('delete users');
 
+        $user = User::findOrFail($userId);
+
+        if ($this->getHighestRoleLevel(Auth::user()) < $this->getHighestRoleLevel($user)) {
+            Flux::toast(text: __('You cannot delete a user with a higher role than yours.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
         $this->userToDelete = $userId;
         $this->modal('confirm-user-deletion')->show();
     }
@@ -184,6 +192,12 @@ class UserManagement extends Component
 
         if ($user->id === auth()->id()) {
             Flux::toast(text: __('You cannot delete yourself.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        if ($this->getHighestRoleLevel(Auth::user()) < $this->getHighestRoleLevel($user)) {
+            Flux::toast(text: __('You cannot delete a user with a higher role than yours.'), heading: __('Error'), variant: 'danger');
 
             return;
         }
@@ -202,6 +216,21 @@ class UserManagement extends Component
         $this->authorize('manage users');
 
         return redirect()->route('admin.user.profile', $userId);
+    }
+
+    /**
+     * Get the highest role level of a user.
+     */
+    private function getHighestRoleLevel(User $user): int
+    {
+        $roleHierarchy = [
+            'maintainer' => 4,
+            'super-admin' => 3,
+            'admin' => 2,
+            'tog-member' => 1,
+        ];
+
+        return $user->getRoleNames()->max(fn ($name) => $roleHierarchy[$name] ?? 0) ?? 0;
     }
 
     #[Layout('layouts.app')]
