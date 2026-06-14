@@ -53,6 +53,11 @@ class OAuthController extends Controller
 
             return $this->handleProviderCallback($user, $provider);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("OAuth Callback Error ({$provider}): ".$e->getMessage(), [
+                'exception' => $e,
+                'provider' => $provider,
+            ]);
+
             return redirect('/login')->with('error', "Failed to fetch your data from {$provider}.");
         }
     }
