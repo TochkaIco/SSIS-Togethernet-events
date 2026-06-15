@@ -269,9 +269,9 @@ class Participants extends Component
             'allClassGroups' => [
                 'Personal',
                 'Alumni',
-                'TE'.now()->subMonths(7)->format('y'),
-                'TE'.now()->subMonths(7)->subYear()->format('y'),
-                'TE'.now()->subMonths(7)->subYears(2)->format('y'),
+                'TE'.now()->subMonths(6)->addDays(20)->format('y'),
+                'TE'.now()->subMonths(6)->addDays(20)->subYear()->format('y'),
+                'TE'.now()->subMonths(6)->addDays(20)->subYears(2)->format('y'),
             ],
         ]);
     }
