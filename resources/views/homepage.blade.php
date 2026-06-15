@@ -2,7 +2,31 @@
     <div class="flex mt-12 items-center justify-center w-full">
         <div class="w-full max-w-4xl px-2 lg:px-0">
             <flux:card size="none" class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                <img src="{{ asset('/images/togethernet-feature.jpg') }}" alt="Image" class="w-full h-48 md:h-64 object-cover rounded-t-xl">
+                <div x-data="{
+                        images: [
+                            '/images/togethernet-feature.jpg',
+                            '/images/monochrome-feature.jpg',
+                            '/images/karaoke-feature.jpg'
+                        ],
+                        active: 0
+                    }"
+                                         x-init="setInterval(() => {
+                        active = (active + 1) % images.length
+                    },4500)"
+                     class="relative w-full h-36 md:h-64 overflow-hidden rounded-t-xl">
+                    <template x-for="(image, index) in images" :key="index">
+                        <img :src="image"
+                             x-show="active === index"
+                             x-transition:enter="transition-opacity duration-900 ease-in-out"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition-opacity duration-900 ease-in-out"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="absolute inset-0 w-full h-full object-cover"
+                             alt="{{ __('Feature Image') }}">
+                    </template>
+                </div>
                 <div class="p-4 pt-3 md:p-6 md:pt-5">
                     <flux:heading size="xl" class="mb-2 flex flex-wrap items-center gap-x-2 text-2xl md:text-3xl lg:col-span-2">
                         <span>{{ __('Welcome to') }}</span>
