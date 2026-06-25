@@ -49,12 +49,46 @@
         </aside>
 
         <!-- Mobile sub-nav -->
-        <div class="lg:hidden">
-            <flux:select x-on:change="Livewire.navigate('/docs/' + $event.target.value)">
-                @foreach($pages as $slug => $pageTitle)
-                    <option value="{{ $slug }}" @selected($currentPage === $slug)>{{ $pageTitle }}</option>
-                @endforeach
-            </flux:select>
+        <div class="space-y-4 lg:hidden">
+            <div>
+                <flux:heading size="sm" class="mb-2 text-zinc-500 uppercase tracking-wider">{{ __('Documentation') }}</flux:heading>
+                <flux:select x-on:change="Livewire.navigate('/docs/' + $event.target.value)">
+                    @foreach($pages as $slug => $pageTitle)
+                        <option value="{{ $slug }}" @selected($currentPage === $slug)>{{ $pageTitle }}</option>
+                    @endforeach
+                </flux:select>
+            </div>
+
+            @php
+                $devLinks = array_filter([
+                    'repo' => config('app.dev_info.repo'),
+                    'openshift_url' => config('app.dev_info.openshift_url'),
+                    'jira_url' => config('app.dev_info.jira_url'),
+                    'sentry_url' => config('app.dev_info.sentry_url'),
+                    'argocd_url' => config('app.dev_info.argocd_url'),
+                ]);
+            @endphp
+
+            @if(!empty($devLinks))
+                <div>
+                    <flux:heading size="sm" class="mb-2 text-zinc-500 uppercase tracking-wider">{{ __('External Resources') }}</flux:heading>
+
+                    <flux:select x-on:change="if($event.target.value) window.open($event.target.value, '_blank')">
+                        <option value="" selected disabled hidden>{{ __('Select a resource...') }}</option>
+                        @foreach([
+                            'repo' => 'Repository',
+                            'openshift_url' => 'Openshift',
+                            'jira_url' => 'Jira',
+                            'sentry_url' => 'Sentry',
+                            'argocd_url' => 'ArgoCD',
+                        ] as $key => $label)
+                            @if(isset($devLinks[$key]))
+                                <option value="{{ $devLinks[$key] }}">{{ __($label) }}</option>
+                            @endif
+                        @endforeach
+                    </flux:select>
+                </div>
+            @endif
         </div>
 
         <!-- Content -->
