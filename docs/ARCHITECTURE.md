@@ -7,7 +7,7 @@ TogethernetEvents is built on the modern Laravel stack, prioritizing developer p
 - **Frontend**: Livewire 4 & Flux UI (Blade-based reactivity)
 - **Styling**: Tailwind CSS 4
 - **Database**: MariaDB
-- **Authentication**: Laravel Fortify (Backend) & Spatie Permission (RBAC)
+- **Authentication**: Laravel Fortify (Backend) & Spatie Permission (RBAC) with optional Elevkar OAuth provider (`elevkar-auth`) via Socialite.
 
 ## Architectural Patterns
 

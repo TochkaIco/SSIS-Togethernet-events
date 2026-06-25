@@ -36,15 +36,15 @@ TogethernetEvents is a comprehensive event management system designed for organi
 
 ### 6. User Management & Auth
 - **LDAP Integration**: Integration with SSIS Active Directory (e.g., users' names and classes are being pulled from there).
-- **OAuth Support**: Sign in with Google (Socialite).
+- **OAuth Support**: Sign in with Google (Socialite) *or* the custom Elevkar-Auth provider (`elevkar-auth`) configured via `services.elevkar`.
 - **Role-Based Access Control (RBAC)**: Fine-grained permissions (Spatie Permission).
-- **Two-Factor Authentication (2FA)**: Enhanced security via Laravel Fortify.
 - **Impersonation**: Admins can impersonate users for support and debugging.
 - **Anonymization**: Support for GDPR-compliant user data anonymization, including automated cleanup for graduated students and inactive accounts.
-- **Terms of Service Enforcement**: Mandatory TOS acceptance for all users with automated notifications and enforcement grace periods.
+- **Terms of Service Enforcement**: Mandatory TOS acceptance for all users partaking in any events with automated notifications and enforcement grace periods.
 
 ## Administrative Tools
 - **Global Logs**: Audit trail for all significant actions across the system.
 - **App Configuration**: Dynamic management of system settings within the application.
 - **Dashboard**: High-level overview of system activity, with charts nad some quick actions.
 - **Pulse Integration**: Real-time application monitoring and health metrics.
+- **Sentry**: A broader monitoring system with notifications for severe exceptions, etc.

@@ -34,6 +34,14 @@ The default password (if applicable) is determined by your local environment, bu
 
 ## Documentation
 
+### Custom Authentication Provider: Elevkar-Auth
+
+The application supports a custom OAuth provider `elevkar-auth` via Laravel Socialite. Configuration resides in `config/services.php` under the `elevkar` key. The default base URL is `https://elevkar-auth.ssis.nu` but can be overridden with the `ELEVKAR_BASE_URL` environment variable.
+
+- **Provider Selection**: The active auth provider is stored in `AppConfig` (`active_auth_provider`). Set it to `elevkar` to enable this provider (default is `google`).
+- **Required Credentials**: Add `ELEVKAR_CLIENT_ID` and `ELEVKAR_CLIENT_SECRET` to your `.env` and reference them in `services.elevkar`.
+- **Implementation Details**: See `app/Services/Auth/ElevkarProvider.php` for the OAuth flow (PKCE, token handling) and `app/Http/Controllers/OAuthController.php` for the callback handling.
+
 Detailed documentation is available in the `docs` directory:
 
 - **[System Architecture](docs/ARCHITECTURE.md)**: Technical stack and architectural decisions.

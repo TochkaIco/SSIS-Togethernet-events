@@ -89,6 +89,19 @@ This will run the `DevSeeder` (if in a local environment), which creates:
     - `admin@stockholmscience.se` (Administrative access)
     - `member@stockholmscience.se` (Standard member access)
 - **Sample Events**: Multiple event types (Karaoke, QR-Tag, etc.) in various states (Upcoming, Ongoing, Finished).
+
+## Custom Elevkar-Auth Provider
+
+The app supports the internal `elevkar-auth` OAuth provider. Configure it in your `.env`:
+
+```
+ELEVKAR_BASE_URL=https://elevkar-auth.ssis.nu
+ELEVKAR_CLIENT_ID=your-client-id
+ELEVKAR_CLIENT_SECRET=your-client-secret
+```
+
+Set the active authentication provider via the application configuration (`AppConfig` key `active_auth_provider`) to `elevkar`. The provider uses PKCE and is implemented in `app/Services/Auth/ElevkarProvider.php`.
+
 - **QR-Tag Data**: Fake QR-Tag logs and registrations.
 - **Feedback**: Sample user feedback entries.
 
