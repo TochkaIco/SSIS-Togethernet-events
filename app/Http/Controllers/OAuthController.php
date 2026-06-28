@@ -80,6 +80,8 @@ class OAuthController extends Controller
             $this->validateGoogleHd($oauthUser);
         }
 
+        $isNewUser = (! User::where('email', $oauthUser->getEmail())->exists());
+
         $user = User::updateOrCreate(
             ['email' => $oauthUser->getEmail()],
             [
@@ -94,7 +96,11 @@ class OAuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/');
+        if ($isNewUser) {
+            return redirect(route('terms.accept'));
+        } else {
+            return redirect('/');
+        }
     }
 
     private function validateGoogleHd(SocialiteUserContract $oauthUser): void
