@@ -98,9 +98,9 @@ class OAuthController extends Controller
 
         if ($isNewUser) {
             return redirect(route('terms.accept'));
-        } else {
-            return redirect('/');
         }
+
+        return redirect('/');
     }
 
     private function validateGoogleHd(SocialiteUserContract $oauthUser): void
