@@ -3,8 +3,9 @@
 <meta name="description" content="Add a short, catchy description of your website here (around 150-160 characters) for Google search results.">
 
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Togethernet">
 <meta property="og:title" content="{{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}">
-<meta property="og:description" content="{{ __('Togethernet is a :year-year-old organization founded and run by committed students at Stockholm Science & Innovation School to create fun events for all students.', ['year' => now()->subYears(2013)->format('y')]) }}">
+<meta property="og:description" content="Student-run organization hosting fun events for all SSIS students.">
 <meta property="og:image" content="{{ config('app.url') }}/images/togethernet-feature.jpg">
 <meta property="og:url" content="{{ config('app.url') }}">
 
