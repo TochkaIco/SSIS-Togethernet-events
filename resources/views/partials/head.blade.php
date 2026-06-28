@@ -10,7 +10,8 @@
 <meta property="og:url" content="{{ config('app.url') }}">
 
 <meta name="twitter:card" content="{{ config('app.url') }}/images/togethernet-feature.jp">
-<meta name="twitter:title" content="Hem - Togethernet">
+<meta name="twitter:title" content="{{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}
+">
 <meta name="twitter:description" content="A student-run organization hosting various events for SSIS students.">
 <meta name="twitter:image" content="{{ config('app.url') }}/images/togethernet-feature.jpg">
 
