@@ -80,8 +80,6 @@ class OAuthController extends Controller
             $this->validateGoogleHd($oauthUser);
         }
 
-        $isNewUser = (! User::where('email', $oauthUser->getEmail())->exists());
-
         $user = User::updateOrCreate(
             ['email' => $oauthUser->getEmail()],
             [
@@ -94,9 +92,11 @@ class OAuthController extends Controller
             ]
         );
 
+        $notAcceptedTOS = ($user->tos_accepted_at === null);
+
         Auth::login($user);
 
-        if ($isNewUser) {
+        if ($notAcceptedTOS) {
             return redirect(route('terms.accept'));
         }
 
