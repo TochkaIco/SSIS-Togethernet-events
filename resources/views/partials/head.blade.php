@@ -1,18 +1,18 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Add a short, catchy description of your website here (around 150-160 characters) for Google search results.">
+<meta name="description" content="A student-run organization hosting various events for SSIS students.">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Togethernet">
 <meta property="og:title" content="{{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}">
-<meta property="og:description" content="Student-run organization hosting fun events for all SSIS students.">
+<meta property="og:description" content="A student-run organization hosting various events for SSIS students.">
 <meta property="og:image" content="{{ config('app.url') }}/images/togethernet-feature.jpg">
 <meta property="og:url" content="{{ config('app.url') }}">
 
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="{{ config('app.url') }}/images/togethernet-feature.jp">
 <meta name="twitter:title" content="Hem - Togethernet">
-<meta name="twitter:description" content="Add a short, catchy description of your website here for X/Twitter.">
-<meta name="twitter:image" content="https://yourwebsite.com/path-to-your-image.jpg">
+<meta name="twitter:description" content="A student-run organization hosting various events for SSIS students.">
+<meta name="twitter:image" content="{{ config('app.url') }}/images/togethernet-feature.jpg">
 
 <title>
     {{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}
