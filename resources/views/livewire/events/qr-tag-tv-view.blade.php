@@ -52,14 +52,19 @@
                                     <flux:table.cell class="pl-4">
                                         <div class="flex items-center gap-5">
                                             <div class="relative">
-                                                <flux:avatar src="{{ $participant->user->profile_picture }}" :initials="$participant->user->initials()" class="size-16 ring-4 bg-zinc-400 {{ $index === 0 ? 'ring-orange-400/20' : 'ring-zinc-800' }}" />
+                                                <flux:avatar src="{{ $participant->user->profile_picture }}" :initials="$participant->user->initials()" class="size-16 ring-4 bg-zinc-400 {{ $index === 0 ? 'ring-orange-400/20' : 'ring-zinc-800' }} {{ $participant->qrTagStreak() ? 'ring-2 ring-orange-400/70' : '' }}" />
                                                 @if($index === 0)
                                                     <div class="absolute -top-2 -right-2 bg-orange-400 text-white p-1 rounded-full shadow-lg">
                                                         <flux:icon.sparkles class="size-4" />
                                                     </div>
                                                 @endif
                                             </div>
-                                            <div class="text-2xl font-black leading-tight">{{ $participant->user->name }}</div>
+                                            <div class="flex text-2xl font-black leading-tight">
+                                                {{ $participant->user->name }}
+                                                @if($streak = $participant->qrTagStreak())
+                                                    <span class="flex items-center gap-x-1 ml-2 bg-orange-600 text-white rounded-full px-2 py-0.5 text-xs font-medium"><flux:icon icon="fire" /> {{ $streak }}</span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </flux:table.cell>
                                     <flux:table.cell class="text-center">

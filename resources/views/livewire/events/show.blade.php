@@ -187,8 +187,13 @@
                                         <div class="space-y-2">
                                             <flux:text>{{ __('Your current target is:') }}</flux:text>
                                             <div class="flex items-center gap-3 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden min-w-0">
-                                                <flux:avatar :initials="$this->registration->targetUser->initials()" size="sm" class="shrink-0" />
-                                                <span class="font-bold text-lg truncate">{{ Str::limit($this->registration->targetUser->name, 18) }}</span>
+                                                <flux:avatar :initials="$this->registration->targetUser->initials()" size="sm" class="shrink-0 {{ $this->registration->qrTagStreak() ? 'ring-2 ring-orange-500/70' : '' }}" />
+                                                <span class="flex font-bold text-lg truncate">
+                                                    {{ Str::limit($this->registration->targetUser->name, 18) }}
+                                                    @if($streak = $this->registration->qrTagStreak())
+                                                        <span class="flex items-center gap-x-1 ml-2 bg-orange-600 text-white rounded-full px-2 py-0.5 text-xs font-medium"><flux:icon icon="fire" /> {{ $streak }}</span>
+                                                    @endif
+                                                </span>
                                             </div>
                                             <flux:text size="sm" class="italic">{{ __('Find them and scan their QR-code to tag them.') }}</flux:text>
                                         </div>
@@ -245,10 +250,15 @@
                                         {{ $index + 1 }}
                                     </div>
 
-                                    <flux:avatar src="{{ $leader->user->profile_picture }}" :initials="$leader->user->initials()" size="sm" class="shrink-0" />
+                                    <flux:avatar src="{{ $leader->user->profile_picture }}" :initials="$leader->user->initials()" size="sm" class="shrink-0 {{ $leader->qrTagStreak() ? 'ring-2 ring-orange-400/70' : '' }}" />
 
                                     <div class="flex-1 min-w-0">
-                                        <div class="text-xs md:text-lg font-bold truncate">{{ Str::limit($leader->user->name, 15) }}</div>
+                                        <div class="flex text-xs md:text-lg font-bold truncate">
+                                            {{ Str::limit($leader->user->name, 15) }}
+                                            @if($streak = $leader->qrTagStreak())
+                                                <span class="flex items-center gap-x-1 ml-2 bg-orange-600 text-white rounded-full px-2 py-0.5 text-xs font-medium"><flux:icon icon="fire" /> {{ $streak }}</span>
+                                            @endif
+                                        </div>
                                     </div>
 
                                     <div class="flex flex-col items-end shrink-0">

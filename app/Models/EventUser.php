@@ -267,4 +267,37 @@ class EventUser extends Model
             $host->update(['qr_tag_target_user_id' => $this->user_id]);
         }
     }
+
+    public function qrTagStreak(): ?int
+    {
+        if (! $this->qr_tag_token) {
+            return null;
+        }
+
+        if ($this->qr_tag_tagged_at !== null || $this->qr_tag_count < 3) {
+            return null;
+        }
+
+        $lastOther = QrTagLog::query()
+            ->where('event_id', $this->event_id)
+            ->where('type', 'tagged')
+            ->where('user_id', '<>', $this->user_id)
+            ->orderByDesc('created_at')
+            ->first();
+
+        $query = QrTagLog::query()
+            ->where('event_id', $this->event_id)
+            ->where('type', 'tagged')
+            ->where('user_id', $this->user_id);
+
+        if ($lastOther) {
+            $query->where('created_at', '>', $lastOther->created_at);
+        }
+
+        if ($query->count() > 2) {
+            return $query->count();
+        }
+
+        return null;
+    }
 }
