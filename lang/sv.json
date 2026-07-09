@@ -589,5 +589,11 @@
     "Minutes": "Minuter",
     "Count": "Antal",
     "Rate (%)": "Grad (%)",
-    "You cannot delete a user with a higher role than yours.": "Du kan inte ta bort en användare med en högre roll än din."
+    "You cannot delete a user with a higher role than yours.": "Du kan inte ta bort en användare med en högre roll än din.",
+    "Not a qr-tag event": "Inget qr-tag evenemang",
+    "Or enter their qr-tag token directly if cannot scan the qr-code.": "Eller ange deras qr-tag token direkt om du inte kan skanna qr-koden.",
+    "Your Qr-Tag Token": "Din Qr-Tag Token",
+    "Enter qr-tag token": "Ange qr-tag token",
+    "Show this to your hunter if they cannot scan qr-codes.": "Visa detta för din jägare om hen inte kan skanna qr-koder.",
+    "characters remaining": "återstående tecken"
 }
