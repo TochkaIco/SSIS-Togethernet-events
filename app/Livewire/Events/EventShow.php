@@ -6,6 +6,7 @@ namespace App\Livewire\Events;
 
 use App\Actions\RegisterUserToEvent;
 use App\Actions\UnregisterUserFromEvent;
+use App\EventType;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\GlobalLog;
@@ -29,6 +30,8 @@ class EventShow extends Component
     public string $tab = 'view';
 
     protected $queryString = ['tab'];
+
+    public string $qrTagGivenToken = '';
 
     public function mount(Event $event): void
     {
@@ -167,6 +170,69 @@ class EventShow extends Component
         }
 
         GlobalLog::log('User registered to an event', 'user', ['event_id' => $event->id]);
+    }
+
+    public function openQrTagTokenModal()
+    {
+        // Validations
+
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if ($this->event->event_type !== EventType::QR_TAG) {
+            Flux::toast(text: __('Not a qr-tag event'), heading: __('Error'), variant: 'danger');
+        }
+
+        if (! $this->registration() instanceof EventUser) {
+            Flux::toast(text: __('You are not registered for this event.'), heading: __('Error'), variant: 'danger');
+        }
+
+        $this->modal('qr-tag-token-modal')->show();
+    }
+
+    public function openQrTagTokenEntryModal()
+    {
+        // Validations
+
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if ($this->event->event_type !== EventType::QR_TAG) {
+            Flux::toast(text: __('Not a qr-tag event'), heading: __('Error'), variant: 'danger');
+        }
+
+        if (! $this->registration() instanceof EventUser) {
+            Flux::toast(text: __('You are not registered for this event.'), heading: __('Error'), variant: 'danger');
+        }
+
+        $this->modal('qr-tag-token-entry-modal')->show();
+    }
+
+    public function tagQrTagTargetWithToken()
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if ($this->event->event_type !== EventType::QR_TAG) {
+            Flux::toast(text: __('Not a qr-tag event'), heading: __('Error'), variant: 'danger');
+        }
+
+        if (! $this->registration() instanceof EventUser) {
+            Flux::toast(text: __('You are not registered for this event.'), heading: __('Error'), variant: 'danger');
+        }
+
+        if ($this->qrTagGivenToken !== '' && $this->qrTagGivenToken !== '0') {
+            if (strlen($this->qrTagGivenToken) !== 32) {
+                Flux::toast(text: __('You have entered an incomplete token.'), heading: __('Error'), variant: 'danger');
+
+                return null;
+            }
+
+            redirect(route('qr_tag.confirm', ['token' => $this->qrTagGivenToken]));
+        }
     }
 
     #[Layout('layouts.app')]

@@ -196,6 +196,9 @@
                                                 </span>
                                             </div>
                                             <flux:text size="sm" class="italic">{{ __('Find them and scan their QR-code to tag them.') }}</flux:text>
+
+                                            <flux:text size="sm">{{ __('Or enter their qr-tag token directly if cannot scan the qr-code.') }}</flux:text>
+                                            <flux:button size="sm" wire:click="openQrTagTokenEntryModal">{{ __('Enter qr-tag token') }}</flux:button>
                                         </div>
                                     @endif
                                 @else
@@ -203,7 +206,7 @@
                                 @endif
                             </div>
 
-                            @if(!$this->registration->qr_tag_tagged_at && !$this->registration->is_disabled && $this->registration->qr_tag_token && !$event->isFinished())
+                            @if($this->registration && !$this->registration->qr_tag_tagged_at && !$this->registration->is_disabled && $this->registration->qr_tag_token && !$event->isFinished())
                                 <div class="flex flex-col items-center gap-3 shrink-0 max-w-full">
                                     <flux:text class="font-medium">{{ __('Your QR Code') }}</flux:text>
                                     <div class="p-4 bg-white rounded-xl shadow-inner border-2 border-orange-400 max-w-full overflow-hidden">
@@ -211,6 +214,9 @@
                                             {!! $this->registration->qrTagQrCodeSvg() !!}
                                         </div>
                                     </div>
+
+                                    <flux:text size="sm" class="font-medium mt-4">{{ __('Your QR-Tag Token') }}</flux:text>
+                                    <flux:button size="sm" wire:click="openQrTagTokenModal" class="w-full">{{ __('View') }}</flux:button>
                                 </div>
                             @endif
                         </div>
@@ -402,6 +408,103 @@
                     <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
                 <flux:button type="submit" variant="danger" class="cursor-pointer" wire:click="unregisterUser">{{ __('Unregister') }}</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+    @if($this->registration())
+        <flux:modal name="qr-tag-token-modal" class="min-w-[22rem]">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Your Qr-Tag Token') }}</flux:heading>
+                    <flux:subheading>{{ __('Show this to your hunter if they cannot scan qr-codes.') }}</flux:subheading>
+                </div>
+
+                <flux:textarea disabled>{!! $this->registration()->qr_tag_token !!}</flux:textarea>
+
+                <div class="flex">
+                    <flux:spacer />
+                    <flux:modal.close>
+                        <flux:button variant="primary" class="cursor-pointer">{{ __('Close') }}</flux:button>
+                    </flux:modal.close>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+    <flux:modal name="qr-tag-token-entry-modal" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <div class="max-w-64 mx-auto space-y-2">
+                <flux:heading size="lg" class="text-center">{{ __('Qr-Tag Token') }}</flux:heading>
+                <flux:text class="text-center">{{ __('Please enter your target\'s qr-tag token.') }}</flux:text>
+            </div>
+            <div>
+                <div x-data="{
+                    code: @entangle('qrTagGivenToken').live,
+                    maxLength: 32,
+                    visibleLength: 6,
+                    get visibleChars() {
+                        let actualChars = (this.code || '').split('');
+                        if (actualChars.length <= this.visibleLength) {
+                            while (actualChars.length < this.visibleLength) {
+                                actualChars.push('');
+                            }
+                            return actualChars;
+                        }
+                        return actualChars.slice(-this.visibleLength);
+                    },
+                    get remaining() {
+                        return this.maxLength - (this.code ? this.code.length : 0);
+                    }
+                }" class="relative max-w-xs mx-auto group">
+
+                    <label class="sr-only">OTP Code</label>
+                    <input
+                        type="text"
+                        x-model="code"
+                        :maxlength="maxLength"
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-text z-10 focus:outline-none"
+                        autofocus
+                    />
+
+                    <div class="flex justify-center gap-2 pointer-events-none">
+                        <template x-for="(char, index) in visibleChars" :key="index">
+                            <div
+                                class="w-11 h-14 flex items-center justify-center border rounded-xl text-lg font-medium transition-all duration-150 shadow-sm
+                                  group-focus-within:border-zinc-400 dark:group-focus-within:border-zinc-500"
+                                :class="[
+                                    char ? 'border-zinc-800 dark:border-white dark:text-white ring-1 ring-zinc-800 dark:ring-white' : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800',
+                                    @error('tokenEntry') 'border-red-500 dark:border-red-500 ring-red-500 dark:ring-red-500' @enderror
+                                ]"
+                            >
+                                <span
+                                    x-text="char"
+                                    x-show="char"
+                                    x-transition:enter="transition ease-out duration-150"
+                                    x-transition:enter-start="opacity-0 translate-x-2"
+                                    x-transition:enter-end="opacity-100 translate-x-0"
+                                ></span>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="mt-3 text-center h-5">
+                        <span
+                            x-show="remaining > 0"
+                            x-text="remaining + ' {{ __('characters remaining') }}'"
+                            class="text-xs font-medium text-zinc-400 dark:text-zinc-500 tracking-wide uppercase transition-opacity duration-200"
+                            style="display: none;"
+                        ></span>
+                    </div>
+                </div>
+
+                @error('tokenEntry')
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400 text-center">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="space-y-4">
+                <flux:button variant="primary" wire:click="tagQrTagTargetWithToken" :disabled="strlen($qrTagGivenToken) < 32" class="w-full">{{ __('Continue') }}</flux:button>
+                <flux:modal.close>
+                    <flux:button class="w-full">{{ __('Close') }}</flux:button>
+                </flux:modal.close>
             </div>
         </div>
     </flux:modal>
