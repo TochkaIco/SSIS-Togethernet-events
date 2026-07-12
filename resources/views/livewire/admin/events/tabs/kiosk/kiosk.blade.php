@@ -177,7 +177,8 @@
                                     <flux:table.cell>{{ number_format($purchase->cost) }} kr</flux:table.cell>
                                     <flux:table.cell align="end">
                                         <div class="flex gap-x-1 justify-end">
-                                            <flux:button size="xs" class="cursor-pointer" icon="eye" variant="ghost" wire:click="viewPurchase({{ $purchase->id }})" x-on:click="$flux.modal('purchase-modal').show()" />
+                                            <flux:button size="xs" class="cursor-pointer" icon="eye" variant="ghost" wire:click="viewPurchase({{ $purchase->id }})" />
+                                            <flux:button size="xs" class="cursor-pointer" icon="qr-code" variant="ghost" wire:click="viewPurchaseQrCode({{ $purchase->id }})" />
                                             <flux:button
                                                 size="xs"
                                                 class="cursor-pointer"
@@ -774,8 +775,14 @@
     </flux:modal>
 
     <flux:modal name="swish-qr-code-modal" class="min-w-[22rem]">
-        <div class="space-y-6">
-            <img src="{{ $swishQrCodeData }}" alt="Swish QR Code" class="p-6">
+        <div class="space-y-6 p-6">
+            <div class="bg-zinc-50 p-6 rounded-2xl">
+                <img src="{{ $swishQrCodeData }}" alt="Swish QR Code">
+            </div>
+            <div>
+                <flux:text class="text-muted-foreground"><b>{{ __('Swish number') }}:</b> {{ $this->event->kiosk->swish_number ?? 'Undefined' }}</flux:text>
+                <flux:text class="text-muted-foreground"><b>{{ __('Price (kr)') }}:</b> {{ $this->cartTotal ?? 'Undefined' }}</flux:text>
+            </div>
         </div>
     </flux:modal>
 </div>

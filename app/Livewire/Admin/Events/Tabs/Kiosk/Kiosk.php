@@ -7,6 +7,7 @@ namespace App\Livewire\Admin\Events\Tabs\Kiosk;
 use App\Models\Event;
 use App\Models\EventKioskArticle;
 use App\Models\EventKioskCategory;
+use App\Models\EventKioskPurchase;
 use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,8 @@ class Kiosk extends Component
     public string $subTab = 'articles';
 
     public string $swishNumber = '';
+
+    public float $cartTotal = 0.00;
 
     public string $swishQrCodeData = '';
 
@@ -82,7 +85,7 @@ class Kiosk extends Component
     public function mount(): void
     {
         $this->authorize('manage kiosk');
-        $this->swishNumber = old('swishNumber', (string) $this->event->kiosk->swish_number);
+        $this->swishNumber = old('swishNumber', (string) ($this->event->kiosk->swish_number ?? ''));
     }
 
     #[Computed]
@@ -539,7 +542,8 @@ class Kiosk extends Component
         $this->cart = [];
         $this->dispatch('refreshKiosk');
 
-        $this->swishQrCodeData = $this->event->kiosk->getSwishQrCode($totalCost);
+        $this->cartTotal = $totalCost;
+        $this->swishQrCodeData = $this->event->kiosk->getSwishQrCode($this->cartTotal);
 
         if ($this->swishQrCodeData !== '' && $this->swishQrCodeData !== '0') {
             $this->modal('swish-qr-code-modal')->show();
@@ -550,7 +554,23 @@ class Kiosk extends Component
 
     public function viewPurchase(int $purchaseId): void
     {
+        $this->authorize('manage kiosk');
+
         $this->selectedPurchaseId = $purchaseId;
+    }
+
+    public function viewPurchaseQrCode(int $purchaseId): void
+    {
+        $this->authorize('manage kiosk');
+
+        $this->cartTotal = EventKioskPurchase::find($purchaseId)->cost ?? 0.00;
+        $this->swishQrCodeData = $this->event->kiosk->getSwishQrCode($this->cartTotal);
+
+        if ($this->swishQrCodeData !== '' && $this->swishQrCodeData !== '0') {
+            $this->modal('swish-qr-code-modal')->show();
+        } else {
+            Flux::toast(__('Could not generate QR code. Please try again.'), variant: 'danger');
+        }
     }
 
     public function confirmDeletePurchase(int $purchaseId): void
