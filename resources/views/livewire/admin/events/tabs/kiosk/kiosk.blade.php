@@ -43,10 +43,13 @@
 
         @if($subTab === 'articles')
             <div class="space-y-4">
-                <div class="flex justify-end">
+                <div class="flex justify-end space-x-3">
                     @can('manage kiosk')
                         <flux:button icon="plus" wire:click="openArticleModal" class="cursor-pointer">
                             {{ __('Add Article') }}
+                        </flux:button>
+                        <flux:button wire:click="openSwishManagementModal" class="cursor-pointer">
+                            <x-icons.swish />
                         </flux:button>
                     @endcan
                 </div>
@@ -746,5 +749,33 @@
                 </div>
             </div>
         </form>
+    </flux:modal>
+
+    <flux:modal name="swish-management-modal" class="min-w-[22rem] min-h-[12rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Swish Number') }}</flux:heading>
+                <flux:text class="mt-2">
+                    {{ __("Entered swish number will be used to generate swish qr-codes for payments.") }}
+                </flux:text>
+                <flux:input name="swish_number" wire:model.live="swishNumber" class="mt-4" required />
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+
+                <flux:button variant="primary" wire:click="saveSwishNumber" class="cursor-pointer">{{ __('Save') }}</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    <flux:modal name="swish-qr-code-modal" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <img src="{{ $swishQrCodeData }}" alt="Swish QR Code" class="p-6">
+        </div>
     </flux:modal>
 </div>

@@ -29,6 +29,62 @@ class Kiosk extends Component
     #[Url]
     public string $subTab = 'articles';
 
+    public string $swishNumber = '';
+
+    public string $swishQrCodeData = '';
+
+    public string $imagePath = '';
+
+    public $image;
+
+    public bool $showArticleModal = false;
+
+    public bool $showCategoryModal = false;
+
+    public bool $storeArticleImageUrl = false;
+
+    public bool $showImportModal = false;
+
+    public ?int $editingArticleId = null;
+
+    public ?int $editingCategoryId = null;
+
+    public string $articleName = '';
+
+    public ?int $articleCategoryId = null;
+
+    public int $articleCost = 0;
+
+    public int $articleAmount = 0;
+
+    public string $articleImageUrl = '';
+
+    public string $categoryName = '';
+
+    public ?int $importEventId = null;
+
+    public array $cart = [];
+
+    public ?int $selectedPurchaseId = null;
+
+    public ?int $deletingArticleId = null;
+
+    public ?int $deletingCategoryId = null;
+
+    public ?int $deletingPurchaseId = null;
+
+    public ?int $selectedSellCategoryId = null;
+
+    protected $listeners = [
+        'refreshKiosk' => '$refresh',
+    ];
+
+    public function mount(): void
+    {
+        $this->authorize('manage kiosk');
+        $this->swishNumber = old('swishNumber', (string) $this->event->kiosk->swish_number);
+    }
+
     #[Computed]
     public function stats(): array
     {
@@ -82,57 +138,6 @@ class Kiosk extends Component
                 'data' => $hourlySales->pluck('total')->map(fn ($t) => (int) $t)->toArray(),
             ],
         ];
-    }
-
-    public string $imagePath = '';
-
-    public $image;
-
-    public bool $showArticleModal = false;
-
-    public bool $showCategoryModal = false;
-
-    public bool $storeArticleImageUrl = false;
-
-    public bool $showImportModal = false;
-
-    public ?int $editingArticleId = null;
-
-    public ?int $editingCategoryId = null;
-
-    public string $articleName = '';
-
-    public ?int $articleCategoryId = null;
-
-    public int $articleCost = 0;
-
-    public int $articleAmount = 0;
-
-    public string $articleImageUrl = '';
-
-    public string $categoryName = '';
-
-    public ?int $importEventId = null;
-
-    public array $cart = [];
-
-    public ?int $selectedPurchaseId = null;
-
-    public ?int $deletingArticleId = null;
-
-    public ?int $deletingCategoryId = null;
-
-    public ?int $deletingPurchaseId = null;
-
-    public ?int $selectedSellCategoryId = null;
-
-    protected $listeners = [
-        'refreshKiosk' => '$refresh',
-    ];
-
-    public function mount(): void
-    {
-        $this->authorize('manage kiosk');
     }
 
     public function setSubTab(string $tab): void
@@ -533,6 +538,14 @@ class Kiosk extends Component
         Flux::toast(__('Purchase recorded.'), variant: 'success');
         $this->cart = [];
         $this->dispatch('refreshKiosk');
+
+        $this->swishQrCodeData = $this->event->kiosk->getSwishQrCode($totalCost);
+
+        if ($this->swishQrCodeData !== '' && $this->swishQrCodeData !== '0') {
+            $this->modal('swish-qr-code-modal')->show();
+        } else {
+            Flux::toast(__('Could not generate QR code. Please try again.'), variant: 'danger');
+        }
     }
 
     public function viewPurchase(int $purchaseId): void
@@ -584,6 +597,25 @@ class Kiosk extends Component
             $this->modal('delete-purchase-modal')->close();
             $this->dispatch('refreshKiosk');
         }
+    }
+
+    public function openSwishManagementModal(): void
+    {
+        $this->authorize('manage kiosk');
+
+        $this->modal('swish-management-modal')->show();
+    }
+
+    public function saveSwishNumber(): void
+    {
+        $this->authorize('manage kiosk');
+
+        $this->validate([
+            'swishNumber' => 'required|integer',
+        ]);
+        $this->event->kiosk->swish_number = $this->swishNumber;
+        $this->event->kiosk->update();
+        $this->modal('swish-management-modal')->close();
     }
 
     public function render()
