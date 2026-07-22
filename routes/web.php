@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\QrTagController;
+use App\Http\Controllers\SitemapController;
 use App\Livewire\AcceptTerms;
 use App\Livewire\Admin\AdminFeedbackView;
 use App\Livewire\Admin\AdminGlobalLogs;
@@ -31,7 +32,7 @@ Route::view('/faq', 'faq')->name('faq');
 Route::view('/legal', 'legal')->name('legal');
 
 // Sitemap route
-Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 Route::middleware(['tos.accepted'])->group(function () {
     Route::get('/events', PublicEvents::class)->name('events');
