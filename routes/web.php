@@ -30,6 +30,9 @@ Route::view('/', 'homepage')->name('home');
 Route::view('/faq', 'faq')->name('faq');
 Route::view('/legal', 'legal')->name('legal');
 
+// Sitemap route
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
 Route::middleware(['tos.accepted'])->group(function () {
     Route::get('/events', PublicEvents::class)->name('events');
     Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
