@@ -16,7 +16,7 @@ class SitemapController
         $routes = Route::getRoutes();
         $urls = [];
         $publicNames = ['home', 'faq', 'legal', 'events', 'event.show'];
-        foreach ($routes as $route) {
+        foreach ($routes->getRoutes() as $route) {
             // Only consider GET routes with a name and no required parameters
             if (! in_array('GET', $route->methods())) {
                 continue;
@@ -36,7 +36,7 @@ class SitemapController
 
         // Add URLs for each specific event
         foreach (Event::where('display_starts_at', '<', now())->get() as $event) {
-            $urls[] = route('event.show', $event);
+            $urls[] = route('event.show', ['event' => $event->id]);
         }
 
         $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
