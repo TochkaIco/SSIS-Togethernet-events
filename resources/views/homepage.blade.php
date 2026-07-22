@@ -6,6 +6,8 @@
                         images: [
                             '/images/togethernet-feature.jpg',
                             '/images/monochrome-feature.jpg',
+                            '/images/lan-feature.jpg',
+                            '/images/lan-feature1.jpg',
                             '/images/karaoke-feature.jpg'
                         ],
                         active: 0
