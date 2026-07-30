@@ -28,8 +28,8 @@ class DeleteUserForm extends Component
             'confirmation.in' => __('Please enter "DELETE" to confirm your account deletion.'),
         ]);
 
-        $user->remove();
         $logout();
+        $user->remove();
 
         $this->redirect('/', navigate: true);
     }
