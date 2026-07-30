@@ -28,6 +28,7 @@ composer:
   stage: prepare
   image: $BUILDIMAGE
   cache:
+    key: composer-$CI_COMMIT_REF_SLUG
     paths:
       - vendor/
   script:
@@ -36,10 +37,6 @@ composer:
     - php --version
     - cp .env.example .env
     - time composer install --no-progress --no-scripts
-  artifacts:
-    expire_in: 1 hour
-    paths:
-      - vendor/
 
 Build:
   stage: build
@@ -99,7 +96,6 @@ secret_detection:
     SECRET_DETECTION_HISTORIC_SCAN: "false"
     SECRET_DETECTION_REPORT_FILE: "gl-secret-detection-report.json"
 
-
 test:
   stage: test
   image: $BUILDIMAGE
@@ -118,10 +114,14 @@ test:
   needs:
     - composer
   cache:
-    key: test-$CI_COMMIT_REF_SLUG
-    paths:
-      - node_modules/
-      - $PLAYWRIGHT_BROWSERS_PATH
+    - key: composer-$CI_COMMIT_REF_SLUG
+      paths:
+        - vendor/
+      policy: pull
+    - key: test-$CI_COMMIT_REF_SLUG
+      paths:
+        - node_modules/
+        - $PLAYWRIGHT_BROWSERS_PATH
   script:
     - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
     - docker-php-ext-install sockets pcntl pdo_mysql ldap
@@ -147,6 +147,11 @@ security-check:
   stage: analysis
   needs:
     - composer
+  cache:
+    key: composer-$CI_COMMIT_REF_SLUG
+    paths:
+      - vendor/
+    policy: pull
   variables:
     GIT_DEPTH: 1
   script:
@@ -157,6 +162,11 @@ static analysis:
   stage: analysis
   needs:
     - composer
+  cache:
+    key: composer-$CI_COMMIT_REF_SLUG
+    paths:
+      - vendor/
+    policy: pull
   variables:
     GIT_DEPTH: 1
   script:
@@ -174,6 +184,11 @@ code style:
   stage: analysis
   needs:
     - composer
+  cache:
+    key: composer-$CI_COMMIT_REF_SLUG
+    paths:
+      - vendor/
+    policy: pull
   variables:
     GIT_DEPTH: 1
   script:
