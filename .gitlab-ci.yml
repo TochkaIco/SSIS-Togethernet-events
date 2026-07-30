@@ -2,7 +2,6 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
 
 stages:
-  - prepare
   - build
   - push
   - secret-detection
@@ -23,30 +22,16 @@ variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_TLS_CERTDIR: ""
   PLAYWRIGHT_BROWSERS_PATH: $CI_PROJECT_DIR/pw-browsers
+  COMPOSER_CACHE_DIR: $CI_PROJECT_DIR/.composer-cache
 
-composer:
-  stage: prepare
-  image: $BUILDIMAGE
-  script:
-    - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
-    - docker-php-ext-install sockets pcntl pdo_mysql ldap
-    - php --version
-    - cp .env.example .env
-    - time composer install --no-progress --no-scripts
-  artifacts:
-    expire_in: 1 hour
-    paths:
-      - vendor/
-    exclude:
-      - vendor/**/tests/**/*
-      - vendor/**/docs/**/*
-      - vendor/**/*.md
-      - vendor/**/*.pdf
+# Global cache for Composer downloads & NPM node_modules
+cache:
+  key: composer-cache-$CI_COMMIT_REF_SLUG
+  paths:
+    - .composer-cache/
 
 Build:
   stage: build
-  needs:
-    - composer
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
   except:
@@ -116,17 +101,17 @@ test:
     DB_USERNAME: root
     DB_PASSWORD: ""
   coverage: '/^\s*Total:\s*\d+.\d+\s*\%/'
-  needs:
-    - composer
   cache:
-    key: test-$CI_COMMIT_REF_SLUG
+    key: test-frontend-$CI_COMMIT_REF_SLUG
     paths:
+      - .composer-cache/
       - node_modules/
       - $PLAYWRIGHT_BROWSERS_PATH
   script:
     - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
     - docker-php-ext-install sockets pcntl pdo_mysql ldap
     - cp -n .env.example .env
+    - composer install --no-progress --no-scripts
     - php -r "while(!@fsockopen('mysql', 3306)) { echo 'Waiting for mysql...\n'; sleep(1); }"
     - npm install
     - npx playwright install --with-deps
@@ -146,23 +131,21 @@ test:
 security-check:
   image: $BUILDIMAGE
   stage: analysis
-  needs:
-    - composer
   variables:
     GIT_DEPTH: 1
   script:
+    - composer install --no-progress --no-scripts
     - COMPOSER_AUDIT_ABANDONED=ignore composer audit
 
 static analysis:
   image: $BUILDIMAGE
   stage: analysis
-  needs:
-    - composer
   variables:
     GIT_DEPTH: 1
   script:
     - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
     - docker-php-ext-install sockets pcntl pdo_mysql ldap
+    - composer install --no-progress --no-scripts
     - ./vendor/bin/phpstan analyse --memory-limit=2G --error-format=gitlab > gl-code-quality-report.json
   artifacts:
     reports:
@@ -173,11 +156,10 @@ static analysis:
 code style:
   image: $BUILDIMAGE
   stage: analysis
-  needs:
-    - composer
   variables:
     GIT_DEPTH: 1
   script:
+    - composer install --no-progress --no-scripts
     - ./vendor/bin/pint --test
 
 .gitops-deploy:
