@@ -1,12 +1,12 @@
 {
     "agents": [
-        "gemini",
-        "opencode"
+        "opencode",
+        "antigravity"
     ],
     "cloud": false,
     "guidelines": true,
     "mcp": true,
-    "nightwatch_mcp": false,
+    "nightwatch": false,
     "packages": [
         "spatie/laravel-permission"
     ],
