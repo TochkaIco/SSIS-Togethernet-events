@@ -7,6 +7,7 @@
         "dev": "vite"
     },
     "dependencies": {
+        "@sentry/browser": "^10.69.0",
         "@tailwindcss/vite": "^4.1.11",
         "autoprefixer": "^10.4.20",
         "axios": "^1.15.0",

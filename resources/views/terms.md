@@ -1,7 +1,7 @@
 <a name="tos"></a>
 # Användarvillkor för Togethernet Events
 
-Senast uppdaterad: 2026-05-26
+Senast uppdaterad: 2026-08-08
 
 ## 1. Allmänt
 Dessa användarvillkor ("Villkoren") reglerar din användning av Togethernet Events ("Tjänsten") som drivs av Togethernet, organizationsnummer 8025534440.
@@ -45,7 +45,7 @@ Tvister som uppstår i samband med dessa Villkor ska i första hand lösas genom
 <a name="privacy"></a>
 # Integritetspolicy
 
-Senast uppdaterad: 2026-05-26
+Senast uppdaterad: 2026-08-08
 
 ## 1. Inledning
 Denna integritetspolicy beskriver hur Togethernet samlar in, använder och skyddar dina personuppgifter i Togethernet Events. Vi följer EU:s dataskyddsförordning (GDPR).
@@ -59,12 +59,14 @@ Kontakt: togethernet@stockholmscience.se
 - **Profiluppgifter**: Klass och profilbild (synkroniseras ofta från organisationens katalog).
 - **Aktivitetsdata**: Evenemangsanmälningar, loggar för QR-tag-spel och mötesnärvaro.
 - **Systemloggar och Metadata**: Administrativa åtgärder loggas för systemets säkerhet. Vi sparar även information om din **senaste inloggning** för att kunna hantera inaktiva konton och upprätthålla systemsäkerheten.
+- **Felrapportering och felsökningsdata**: Vi samlar in felrapporter och information om hur du interagerar med Tjänsten (så kallade "replays") med hjälp av Sentry. Det hjälper oss att identifiera, förstå och åtgärda tekniska problem. Sessioner spelas in i form av musrörelser, klick, navigering och konsolloggar, men all textinmatning och all media maskeras automatiskt lokalt i din webbläsare innan den skickas, vilket säkerställer datakonfidentialitet.
 
 ## 4. Syfte med behandling
 - **Order- och anmälanshantering**: För att administrera ditt deltagande i evenemang.
 - **Spelintegritet**: För att säkerställa att QR-tag-spel sker på ett rättvist sätt.
 - **Mötesadministration**: För att föra protokoll och närvarolistor vid möten.
 - **Säkerhet och Administration**: För att skydda tjänsten mot missbruk och för att hantera livscykeln för användarkonton (t.ex. identifiera inaktiva konton via metadata om senaste inloggning).
+- **Teknisk felsökning**: För att upptäcka, förstå och åtgärda buggar, prestandaproblem och fel i Tjänsten med hjälp av felrapporteringsverktyg (Sentry).
 - **Anonymisering**: För att automatiskt rensa data enligt våra gallringsregler. Detta inkluderar:
     - Konton tillhörande utexaminerade elever (anonymiseras årligen i juli).
     - Konton som varit inaktiva i mer än 7 månader.
@@ -96,7 +98,7 @@ E-post: togethernet@stockholmscience.se
 <a name="cookies"></a>
 # Cookiepolicy
 
-Senast uppdaterad: 2026-06-15
+Senast uppdaterad: 2026-08-08
 
 Togethernet Events använder endast nödvändiga kakor (cookies) för att tjänsten ska fungera korrekt.
 
@@ -108,12 +110,13 @@ Vi använder cookies uteslutande för att:
 - **Hantera din session**: För att veta vem du är när du navigerar mellan sidor.
 - **Säkerhet**: För att skydda ditt konto, förhindra obehörig åtkomst och möjliggöra för administratörer att övervaka kontosäkerhet (t.ex. via metadata om senaste inloggning).
 - **Inloggning**: För att hålla dig inloggad på tjänsten.
+- **Felrapportering och felsökning**: Vi använder nödvändiga kakor och lokal lagring (local storage) via Sentry för att kunna koppla samman felrapporter med din session och därmed felsöka tekniska problem.
 
 ## Ingen spårning eller marknadsföring
 Vi använder **inte** cookies för:
 - Marknadsföring eller reklam.
 - Spårning av ditt beteende på andra webbplatser.
-- Analys av din användning via tredjepartstjänster (såsom Google Analytics).
+- Analys av din användning via tredjepartstjänster (såsom Google Analytics). Vi använder endast Sentry för felrapportering och teknisk felsökning, inte för beteendespårning eller marknadsföringsanalys.
 
 ## Hantering av cookies
 Eftersom vi endast använder nödvändiga cookies krävs inte ditt samtycke för dessa enligt lag. Om du väljer att stänga av cookies i din webbläsare kommer Tjänsten inte att fungera korrekt då vi inte kan identifiera din inloggning.
