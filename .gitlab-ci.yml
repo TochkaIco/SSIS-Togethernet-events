@@ -17,6 +17,7 @@ services:
     command: ["--tls=false"]
 
 variables:
+  DOCKER_BUILDKIT: "1"
   BUILDIMAGE: gitregistry.ssis.nu/ssis/php-images:8.5-build
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://docker:2375/
@@ -39,7 +40,7 @@ Build:
       - $DOCKER_NO_CACHE
   script:
     - docker pull $CI_REGISTRY_IMAGE:latest || true
-    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
 Build without cache:
@@ -109,11 +110,11 @@ test:
       - $PLAYWRIGHT_BROWSERS_PATH
   script:
     - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
-    - docker-php-ext-install sockets pcntl pdo_mysql ldap
+    - for ext in sockets pcntl pdo_mysql ldap; do php -m | grep -iq "^$ext$" || docker-php-ext-install "$ext"; done
     - cp -n .env.example .env
     - composer install --no-progress --no-scripts
     - php -r "while(!@fsockopen('mysql', 3306)) { echo 'Waiting for mysql...\n'; sleep(1); }"
-    - npm install
+    - npm ci
     - npx playwright install --with-deps
     - npm run build
     - php artisan key:generate
@@ -134,8 +135,7 @@ security-check:
   variables:
     GIT_DEPTH: 1
   script:
-    - composer install --no-progress --no-scripts
-    - COMPOSER_AUDIT_ABANDONED=ignore composer audit
+    - COMPOSER_AUDIT_ABANDONED=ignore composer audit --locked
 
 static analysis:
   image: $BUILDIMAGE
@@ -144,7 +144,7 @@ static analysis:
     GIT_DEPTH: 1
   script:
     - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
-    - docker-php-ext-install sockets pcntl pdo_mysql ldap
+    - for ext in sockets pcntl pdo_mysql ldap; do php -m | grep -iq "^$ext$" || docker-php-ext-install "$ext"; done
     - composer install --no-progress --no-scripts
     - ./vendor/bin/phpstan analyse --memory-limit=2G --error-format=gitlab > gl-code-quality-report.json
   artifacts:

@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM php:8.5-apache-trixie
 ENV DEBIAN_FRONTEND=noninteractive
 RUN sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
@@ -15,15 +16,29 @@ ENV COMPOSER_PROCESS_TIMEOUT=600
 EXPOSE 8080
 WORKDIR /var/www/html
 
+# Create config/storage dirs and configure permissions
+RUN mkdir -p /.config storage && \
+    chmod 777 /.config
+
+# Copy Composer config first to leverage caching
+COPY composer.json composer.lock /var/www/html/
+RUN --mount=type=cache,target=/root/.composer/cache \
+    composer config preferred-install source && \
+    composer install --no-dev --no-interaction --no-scripts --no-autoloader --prefer-source
+
+# Copy NPM config first to leverage caching
+COPY package.json package-lock.json /var/www/html/
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+
+# Copy the rest of the application code
 COPY . /var/www/html/
 
-RUN mkdir -p /.config storage && \
-    chmod 777 /.config && \
-    chmod 777 /var/www/html/storage && \
+# Generate optimized autoloader, build assets, and set up permissions
+RUN chmod 777 /var/www/html/storage && \
     chmod 777 /var/www/html/public/ && \
-    composer config preferred-install source && \
-    composer install --no-dev --no-interaction --prefer-source && \
-    npm install && \
+    composer dump-autoload --no-dev --optimize && \
+    php artisan package:discover --ansi && \
     npm run build && \
     php artisan storage:link && \
     chmod 755 /var/www/html/public/

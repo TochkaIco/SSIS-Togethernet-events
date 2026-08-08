@@ -1,0 +1,10 @@
+.git
+.gitlab
+node_modules
+vendor
+public/build
+storage/*.key
+.env
+.phpunit.cache
+.composer-cache
+pw-browsers
