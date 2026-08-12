@@ -596,5 +596,6 @@
     "Your Qr-Tag Token": "Din Qr-Tag Token",
     "Enter qr-tag token": "Ange qr-tag token",
     "Show this to your hunter if they cannot scan qr-codes.": "Visa detta för din jägare om hen inte kan skanna qr-koder.",
-    "characters remaining": "återstående tecken"
+    "characters remaining": "återstående tecken",
+    "Days Until Event": "Dagar kvar till evenemanget"
 }

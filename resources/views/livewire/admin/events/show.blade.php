@@ -18,17 +18,15 @@
                 @endif
             </div>
             <div class="flex space-x-3 items-center justify-between">
-                @if($event->event_type === \App\EventType::QR_TAG)
-                    <flux:button
-                        variant="ghost"
-                        icon="tv"
-                        href="{{ route('event.tv', $event) }}"
-                        target="_blank"
-                        class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl"
-                    >
-                        {{ __('TV View') }}
-                    </flux:button>
-                @endif
+                <flux:button
+                    variant="ghost"
+                    icon="tv"
+                    href="{{ route('event.tv', $event) }}"
+                    target="_blank"
+                    class="cursor-pointer transition-all duration-300 shadow-xs hover:-translate-y-0.5 hover:shadow-2xl"
+                >
+                    {{ __('TV View') }}
+                </flux:button>
 
                 @haspermission('edit articles')
                 <flux:button

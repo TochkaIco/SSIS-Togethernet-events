@@ -23,7 +23,7 @@ use App\Livewire\Admin\UserProfile;
 use App\Livewire\Documentation;
 use App\Livewire\Events\EventShow as PublicEventShow;
 use App\Livewire\Events\Index as PublicEvents;
-use App\Livewire\Events\QrTagTvView;
+use App\Livewire\Events\TvView;
 use App\Livewire\UserFeedbackView;
 use Illuminate\Support\Facades\Route;
 
@@ -37,7 +37,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::middleware(['tos.accepted'])->group(function () {
     Route::get('/events', PublicEvents::class)->name('events');
     Route::get('/events/{event}', PublicEventShow::class)->name('event.show');
-    Route::get('/events/{event}/tv', QrTagTvView::class)->name('event.tv');
+    Route::get('/events/{event}/tv', TvView::class)->name('event.tv');
 });
 
 Route::get('/terms/accept', AcceptTerms::class)->name('terms.accept')->middleware(['auth']);
