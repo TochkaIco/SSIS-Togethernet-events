@@ -1,0 +1,16 @@
+# Togethernet Events
+
+Togethernet Events is the central event management and engagement platform for the Togethernet student organization at Stockholm Science & Innovation School (SSIS). The website is designed to bring students together, manage organization events/meetings, and host interactive school-wide games.
+
+## What You Can Do on the Website
+
+### 1. Attend & Manage Events
+- **Discover Events**: View upcoming and past events organized by Togethernet (such as Karaoke, Film Parties, and QR-Tag games).
+- **Register for Events**: Sign up for events, choose specific time periods (such as Karaoke slots), and pay for entries if required.
+- **Join Waiting Lists**: If an event is full, join a priority-based queue that automatically secures a spot if another participant cancels.
+
+### 2. Play QR-Tag
+- **Join the Game**: Partake in a school-wide game of tag.
+- **Track Your Target**: View your current target and access your unique QR code.
+- **Tag Other Players**: Scan your target's QR code to tag/eliminate them, which instantly assigns their target to you.
+- **Follow the Leaderboard**: Watch the live standings of top taggers on the dashboard or on the school's TV screens.
