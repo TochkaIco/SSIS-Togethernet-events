@@ -31,7 +31,7 @@ class TvView extends Component
                 'totalCount' => $this->event->participants()->count(),
             ]);
         }
-        if ($this->event->event_starts_at > now()) {
+        if ($this->event->event_starts_at > now() || ($this->event->event_type !== EventType::QR_TAG && $this->event->event_starts_at <= now())) {
             $daysLeft = max(0, (int) ceil(now()->diffInSeconds($this->event->event_starts_at, false) / 86400));
 
             return view('livewire.events.countdown', [
