@@ -1,7 +1,7 @@
 <x-layouts::app :title="__('Home')">
     <div class="flex mt-12 items-center justify-center w-full">
         <div class="w-full max-w-4xl px-2 lg:px-0">
-            <flux:card size="none" class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <flux:card size="none" class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl staged-card" style="animation-delay: 0ms;">
                 <div x-data="{
                         images: [
                             '/images/togethernet-feature.jpg',
@@ -12,7 +12,7 @@
                         ],
                         active: 0
                     }"
-                                         x-init="setInterval(() => {
+                     x-init="setInterval(() => {
                         active = (active + 1) % images.length
                     },4500)"
                      class="relative w-full h-36 md:h-64 overflow-hidden rounded-t-xl">
@@ -53,7 +53,7 @@
                     <flux:separator class="my-12 w-full" />
 
                     <div class="mb-12">
-                        <flux:card class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <flux:card class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl staged-card" style="animation-delay: 100ms;">
                             <div class="flex-none bg-white p-2 rounded-lg shadow-inner w-full lg:w-64 h-auto lg:h-64 flex items-center justify-center overflow-hidden">
                                 {!! $qrTagRegistration->qrTagQrCodeSvg() !!}
                             </div>
@@ -75,28 +75,28 @@
             <flux:separator class="my-12 w-full" />
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <flux:card href="{{ route('events') . '?filterType=karaoke' }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card href="{{ route('events') . '?filterType=karaoke' }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl staged-card" style="animation-delay: 200ms;">
                     <flux:heading size="lg" icon="musical-note">{{ __('Karaoke') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __('Sing your heart out at our karaoke sessions. No talent required, just enthusiasm!') }}
                     </flux:text>
                 </flux:card>
 
-                <flux:card href="{{ route('events') . '?filterType=film_party' }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card href="{{ route('events') . '?filterType=film_party' }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl staged-card" style="animation-delay: 300ms;">
                     <flux:heading size="lg" icon="film">{{ __('Film Nights') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __('Relax and enjoy a film session with your fellow students.') }}
                     </flux:text>
                 </flux:card>
 
-                <flux:card href="{{ route('events') . '?filterType=qr_tag' }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card href="{{ route('events') . '?filterType=qr_tag' }}" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl staged-card" style="animation-delay: 400ms;">
                     <flux:heading size="lg" icon="sparkles">{{ __('QR-Tag') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __('QRTag is a digital version of the "Killer Game" and a great way to meet other students at school.') }}
                     </flux:text>
                 </flux:card>
 
-                <flux:card href="https://lan.ssis.nu/" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <flux:card href="https://lan.ssis.nu/" class="flex flex-col transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl staged-card" style="animation-delay: 500ms;">
                     <flux:heading size="lg" icon="sparkles">{{ __('LAN') }}</flux:heading>
                     <flux:text class="mt-2 grow">
                         {{ __("From game tournaments to themed parties, there're always things happening at our LAN-events.") }}

@@ -6,6 +6,22 @@
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
+@keyframes stageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.staged-card {
+    opacity: 0;
+    animation: stageFadeIn 0.5s ease-out forwards;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
