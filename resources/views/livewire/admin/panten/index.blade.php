@@ -128,12 +128,10 @@
                                                     <flux:badge color="zinc" size="sm" title="{{ __('Confirmed by') }} {{ $alert->admin?->name }}">
                                                         {{ __('Confirmed') }}
                                                     </flux:badge>
-                                                @elseif($alert->receipt_path)
+                                                @else
                                                     <flux:button size="xs" variant="primary" wire:click="confirmReceipt({{ $alert->id }})" class="cursor-pointer">
                                                         {{ __('Confirm Receipt') }}
                                                     </flux:button>
-                                                @else
-                                                    <flux:badge color="zinc" size="sm">{{ __('Swish Direct') }}</flux:badge>
                                                 @endif
                                             @else
                                                 @if($alert->admin_user_id)

@@ -157,6 +157,29 @@ test('admin can confirm receipt of a check pant alert', function () {
     expect($alert->admin_user_id)->toBe($admin->id);
 });
 
+test('admin can confirm receipt of a Swish pant alert', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $alert = PantAlert::factory()->create([
+        'is_complete' => true,
+        'receipt_path' => null,
+        'admin_user_id' => null,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PantenIndex::class)
+        ->call('confirmReceipt', $alert->id)
+        ->assertHasNoErrors()
+        ->assertSet('confirmingReceiptId', $alert->id)
+        ->call('executeConfirmReceipt')
+        ->assertHasNoErrors()
+        ->assertSet('confirmingReceiptId', null);
+
+    $alert->refresh();
+    expect($alert->admin_user_id)->toBe($admin->id);
+});
+
 test('non-admin cannot confirm receipt of a check pant alert', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('manage panten');

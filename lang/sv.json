@@ -646,5 +646,7 @@
     "Who participated in recycling?": "Vilka deltog i pantningen?",
     "Check Photo": "Kvittofoto",
     "Pant Swish Number": "Swishnummer för pant",
-    "The Swish account number to which pant money should be sent.": "Swishnummer som pantpengar ska skickas till."
+    "The Swish account number to which pant money should be sent.": "Swishnummer som pantpengar ska skickas till.",
+    "Confirm receipt?": "Bekräfta mottagande?",
+    "Are you sure you want to confirm receipt of this recycling payment?": "Är du säker på att du vill bekräfta mottagandet av denna pantbetalning?"
 }
