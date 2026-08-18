@@ -19,11 +19,14 @@ class AppConfigurationPage extends Component
 
     public bool $automatedWaitingListMove;
 
+    public string $pantSwishNumber = '';
+
     public function mount(): void
     {
         $this->useElevkarAuth = AppConfig::get('active_auth_provider', 'google') === 'elevkar';
         $this->allowExternal = AppConfig::get('allow_external_emails', false);
         $this->automatedWaitingListMove = AppConfig::get('automated_waiting_list_move', true);
+        $this->pantSwishNumber = (string) AppConfig::get('pant_swish_number', '');
     }
 
     public function updatedUseElevkarAuth($value): void
@@ -49,6 +52,15 @@ class AppConfigurationPage extends Component
         AppConfig::updateOrCreate(['key' => 'automated_waiting_list_move'], ['value' => $value ? 'true' : 'false', 'type' => 'boolean']);
 
         GlobalLog::log('App Configuration Updated', 'config', ['key' => 'automated_waiting_list_move', 'value' => $value ? 'true' : 'false']);
+
+        Flux::toast(__('Setting saved.'), variant: 'success');
+    }
+
+    public function updatedPantSwishNumber($value): void
+    {
+        AppConfig::updateOrCreate(['key' => 'pant_swish_number'], ['value' => $value, 'type' => 'string']);
+
+        GlobalLog::log('App Configuration Updated', 'config', ['key' => 'pant_swish_number', 'value' => $value]);
 
         Flux::toast(__('Setting saved.'), variant: 'success');
     }

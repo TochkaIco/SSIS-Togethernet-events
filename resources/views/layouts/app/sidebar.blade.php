@@ -92,6 +92,12 @@
                                     </flux:sidebar.item>
                                 </flux:sidebar.group>
                             @endif
+
+                            @can('manage panten')
+                                <flux:sidebar.item icon="trash" :href="route('admin.panten.index')" :current="request()->routeIs('admin.panten*')" wire:navigate>
+                                    {{ __('Panten') }}
+                                </flux:sidebar.item>
+                            @endcan
                             @can('manage users')
                                 <flux:sidebar.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.user*')" wire:navigate>
                                     {{ __('Users') }}

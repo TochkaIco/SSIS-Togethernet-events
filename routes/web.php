@@ -17,6 +17,7 @@ use App\Livewire\Admin\Events\ParticipantProfile;
 use App\Livewire\Admin\Meetings\Index;
 use App\Livewire\Admin\Meetings\Protocol;
 use App\Livewire\Admin\Meetings\Show;
+use App\Livewire\Admin\Panten\Index as PantHome;
 use App\Livewire\Admin\UserImpersonationPage;
 use App\Livewire\Admin\UserManagement;
 use App\Livewire\Admin\UserProfile;
@@ -60,6 +61,9 @@ Route::middleware(['auth', 'verified', 'tos.accepted'])->group(function () {
     Route::middleware(['auth', 'can:edit articles'])->group(function () {
         Route::patch('admin/events/{event}/update', [EventController::class, 'update'])->name('admin.event.update');
         Route::delete('admin/events/{event}/destroy', [EventController::class, 'destroy'])->name('admin.event.destroy');
+    });
+    Route::middleware(['auth', 'can:manage panten'])->group(function () {
+        Route::get('/admin/panten', PantHome::class)->name('admin.panten.index');
     });
     Route::middleware(['auth', 'can:manage users'])->group(function () {
         Route::get('/admin/users', UserManagement::class)->name('admin.users');
