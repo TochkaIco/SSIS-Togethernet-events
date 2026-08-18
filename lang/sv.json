@@ -648,5 +648,6 @@
     "Pant Swish Number": "Swishnummer för pant",
     "The Swish account number to which pant money should be sent.": "Swishnummer som pantpengar ska skickas till.",
     "Confirm receipt?": "Bekräfta mottagande?",
-    "Are you sure you want to confirm receipt of this recycling payment?": "Är du säker på att du vill bekräfta mottagandet av denna pantbetalning?"
+    "Are you sure you want to confirm receipt of this recycling payment?": "Är du säker på att du vill bekräfta mottagandet av denna pantbetalning?",
+    "A pant alert is already active or pending confirmation.": "En pant-alert är redan aktiv eller väntar på bekräftelse."
 }

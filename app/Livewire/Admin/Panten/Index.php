@@ -42,9 +42,9 @@ class Index extends Component
             abort(403);
         }
 
-        $activeAlert = PantAlert::active()->first();
-        if ($activeAlert) {
-            Flux::toast(__('A pant alert is already active.'), variant: 'warning');
+        $incompleteAlert = PantAlert::whereNull('admin_user_id')->first();
+        if ($incompleteAlert) {
+            Flux::toast(__('A pant alert is already active or pending confirmation.'), variant: 'warning');
 
             return;
         }
@@ -220,6 +220,7 @@ class Index extends Component
         }
 
         $activeAlert = PantAlert::active()->first();
+        $hasIncomplete = PantAlert::whereNull('admin_user_id')->exists();
         $pastAlerts = PantAlert::where('is_complete', true)
             ->orderBy('created_at', 'desc')
             ->paginate(15);
@@ -234,6 +235,7 @@ class Index extends Component
             'activeAlert' => $activeAlert,
             'pastAlerts' => $pastAlerts,
             'usersList' => $usersList,
+            'hasIncomplete' => $hasIncomplete,
         ]);
     }
 }

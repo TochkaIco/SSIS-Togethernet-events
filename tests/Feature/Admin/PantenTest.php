@@ -83,6 +83,22 @@ test('only one pant alert can be active at a time', function () {
     expect(PantAlert::count())->toBe(1);
 });
 
+test('cannot activate new pant alert if there is a completed but unconfirmed pant alert', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    PantAlert::factory()->create([
+        'is_complete' => true,
+        'admin_user_id' => null,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PantenIndex::class)
+        ->call('activateAlert');
+
+    expect(PantAlert::count())->toBe(1);
+});
+
 test('member can complete pant alert using Swish method', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('manage panten');

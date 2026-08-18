@@ -6,10 +6,16 @@
         </div>
 
         @if(auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer']))
-            @if(!$activeAlert)
+            @if(!$hasIncomplete)
                 <flux:button variant="primary" icon="bell" wire:click="activateAlert" class="cursor-pointer">
                     {{ __('Activate Pant Alert') }}
                 </flux:button>
+            @else
+                <flux:tooltip :content="__('A pant alert is already active or pending confirmation.')">
+                    <flux:button variant="primary" icon="bell" disabled>
+                        {{ __('Activate Pant Alert') }}
+                    </flux:button>
+                </flux:tooltip>
             @endif
         @endif
     </div>
