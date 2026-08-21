@@ -177,7 +177,6 @@ code style:
       allow_failure: true
   needs:
     - Build
-    - Push latest
   script:
     - eval $(ssh-agent -s)
     - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
