@@ -7,9 +7,11 @@
 
         @if(auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer']))
             @if(!$hasIncomplete)
-                <flux:button variant="primary" icon="bell" wire:click="activateAlert" class="cursor-pointer">
-                    {{ __('Activate Pant Alert') }}
-                </flux:button>
+                <flux:modal.trigger name="confirm-activate-alert-modal">
+                    <flux:button variant="primary" icon="bell" class="cursor-pointer">
+                        {{ __('Activate Pant Alert') }}
+                    </flux:button>
+                </flux:modal.trigger>
             @else
                 <flux:tooltip :content="__('A pant alert is already active or pending confirmation.')">
                     <flux:button variant="primary" icon="bell" disabled>
@@ -315,6 +317,27 @@
                 </flux:modal.close>
 
                 <flux:button type="submit" variant="primary" class="cursor-pointer">{{ __('Confirm') }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="confirm-activate-alert-modal" class="min-w-[22rem]">
+        <form wire:submit="activateAlert" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Activate Pant Alert?') }}</flux:heading>
+                <flux:text class="mt-2">
+                    {{ __('Are you sure you want to activate a new pant alert? This will notify members to recycling action.') }}
+                </flux:text>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+
+                <flux:button type="submit" variant="primary" class="cursor-pointer">{{ __('Activate') }}</flux:button>
             </div>
         </form>
     </flux:modal>

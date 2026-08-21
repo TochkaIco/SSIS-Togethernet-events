@@ -45,6 +45,7 @@ class Index extends Component
         $incompleteAlert = PantAlert::whereNull('admin_user_id')->first();
         if ($incompleteAlert) {
             Flux::toast(__('A pant alert is already active or pending confirmation.'), variant: 'warning');
+            $this->modal('confirm-activate-alert-modal')->close();
 
             return;
         }
@@ -55,6 +56,8 @@ class Index extends Component
         ]);
 
         GlobalLog::log('Pant alert activated', 'panten', ['alert_id' => $alert->id]);
+
+        $this->modal('confirm-activate-alert-modal')->close();
 
         Flux::toast(__('Pant alert activated successfully.'), variant: 'success');
     }

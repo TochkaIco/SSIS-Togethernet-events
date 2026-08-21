@@ -246,5 +246,8 @@
     "What happens if I don't accept?": "What happens if I don't accept?",
     "If the new terms are not accepted by **:date**, your account will be automatically anonymized for privacy and security reasons.": "If the new terms are not accepted by **:date**, your account will be automatically anonymized for privacy and security reasons.",
     "Review and Accept Terms": "Review and Accept Terms",
-    "Login Now": "Login Now"
+    "Login Now": "Login Now",
+    "Activate Pant Alert?": "Activate Pant Alert?",
+    "Are you sure you want to activate a new pant alert? This will notify members to recycling action.": "Are you sure you want to activate a new pant alert? This will notify members to recycling action.",
+    "Activate": "Activate"
 }
