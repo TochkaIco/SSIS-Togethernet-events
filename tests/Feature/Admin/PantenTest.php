@@ -463,7 +463,7 @@ test('confirming receipt dispatches SendDiscordPantCompletionAlert with correct 
         ->call('confirmReceipt', $alert->id)
         ->call('executeConfirmReceipt');
 
-    Queue::assertPushed(SendDiscordPantCompletionAlert::class, function ($job) use ($alert) {
+    Queue::assertPushed(SendDiscordPantCompletionAlert::class, function ($job) use ($alert): bool {
         return $job->alert->id === $alert->id;
     });
 });
@@ -485,7 +485,7 @@ test('SendDiscordPantCompletionAlert sends post request to discord togethernet w
     $job = new SendDiscordPantCompletionAlert($alert);
     $job->handle();
 
-    Http::assertSent(function (Request $request) {
+    Http::assertSent(function (Request $request): bool {
         return $request->url() === 'https://discord.com/api/webhooks/test' &&
             str_contains($request['content'], 'Alice, Bob') &&
             str_contains($request['content'], '150,50 kr');
