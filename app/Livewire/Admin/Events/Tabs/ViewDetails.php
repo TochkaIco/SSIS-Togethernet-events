@@ -43,6 +43,8 @@ class ViewDetails extends Component
                 'times' => $registrationTimes,
                 'event_start' => $this->event->event_starts_at->getTimestamp() * 1000,
                 'event_created' => $this->event->created_at->getTimestamp() * 1000,
+                'display_starts_at' => $this->event->display_starts_at->getTimestamp() * 1000,
+                'event_ends_at' => $this->event->event_ends_at->getTimestamp() * 1000,
             ],
         ];
     }

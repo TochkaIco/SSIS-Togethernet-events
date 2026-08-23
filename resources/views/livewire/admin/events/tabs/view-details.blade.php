@@ -35,12 +35,14 @@
                             const times = @js($this->stats['registration_timeline']['times']);
                             const eventStart = @js($this->stats['registration_timeline']['event_start']);
                             const eventCreated = @js($this->stats['registration_timeline']['event_created']);
+                            const displayStartsAt = @js($this->stats['registration_timeline']['display_starts_at']);
+                            const eventEndsAt = @js($this->stats['registration_timeline']['event_ends_at']);
                             const now = Date.now();
 
                             const dataPoints = [];
                             
-                            // Start at 0 on eventCreated
-                            dataPoints.push({ x: eventCreated, y: 0 });
+                            // Start at 0 on displayStartsAt
+                            dataPoints.push({ x: displayStartsAt, y: 0 });
 
                             let count = 0;
                             times.forEach(t => {
@@ -48,16 +50,16 @@
                                 dataPoints.push({ x: t, y: count });
                             });
 
-                            // Add a point for the current time or event start to keep the line current
-                            const lastTime = times[times.length - 1] || eventCreated;
-                            const currentEnd = Math.max(eventStart, lastTime, now);
+                            // Add a point for eventEndsAt to keep the line flat to the end of the chart
+                            const lastTime = times[times.length - 1] || displayStartsAt;
+                            const currentEnd = eventEndsAt;
                             
                             if (currentEnd > lastTime) {
                                 dataPoints.push({ x: currentEnd, y: count });
                             }
 
-                            const minX = Math.min(eventCreated, times[0] || eventCreated);
-                            const maxX = currentEnd;
+                            const minX = displayStartsAt;
+                            const maxX = eventEndsAt;
 
                             new Chart(this.$refs.registrationTimelineChart, {
                                 type: 'line',
