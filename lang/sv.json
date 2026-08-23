@@ -610,6 +610,8 @@
     "Monitor recycling status and submit check or swish payments.": "Övervaka återvinningsstatus och skicka kvitto- eller swishbetalningar.",
     "Active Pant Alert": "Aktiv pant-alert",
     "This alert is active. If the recycling bins at school are full, you can take them to a shop and submit the check here or send the money to the swish number below.": "Denna alert är aktiv. Om pantkorgarna på skolan är fulla kan du panta dem i en butik och ladda upp kvittot här eller swisha pengarna till numret nedan.",
+    "Recycliong Bins are Full!": "Återvinningskärlen är fulla!",
+    "The role ID for the togethernet role in our Discord server.": "Roll-ID för togethernet-rollen på vår Discord-server.",
     "Swish Number:": "Swishnummer:",
     "Complete recycling & submit": "Slutför pantning & skicka",
     "All Clean!": "Allt rent!",
@@ -652,5 +654,17 @@
     "A pant alert is already active or pending confirmation.": "En pant-alert är redan aktiv eller väntar på bekräftelse.",
     "Activate Pant Alert?": "Aktivera pant-alert?",
     "Are you sure you want to activate a new pant alert? This will notify members to recycling action.": "Är du säker på att du vill aktivera en ny pant-alert? Detta kommer att meddela medlemmar om pantning.",
-    "Activate": "Aktivera"
+    "Activate": "Aktivera",
+    "Stop Alert": "Stoppa alert",
+    "Stop Pant Alert?": "Stoppa pant-alert?",
+    "Are you sure you want to stop this pant alert? This will cancel the alert and remove it.": "Är du säker på att du vill stoppa denna pant-alert? Detta kommer att avbryta alerten och ta bort den.",
+    "Decline completion?": "Avvisa slutförande?",
+    "Are you sure you want to decline this completion submission? This will return the alert to an active state, allowing members to submit details again.": "Är du säker på att du vill avvisa detta slutförande? Detta kommer att återställa alerten till ett aktivt läge, vilket gör det möjligt för medlemmar att skicka information igen.",
+    "Delete Alert?": "Ta bort alert?",
+    "Are you sure you want to delete this alert from history? This action cannot be undone.": "Är du säker på att du vill ta bort denna alert från historiken? Denna åtgärd kan inte ångras.",
+    "Stop": "Stoppa",
+    "Pant alert stopped successfully.": "Pant-alerten har stoppats.",
+    "Pant completion declined successfully.": "Mottagandet avvisades framgångsrikt.",
+    "Pant alert deleted successfully.": "Pant-alerten har raderats.",
+    "This alert cannot be declined.": "Denna alert kan inte avvisas."
 }

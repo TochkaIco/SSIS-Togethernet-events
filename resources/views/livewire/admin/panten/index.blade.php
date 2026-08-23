@@ -36,7 +36,7 @@
                             <flux:icon.exclamation-triangle class="size-6" />
                         </div>
                         <div>
-                            <flux:heading>{{ __('Recycling Bin is Full!') }}</flux:heading>
+                            <flux:heading>{{ __('Recycling Bins are Full!') }}</flux:heading>
                             <flux:subheading>
                                 {{ __('Alert active since') }} {{ $activeAlert->created_at->format('Y-m-d H:i') }}
                             </flux:subheading>
@@ -63,13 +63,22 @@
                     </div>
                 </div>
 
-                @can('manage panten')
-                    <div class="flex justify-end pt-2">
+                <div class="flex justify-between items-center pt-2">
+                    <div>
+                        @if(auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer']))
+                            <flux:modal.trigger name="confirm-stop-alert-modal">
+                                <flux:button variant="danger" icon="x-mark" class="cursor-pointer">
+                                    {{ __('Stop Alert') }}
+                                </flux:button>
+                            </flux:modal.trigger>
+                        @endif
+                    </div>
+                    @can('manage panten')
                         <flux:button variant="primary" icon="check" wire:click="openCompleteModal" class="cursor-pointer">
                             {{ __('Complete recycling & submit') }}
                         </flux:button>
-                    </div>
-                @endcan
+                    @endcan
+                </div>
             </flux:card>
         @else
             <flux:card class="flex flex-col items-center justify-center py-16 text-center border border-dashed border-zinc-305 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-950/5">
@@ -131,7 +140,7 @@
                                                 @if($alert->receipt_path)
                                                     <flux:button size="xs" variant="ghost" icon="eye" wire:click="viewPhoto({{ $alert->id }})" class="cursor-pointer" />
                                                 @endif
- 
+
                                                 @if($alert->admin_user_id)
                                                     <flux:badge color="zinc" size="sm" title="{{ __('Confirmed by') }} {{ $alert->admin?->name }}">
                                                         {{ __('Confirmed') }}
@@ -140,7 +149,12 @@
                                                     <flux:button size="xs" variant="primary" wire:click="confirmReceipt({{ $alert->id }})" class="cursor-pointer">
                                                         {{ __('Confirm Receipt') }}
                                                     </flux:button>
+                                                    <flux:button size="xs" variant="danger" wire:click="declineCompletion({{ $alert->id }})" class="cursor-pointer">
+                                                        {{ __('Decline') }}
+                                                    </flux:button>
                                                 @endif
+
+                                                <flux:button size="xs" variant="ghost" icon="trash" wire:click="deleteAlert({{ $alert->id }})" class="cursor-pointer text-red-500 hover:text-red-600" />
                                             @else
                                                 @if($alert->admin_user_id)
                                                     <flux:badge color="zinc" size="sm">{{ __('Confirmed') }}</flux:badge>
@@ -159,14 +173,14 @@
                     </div>
                 @endif
             </flux:card>
- 
+
             {{-- Leaderboard --}}
             <flux:card class="space-y-4">
                 <div class="flex items-center gap-2 mb-2">
                     <flux:icon.trophy variant="outline" class="size-6 text-zinc-400" />
                     <flux:heading>{{ __('Recycling Leaderboard') }}</flux:heading>
                 </div>
- 
+
                 @if(empty($leaderboard))
                     <flux:text class="text-zinc-400 text-sm">{{ __('No recycling data yet.') }}</flux:text>
                 @else
@@ -338,6 +352,69 @@
                 </flux:modal.close>
 
                 <flux:button type="submit" variant="primary" class="cursor-pointer">{{ __('Activate') }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="confirm-stop-alert-modal" class="min-w-[22rem]">
+        <form wire:submit="stopAlert" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Stop Pant Alert?') }}</flux:heading>
+                <flux:text class="mt-2">
+                    {{ __('Are you sure you want to stop this pant alert? This will cancel the alert and remove it.') }}
+                </flux:text>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+
+                <flux:button type="submit" variant="danger" class="cursor-pointer">{{ __('Stop') }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="confirm-decline-completion-modal" class="min-w-[22rem]">
+        <form wire:submit="executeDeclineCompletion" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Decline completion?') }}</flux:heading>
+                <flux:text class="mt-2">
+                    {{ __('Are you sure you want to decline this completion submission? This will return the alert to an active state, allowing members to submit details again.') }}
+                </flux:text>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+
+                <flux:button type="submit" variant="danger" class="cursor-pointer">{{ __('Decline') }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="confirm-delete-alert-modal" class="min-w-[22rem]">
+        <form wire:submit="executeDeleteAlert" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Delete Alert?') }}</flux:heading>
+                <flux:text class="mt-2">
+                    {{ __('Are you sure you want to delete this alert from history? This action cannot be undone.') }}
+                </flux:text>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+
+                <flux:button type="submit" variant="danger" class="cursor-pointer">{{ __('Delete') }}</flux:button>
             </div>
         </form>
     </flux:modal>

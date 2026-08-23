@@ -21,12 +21,15 @@ class AppConfigurationPage extends Component
 
     public string $pantSwishNumber = '';
 
+    public string $discordTogethernetRoleId = '';
+
     public function mount(): void
     {
         $this->useElevkarAuth = AppConfig::get('active_auth_provider', 'google') === 'elevkar';
         $this->allowExternal = AppConfig::get('allow_external_emails', false);
         $this->automatedWaitingListMove = AppConfig::get('automated_waiting_list_move', true);
         $this->pantSwishNumber = (string) AppConfig::get('pant_swish_number', '');
+        $this->discordTogethernetRoleId = (string) AppConfig::get('discord_togethernet_role_id', '');
     }
 
     public function updatedUseElevkarAuth($value): void
@@ -61,6 +64,19 @@ class AppConfigurationPage extends Component
         AppConfig::updateOrCreate(['key' => 'pant_swish_number'], ['value' => $value, 'type' => 'string']);
 
         GlobalLog::log('App Configuration Updated', 'config', ['key' => 'pant_swish_number', 'value' => $value]);
+
+        Flux::toast(__('Setting saved.'), variant: 'success');
+    }
+
+    public function updatedDiscordTogethernetRoleId($value): void
+    {
+        $this->validate([
+            'discordTogethernetRoleId' => 'nullable|numeric',
+        ]);
+
+        AppConfig::updateOrCreate(['key' => 'discord_togethernet_role_id'], ['value' => $value, 'type' => 'string']);
+
+        GlobalLog::log('App Configuration Updated', 'config', ['key' => 'discord_togethernet_role_id', 'value' => $value]);
 
         Flux::toast(__('Setting saved.'), variant: 'success');
     }

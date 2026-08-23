@@ -27,4 +27,11 @@
         <flux:input wire:model.live.debounce.500ms="pantSwishNumber" placeholder="e.g. 1234567890" />
         <flux:description>{{ __('The Swish account number to which pant money should be sent.') }}</flux:description>
     </flux:field>
+
+    <flux:field>
+        <flux:label>{{ __('Discord Togethernet Role ID') }}</flux:label>
+        <flux:input wire:model.live.debounce.500ms="discordTogethernetRoleId" placeholder="e.g. 123456789012345678" />
+        <flux:error name="discordTogethernetRoleId" />
+        <flux:description>{{ __('The role ID for the togethernet role in our Discord server.') }}</flux:description>
+    </flux:field>
 </div>

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Panten;
 
+use App\Jobs\SendDiscordPantAlert;
+use App\Jobs\SendDiscordPantCompletionAlert;
 use App\Models\AppConfig;
 use App\Models\GlobalLog;
 use App\Models\PantAlert;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -30,6 +33,10 @@ class Index extends Component
     public array $completedBy = [];
 
     public ?string $viewingPhotoPath = null;
+
+    public ?int $decliningAlertId = null;
+
+    public ?int $deletingAlertId = null;
 
     public function mount(): void
     {
@@ -60,6 +67,8 @@ class Index extends Component
         $this->modal('confirm-activate-alert-modal')->close();
 
         Flux::toast(__('Pant alert activated successfully.'), variant: 'success');
+
+        SendDiscordPantAlert::dispatch();
     }
 
     public function openCompleteModal(): void
@@ -167,6 +176,8 @@ class Index extends Component
 
         GlobalLog::log('Pant receipt confirmed', 'panten', ['alert_id' => $this->confirmingReceiptId]);
 
+        SendDiscordPantCompletionAlert::dispatch($alert);
+
         $this->confirmingReceiptId = null;
         $this->modal('confirm-receipt-modal')->close();
 
@@ -182,6 +193,123 @@ class Index extends Component
         $alert = PantAlert::findOrFail($alertId);
         $this->viewingPhotoPath = $alert->receipt_path;
         $this->modal('view-photo-modal')->show();
+    }
+
+    public function stopAlert(): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        $activeAlert = PantAlert::active()->first();
+        if (! $activeAlert) {
+            Flux::toast(__('No active pant alert found.'), variant: 'warning');
+
+            return;
+        }
+
+        GlobalLog::log('Pant alert stopped', 'panten', ['alert_id' => $activeAlert->id]);
+
+        $activeAlert->delete();
+
+        $this->modal('confirm-stop-alert-modal')->close();
+
+        Flux::toast(__('Pant alert stopped successfully.'), variant: 'success');
+    }
+
+    public function declineCompletion(int $alertId): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        $alert = PantAlert::findOrFail($alertId);
+        if (! $alert->is_complete || $alert->admin_user_id !== null) {
+            Flux::toast(__('This alert cannot be declined.'), variant: 'warning');
+
+            return;
+        }
+
+        $this->decliningAlertId = $alertId;
+        $this->modal('confirm-decline-completion-modal')->show();
+    }
+
+    public function executeDeclineCompletion(): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        if (! $this->decliningAlertId) {
+            return;
+        }
+
+        $alert = PantAlert::findOrFail($this->decliningAlertId);
+        if (! $alert->is_complete || $alert->admin_user_id !== null) {
+            Flux::toast(__('This alert cannot be declined.'), variant: 'warning');
+            $this->decliningAlertId = null;
+            $this->modal('confirm-decline-completion-modal')->close();
+
+            return;
+        }
+
+        if ($alert->receipt_path) {
+            Storage::disk('public')->delete($alert->receipt_path);
+        }
+
+        $alert->update([
+            'is_complete' => false,
+            'completed_by' => null,
+            'sek_received' => 0.0,
+            'receipt_path' => null,
+        ]);
+
+        GlobalLog::log('Pant completion declined', 'panten', ['alert_id' => $this->decliningAlertId]);
+
+        $this->decliningAlertId = null;
+        $this->modal('confirm-decline-completion-modal')->close();
+
+        Flux::toast(__('Pant completion declined successfully.'), variant: 'success');
+    }
+
+    public function deleteAlert(int $alertId): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        $this->deletingAlertId = $alertId;
+        $this->modal('confirm-delete-alert-modal')->show();
+    }
+
+    public function executeDeleteAlert(): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        if (! $this->deletingAlertId) {
+            return;
+        }
+
+        $alert = PantAlert::findOrFail($this->deletingAlertId);
+
+        if ($alert->receipt_path) {
+            Storage::disk('public')->delete($alert->receipt_path);
+        }
+
+        GlobalLog::log('Pant alert deleted', 'panten', [
+            'alert_id' => $alert->id,
+            'sek' => $alert->sek_received,
+            'is_complete' => $alert->is_complete,
+        ]);
+
+        $alert->delete();
+
+        $this->deletingAlertId = null;
+        $this->modal('confirm-delete-alert-modal')->close();
+
+        Flux::toast(__('Pant alert deleted successfully.'), variant: 'success');
     }
 
     #[Layout('layouts.app')]
