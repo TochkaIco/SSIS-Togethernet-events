@@ -24,50 +24,141 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {{-- Event Stats Overview --}}
+        {{-- Registration Timeline Chart --}}
         <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <h2 class="text-lg font-bold mb-4">{{ __('Attendance Overview') }}</h2>
+            <h2 class="text-lg font-bold mb-4">{{ __('Registration Timeline') }}</h2>
 
-            <div class="space-y-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                        <span class="block text-sm text-zinc-500 dark:text-zinc-400 mb-1">{{ __('Registrations') }}</span>
-                        <span class="text-2xl font-bold">{{ $this->stats['registrations'] }}</span>
-                    </div>
-                    <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                        <span class="block text-sm text-zinc-500 dark:text-zinc-400 mb-1">{{ __('Attendance') }}</span>
-                        <span class="text-2xl font-bold">{{ $this->stats['attendance'] }}</span>
-                    </div>
+            @if($this->stats['registrations'] > 0)
+                <div
+                    x-data="{
+                        init() {
+                            const times = @js($this->stats['registration_timeline']['times']);
+                            const eventStart = @js($this->stats['registration_timeline']['event_start']);
+                            const eventCreated = @js($this->stats['registration_timeline']['event_created']);
+                            const now = Date.now();
+
+                            const dataPoints = [];
+                            
+                            // Start at 0 on eventCreated
+                            dataPoints.push({ x: eventCreated, y: 0 });
+
+                            let count = 0;
+                            times.forEach(t => {
+                                count++;
+                                dataPoints.push({ x: t, y: count });
+                            });
+
+                            // Add a point for the current time or event start to keep the line current
+                            const lastTime = times[times.length - 1] || eventCreated;
+                            const currentEnd = Math.max(eventStart, lastTime, now);
+                            
+                            if (currentEnd > lastTime) {
+                                dataPoints.push({ x: currentEnd, y: count });
+                            }
+
+                            const minX = Math.min(eventCreated, times[0] || eventCreated);
+                            const maxX = currentEnd;
+
+                            new Chart(this.$refs.registrationTimelineChart, {
+                                type: 'line',
+                                data: {
+                                    datasets: [{
+                                        label: '{{ __('Registrations') }}',
+                                        data: dataPoints,
+                                        borderColor: '#f97316',
+                                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                                        borderWidth: 2,
+                                        fill: true,
+                                        stepped: true,
+                                        pointRadius: times.length > 50 ? 0 : 3,
+                                        pointHoverRadius: 5,
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        x: {
+                                            type: 'linear',
+                                            min: minX,
+                                            max: maxX,
+                                            ticks: {
+                                                callback: function(value) {
+                                                    const date = new Date(value);
+                                                    return date.toLocaleDateString(undefined, { 
+                                                        month: 'short', 
+                                                        day: 'numeric'
+                                                    });
+                                                },
+                                                maxRotation: 45,
+                                                minRotation: 0,
+                                            },
+                                            title: {
+                                                display: true,
+                                                text: '{{ __('Date') }}'
+                                            }
+                                        },
+                                        y: {
+                                            beginAtZero: true,
+                                            ticks: {
+                                                precision: 0
+                                            },
+                                            title: {
+                                                display: true,
+                                                text: '{{ __('Total Participants') }}'
+                                            }
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                title: function(context) {
+                                                    const date = new Date(context[0].raw.x);
+                                                    return date.toLocaleString();
+                                                },
+                                                label: function(context) {
+                                                    return `{{ __('Registrations') }}: ${context.raw.y}`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: [{
+                                    id: 'verticalLine',
+                                    afterDraw: (chart) => {
+                                        const xAxis = chart.scales.x;
+                                        const yAxis = chart.scales.y;
+                                        if (eventStart >= xAxis.min && eventStart <= xAxis.max) {
+                                            const xPixel = xAxis.getPixelForValue(eventStart);
+                                            const ctx = chart.ctx;
+                                            ctx.save();
+                                            ctx.beginPath();
+                                            ctx.moveTo(xPixel, yAxis.top);
+                                            ctx.lineTo(xPixel, yAxis.bottom);
+                                            ctx.lineWidth = 2;
+                                            ctx.strokeStyle = '#ef4444';
+                                            ctx.setLineDash([5, 5]);
+                                            ctx.stroke();
+                                            ctx.restore();
+                                        }
+                                    }
+                                }]
+                            });
+                        }
+                    }"
+                    class="h-64"
+                >
+                    <canvas x-ref="registrationTimelineChart"></canvas>
                 </div>
-
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm font-medium">{{ __('Attendance Rate') }}</span>
-                        <span class="text-sm font-bold text-orange-500">{{ $this->stats['attendance_rate'] }}%</span>
-                    </div>
-                    <div class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2.5">
-                        <div class="bg-orange-500 h-2.5 rounded-full" style="width: {{ $this->stats['attendance_rate'] }}%"></div>
-                    </div>
+            @else
+                <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                    <flux:icon.users class="size-12 mb-4 opacity-20" />
+                    <p>{{ __('No participants yet.') }}</p>
                 </div>
-
-                @if($event->num_of_seats > 0)
-                    @php
-                        $fillRate = round(($this->stats['registrations'] / $event->num_of_seats) * 100);
-                    @endphp
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-medium">{{ __('Capacity Usage') }}</span>
-                            <span class="text-sm font-bold text-blue-500">{{ $fillRate }}%</span>
-                        </div>
-                        <div class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2.5">
-                            <div class="bg-blue-500 h-2.5 rounded-full" style="width: {{ min(100, $fillRate) }}%"></div>
-                        </div>
-                        <p class="text-[10px] text-zinc-500 mt-1 text-right">
-                            {{ $this->stats['registrations'] }} / {{ $event->num_of_seats }} {{ __('seats taken') }}
-                        </p>
-                    </div>
-                @endif
-            </div>
+            @endif
         </flux:card>
 
         {{-- Class Distribution Chart --}}

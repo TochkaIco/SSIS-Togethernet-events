@@ -48,8 +48,9 @@ it('calculates statistics correctly', function () {
     $stats = $component->get('stats');
 
     expect($stats['registrations'])->toBe(3);
-    expect($stats['attendance'])->toBe(2);
-    expect($stats['attendance_rate'])->toBe(67); // round(2/3 * 100)
+    expect($stats['registration_timeline']['times'])->toHaveCount(3);
+    expect($stats['registration_timeline']['event_start'])->toBe($event->event_starts_at->getTimestamp() * 1000);
+    expect($stats['registration_timeline']['event_created'])->toBe($event->created_at->getTimestamp() * 1000);
 
     $classDist = $stats['class_distribution'];
     expect($classDist['labels'])->toContain('TE22', 'EE23');

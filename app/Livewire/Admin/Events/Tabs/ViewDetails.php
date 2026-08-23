@@ -18,10 +18,6 @@ class ViewDetails extends Component
     {
         $registrationsCount = $this->event->participants()->count();
 
-        $attendanceCount = $this->event->participants()
-            ->where('has_arrived', true)
-            ->count();
-
         $userIds = $this->event->participants()
             ->pluck('user_id');
 
@@ -30,14 +26,23 @@ class ViewDetails extends Component
             ->groupBy('class')
             ->get();
 
+        $registrationTimes = $this->event->participants()
+            ->oldest('created_at')
+            ->pluck('created_at')
+            ->map(fn ($date) => $date->getTimestamp() * 1000)
+            ->toArray();
+
         return [
             'registrations' => $registrationsCount,
-            'attendance' => $attendanceCount,
-            'attendance_rate' => $registrationsCount > 0 ? (int) round(($attendanceCount / $registrationsCount) * 100) : 0,
             'class_distribution' => [
                 'labels' => $classData->pluck('class')->map(fn ($c) => $c ?? __('Unknown'))->toArray(),
                 'data' => $classData->pluck('count')->toArray(),
                 'colors' => $classData->map(fn ($item) => '#'.substr(md5($item->class ?? 'Unknown'), 0, 6))->toArray(),
+            ],
+            'registration_timeline' => [
+                'times' => $registrationTimes,
+                'event_start' => $this->event->event_starts_at->getTimestamp() * 1000,
+                'event_created' => $this->event->created_at->getTimestamp() * 1000,
             ],
         ];
     }
