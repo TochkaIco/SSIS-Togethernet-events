@@ -615,3 +615,25 @@ test('cannot tag after event ends', function () {
     $response->assertRedirect(route('event.show', $event));
     $response->assertSessionHas('error', __('The event has already ended.'));
 });
+
+test('guests are redirected to login and then redirected to confirm page after login', function () {
+    $event = Event::factory()->create(['event_type' => EventType::QR_TAG]);
+    $u1 = User::factory()->create(['tos_accepted_at' => now()]);
+    $u2 = User::factory()->create();
+
+    EventUser::create(['user_id' => $u1->id, 'event_id' => $event->id, 'qr_tag_token' => 't1', 'qr_tag_target_user_id' => $u2->id]);
+    EventUser::create(['user_id' => $u2->id, 'event_id' => $event->id, 'qr_tag_token' => 't2', 'qr_tag_target_user_id' => $u1->id]);
+
+    // Requesting as guest
+    $response = $this->get(route('qr_tag.confirm', ['token' => 't2']));
+
+    $response->assertRedirect(route('login'));
+    expect(session('url.intended'))->toBe(route('qr_tag.confirm', ['token' => 't2']));
+
+    // Simulating OAuth callback redirecting to intended
+    $this->actingAs($u1);
+
+    // Verify redirect()->intended() redirects to the correct URL
+    $redirectResponse = redirect()->intended('/');
+    expect($redirectResponse->getTargetUrl())->toBe(route('qr_tag.confirm', ['token' => 't2']));
+});

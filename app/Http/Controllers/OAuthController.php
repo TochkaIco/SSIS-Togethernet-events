@@ -100,7 +100,7 @@ class OAuthController extends Controller
             return redirect(route('terms.accept'));
         }
 
-        return redirect('/');
+        return redirect()->intended('/');
     }
 
     private function validateGoogleHd(SocialiteUserContract $oauthUser): void
