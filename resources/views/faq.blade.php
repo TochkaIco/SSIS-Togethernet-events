@@ -132,7 +132,7 @@
                 {{ __('I am unable to scan my QR-Tag target\'s qr-code, what do I do?') }}
             </x-faq.question>
             <x-faq.answer>
-                {{ __('In case you are unable to scan the qr-code, you can manually enter the entirety of the token by hand. There are corrisponding buttons for this on the event page.') }}
+                {{ __('In case you are unable to scan the qr-code, you can manually enter the entirety of the token by hand. There are corresponding buttons for this on the event page.') }}
             </x-faq.answer>
         </div>
     </div>

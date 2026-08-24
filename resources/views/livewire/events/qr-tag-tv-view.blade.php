@@ -125,7 +125,7 @@
                 </flux:card>
 
                 <flux:card class="h-24 shrink-0 bg-orange-400 border-zinc-800 rounded-4xl flex items-center justify-center shadow-lg px-8 gap-4 overflow-hidden">
-                    <h1 class="text-white font-bold text-3xl uppercase tracking-[0.25em] animate-pulse">{{ __('Game Active') }}</h1>
+                    <h1 class="flex items-center text-white font-bold text-3xl uppercase tracking-[0.25em] animate-pulse">{{ __('Game Active') }}</h1>
                 </flux:card>
             </div>
         </div>
