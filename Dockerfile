@@ -2,7 +2,7 @@
 FROM php:8.5-apache-trixie
 ENV DEBIAN_FRONTEND=noninteractive
 RUN sed -i '/debian-security/!s/deb.debian.org/ftp.se.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i '/debian-security/!s/deb.debian.org/ftp.se.debian.org/g' /etc/apt/sources.list
-RUN apt-get update && apt-get install -y ca-certificates curl gnupg libkrb5-dev nmap inetutils-ping net-tools libpng-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev zip unzip git libfreetype6-dev libjpeg62-turbo-dev libpng-dev libldap-dev && rm -r /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ca-certificates curl gnupg libkrb5-dev nmap inetutils-ping net-tools libpng-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev zip unzip git libfreetype6-dev libjpeg62-turbo-dev libpng-dev libldap-dev mariadb-client && rm -r /var/lib/apt/lists/*
 RUN a2enmod rewrite
 RUN docker-php-ext-install pdo_mysql gettext xsl pcntl ldap && docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install gd
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

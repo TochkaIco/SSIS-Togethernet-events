@@ -65,6 +65,18 @@ return [
             'credentials_file' => env('GOOGLE_DRIVE_CREDENTIALS', 'google-credentials.json'),
             'folder_id' => env('GOOGLE_DRIVE_FOLDER_ID'),
         ],
+
+        'sftp' => [
+            'driver' => 'sftp',
+            'host' => env('SFTP_HOST'),
+            'username' => env('SFTP_USERNAME'),
+            'password' => env('SFTP_PASSWORD'),
+            'privateKey' => env('SFTP_PRIVATE_KEY'),
+            'passphrase' => env('SFTP_PASSPHRASE'),
+            'port' => (int) env('SFTP_PORT', 22),
+            'root' => env('SFTP_ROOT', ''),
+            'timeout' => 30,
+        ],
     ],
 
     /*
