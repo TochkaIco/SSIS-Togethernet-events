@@ -11,7 +11,7 @@ window.Quill = Quill;
 
 Sentry.init({
     dsn: import.meta.env.SENTRY_LARAVEL_DSN,
-    replaysSessionSampleRate: 0.1,
+    replaysSessionSampleRate: 1.0,
     replaysOnErrorSampleRate: 1.0,
     integrations: [
         Sentry.replayIntegration({
