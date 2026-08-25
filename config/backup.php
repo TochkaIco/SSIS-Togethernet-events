@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Spatie\Backup\Notifications\Notifiable;
 use Spatie\Backup\Notifications\Notifications\BackupHasFailedNotification;
 use Spatie\Backup\Notifications\Notifications\BackupWasSuccessfulNotification;
@@ -235,7 +237,7 @@ return [
         'notifiable' => Notifiable::class,
 
         'mail' => [
-            'to' => env('MAINTAINER_EMAIL'),
+            'to' => env('MAINTAINER_EMAIL', 'hello@example.com'),
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
