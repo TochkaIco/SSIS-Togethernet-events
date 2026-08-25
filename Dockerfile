@@ -2,9 +2,9 @@
 FROM php:8.5-apache-trixie
 ENV DEBIAN_FRONTEND=noninteractive
 RUN sed -i '/debian-security/!s/deb.debian.org/ftp.se.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i '/debian-security/!s/deb.debian.org/ftp.se.debian.org/g' /etc/apt/sources.list
-RUN apt-get update && apt-get install -y ca-certificates curl gnupg libkrb5-dev nmap inetutils-ping net-tools libpng-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev zip unzip git libfreetype6-dev libjpeg62-turbo-dev libpng-dev libldap-dev mariadb-client && rm -r /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ca-certificates curl gnupg libkrb5-dev nmap inetutils-ping net-tools libpng-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev zip unzip git libfreetype6-dev libjpeg62-turbo-dev libpng-dev libldap-dev mariadb-client libzip-dev && rm -r /var/lib/apt/lists/*
 RUN a2enmod rewrite
-RUN docker-php-ext-install pdo_mysql gettext xsl pcntl ldap && docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install gd
+RUN docker-php-ext-install pdo_mysql gettext xsl pcntl ldap zip && docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install gd
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN sed -i /etc/apache2/sites-enabled/000-default.conf -e 's,DocumentRoot /var/www/html, DocumentRoot /var/www/html/public,g' -e 's,:80,:8080,g' && sed -i /etc/apache2/ports.conf -e 's,Listen 80,Listen 8080,g'
 RUN mkdir -p /etc/apt/keyrings && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
