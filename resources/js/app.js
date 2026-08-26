@@ -15,7 +15,7 @@ const sentryDsn = document.querySelector('meta[name="sentry-dsn"]')?.getAttribut
 if (sentryDsn) {
     Sentry.init({
         dsn: sentryDsn,
-        replaysSessionSampleRate: 1.0,
+        replaysSessionSampleRate: 0.2,
         replaysOnErrorSampleRate: 1.0,
         integrations: [
             Sentry.replayIntegration({
