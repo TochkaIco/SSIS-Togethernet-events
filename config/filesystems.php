@@ -71,7 +71,7 @@ return [
             'host' => env('SFTP_HOST'),
             'username' => env('SFTP_USERNAME'),
             'password' => env('SFTP_PASSWORD'),
-            'privateKey' => env('SFTP_PRIVATE_KEY'),
+            'privateKey' => str_replace('\n', "\n", env('SFTP_PRIVATE_KEY', '')),
             'passphrase' => env('SFTP_PASSPHRASE'),
             'port' => (int) env('SFTP_PORT', 22),
             'root' => env('SFTP_ROOT', ''),

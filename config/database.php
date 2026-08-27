@@ -66,6 +66,7 @@ return [
             ]) : [],
             'dump' => [
                 'useSingleTransaction' => true,
+                'dump_binary_path' => '/usr/bin',
             ],
         ],
 
@@ -89,6 +90,7 @@ return [
             ]) : [],
             'dump' => [
                 'useSingleTransaction' => true,
+                'dump_binary_path' => '/usr/bin',
             ],
         ],
 

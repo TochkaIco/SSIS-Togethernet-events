@@ -10,10 +10,13 @@ use App\Services\GoogleDriveService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
+use Spatie\Backup\Events\BackupHasFailed;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -52,6 +55,16 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasPermissionTo('dev');
 
         });
+
+        Event::listen(
+            BackupHasFailed::class,
+            function (BackupHasFailed $event): void {
+                Log::error('Backup failed: '.$event->exception->getMessage(), [
+                    'exception' => $event->exception,
+                    'disk' => $event->diskName,
+                ]);
+            }
+        );
     }
 
     /**
