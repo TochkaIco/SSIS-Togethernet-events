@@ -222,9 +222,9 @@ return [
      */
     'notifications' => [
         'notifications' => [
-            BackupHasFailedNotification::class => ['mail'],
-            UnhealthyBackupWasFoundNotification::class => ['mail'],
-            CleanupHasFailedNotification::class => ['mail'],
+            BackupHasFailedNotification::class => ['mail', 'discord'],
+            UnhealthyBackupWasFoundNotification::class => ['mail', 'discord'],
+            CleanupHasFailedNotification::class => ['mail', 'discord'],
             BackupWasSuccessfulNotification::class => ['mail'],
             HealthyBackupWasFoundNotification::class => ['mail'],
             CleanupWasSuccessfulNotification::class => ['mail'],
