@@ -42,8 +42,4 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         Integration::handles($exceptions);
-    })
-    ->withSchedule(function ($schedule): void {
-        $schedule->command('app:anonymize-users')->daily();
-        $schedule->command('app:notify-tos-update')->daily();
     })->create();

@@ -32,6 +32,8 @@ Artisan::command('app:make-superadmin {email}', function (string $email) {
     $this->info("Lade till super-admin rollen på användare $user->name ($email)");
 })->purpose('Lägg till admin rollen och en användare som ska få super-admin rollen');
 
+Schedule::command('app:anonymize-users')->daily()->at('01:00');
+Schedule::command('app:notify-tos-update')->daily()->at('01:10');
 Schedule::command('backup:clean')->daily()->at('02:00')->environments('production');
 Schedule::command('backup:run')->daily()->at('02:30')->environments('production');
 Schedule::command('backup:monitor')->daily()->at('03:00')->environments('production');
