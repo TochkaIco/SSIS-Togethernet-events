@@ -41,7 +41,9 @@ class AnonymizeUsersCommand extends Command
         }
 
         $this->info("Anonymized {$count} graduated users.");
-        GlobalLog::log('Anonymized graduated users', 'system', ['number of users:' => $count]);
+        if ($count > 0) {
+            GlobalLog::log('Anonymized graduated users', 'system', ['number of users:' => $count]);
+        }
     }
 
     private function handleInactiveUsers(): void
