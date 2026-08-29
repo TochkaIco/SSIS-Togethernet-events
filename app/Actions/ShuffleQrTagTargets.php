@@ -31,7 +31,7 @@ class ShuffleQrTagTargets
 
             $participant->update([
                 'qr_tag_target_user_id' => $target->user_id,
-                'qr_tag_token' => Str::random(32),
+                'qr_tag_token' => Str::substr($participant->user->email, 0, 4).Str::random(28),
                 'qr_tag_tagged_at' => null,
                 'qr_tag_tagged_by_user_id' => null,
             ]);

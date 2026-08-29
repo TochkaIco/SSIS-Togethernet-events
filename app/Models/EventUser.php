@@ -236,7 +236,7 @@ class EventUser extends Model
         DB::transaction(function () {
             $this->update([
                 'is_disabled' => false,
-                'qr_tag_token' => Str::random(32),
+                'qr_tag_token' => Str::substr($this->user->email, 0, 4).Str::random(28),
             ]);
 
             if ($this->event->isQrTagGameStarted() && ! $this->qr_tag_tagged_at) {
@@ -262,7 +262,7 @@ class EventUser extends Model
 
             $this->update([
                 'qr_tag_target_user_id' => $oldTargetId,
-                'qr_tag_token' => $this->qr_tag_token ?? Str::random(32),
+                'qr_tag_token' => $this->qr_tag_token ?? Str::substr($this->user->email, 0, 4).Str::random(28),
             ]);
             $host->update(['qr_tag_target_user_id' => $this->user_id]);
         }

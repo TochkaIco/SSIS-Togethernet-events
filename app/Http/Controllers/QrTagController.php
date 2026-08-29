@@ -137,7 +137,7 @@ class QrTagController extends Controller
                 'qr_tag_tagged_at' => now(),
                 'qr_tag_tagged_by_user_id' => Auth::id(),
                 'qr_tag_target_user_id' => null,
-                'qr_tag_token' => Str::random(32),
+                'qr_tag_token' => Str::substr($victimRegistration->user->email, 0, 4).Str::random(28),
             ]);
 
             QrTagLog::create([
