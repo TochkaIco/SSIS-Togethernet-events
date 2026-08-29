@@ -104,7 +104,7 @@
                 {{ __('Only during breaks. You may not tag someone who is in class or eating lunch.') }}
             </x-faq.answer>
             <x-faq.answer>
-                {{ __('Camping outside a classroom and waiting for your goal is unsportsmanlike and prohibited.') }}
+                {{ __('Camping outside a classroom and waiting for your goal is unsportsmanlike and we hope that you avoid doing so.') }}
             </x-faq.answer>
             <x-faq.answer>
                 {{ __('Take it easy in the corridors. No running or chaos.') }}
@@ -119,7 +119,13 @@
                 {{ __('What happens if I or my target is absent during the game?') }}
             </x-faq.question>
             <x-faq.answer>
-                {{ __('If you or your target isn\'t present during any of the days during the duration of a qr-tag game, please contact one of the qr-tag organisers from Togethernet.') }}
+                {{ __('If you or your target isn\'t present during any of the days during the duration of a qr-tag game, please contact one of the qr-tag organisers from Togethernet. If your target isn\'t currently at school because their lessons have ended, we will usually not remove them, unless they miss the entire day.') }}
+            </x-faq.answer>
+            <x-faq.question>
+                {{ __('I had one target, but now that I am trying to scan their qr-code, I suddenly have a new target. Why?') }}
+            </x-faq.question>
+            <x-faq.answer>
+                {{ __('When the players are initially shuffled, they are all arranged into a chain. Once somebody joins the game or gets (de/re)activated - the chain needs to be broken in a point, for the new player to be able to join. Because of this, it is recommended to regularly check who your target is.') }}
             </x-faq.answer>
             <a name="qrtag-rules-disabled-player"></a>
             <x-faq.question>
