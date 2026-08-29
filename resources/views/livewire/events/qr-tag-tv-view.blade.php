@@ -16,7 +16,7 @@
             <div class="flex items-center gap-4">
                 <x-svg.app-logo.text.light class="h-10 w-auto block leading-none" />
                 <flux:separator vertical />
-                <flux:heading size="xl" class="uppercase tracking-tight truncate max-w-xl leading-none">
+                <flux:heading size="xl" class="uppercase font-bold tracking-tight truncate max-w-xl leading-none">
                     {{ $event->title }}
                 </flux:heading>
             </div>
@@ -124,8 +124,16 @@
                     </div>
                 </flux:card>
 
-                <flux:card class="h-24 shrink-0 bg-orange-400 border-zinc-800 rounded-4xl flex items-center justify-center shadow-lg px-8 gap-4 overflow-hidden">
-                    <h1 class="flex items-center text-white font-bold text-3xl uppercase tracking-[0.25em] animate-pulse">{{ __('Game Active') }}</h1>
+                <flux:card class="flex items-center justify-center shrink-0 bg-orange-400 border-zinc-800 rounded-4xl shadow-lg px-2 overflow-hidden">
+                    @if($event->event_ends_at > now())
+                        <flux:text class="text-white font-bold text-3xl uppercase tracking-[0.25em] animate-pulse">
+                            {{ __('Game Active') }}
+                        </flux:text>
+                    @else
+                        <flux:text class="text-red-500 font-bold text-3xl uppercase tracking-[0.05em]">
+                            {{ __('Event Finished') }}
+                        </flux:text>
+                    @endif
                 </flux:card>
             </div>
         </div>
