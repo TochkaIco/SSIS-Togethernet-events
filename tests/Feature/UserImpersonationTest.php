@@ -47,7 +47,7 @@ test('admin cannot impersonate another admin', function () {
 });
 
 test('searching for users works', function () {
-    $admin = User::factory()->create();
+    $admin = User::factory()->create(['name' => 'Admin User', 'email' => 'admin@example.com']);
     $admin->assignRole('super-admin');
 
     User::factory()->create(['name' => 'John Doe']);
