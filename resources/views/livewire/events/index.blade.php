@@ -103,7 +103,7 @@
                         @endif
 
                         <h2 class="text-accent-content font-semibold text-xl">{{ $event->title }}</h2>
-                        <div class="mt-2 flex-col space-y-3 md:flex-row md:space-y-0 items-center gap-2">
+                        <div class="mt-2 flex-col space-y-3 md:flex-row md:space-y-1 items-center gap-2">
                             @if($event->event_type !== \App\EventType::QR_TAG)
                                 <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
                                 <flux:badge color="orange" size="sm">
@@ -208,7 +208,7 @@
                             @endif
 
                             <h2 class="text-accent-content font-semibold text-xl">{{ $event->title }}</h2>
-                            <div class="mt-2 flex-col space-y-3 md:flex-row md:space-y-0 items-center gap-2">
+                            <div class="mt-2 flex-col space-y-3 md:flex-row md:space-y-1 items-center gap-2">
                                 @if($event->event_type !== \App\EventType::QR_TAG)
                                     <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
                                     <flux:badge color="orange" size="sm">
