@@ -120,7 +120,7 @@ test:
     - npx playwright install --with-deps
     - npm run build
     - php artisan key:generate
-    - XDEBUG_MODE=coverage php artisan test --coverage --coverage-cobertura=coverage.cobertura.xml
+    - XDEBUG_MODE=coverage php -d memory_limit=512M artisan test --coverage --coverage-cobertura=coverage.cobertura.xml
   artifacts:
     reports:
       coverage_report:
