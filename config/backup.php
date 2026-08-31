@@ -225,9 +225,9 @@ return [
             BackupHasFailedNotification::class => ['mail', 'discord'],
             UnhealthyBackupWasFoundNotification::class => ['mail', 'discord'],
             CleanupHasFailedNotification::class => ['mail', 'discord'],
-            BackupWasSuccessfulNotification::class => [],
-            HealthyBackupWasFoundNotification::class => [],
-            CleanupWasSuccessfulNotification::class => [],
+	    BackupWasSuccessfulNotification::class => ['discord'],
+            HealthyBackupWasFoundNotification::class => ['discord'],
+            CleanupWasSuccessfulNotification::class => ['discord'],
         ],
 
         /*
