@@ -99,7 +99,7 @@
                 label="{{ __('Allow external domains (e.g. @gmail.com)') }}"
                 name="allow_external_domains"
                 class="whitespace-nowrap"
-                ::checked="allow_external_domains"
+                ::checked="allowExternalDomains"
                 x-on:change="allowExternalDomains = $el.checked"
             />
 

@@ -34,6 +34,8 @@ Artisan::command('app:make-superadmin {email}', function (string $email) {
 
 Schedule::command('app:anonymize-users')->daily()->at('01:00');
 Schedule::command('app:notify-tos-update')->daily()->at('01:10');
-Schedule::command('backup:clean')->daily()->at('02:00')->environments('production');
-Schedule::command('backup:run')->daily()->at('02:30')->environments('production');
-Schedule::command('backup:monitor')->daily()->at('03:00')->environments('production');
+if (config('SFTP_HOST')) {
+    Schedule::command('backup:clean')->daily()->at('02:00');
+    Schedule::command('backup:run')->daily()->at('02:30');
+    Schedule::command('backup:monitor')->daily()->at('03:00');
+}
