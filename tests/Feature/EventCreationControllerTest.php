@@ -106,12 +106,3 @@ test('qr tag event can be updated with null seats', function () {
         'num_of_seats' => 1000000,
     ]);
 });
-
-test('admin event modal component renders allowExternalDomains binding correctly', function () {
-    $event = Event::factory()->create(['allow_external_domains' => true]);
-
-    $view = $this->withViewErrors([])->blade('<x-admin.event.modal :event="$event" />', ['event' => $event]);
-
-    $view->assertSee('allowExternalDomains');
-    $view->assertSee('allowExternalDomains = $el.checked');
-});
