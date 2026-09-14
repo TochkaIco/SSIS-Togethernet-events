@@ -471,7 +471,7 @@ test('confirming receipt dispatches SendDiscordPantCompletionAlert with correct 
 test('SendDiscordPantCompletionAlert sends post request to discord togethernet webhook url', function () {
     Http::fake();
 
-    config(['services.discord.togethernet_webhook_url' => 'https://discord.com/api/webhooks/test']);
+    config(['services.discord.togethernet_pant_webhook_url' => 'https://discord.com/api/webhooks/test']);
 
     $member1 = User::factory()->create(['name' => 'Alice']);
     $member2 = User::factory()->create(['name' => 'Bob']);

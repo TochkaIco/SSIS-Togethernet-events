@@ -53,7 +53,7 @@ return [
 
     'discord' => [
         'webhook_url' => env('DISCORD_WEBHOOK_URL'),
-        'togethernet_webhook_url' => env('TOGETHERNET_PRIVATE_WEBHOOK_URL'),
+        'togethernet_pant_webhook_url' => env('TOGETHERNET_PANT_WEBHOOK_URL'),
     ],
 
 ];

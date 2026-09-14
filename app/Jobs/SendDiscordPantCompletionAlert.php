@@ -26,7 +26,7 @@ class SendDiscordPantCompletionAlert implements ShouldQueue
      */
     public function handle(): void
     {
-        $webhookUrl = config('services.discord.togethernet_webhook_url');
+        $webhookUrl = config('services.discord.togethernet_pant_webhook_url');
 
         if (! $webhookUrl) {
             return;
