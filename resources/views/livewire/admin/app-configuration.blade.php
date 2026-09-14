@@ -29,9 +29,9 @@
     </flux:field>
 
     <flux:field>
-        <flux:label>{{ __('Discord Togethernet Role ID') }}</flux:label>
-        <flux:input wire:model.live.debounce.500ms="discordTogethernetRoleId" placeholder="e.g. 123456789012345678" />
-        <flux:error name="discordTogethernetRoleId" />
-        <flux:description>{{ __('The role ID for the togethernet role in our Discord server.') }}</flux:description>
+        <flux:label>{{ __('Discord Pant Role ID') }}</flux:label>
+        <flux:input wire:model.live.debounce.500ms="discordPantRoleId" placeholder="e.g. 123456789012345678" />
+        <flux:error name="discordPantRoleId" />
+        <flux:description>{{ __('The role ID for the pant role in our Discord server.') }}</flux:description>
     </flux:field>
 </div>
