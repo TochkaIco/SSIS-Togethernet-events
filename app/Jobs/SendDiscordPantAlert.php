@@ -33,7 +33,7 @@ class SendDiscordPantAlert implements ShouldQueue
         }
 
         $message = "# Panten är full\n"
-        ."Ta med panten till någon butik för återvinning (t.ex. [ICA](<https://maps.app.goo.gl/8mcnxtccTL7aWAzi6>) eller [Lidle](<https://maps.app.goo.gl/8XufEh63xAzaN7M98>) i Kista Centrum), ta hand om panten och skicka in dina resultat via [togethernet](https://togethernet.ssis.nu/admin/panten).\n\n"
+        ."Ta med panten till någon butik för återvinning (t.ex. [ICA](<https://maps.app.goo.gl/8mcnxtccTL7aWAzi6>) eller [Lidl](<https://maps.app.goo.gl/8XufEh63xAzaN7M98>) i Kista Centrum), ta hand om panten och skicka in dina resultat via [togethernet](https://togethernet.ssis.nu/admin/panten).\n\n"
         .'<@&'.AppConfig::get('discord_togethernet_role_id', 'unset').'>';
 
         Http::post($webhookUrl, [
