@@ -44,24 +44,24 @@ test('admins can configure pant swish number', function () {
     expect(AppConfig::get('pant_swish_number'))->toBe('1234567890');
 });
 
-test('admins can configure discord togethernet role id', function () {
+test('admins can configure discord pant role id', function () {
     $admin = User::factory()->create();
     $admin->assignRole('admin');
 
     Livewire::actingAs($admin)
         ->test(AppConfigurationPage::class)
-        ->set('discordTogethernetRoleId', '123456789012345678')
+        ->set('discordPantRoleId', '123456789012345678')
         ->assertHasNoErrors();
 
-    expect(AppConfig::get('discord_togethernet_role_id'))->toBe('123456789012345678');
+    expect(AppConfig::get('discord_pant_role_id'))->toBe('123456789012345678');
 
     Livewire::actingAs($admin)
         ->test(AppConfigurationPage::class)
-        ->set('discordTogethernetRoleId', 'not-a-number')
-        ->assertHasErrors(['discordTogethernetRoleId']);
+        ->set('discordPantRoleId', 'not-a-number')
+        ->assertHasErrors(['discordPantRoleId']);
 
     // Database should still have the old valid value because validation failed
-    expect(AppConfig::get('discord_togethernet_role_id'))->toBe('123456789012345678');
+    expect(AppConfig::get('discord_pant_role_id'))->toBe('123456789012345678');
 });
 
 test('admin can activate a pant alert', function () {
