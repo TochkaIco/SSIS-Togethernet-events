@@ -35,24 +35,19 @@
                         <div class="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400">
                             <flux:icon.exclamation-triangle class="size-6" />
                         </div>
-                        <div>
-                            <flux:heading>{{ __('Recycling Bins are Full!') }}</flux:heading>
-                            <flux:subheading>
-                                {{ __('Alert active since') }} {{ $activeAlert->created_at->format('Y-m-d H:i') }}
-                            </flux:subheading>
-                        </div>
+                        <flux:heading>{{ __('Recycling Bins are Full!') }}</flux:heading>
                     </div>
                     <flux:badge color="zinc" size="sm" class="uppercase font-semibold tracking-wider">{{ __('Active') }}</flux:badge>
                 </div>
 
-                <flux:separator />
+                <flux:separator class="mt-1" />
 
                 <div class="space-y-4 text-sm text-zinc-700 dark:text-zinc-300">
                     <p>{{ __('Please return the bottles/cans to a shop. Once recycled, submit the details here.') }}</p>
 
                     <div class="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 space-y-2">
                         <span class="text-xs uppercase font-semibold text-zinc-450 dark:text-zinc-400 tracking-wider">{{ __('Swish Account for Pant') }}</span>
-                        <div class="flex items-center justify-between">
+                        <div class="flex flex-col md:flex-row items-center justify-between">
                                 <span class="text-lg font-mono font-bold text-zinc-900 dark:text-white">
                                     {{ $activeAlert->receiver_swish !== 'unset' ? $activeAlert->receiver_swish : __('Not Configured') }}
                                 </span>
@@ -63,7 +58,7 @@
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center pt-2">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 space-y-2">
                     <div>
                         @if(auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer']))
                             <flux:modal.trigger name="confirm-stop-alert-modal">
