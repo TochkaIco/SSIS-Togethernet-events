@@ -23,8 +23,7 @@ RUN mkdir -p /.config storage && \
 # Copy Composer config first to leverage caching
 COPY composer.json composer.lock /var/www/html/
 RUN --mount=type=cache,target=/root/.composer/cache \
-    composer config preferred-install source && \
-    composer install --no-dev --no-interaction --no-scripts --no-autoloader --prefer-source
+    composer install --no-dev --no-interaction --no-scripts --no-autoloader --prefer-dist
 
 # Copy NPM config first to leverage caching
 COPY package.json package-lock.json /var/www/html/
