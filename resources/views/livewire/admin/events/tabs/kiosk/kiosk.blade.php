@@ -195,7 +195,7 @@
                         </flux:table.rows>
                     </flux:table>
                     <div class="flex justify-center">
-                        {{ $purchases->links() }}
+                        <flux:pagination :paginator="$purchases" scroll-to />
                     </div>
                 @endif
             </div>

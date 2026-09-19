@@ -557,6 +557,7 @@ class Kiosk extends Component
         $this->authorize('manage kiosk');
 
         $this->selectedPurchaseId = $purchaseId;
+        $this->modal('purchase-modal')->show();
     }
 
     public function viewPurchaseQrCode(int $purchaseId): void
