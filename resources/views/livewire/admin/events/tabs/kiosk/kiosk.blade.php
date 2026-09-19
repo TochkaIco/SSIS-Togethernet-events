@@ -11,7 +11,7 @@
         </div>
     @else
         <div class="flex items-center justify-between">
-            <flux:navbar class="-mb-px">
+            <flux:navbar class="-mb-px hidden md:flex">
                 <flux:navbar.item wire:click="setSubTab('articles')" :current="$subTab === 'articles'" class="cursor-pointer">
                     {{ __('Articles') }}
                 </flux:navbar.item>
@@ -28,6 +28,19 @@
                     {{ __('Stats') }}
                 </flux:navbar.item>
             </flux:navbar>
+
+            <div class="block md:hidden w-full">
+                <h3 class="mb-2 font-semibold text-lg">{{ __('Select a page') }}</h3>
+
+                <flux:select wire:model.live="subTab">
+                    <option value="" selected disabled hidden>{{ __('Select a page...') }}</option>
+                    <option value="articles">{{ __('Articles') }}</option>
+                    <option value="categories">{{ __('Categories') }}</option>
+                    <option value="transactions">{{ __('Transactions') }}</option>
+                    <option value="sell">{{ __('Sell') }}</option>
+                    <option value="stats">{{ __('Stats') }}</option>
+                </flux:select>
+            </div>
 
             <div class="flex gap-2">
                 @can('manage kiosk')
