@@ -66,4 +66,4 @@ vendor/bin/sail pest
 ```
 
 ---
-&copy; 2026 Fedor Romanov and Togethernet. All rights reserved.
+&copy; 2026 Sasha Romanova and Togethernet. All rights reserved.
