@@ -4,6 +4,6 @@
 
         <livewire:feedback-modal />
 
-        <x-signature /> {{-- Togethernet and Fedor Romanov's (original developer) copyrights --}}
+        <x-signature /> {{-- Togethernet and Sasha Romanova's (original developer) copyrights --}}
     </flux:main>
 </x-layouts::app.sidebar>

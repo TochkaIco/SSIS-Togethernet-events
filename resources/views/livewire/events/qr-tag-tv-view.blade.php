@@ -139,7 +139,7 @@
         </div>
 
         <div class="h-6 shrink-0 flex items-center justify-center opacity-80">
-            <x-signature :with-legal="false" /> {{-- Togethernet and Fedor Romanov's (original developer) copyrights --}}
+            <x-signature :with-legal="false" /> {{-- Togethernet and Sasha Romanova's (original developer) copyrights --}}
         </div>
     </div>
 </flux:main>
