@@ -207,9 +207,7 @@
                             @endforeach
                         </flux:table.rows>
                     </flux:table>
-                    <div class="flex justify-center">
-                        <flux:pagination :paginator="$purchases" scroll-to />
-                    </div>
+                    <flux:pagination :paginator="$purchases" scroll-to />
                 @endif
             </div>
         @elseif($subTab === 'sell')
