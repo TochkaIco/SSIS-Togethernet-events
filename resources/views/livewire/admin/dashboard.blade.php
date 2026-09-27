@@ -128,7 +128,7 @@
                             }"
                                 class="h-40 md:h-48"
                             >
-                                <canvas x-ref="eventClassChart"></canvas>
+                                <canvas id="eventClassChart" x-ref="eventClassChart"></canvas>
                             </div>
                         </div>
                     @endif
@@ -374,7 +374,7 @@
                 }"
                 class="h-64 md:h-72"
             >
-                <canvas x-ref="attendanceChart"></canvas>
+                <canvas id="attendanceChart" x-ref="attendanceChart"></canvas>
             </div>
         </flux:card>
 
@@ -452,7 +452,7 @@
                 }"
                 class="h-64 md:h-72"
             >
-                <canvas x-ref="meetingChart"></canvas>
+                <canvas id="meetingChart" x-ref="meetingChart"></canvas>
             </div>
         </flux:card>
 
@@ -515,7 +515,7 @@
                 }"
                 class="h-56 md:h-64"
             >
-                <canvas x-ref="yearlyMeetingChart"></canvas>
+                <canvas id="yearlyMeetingChart" x-ref="yearlyMeetingChart"></canvas>
             </div>
         </flux:card>
 
@@ -570,7 +570,7 @@
                 }"
                 class="h-56 md:h-64"
             >
-                <canvas x-ref="durationChart"></canvas>
+                <canvas id="durationChart" x-ref="durationChart"></canvas>
             </div>
         </flux:card>
 
@@ -633,7 +633,7 @@
                 }"
                 class="h-56 md:h-64"
             >
-                <canvas x-ref="yearlyDurationChart"></canvas>
+                <canvas id="yearlyDurationChart" x-ref="yearlyDurationChart"></canvas>
             </div>
         </flux:card>
 
@@ -696,7 +696,7 @@
                 }"
                 class="h-56 md:h-64"
             >
-                <canvas x-ref="revenueChart"></canvas>
+                <canvas id="revenueChart" x-ref="revenueChart"></canvas>
             </div>
         </flux:card>
 
@@ -755,7 +755,7 @@
                 }"
                 class="h-56 md:h-64"
             >
-                <canvas x-ref="growthChart"></canvas>
+                <canvas id="growthChart" x-ref="growthChart"></canvas>
             </div>
         </flux:card>
 
@@ -809,7 +809,7 @@
                 }"
                 class="h-64 md:h-72"
             >
-                <canvas x-ref="classChart"></canvas>
+                <canvas id="classChart" x-ref="classChart"></canvas>
             </div>
         </flux:card>
     </div>

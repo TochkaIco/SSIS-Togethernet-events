@@ -96,7 +96,7 @@
                         }"
                         class="h-32"
                     >
-                        <canvas x-ref="attendanceChart"></canvas>
+                        <canvas id="attendanceChart" x-ref="attendanceChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -153,7 +153,7 @@
                     }"
                     class="h-64"
                 >
-                    <canvas x-ref="meetingClassChart"></canvas>
+                    <canvas id="meetingClassChart" x-ref="meetingClassChart"></canvas>
                 </div>
             @else
                 <div class="flex flex-col items-center justify-center py-12 text-zinc-400">

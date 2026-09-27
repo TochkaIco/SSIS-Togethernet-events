@@ -393,7 +393,7 @@
                                 }"
                                 class="h-64"
                             >
-                                <canvas x-ref="kioskCategoryChart"></canvas>
+                                <canvas id="kioskCategoryChart" x-ref="kioskCategoryChart"></canvas>
                             </div>
                         @else
                             <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
@@ -438,7 +438,7 @@
                                 }"
                                 class="h-64"
                             >
-                                <canvas x-ref="topArticlesChart"></canvas>
+                                <canvas id="topArticlesChart" x-ref="topArticlesChart"></canvas>
                             </div>
                         @else
                             <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
@@ -483,7 +483,7 @@
                                 }"
                                 class="h-64"
                             >
-                                <canvas x-ref="hourlySalesChart"></canvas>
+                                <canvas id="hourlySalesChart" x-ref="hourlySalesChart"></canvas>
                             </div>
                         @else
                             <div class="flex flex-col items-center justify-center py-12 text-zinc-400">

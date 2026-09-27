@@ -40,7 +40,7 @@
                             const now = Date.now();
 
                             const dataPoints = [];
-                            
+
                             // Start at 0 on displayStartsAt
                             dataPoints.push({ x: displayStartsAt, y: 0 });
 
@@ -53,7 +53,7 @@
                             // Add a point for eventEndsAt to keep the line flat to the end of the chart
                             const lastTime = times[times.length - 1] || displayStartsAt;
                             const currentEnd = eventEndsAt;
-                            
+
                             if (currentEnd > lastTime) {
                                 dataPoints.push({ x: currentEnd, y: count });
                             }
@@ -87,8 +87,8 @@
                                             ticks: {
                                                 callback: function(value) {
                                                     const date = new Date(value);
-                                                    return date.toLocaleDateString(undefined, { 
-                                                        month: 'short', 
+                                                    return date.toLocaleDateString(undefined, {
+                                                        month: 'short',
                                                         day: 'numeric'
                                                     });
                                                 },
@@ -153,7 +153,7 @@
                     }"
                     class="h-64"
                 >
-                    <canvas x-ref="registrationTimelineChart"></canvas>
+                    <canvas id="registrationTimelineChart" x-ref="registrationTimelineChart"></canvas>
                 </div>
             @else
                 <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
@@ -214,7 +214,7 @@
                     }"
                     class="h-64"
                 >
-                    <canvas x-ref="eventClassChart"></canvas>
+                    <canvas id="eventClassChart" x-ref="eventClassChart"></canvas>
                 </div>
             @else
                 <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
