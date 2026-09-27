@@ -20,7 +20,7 @@ class Index extends Component
 
         $date = now()->format('Y-m-d');
         $meeting = Meeting::create([
-            'title' => __('Togethernet Meeting :date', ['date' => $date]),
+            'title' => __('Togethernet möte :date', ['date' => $date]),
             'meeting_starts_at' => now(),
         ]);
 
