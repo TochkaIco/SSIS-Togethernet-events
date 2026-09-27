@@ -45,10 +45,6 @@ class OAuthController extends Controller
             /** @var AbstractProvider $driver */
             $driver = Socialite::driver($provider);
 
-            if ($provider === 'elevkar') {
-                $driver->stateless();
-            }
-
             /** @var \Laravel\Socialite\Two\User $user */
             $user = $driver->user();
 
