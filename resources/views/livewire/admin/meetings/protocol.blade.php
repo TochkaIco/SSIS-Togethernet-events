@@ -8,7 +8,7 @@
     </div>
 
     <form wire:submit="save" class="space-y-6">
-        <flux:input wire:model="title" label="{{ __('Title') }}" required />
+        <flux:input wire:model="title" label="{{ __('Title') }}" :placeholder="__('Togethernet möte :date', ['date' => now()->format('Y-m-d')])" required />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <flux:input type="datetime-local" wire:model="meeting_starts_at" label="{{ __('Starts At') }}" required />
