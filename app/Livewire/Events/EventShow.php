@@ -238,7 +238,7 @@ class EventShow extends Component
     #[Layout('layouts.app')]
     public function render(): View
     {
-        if (! $this->event || $this->event->display_starts_at >= now()) {
+        if ($this->event->display_starts_at >= now()) {
             abort(404);
         }
 
