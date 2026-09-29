@@ -238,6 +238,10 @@ class EventShow extends Component
     #[Layout('layouts.app')]
     public function render(): View
     {
+        if (! $this->event || $this->event->display_starts_at >= now()) {
+            abort(404);
+        }
+
         return view('livewire.events.show', [
             'event' => $this->event,
         ])->title($this->event->title);
