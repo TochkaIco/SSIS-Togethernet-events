@@ -41,7 +41,7 @@ class Dashboard extends Component
     #[Computed]
     public function latestEvent(): ?Event
     {
-        return Event::orderBy('event_starts_at', 'desc')->first();
+        return Event::orderBy('event_starts_at', 'desc')->where('display_starts_at', '<', now())->first();
     }
 
     #[Computed]
