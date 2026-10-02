@@ -15,11 +15,11 @@
         "infer-conventions",
         "fortify-development",
         "laravel-best-practices",
+        "testing-best-practices",
         "pulse-development",
         "socialite-development",
         "fluxui-development",
         "livewire-development",
-        "pest-testing",
         "tailwindcss-development",
         "laravel-permission-development"
     ]
