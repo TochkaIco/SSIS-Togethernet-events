@@ -7,8 +7,6 @@ namespace App\Livewire\Events;
 use App\EventType;
 use App\Models\Event;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -22,7 +20,7 @@ class TvView extends Component
     }
 
     #[Layout('layouts.tv')]
-    public function render(): View|RedirectResponse|Redirector
+    public function render(): View
     {
         if ($this->event->event_starts_at <= now() && $this->event->event_type === EventType::QR_TAG) {
             return view('livewire.events.qr-tag-tv-view', [
@@ -31,14 +29,17 @@ class TvView extends Component
                 'totalCount' => $this->event->participants()->count(),
             ]);
         }
-        if ($this->event->event_starts_at > now() || ($this->event->event_type !== EventType::QR_TAG && $this->event->event_starts_at <= now())) {
-            $daysLeft = max(0, (int) ceil(now()->diffInSeconds($this->event->event_starts_at, false) / 86400));
 
+        $daysLeft = (int) now()->startOfDay()->diffInDays($this->event->event_starts_at->startOfDay(), false);
+
+        if ($daysLeft >= 0) {
             return view('livewire.events.countdown', [
                 'daysLeft' => $daysLeft,
             ]);
         }
 
-        return redirect(route('home'));
+        $this->redirect(route('home'), navigate: true);
+
+        return view('livewire.events.countdown', ['daysLeft' => 0]);
     }
 }

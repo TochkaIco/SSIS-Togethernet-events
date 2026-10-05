@@ -4,9 +4,9 @@
         {{-- Blended Background Image --}}
         <div class="absolute inset-0 z-0 select-none pointer-events-none">
             @if($event->image_path)
-                <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ $event->title }}" class="w-full h-full object-cover opacity-10">
+                <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ $event->title }}" class="w-full h-full object-cover opacity-20">
             @else
-                <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ $event->title }}" class="w-full h-full object-cover opacity-5">
+                <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ $event->title }}" class="w-full h-full object-cover opacity-20">
             @endif
             <div class="absolute inset-0 bg-linear-to-b from-zinc-950/20 via-zinc-950/60 to-zinc-950"></div>
             <div class="absolute inset-0 bg-orange-400/[0.01] mix-blend-color"></div>
