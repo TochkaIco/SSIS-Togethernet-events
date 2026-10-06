@@ -78,12 +78,12 @@
                                 @if($article->image_url)
                                     <div class="absolute inset-0 z-0">
                                         <img src="{{ $article->image_url }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                        <div class="absolute inset-0 bg-black/40 dark:bg-black/65"></div>
+                                        <div class="absolute inset-0 bg-white/75 dark:bg-black/65"></div>
                                     </div>
                                 @elseif($article->image_path)
                                     <div class="absolute inset-0 z-0">
                                         <img src="{{ asset('storage/' . $article->image_path) }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                        <div class="absolute inset-0 bg-black/40 dark:bg-black/65"></div>
+                                        <div class="absolute inset-0 bg-white/75 dark:bg-black/65"></div>
                                     </div>
                                 @endif
 
@@ -228,16 +228,16 @@
                     <div class="lg:col-span-2">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @forelse($articles as $article)
-                                <div class="relative border-2 border-accent-content/5 rounded-lg p-4 h-44 flex flex-col justify-between overflow-hidden group {{ $article->amount === 0 ? 'opacity-60' : 'transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl' }}">
+                                <div class="relative border-2 border-accent-content/5 rounded-lg p-4 h-44 flex flex-col justify-between overflow-hidden group {{ $article->amount === 0 ? 'opacity-25 blur-xs' : 'transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl' }}">
                                     @if($article->image_url)
                                         <div class="absolute inset-0 z-0">
                                             <img src="{{ $article->image_url }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                            <div class="absolute inset-0 bg-black/40 dark:bg-black/65"></div>
+                                            <div class="absolute inset-0 bg-white/75 dark:bg-black/65"></div>
                                         </div>
                                     @elseif($article->image_path)
                                         <div class="absolute inset-0 z-0">
                                             <img src="{{ asset('storage/' . $article->image_path) }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                            <div class="absolute inset-0 bg-black/40 dark:bg-black/65"></div>
+                                            <div class="absolute inset-0 bg-white/75 dark:bg-black/65"></div>
                                         </div>
                                     @endif
 
