@@ -7,10 +7,11 @@ namespace App\Jobs;
 use App\Services\GoogleDriveService;
 use Google\Service\Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
 class BackupMeetingToGoogleDrive implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     protected $html;
 
