@@ -22,10 +22,6 @@ class QrTagLog extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'data' => 'array',
-    ];
-
     /**
      * @return BelongsTo<Event, $this>
      */
@@ -82,5 +78,12 @@ class QrTagLog extends Model
                 SendDiscordQrtagNotification::dispatch($message);
             }
         });
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'data' => 'array',
+        ];
     }
 }

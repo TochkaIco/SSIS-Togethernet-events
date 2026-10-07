@@ -22,11 +22,6 @@ class EventKioskArticle extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'cost' => 'integer',
-        'amount' => 'integer',
-    ];
-
     /**
      * @return BelongsTo<EventKiosk, $this>
      */
@@ -41,5 +36,13 @@ class EventKioskArticle extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(EventKioskCategory::class, 'category_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'cost' => 'integer',
+            'amount' => 'integer',
+        ];
     }
 }

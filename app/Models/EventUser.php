@@ -14,6 +14,7 @@ use BaconQrCode\Writer;
 use Carbon\Carbon;
 use Database\Factories\EventUserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -156,7 +157,8 @@ class EventUser extends Model
     /**
      * @param  Builder<EventUser>  $query
      */
-    public function scopeParticipants(Builder $query): void
+    #[Scope]
+    protected function participants(Builder $query): void
     {
         $query->where(function ($query) {
             $query->where('in_waitinglist', false)
@@ -167,7 +169,8 @@ class EventUser extends Model
     /**
      * @param  Builder<EventUser>  $query
      */
-    public function scopeWaitingList(Builder $query): void
+    #[Scope]
+    protected function waitingList(Builder $query): void
     {
         $query->where('in_waitinglist', true);
     }

@@ -6,6 +6,7 @@ namespace App\Livewire\Admin\Events\Tabs;
 
 use App\Models\Event;
 use App\Models\User;
+use Carbon\Carbon;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -41,10 +42,10 @@ class ViewDetails extends Component
             ],
             'registration_timeline' => [
                 'times' => $registrationTimes,
-                'event_start' => $this->event->event_starts_at->getTimestamp() * 1000,
-                'event_created' => $this->event->created_at->getTimestamp() * 1000,
-                'display_starts_at' => $this->event->display_starts_at->getTimestamp() * 1000,
-                'event_ends_at' => $this->event->event_ends_at->getTimestamp() * 1000,
+                'event_start' => Carbon::parse($this->event->event_starts_at)->getTimestamp() * 1000,
+                'event_created' => Carbon::parse($this->event->created_at)->getTimestamp() * 1000,
+                'display_starts_at' => Carbon::parse($this->event->display_starts_at)->getTimestamp() * 1000,
+                'event_ends_at' => Carbon::parse($this->event->event_ends_at)->getTimestamp() * 1000,
             ],
         ];
     }

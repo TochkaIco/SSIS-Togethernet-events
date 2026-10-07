@@ -9,6 +9,7 @@ use App\EventType;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -87,7 +88,8 @@ class User extends Authenticatable
         $this->sessions()->delete();
     }
 
-    public function scopeNotAnonymized($query)
+    #[Scope]
+    protected function notAnonymized($query)
     {
         return $query->whereNull('anonymized_at');
     }

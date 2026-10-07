@@ -29,8 +29,6 @@ class EventShow extends Component
     #[Url]
     public string $tab = 'view';
 
-    protected $queryString = ['tab'];
-
     public string $qrTagGivenToken = '';
 
     public function mount(Event $event): void

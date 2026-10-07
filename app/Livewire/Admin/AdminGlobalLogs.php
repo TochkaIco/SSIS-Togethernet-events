@@ -49,7 +49,7 @@ class AdminGlobalLogs extends Component
             ->paginate(10);
 
         $targetUserIds = collect($logs->items())->map(function ($log) {
-            return $log->details['target_user_id'] ?? $log->details['user_id'] ?? null;
+            return data_get($log->details, 'target_user_id') ?? data_get($log->details, 'user_id');
         })->filter()->unique();
 
         $targetUsers = User::whereIn('id', $targetUserIds)->get()->keyBy('id');

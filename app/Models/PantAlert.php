@@ -7,6 +7,8 @@ namespace App\Models;
 use Carbon\Carbon;
 use Database\Factories\PantAlertFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -43,12 +45,15 @@ class PantAlert extends Model
         return $this->belongsTo(User::class, 'admin_user_id');
     }
 
-    public function getCompletedByUsersAttribute()
+    protected function completedByUsers(): Attribute
     {
-        return User::whereIn('id', $this->completed_by ?? [])->get();
+        return Attribute::make(get: function () {
+            return User::whereIn('id', $this->completed_by ?? [])->get();
+        });
     }
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active($query)
     {
         return $query->where('is_complete', false);
     }

@@ -24,7 +24,7 @@ class AdminFeedbackView extends Component
 
     public string $feedback_comment = '';
 
-    public FeedbackType $feedback_type = FeedbackType::FEATURE;
+    public string $feedback_type = FeedbackType::FEATURE->value;
 
     public ?Feedback $selected_feedback = null;
 
@@ -102,7 +102,7 @@ class AdminFeedbackView extends Component
 
         $this->selected_feedback = $feedback;
         $this->feedback_comment = $feedback->comment;
-        $this->feedback_type = $feedback->type;
+        $this->feedback_type = FeedbackType::from($feedback->type)->value;
         $this->modal('feedback-modal-admin')->show();
     }
 

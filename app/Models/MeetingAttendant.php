@@ -29,10 +29,6 @@ class MeetingAttendant extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'has_attended' => 'boolean',
-    ];
-
     public function meeting(): BelongsTo
     {
         return $this->belongsTo(Meeting::class);
@@ -41,5 +37,12 @@ class MeetingAttendant extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'attendant_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'has_attended' => 'boolean',
+        ];
     }
 }

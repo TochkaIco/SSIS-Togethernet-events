@@ -7,16 +7,20 @@ namespace App\Models;
 use App\EventType;
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /**
  * @method static create(mixed[] $data)
+ *
+ * @property EventType $event_type
  */
 #[Fillable([
     'title',
@@ -35,22 +39,19 @@ use Illuminate\Support\Collection;
     'links',
     'allow_external_domains',
 ])]
+/**
+ * @property Carbon $event_starts_at
+ * @property Carbon $event_ends_at
+ * @property Carbon $display_starts_at
+ */
+/**
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ */
 class Event extends Model
 {
     /** @use HasFactory<EventFactory> */
     use HasFactory;
-
-    protected $casts = [
-        'event_type' => EventType::class,
-        'links' => AsArrayObject::class,
-        'one_hour_periods' => 'boolean',
-        'one_hour_periods_number' => 'integer',
-        'interval_length' => 'integer',
-        'display_starts_at' => 'datetime',
-        'event_starts_at' => 'datetime',
-        'event_ends_at' => 'datetime',
-        'allow_external_domains' => 'boolean',
-    ];
 
     protected function formattedDescription(): Attribute
     {
@@ -238,29 +239,49 @@ class Event extends Model
             ->get();
     }
 
-    public function scopeUpcoming($query)
+    #[Scope]
+    protected function upcoming($query)
     {
         return $query->where('event_starts_at', '>', now());
     }
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active($query)
     {
         return $query->where('event_starts_at', '<=', now())
             ->where('event_ends_at', '>=', now());
     }
 
-    public function scopeFinished($query)
+    #[Scope]
+    protected function finished($query)
     {
         return $query->where('event_ends_at', '<', now());
     }
 
-    public function scopeOfType($query, string|EventType $type)
+    #[Scope]
+    protected function ofType($query, string|EventType $type)
     {
         return $query->where('event_type', $type);
     }
 
-    public function scopeSearch($query, string $search)
+    #[Scope]
+    protected function search($query, string $search)
     {
         return $query->where('title', 'like', '%'.$search.'%');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'event_type' => EventType::class,
+            'links' => AsArrayObject::class,
+            'one_hour_periods' => 'boolean',
+            'one_hour_periods_number' => 'integer',
+            'interval_length' => 'integer',
+            'display_starts_at' => 'datetime',
+            'event_starts_at' => 'datetime',
+            'event_ends_at' => 'datetime',
+            'allow_external_domains' => 'boolean',
+        ];
     }
 }

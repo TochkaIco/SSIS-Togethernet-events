@@ -6,6 +6,7 @@ use App\Jobs\BackupMeetingToGoogleDrive;
 use App\Livewire\Admin\Meetings\Protocol;
 use App\Models\Meeting;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -73,8 +74,8 @@ test('tog members can save protocol and dispatch backup job', function () {
     $meeting->refresh();
     expect($meeting->title)->toEqual('Updated Meeting Title')
         ->and($meeting->description)->toEqual('<p>New description</p>')
-        ->and($meeting->meeting_starts_at->format('Y-m-d H:i'))->toEqual('2026-07-30 17:00')
-        ->and($meeting->meeting_ends_at->format('Y-m-d H:i'))->toEqual('2026-07-30 18:00');
+        ->and(Carbon::parse($meeting->meeting_starts_at)->format('Y-m-d H:i'))->toEqual('2026-07-30 17:00')
+        ->and(Carbon::parse($meeting->meeting_ends_at)->format('Y-m-d H:i'))->toEqual('2026-07-30 18:00');
 
     Bus::assertDispatched(BackupMeetingToGoogleDrive::class);
 });

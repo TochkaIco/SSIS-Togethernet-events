@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(GoogleDriveService::class, function (): GoogleDriveService {
+        $this->app->singleton(function (): GoogleDriveService {
             return new GoogleDriveService;
         });
     }

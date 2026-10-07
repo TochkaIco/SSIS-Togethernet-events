@@ -6,6 +6,7 @@ namespace App\Livewire\Events;
 
 use App\EventType;
 use App\Models\Event;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -30,7 +31,7 @@ class TvView extends Component
             ]);
         }
 
-        $daysLeft = (int) now()->startOfDay()->diffInDays($this->event->event_starts_at->startOfDay(), false);
+        $daysLeft = (int) now()->startOfDay()->diffInDays(Carbon::parse($this->event->event_starts_at)->startOfDay(), false);
 
         if ($daysLeft >= 0) {
             return view('livewire.events.countdown', [

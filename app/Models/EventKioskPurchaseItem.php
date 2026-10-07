@@ -16,11 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class EventKioskPurchaseItem extends Model
 {
-    protected $casts = [
-        'amount' => 'integer',
-        'cost' => 'integer',
-    ];
-
     /**
      * @return BelongsTo<EventKioskPurchase, $this>
      */
@@ -35,5 +30,13 @@ class EventKioskPurchaseItem extends Model
     public function article(): BelongsTo
     {
         return $this->belongsTo(EventKioskArticle::class, 'article_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'integer',
+            'cost' => 'integer',
+        ];
     }
 }

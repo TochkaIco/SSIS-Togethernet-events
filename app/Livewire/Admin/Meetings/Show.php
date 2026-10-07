@@ -105,7 +105,7 @@ class Show extends Component
     {
         if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
             abort(403);
-        } elseif (Carbon::now()->greaterThan($this->meeting->meeting_starts_at->addMinutes(20))) {
+        } elseif (Carbon::now()->greaterThan(Carbon::parse($this->meeting->meeting_starts_at)->addMinutes(20))) {
             abort(403, 'This action is no longer available.');
         }
 

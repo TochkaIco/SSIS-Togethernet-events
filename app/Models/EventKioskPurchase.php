@@ -13,10 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EventKioskPurchase extends Model
 {
-    protected $casts = [
-        'cost' => 'integer',
-    ];
-
     /**
      * @return BelongsTo<EventKiosk, $this>
      */
@@ -39,5 +35,12 @@ class EventKioskPurchase extends Model
     public function items(): HasMany
     {
         return $this->hasMany(EventKioskPurchaseItem::class, 'purchase_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'cost' => 'integer',
+        ];
     }
 }

@@ -6,6 +6,7 @@ use App\Livewire\Admin\Events\Tabs\ViewDetails;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
+use Carbon\Carbon;
 use Livewire\Livewire;
 
 it('calculates statistics correctly', function () {
@@ -49,7 +50,7 @@ it('calculates statistics correctly', function () {
 
     expect($stats['registrations'])->toBe(3);
     expect($stats['registration_timeline']['times'])->toHaveCount(3);
-    expect($stats['registration_timeline']['event_start'])->toBe($event->event_starts_at->getTimestamp() * 1000);
+    expect($stats['registration_timeline']['event_start'])->toBe(Carbon::parse($event->event_starts_at)->getTimestamp() * 1000);
     expect($stats['registration_timeline']['event_created'])->toBe($event->created_at->getTimestamp() * 1000);
 
     $classDist = $stats['class_distribution'];

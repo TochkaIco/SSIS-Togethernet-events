@@ -30,7 +30,7 @@ class UpdateEvent
         $periodsChanged = (bool) ($attributes['one_hour_periods'] ?? $event->one_hour_periods) !== (bool) $event->one_hour_periods
             || (int) ($attributes['one_hour_periods_number'] ?? $event->one_hour_periods_number) !== (int) $event->one_hour_periods_number
             || (int) ($attributes['interval_length'] ?? $event->interval_length) !== (int) $event->interval_length
-            || ! $event->event_starts_at->startOfMinute()->equalTo($data['event_starts_at']->startOfMinute());
+            || ! Carbon::parse($event->event_starts_at)->startOfMinute()->equalTo($data['event_starts_at']->startOfMinute());
 
         if ($periodsChanged && ! $event->canEditCriticalFields()) {
             throw ValidationException::withMessages([
@@ -45,8 +45,9 @@ class UpdateEvent
 
             // If the start date is being updated, also update the title to match the new date
             if (! empty($attributes['event_starts_at'])) {
-                $newDate = $data['event_starts_at']->format('Y-m-d');
-                $oldDatePattern = 'QR-Tag '.$event->event_starts_at->format('Y-m-d');
+                $eventStarts = $data['event_starts_at'] instanceof \Carbon\Carbon ? $data['event_starts_at'] : \Carbon\Carbon::parse($data['event_starts_at']);
+                $newDate = $eventStarts->format('Y-m-d');
+                $oldDatePattern = 'QR-Tag '.\Carbon\Carbon::parse($event->event_starts_at)->format('Y-m-d');
 
                 // If the user didn't change the title manually, or if it matches the old auto-generated pattern, update it
                 if (empty($attributes['title']) || $attributes['title'] === $oldDatePattern) {

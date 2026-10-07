@@ -10,6 +10,7 @@ use App\Models\EventUser;
 use App\Models\Meeting;
 use App\Models\MeetingAttendant;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -240,7 +241,7 @@ class Dashboard extends Component
             }])
             ->get();
 
-        $monthlyData = $meetings->groupBy(fn ($m) => $m->meeting_starts_at->format('Y-m'))
+        $monthlyData = $meetings->groupBy(fn ($m) => Carbon::parse($m->meeting_starts_at)->format('Y-m'))
             ->map(fn ($group) => round($group->avg('attended_count'), 1));
 
         return [
@@ -262,7 +263,7 @@ class Dashboard extends Component
 
         return [
             'labels' => $meetings->pluck('title')->toArray(),
-            'data' => $meetings->map(fn ($m) => $m->meeting_starts_at->diffInMinutes($m->meeting_ends_at))->toArray(),
+            'data' => $meetings->map(fn ($m) => Carbon::parse($m->meeting_starts_at)->diffInMinutes($m->meeting_ends_at))->toArray(),
         ];
     }
 
@@ -274,8 +275,8 @@ class Dashboard extends Component
             ->where('meeting_starts_at', '>=', now()->subYear())
             ->get();
 
-        $monthlyData = $meetings->groupBy(fn ($m) => $m->meeting_starts_at->format('Y-m'))
-            ->map(fn ($group) => round($group->avg(fn ($m) => $m->meeting_starts_at->diffInMinutes($m->meeting_ends_at))));
+        $monthlyData = $meetings->groupBy(fn ($m) => Carbon::parse($m->meeting_starts_at)->format('Y-m'))
+            ->map(fn ($group) => round($group->avg(fn ($m) => Carbon::parse($m->meeting_starts_at)->diffInMinutes($m->meeting_ends_at))));
 
         return [
             'labels' => $monthlyData->keys()->toArray(),

@@ -12,16 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['type', 'comment', 'is_finished', 'is_rejected', 'user_id'])]
+/**
+ * @property FeedbackType $type
+ */
 class Feedback extends Model
 {
     /** @use HasFactory<FeedbackFactory> */
     use HasFactory;
-
-    protected $casts = [
-        'type' => FeedbackType::class,
-        'is_finished' => 'boolean',
-        'is_rejected' => 'boolean',
-    ];
 
     /**
      * @return BelongsTo<User, $this>
@@ -29,5 +26,14 @@ class Feedback extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'type' => FeedbackType::class,
+            'is_finished' => 'boolean',
+            'is_rejected' => 'boolean',
+        ];
     }
 }

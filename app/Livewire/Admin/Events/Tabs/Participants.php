@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -22,8 +23,10 @@ class Participants extends Component
     /**
      * Component properties for filtering and searching.
      */
+    #[Url(except: '')]
     public string $search = '';
 
+    #[Url(except: '')]
     public string $filterPaid = ''; // Options: '', '1', '0'
 
     public bool $onlyWorkers = false;
@@ -36,8 +39,6 @@ class Participants extends Component
      * Keep the UI state in the URL for easy sharing/reloading.
      */
     protected $queryString = [
-        'search' => ['except' => ''],
-        'filterPaid' => ['except' => ''],
         'onlyWorkers' => ['except' => false],
     ];
 

@@ -3,6 +3,7 @@
 use App\EventType;
 use App\Models\Event;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -34,7 +35,7 @@ test('cannot change critical fields if participants exist', function () {
         'one_hour_periods' => true,
         'one_hour_periods_number' => 2,
         'interval_length' => 0,
-        'display_starts_at' => $event->display_starts_at->format('Y-m-d H:i:s'),
+        'display_starts_at' => Carbon::parse($event->display_starts_at)->format('Y-m-d H:i:s'),
         'event_starts_at' => now()->addDays(2)->format('Y-m-d H:i:s'), // Changing start time
     ]);
 
@@ -63,9 +64,9 @@ test('can change non-critical fields even if participants exist', function () {
         'description' => 'New description',
         'event_type' => EventType::KARAOKE->value,
         'num_of_seats' => $event->num_of_seats,
-        'display_starts_at' => $event->display_starts_at->format('Y-m-d H:i:s'),
-        'event_starts_at' => $event->event_starts_at->format('Y-m-d H:i:s'),
-        'event_ends_at' => $event->event_ends_at->format('Y-m-d H:i:s'),
+        'display_starts_at' => Carbon::parse($event->display_starts_at)->format('Y-m-d H:i:s'),
+        'event_starts_at' => Carbon::parse($event->event_starts_at)->format('Y-m-d H:i:s'),
+        'event_ends_at' => Carbon::parse($event->event_ends_at)->format('Y-m-d H:i:s'),
     ]);
 
     $response->assertSessionHasNoErrors();

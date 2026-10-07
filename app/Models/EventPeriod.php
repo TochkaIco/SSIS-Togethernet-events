@@ -34,11 +34,6 @@ class EventPeriod extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-    ];
-
     /**
      * @return BelongsTo<Event, $this>
      */
@@ -145,5 +140,13 @@ class EventPeriod extends Model
                 return $this->starts_at->format('H:i').' - '.$this->ends_at->format('H:i');
             },
         );
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'starts_at' => 'datetime',
+            'ends_at' => 'datetime',
+        ];
     }
 }

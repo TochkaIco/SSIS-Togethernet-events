@@ -16,14 +16,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'details',
     'user_id',
 ])]
+/**
+ * @property array<string,mixed> $details
+ */
 class GlobalLog extends Model
 {
     /** @use HasFactory<GlobalLogFactory> */
     use HasFactory;
-
-    protected $casts = [
-        'details' => 'array',
-    ];
 
     /**
      * @return BelongsTo<User, $this>
@@ -41,5 +40,12 @@ class GlobalLog extends Model
             'details' => $details,
             'user_id' => auth()->id(),
         ]);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'details' => 'array',
+        ];
     }
 }
