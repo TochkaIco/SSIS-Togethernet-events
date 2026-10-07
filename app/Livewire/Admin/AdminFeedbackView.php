@@ -102,7 +102,7 @@ class AdminFeedbackView extends Component
 
         $this->selected_feedback = $feedback;
         $this->feedback_comment = $feedback->comment;
-        $this->feedback_type = $feedback->type;
+        $this->feedback_type = $feedback->type->label();
         $this->modal('feedback-modal-admin')->show();
     }
 

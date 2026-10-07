@@ -28,12 +28,9 @@ class Feedback extends Model
         return $this->belongsTo(User::class);
     }
 
-    protected function casts(): array
-    {
-        return [
-            'type' => FeedbackType::class,
-            'is_finished' => 'boolean',
-            'is_rejected' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'type' => FeedbackType::class,
+        'is_finished' => 'boolean',
+        'is_rejected' => 'boolean',
+    ];
 }

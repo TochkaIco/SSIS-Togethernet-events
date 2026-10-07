@@ -41,7 +41,7 @@ class UserFeedbackView extends Component
 
         $this->selected_feedback = $feedback;
         $this->feedback_comment = $feedback->comment;
-        $this->feedback_type = FeedbackType::from($feedback->type)->value;
+        $this->feedback_type = $feedback->type->label();
         $this->modal('feedback-modal-view')->show();
     }
 
