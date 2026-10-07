@@ -578,7 +578,7 @@ class Kiosk extends Component
     {
         $this->authorize('manage kiosk');
 
-        if ($this->event->isFinished()) {
+        if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
 
             return;
@@ -595,7 +595,7 @@ class Kiosk extends Component
     {
         $this->authorize('manage kiosk');
 
-        if ($this->event->isFinished()) {
+        if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
 
             return;

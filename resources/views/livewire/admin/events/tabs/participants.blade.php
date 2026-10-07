@@ -119,8 +119,8 @@
                                     variant="ghost"
                                     icon="chevron-double-down"
                                     size="xs"
-                                    :disabled="$event->isFinished()"
-                                    :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                    :disabled="$event->hasFinishedOverAnHourAgo()"
+                                    :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                                 />
                                 <flux:badge size="sm" color="orange">{{ __('Worker') }}</flux:badge>
                             </div>
@@ -131,8 +131,8 @@
                                     variant="ghost"
                                     icon="chevron-double-up"
                                     size="xs"
-                                    :disabled="$event->isFinished()"
-                                    :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                    :disabled="$event->hasFinishedOverAnHourAgo()"
+                                    :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                                 />
                                 <span class="text-xs">{{ __('Attendee') }}</span>
                             </div>
@@ -145,8 +145,8 @@
                             <flux:checkbox
                                 wire:change="togglePaid({{ $participant->id }})"
                                 :checked="(bool) $participant->has_paid"
-                                :disabled="$event->isFinished()"
-                                :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                :disabled="$event->hasFinishedOverAnHourAgo()"
+                                :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                             />
                         </flux:table.cell>
                     @endif
@@ -156,8 +156,8 @@
                         <flux:checkbox
                             wire:change="toggleArrived({{ $participant->id }})"
                             :checked="(bool) $participant->has_arrived"
-                            :disabled="$event->isFinished()"
-                            :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                            :disabled="$event->hasFinishedOverAnHourAgo()"
+                            :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                         />
                     </flux:table.cell>
 
@@ -286,8 +286,8 @@
                                         variant="ghost"
                                         icon="chevron-double-down"
                                         size="xs"
-                                        :disabled="$event->isFinished()"
-                                        :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                        :disabled="$event->hasFinishedOverAnHourAgo()"
+                                        :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                                     />
                                     <flux:badge size="sm" color="orange">{{ __('Worker') }}</flux:badge>
                                 </div>
@@ -298,8 +298,8 @@
                                         variant="ghost"
                                         icon="chevron-double-up"
                                         size="xs"
-                                        :disabled="$event->isFinished()"
-                                        :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                        :disabled="$event->hasFinishedOverAnHourAgo()"
+                                        :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                                     />
                                     <span class="text-xs">{{ __('Attendee') }}</span>
                                 </div>
@@ -336,8 +336,8 @@
                                     wire:change="togglePaid({{ $participant->id }})"
                                     :checked="(bool) $participant->has_paid"
                                     :label="__('Paid')"
-                                    :disabled="$event->isFinished()"
-                                    :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                    :disabled="$event->hasFinishedOverAnHourAgo()"
+                                    :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                                 />
                             </div>
                         @endif
@@ -347,8 +347,8 @@
                                 wire:change="toggleArrived({{ $participant->id }})"
                                 :checked="(bool) $participant->has_arrived"
                                 :label="__('Arrived')"
-                                :disabled="$event->isFinished()"
-                                :tooltip="!$event->isFinished() ? 'The event is finished' : null"
+                                :disabled="$event->hasFinishedOverAnHourAgo()"
+                                :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                             />
                         </div>
                     </div>

@@ -198,8 +198,8 @@
                                                 icon="trash"
                                                 variant="ghost"
                                                 wire:click="confirmDeletePurchase({{ $purchase->id }})"
-                                                :disabled="$event->isFinished()"
-                                                :tooltip="$event->isFinished() ? 'Cannot delete purchases from already finished events' : null"
+                                                :disabled="$event->hasFinishedOverAnHourAgo()"
+                                                :tooltip="$event->hasFinishedOverAnHourAgo() ? 'Cannot delete purchases from already finished events' : null"
                                             />
                                         </div>
                                     </flux:table.cell>
@@ -313,8 +313,8 @@
                                 variant="primary"
                                 class="w-full cursor-pointer"
                                 wire:click="recordPurchase"
-                                :tooltip="$event->isFinished() ? 'Cannot create purchases in already finished events.' : null"
-                                :disabled="$event->isFinished()"
+                                :tooltip="$event->hasFinishedOverAnHourAgo() ? 'Cannot create purchases in already finished events.' : null"
+                                :disabled="$event->hasFinishedOverAnHourAgo()"
                             >
                                 {{ __('Complete Purchase') }}
                             </flux:button>

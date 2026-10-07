@@ -225,6 +225,11 @@ class Event extends Model
         return $this->event_ends_at < now();
     }
 
+    public function hasFinishedOverAnHourAgo(): bool
+    {
+        return Carbon::parse($this->event_ends_at)->addHour() < now();
+    }
+
     /**
      * @return Collection<int, EventUser>
      */

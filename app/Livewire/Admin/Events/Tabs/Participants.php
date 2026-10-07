@@ -72,7 +72,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
-        if ($this->event->isFinished()) {
+        if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
 
             return;
@@ -94,7 +94,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
-        if ($this->event->isFinished()) {
+        if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
 
             return;
@@ -188,7 +188,7 @@ class Participants extends Component
     {
         $this->authorize('manage users');
 
-        if ($this->event->isFinished()) {
+        if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
 
             return;
