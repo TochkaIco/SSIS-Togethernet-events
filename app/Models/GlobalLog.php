@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Jobs\SendDiscordLog;
 use Database\Factories\GlobalLogFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Arr;
 
 #[Fillable([
     'action_title',
@@ -40,6 +42,17 @@ class GlobalLog extends Model
             'details' => $details,
             'user_id' => auth()->id(),
         ]);
+    }
+
+    public static function discord_log(string $title, string $type, array $details = []): void
+    {
+        $appUrl = config('app.url') ?? '';
+        $strDetails = Arr::join($details, ', ', ' and ');
+        $message = "**Log from [togethernet.ssis.nu]({$appUrl})**
+        __Title__: {$title}
+        __Type: {$type}
+        __Details__: {$strDetails}";
+        SendDiscordLog::dispatch($message);
     }
 
     protected function casts(): array

@@ -9,7 +9,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class SendDiscordQrtagNotification implements ShouldQueue
+class SendDiscordLog implements ShouldQueue
 {
     use Queueable;
 
@@ -28,7 +28,7 @@ class SendDiscordQrtagNotification implements ShouldQueue
      */
     public function handle(): void
     {
-        $webhookUrl = config('services.discord.qr_tag_webhook_url');
+        $webhookUrl = config('services.discord.logs_webhook_url');
 
         if (! $webhookUrl) {
             return;
