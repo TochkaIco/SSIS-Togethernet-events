@@ -49,9 +49,9 @@ class GlobalLog extends Model
         $appUrl = config('app.url') ?? '';
         $strDetails = Arr::join($details, ', ', ' and ');
         $message = "**Log from [togethernet.ssis.nu]({$appUrl})**
-        __Title__: {$title}
-        __Type: {$type}
-        __Details__: {$strDetails}";
+__Title__: ``{$title}```
+__Type__: ``{$type}```
+__Details__: ``{$strDetails}``";
         SendDiscordLog::dispatch($message);
     }
 
