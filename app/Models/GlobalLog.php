@@ -47,7 +47,13 @@ class GlobalLog extends Model
     public static function discord_log(string $title, string $type, array $details = []): void
     {
         $appUrl = config('app.url') ?? '';
-        $strDetails = Arr::join($details, ', ', ' and ');
+
+        $pairs = array_map(
+            fn($chunk) => implode(' => ', $chunk),
+            array_chunk($details, 2)
+        );
+        $strDetails = Arr::join($pairs, ', ', ' and ');
+
         $message = "**Log from [togethernet.ssis.nu]({$appUrl})**
 __Title__: ``{$title}``
 __Type__: ``{$type}``
