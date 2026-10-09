@@ -52,8 +52,8 @@ return [
     ],
 
     'discord' => [
-        'logs_webhook_url' => env('DISCORD_LOGS_WEBHOOK_URL'),
-        'qr_tag_webhook_url' => env('DISCORD_QR_TAG_WEBHOOK_URL'),
+        'logs_webhook_url' => env('DISCORD_LOGS_WEBHOOK_URL', 'https://discord.com/webhook'),
+        'qr_tag_webhook_url' => env('DISCORD_QR_TAG_WEBHOOK_URL', 'https://discord.com/webhook'),
         'togethernet_pant_webhook_url' => env('TOGETHERNET_PANT_WEBHOOK_URL'),
     ],
 
