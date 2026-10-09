@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
-    config(['services.discord.webhook_url' => 'https://discord.com/webhook']);
+    config(['services.discord.qr_tag_webhook_url' => 'https://discord.com/webhook']);
     Http::fake();
     Queue::fake();
 });
