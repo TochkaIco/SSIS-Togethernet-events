@@ -49,7 +49,7 @@ class GlobalLog extends Model
         $appUrl = config('app.url') ?? '';
 
         $pairs = array_map(
-            fn($chunk) => implode(' => ', $chunk),
+            fn ($chunk) => implode(' => ', $chunk),
             array_chunk($details, 2)
         );
         $strDetails = Arr::join($pairs, ', ', ' and ');

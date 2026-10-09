@@ -104,6 +104,7 @@ test:
     DB_USERNAME: root
     DB_PASSWORD: ""
   coverage: '/^\s*Total:\s*\d+.\d+\s*\%/'
+  needs: []
   cache:
     key: test-frontend-$CI_COMMIT_REF_SLUG
     paths:
@@ -111,13 +112,12 @@ test:
       - node_modules/
       - $PLAYWRIGHT_BROWSERS_PATH
   script:
-    - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
     - for ext in sockets pcntl pdo_mysql ldap; do php -m | grep -iq "^$ext$" || docker-php-ext-install "$ext"; done
     - cp -n .env.example .env
     - composer install --no-progress --no-scripts
     - php -r "while(!@fsockopen('mysql', 3306)) { echo 'Waiting for mysql...\n'; sleep(1); }"
     - npm ci
-    - npx playwright install --with-deps
+    - npx playwright install firefox --with-deps
     - npm run build
     - php artisan key:generate
     - XDEBUG_MODE=coverage php -d memory_limit=512M artisan test --parallel --coverage --coverage-cobertura=coverage.cobertura.xml
@@ -134,6 +134,7 @@ test:
 security-check:
   image: $BUILDIMAGE
   stage: analysis
+  needs: []
   variables:
     GIT_DEPTH: 1
   script:
@@ -142,10 +143,10 @@ security-check:
 static analysis:
   image: $BUILDIMAGE
   stage: analysis
+  needs: []
   variables:
     GIT_DEPTH: 1
   script:
-    - sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/deb.debian.org/ftp.de.debian.org/g' /etc/apt/sources.list
     - for ext in sockets pcntl pdo_mysql ldap; do php -m | grep -iq "^$ext$" || docker-php-ext-install "$ext"; done
     - composer install --no-progress --no-scripts
     - ./vendor/bin/phpstan analyse --memory-limit=2G --error-format=gitlab > gl-code-quality-report.json
@@ -158,6 +159,7 @@ static analysis:
 code style:
   image: $BUILDIMAGE
   stage: analysis
+  needs: []
   variables:
     GIT_DEPTH: 1
   script:
