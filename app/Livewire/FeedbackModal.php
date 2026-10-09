@@ -38,7 +38,7 @@ class FeedbackModal extends Component
         Flux::modal('feedback-modal')->close();
         Flux::toast(__('Feedback submitted. Thanks!'), variant: 'success');
         GlobalLog::log('New feedback submitted', 'feedback', ['feedback_id' => $feedback->id]);
-        GlobalLog::discord_log('New feedback submitted', 'feedback', ['feedback_id' => $feedback->id, 'comment' => Str::limit($feedback->comment, 120, '...')]);
+        GlobalLog::discord_log('New feedback submitted', 'feedback', ['feedback_id', $feedback->id, 'comment', Str::limit($feedback->comment, 120, '...')]);
     }
 
     public function render()
