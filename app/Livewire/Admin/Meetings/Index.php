@@ -25,6 +25,7 @@ class Index extends Component
         ]);
 
         GlobalLog::log('Meeting Created', 'meeting', ['meeting_id' => $meeting->id, 'title' => $meeting->title]);
+        GlobalLog::discord_log('blue', 'Meeting Created', 'meeting', ['meeting_id' => $meeting->id, 'title' => $meeting->title]);
 
         return redirect()->route('admin.meetings.show', $meeting);
     }

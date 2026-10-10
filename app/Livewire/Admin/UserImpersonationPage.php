@@ -60,6 +60,7 @@ class UserImpersonationPage extends Component
 
         if ($user->canBeImpersonated()) {
             GlobalLog::log('Impersonation Started', 'impersonation', ['target_user_id' => $user->id]);
+            GlobalLog::discord_log('blue', 'Impersonation Started', 'impersanation', ['target_user_id' => $user->id]);
             $this->redirect(route('impersonate', $user->id));
         } else {
             Flux::toast(

@@ -43,6 +43,7 @@ class AnonymizeUsersCommand extends Command
         $this->info("Anonymized {$count} graduated users.");
         if ($count > 0) {
             GlobalLog::log('Anonymized graduated users', 'system', ['number of users:' => $count]);
+            GlobalLog::discord_log('blue', 'Anonymized graduated users', 'system', ['number of users' => $count]);
         }
     }
 
@@ -67,11 +68,13 @@ class AnonymizeUsersCommand extends Command
                 $user->anonymize();
                 $anonymizedCount++;
                 GlobalLog::log('Anonymized an inactive user', 'system', ['user_id' => $user->id]);
+                GlobalLog::discord_log('green', 'Anonymized an inactive user', 'system', ['user_id' => $user->id]);
             } elseif ($lastActivity->lt($warningThreshold) && $user->inactivity_warning_sent_at === null) {
                 Mail::to($user->email)->send(new InactivityWarningMail($user));
                 $user->update(['inactivity_warning_sent_at' => now()]);
                 $warningCount++;
                 GlobalLog::log('Inactivity warning sent to a user', 'system', ['user_id' => $user->id]);
+                GlobalLog::discord_log('green', 'Inactivity warning sent to a user', 'system', ['user_id' => $user->id]);
             }
         }
 

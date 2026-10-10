@@ -16,7 +16,7 @@ class SendDiscordLog implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public string $message)
+    public function __construct(public array $message)
     {
         //
     }
@@ -34,8 +34,6 @@ class SendDiscordLog implements ShouldQueue
             return;
         }
 
-        Http::post($webhookUrl, [
-            'content' => $this->message,
-        ]);
+        Http::post($webhookUrl, $this->message);
     }
 }

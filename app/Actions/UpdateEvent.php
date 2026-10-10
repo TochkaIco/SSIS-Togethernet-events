@@ -75,6 +75,7 @@ class UpdateEvent
             $event->update($data);
 
             GlobalLog::log('Event Updated', 'event', ['event_id' => $event->id, 'title' => $event->title]);
+            GlobalLog::discord_log('green', 'Event Updated', 'event', ['event_id' => $event->id, 'title' => $event->title]);
 
             if ($attributes['one_hour_periods'] ?? false) {
                 if ($periodsChanged) {

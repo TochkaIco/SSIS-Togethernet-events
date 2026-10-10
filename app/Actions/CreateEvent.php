@@ -51,6 +51,7 @@ class CreateEvent
             $event = Event::create($data);
 
             GlobalLog::log('Event Created', 'event', ['event_id' => $event->id, 'title' => $event->title]);
+            GlobalLog::discord_log('green', 'Event Created', 'event', ['event_id' => $event->id, 'title' => $event->title]);
 
             if ($attributes['one_hour_periods'] ?? false) {
                 $currentStart = Carbon::parse($data['event_starts_at']);

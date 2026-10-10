@@ -35,6 +35,7 @@ class AdminGlobalLogs extends Component
         GlobalLog::where('created_at', '<', now()->subMonths($this->monthsToKeep))->delete();
 
         GlobalLog::log('Old Logs Cleared', 'system', ['months_kept' => $this->monthsToKeep, 'logs_deleted' => $count]);
+        GlobalLog::discord_log('yellow', 'Old Logs Cleared', 'system', ['months_kept' => $this->monthsToKeep, 'logs_deleted' => $count]);
 
         $this->modal('confirm-log-clearing')->close();
 

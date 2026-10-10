@@ -37,6 +37,7 @@ class LdapService
         } catch (\Exception $e) {
             Log::error('LDAP error: '.$e->getMessage());
             GlobalLog::log('LDAP error encountered', 'system', ['error_message' => $e->getMessage()]);
+            GlobalLog::discord_log('red', 'LDAP error encountered', 'system', ['error_message' => $e->getMessage()]);
         }
 
         return $data;

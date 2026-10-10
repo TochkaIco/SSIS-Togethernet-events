@@ -37,6 +37,7 @@ class AppConfigurationPage extends Component
         AppConfig::updateOrCreate(['key' => 'active_auth_provider'], ['value' => $value ? 'elevkar' : 'google', 'type' => 'string']);
 
         GlobalLog::log('App Configuration updated', 'config', ['key' => 'active_auth_provider', 'value' => $value ? 'elevkar' : 'google']);
+        GlobalLog::discord_log('blue', 'App Configuration updated', 'config', ['key' => 'active_auth_provider', 'value' => $value ? 'elevkar' : 'google']);
 
         Flux::toast(__('Setting saved.'), variant: 'success');
     }
@@ -46,6 +47,7 @@ class AppConfigurationPage extends Component
         AppConfig::updateOrCreate(['key' => 'allow_external_emails'], ['value' => $value ? 'true' : 'false', 'type' => 'boolean']);
 
         GlobalLog::log('App Configuration Updated', 'config', ['key' => 'allow_external_emails', 'value' => $value ? 'true' : 'false']);
+        GlobalLog::discord_log('blue', 'App Configuration updated', 'config', ['key' => 'allow_external_emails', 'value' => $value ? 'true' : 'false']);
 
         Flux::toast(__('Setting saved.'), variant: 'success');
     }
@@ -55,6 +57,7 @@ class AppConfigurationPage extends Component
         AppConfig::updateOrCreate(['key' => 'automated_waiting_list_move'], ['value' => $value ? 'true' : 'false', 'type' => 'boolean']);
 
         GlobalLog::log('App Configuration Updated', 'config', ['key' => 'automated_waiting_list_move', 'value' => $value ? 'true' : 'false']);
+        GlobalLog::discord_log('blue', 'App Configuration updated', 'config', ['key' => 'automated_waiting_list_move', 'value' => $value ? 'true' : 'false']);
 
         Flux::toast(__('Setting saved.'), variant: 'success');
     }
@@ -64,6 +67,7 @@ class AppConfigurationPage extends Component
         AppConfig::updateOrCreate(['key' => 'pant_swish_number'], ['value' => $value, 'type' => 'string']);
 
         GlobalLog::log('App Configuration Updated', 'config', ['key' => 'pant_swish_number', 'value' => $value]);
+        GlobalLog::discord_log('blue', 'App Configuration updated', 'config', ['key' => 'pant_swish_number', 'value' => $value]);
 
         Flux::toast(__('Setting saved.'), variant: 'success');
     }
@@ -77,6 +81,7 @@ class AppConfigurationPage extends Component
         AppConfig::updateOrCreate(['key' => 'discord_pant_role_id'], ['value' => $value, 'type' => 'string']);
 
         GlobalLog::log('App Configuration Updated', 'config', ['key' => 'discord_pant_role_id', 'value' => $value]);
+        GlobalLog::discord_log('blue', 'App Configuration updated', 'config', ['key' => 'discord_pant_role_id', 'value' => $value]);
 
         Flux::toast(__('Setting saved.'), variant: 'success');
     }

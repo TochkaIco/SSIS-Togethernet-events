@@ -46,6 +46,7 @@ class EventController extends Controller
         }
 
         GlobalLog::log('Event Deleted', 'event', ['event_id' => $event->id, 'title' => $event->title]);
+        GlobalLog::discord_log('yellow', 'Event Deleted', 'event', ['event_id' => $event->id, 'title' => $event->title]);
 
         if ($event->image_path && Storage::disk('public')->exists($event->image_path)) {
             Storage::disk('public')->delete($event->image_path);

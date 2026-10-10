@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 #[Fillable([
     'action_title',
@@ -44,20 +45,59 @@ class GlobalLog extends Model
         ]);
     }
 
-    public static function discord_log(string $title, string $type, array $details = []): void
+    public static function discord_log(string $color, string $title, string $type, array $details = []): void
     {
+        if (! filled(config('services.discord.logs_webhook_url'))) {
+            return;
+        }
+
         $appUrl = config('app.url') ?? '';
+
+        $colorSet = [
+            'red' => 16727598,
+            'orange' => 16746542,
+            'yellow' => 16769554,
+            'blue' => 983274,
+            'green' => 1232664,
+        ];
+
+        if (! $color) {
+            $color = 'blue';
+        }
 
         $pairs = array_map(
             fn ($chunk) => implode(' => ', $chunk),
             array_chunk($details, 2)
         );
-        $strDetails = Arr::join($pairs, ', ', ' and ');
+        $strDetails = Arr::join($pairs, ', ');
 
-        $message = "**Log from [togethernet.ssis.nu]({$appUrl})**
-__Title__: ``{$title}``
-__Type__: ``{$type}``
-__Details__: ``{$strDetails}``";
+        $message = [
+            'embeds' => [
+                [
+                    'title' => $title,
+                    'color' => $colorSet[$color],
+                    'timestamp' => now()->toIso8601String(),
+                    'fields' => [
+                        [
+                            'name' => 'Source',
+                            'value' => "[Log from togethernet.ssis.nu]({$appUrl})",
+                            'inline' => true,
+                        ],
+                        [
+                            'name' => 'Type',
+                            'value' => Str::ucfirst($type),
+                            'inline' => true,
+                        ],
+                        [
+                            'name' => 'Details',
+                            'value' => $strDetails,
+                            'inline' => false,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
         SendDiscordLog::dispatch($message);
     }
 

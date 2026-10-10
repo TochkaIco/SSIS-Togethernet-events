@@ -55,6 +55,7 @@ class Protocol extends Component
         ]);
 
         GlobalLog::log('Meeting Protocol Updated', 'meeting', ['meeting_id' => $this->meeting->id, 'title' => $this->title]);
+        GlobalLog::discord_log('blue', 'Meeting Protocol Updated', 'meeting', ['meeting_id' => $this->meeting->id, 'title' => $this->title]);
 
         BackupMeetingToGoogleDrive::dispatch($this->description, $this->title, $this->meeting_starts_at);
 

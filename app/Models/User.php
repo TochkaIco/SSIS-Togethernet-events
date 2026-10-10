@@ -200,6 +200,7 @@ class User extends Authenticatable
 
             if (! $response->successful()) {
                 GlobalLog::log('Failed revoking elevkar-auth token for removed user', 'system', [$response->body(), $response->status()]);
+                GlobalLog::discord_log('red', 'Failed revoking elevkar-auth token for removed user', 'system', [$response->body(), $response->status()]);
             }
         }
 

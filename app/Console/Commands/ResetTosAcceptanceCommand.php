@@ -31,5 +31,6 @@ class ResetTosAcceptanceCommand extends Command
         $this->info("Successfully reset TOS status for {$count} users.");
         $this->info('Users will be notified by the scheduled notify-tos-update command and prompted upon login.');
         GlobalLog::log('TOS has been updated, users will be notified soon', 'system');
+        GlobalLog::discord_log('green', 'TOS has been updated, users will be notified soon', 'system');
     }
 }
