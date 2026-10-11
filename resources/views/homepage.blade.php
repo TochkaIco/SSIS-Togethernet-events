@@ -12,9 +12,10 @@
                         ],
                         active: 0
                     }"
-                     x-init="setInterval(() => {
+                     x-init="const timer = setInterval(() => {
                         active = (active + 1) % images.length
                     },4500)"
+                     x-on:destroy="clearInterval(timer)"
                      class="relative w-full h-36 md:h-64 overflow-hidden rounded-t-xl">
                     <template x-for="(image, index) in images" :key="index">
                         <img :src="image"
