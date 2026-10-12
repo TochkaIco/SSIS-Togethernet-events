@@ -53,7 +53,7 @@ class AdminFeedbackView extends Component
         ]);
 
         GlobalLog::log('Feedback marked as resolved', 'feedback', ['feedback_id' => $feedback->id]);
-        GlobalLog::discord_log('green', 'Feedback marked as resolved', 'feedback', ['feedback_id', $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 120, '...')]);
+        GlobalLog::discord_log('green', 'Feedback marked as resolved', 'feedback', ['feedback_id', $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 245, '...')]);
 
         $this->modal('feedback-modal-admin')->close();
 
@@ -72,7 +72,7 @@ class AdminFeedbackView extends Component
         ]);
 
         GlobalLog::log('Feedback marked as unresolved', 'feedback', ['feedback_id' => $feedback->id]);
-        GlobalLog::discord_log('yellow', 'Feedback marked as unresolved', 'feedback', ['feedback_id', $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 120, '...')]);
+        GlobalLog::discord_log('yellow', 'Feedback marked as unresolved', 'feedback', ['feedback_id', $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 245, '...')]);
 
         $this->modal('feedback-modal-admin')->close();
 
@@ -91,7 +91,7 @@ class AdminFeedbackView extends Component
         ]);
 
         GlobalLog::log('Feedback marked as rejected', 'feedback', ['feedback_id' => $feedback->id]);
-        GlobalLog::discord_log('yellow', 'Feedback marked as rejected', 'feedback', ['feedback_id', $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 120, '...')]);
+        GlobalLog::discord_log('yellow', 'Feedback marked as rejected', 'feedback', ['feedback_id', $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 245, '...')]);
 
         $this->modal('feedback-modal-admin')->close();
 
@@ -154,7 +154,7 @@ class AdminFeedbackView extends Component
         $feedback->delete();
 
         GlobalLog::log('Feedback deleted by admin', 'feedback', ['feedback_id' => $feedback->id]);
-        GlobalLog::discord_log('yellow', 'Feedback deleted by admin', 'feedback', ['feedback_id' => $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 120, '...')]);
+        GlobalLog::discord_log('yellow', 'Feedback deleted by admin', 'feedback', ['feedback_id' => $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 245, '...')]);
 
         $this->modal('confirm-feedback-deletion')->close();
 
