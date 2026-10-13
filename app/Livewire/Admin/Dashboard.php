@@ -30,19 +30,25 @@ class Dashboard extends Component
     {
         return Event::where('event_starts_at', '<=', now())
             ->where('event_ends_at', '>=', now())
+            ->where('is_hidden_event', false)
             ->count();
     }
 
     #[Computed]
     public function upcomingEventsCount(): int
     {
-        return Event::where('event_starts_at', '>', now())->count();
+        return Event::where('event_starts_at', '>', now())
+            ->where('is_hidden_event', false)
+            ->count();
     }
 
     #[Computed]
     public function latestEvent(): ?Event
     {
-        return Event::orderBy('event_starts_at', 'desc')->where('display_starts_at', '<', now())->first();
+        return Event::orderBy('event_starts_at', 'desc')
+            ->where('display_starts_at', '<', now())
+            ->where('is_hidden_event', false)
+            ->first();
     }
 
     #[Computed]
@@ -93,6 +99,7 @@ class Dashboard extends Component
     {
         // Only show events that have started, as attendance is 0 for future events
         $events = Event::where('event_starts_at', '<=', now())
+            ->where('is_hidden_event', false)
             ->orderBy('event_starts_at', 'desc')
             ->take(10)
             ->get()

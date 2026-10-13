@@ -46,7 +46,7 @@ class Index extends Component
                     default => $q,
                 };
             })
-            ->latest()
+            ->where('is_hidden_event', false)->latest()
             ->get();
     }
 

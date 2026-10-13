@@ -103,6 +103,15 @@
                 x-on:change="allowExternalDomains = $el.checked"
             />
 
+            <flux:checkbox
+                x-data="{ hiddenEvent: {{ old('is_hidden_event', $event->hidden_event) ? 'true' : 'false' }} }"
+                label="{{ __('Hidden Event (no registrations)') }}"
+                name="is_hidden_event"
+                class="whitespace-nowrap"
+                ::checked="hiddenEvent"
+                x-on:change="hiddenEvent = $el.checked"
+            />
+
             {{-- Number of Seats --}}
             <template x-if="event_type !== '{{ App\EventType::QR_TAG->value }}'">
                 <flux:input

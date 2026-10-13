@@ -27,6 +27,7 @@ class EventRequest extends FormRequest
             'paid_entry' => $this->boolean('paid_entry'),
             'one_hour_periods' => $this->boolean('one_hour_periods'),
             'allow_external_domains' => $this->boolean('allow_external_domains'),
+            'is_hidden_event' => $this->boolean('is_hidden_event'),
             'links' => empty($this->links) ? [] : $this->links,
         ]);
     }
@@ -74,6 +75,7 @@ class EventRequest extends FormRequest
                     ->max(12288),
             ],
             'allow_external_domains' => ['boolean'],
+            'is_hidden_event' => ['boolean'],
         ];
     }
 }

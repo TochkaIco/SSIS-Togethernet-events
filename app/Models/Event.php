@@ -38,6 +38,7 @@ use Illuminate\Support\Collection;
     'event_ends_at',
     'links',
     'allow_external_domains',
+    'is_hidden_event',
 ])]
 /**
  * @property Carbon $event_starts_at
@@ -176,7 +177,7 @@ class Event extends Model
 
     public function canRegister(): bool
     {
-        return $this->display_starts_at <= now() && $this->event_ends_at >= now();
+        return $this->display_starts_at <= now() && $this->event_ends_at >= now() && ! $this->is_hidden_event;
     }
 
     public function canUnregister(): bool
@@ -287,6 +288,7 @@ class Event extends Model
             'event_starts_at' => 'datetime',
             'event_ends_at' => 'datetime',
             'allow_external_domains' => 'boolean',
+            'is_hidden_event' => 'boolean',
         ];
     }
 }
