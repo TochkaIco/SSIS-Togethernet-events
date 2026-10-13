@@ -45,15 +45,13 @@
                         </div>
                     @else
                         <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                            <x-placeholder-pattern class="stroke-gray-900/20 dark:stroke-neutral-100/20 w-full h-36 md:h-60 object-cover mb-2">
-                                <flux:text class="text-4xl ml-3 text-center cursor-default">{{ __('No Image Specified') }}</flux:text>
-                            </x-placeholder-pattern>
+                            <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                         </div>
                     @endif
 
                     <h2 class="text-accent-content font-semibold text-xl">{{ $event->title }}</h2>
                     <div class="mt-2 flex-col space-y-3 md:flex-row md:space-y-0 items-center gap-2">
-                        @if($event->event_type !== \App\EventType::QR_TAG)
+                        @if($event->event_type !== \App\EventType::QR_TAG && (! $event->is_hidden_event))
                             <span class="text-sm font-medium text-muted-foreground">{{ __('Seats:') }}</span>
                             <flux:badge color="orange" size="sm">
                                 @if($event->one_hour_periods)
@@ -64,17 +62,19 @@
                             </flux:badge>
                         @endif
 
-                        @if($event->paid_entry===1)
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
-                                <flux:badge color="orange" size="sm">
-                                    {{ $event->entry_fee }} kr
+                        @if(! $event->is_hidden_event)
+                            @if($event->paid_entry===1)
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
+                                    <flux:badge color="orange" size="sm">
+                                        {{ $event->entry_fee }} kr
+                                    </flux:badge>
+                                </div>
+                            @else
+                                <flux:badge color="orange">
+                                    {{ __('This event is free') }}
                                 </flux:badge>
-                            </div>
-                        @else
-                            <flux:badge color="orange">
-                                {{ __('This event is free') }}
-                            </flux:badge>
+                            @endif
                         @endif
                     </div>
                     <p class="mt-3 md:mt-5 line-clamp-4 overflow-hidden whitespace-pre-line">{{ html_entity_decode(strip_tags(Str::markdown($event->description)), ENT_QUOTES, 'UTF-8') }}</p>
@@ -82,9 +82,16 @@
                 <div class="mt-auto">
                     <flux:separator class="mt-2" />
                     <div class="mt-5 flex gap-x-3 items-center justify-between text-sm">
-                        <flux:label class="inline-block rounded-full border px-2 py-1 text-xs font-medium bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
-                            {{ $event->event_type->label() }}
-                        </flux:label>
+                        <div>
+                            <flux:label class="inline-block rounded-full border px-2 py-1 text-xs font-medium bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
+                                {{ $event->event_type->label() }}
+                            </flux:label>
+                            @if($event->is_hidden_event)
+                                <flux:label class="inline-block rounded-full border px-2 py-1 text-xs font-medium bg-red-500/10 text-red-500 border-red-500/20">
+                                    {{ __('Hidden Event') }}
+                                </flux:label>
+                            @endif
+                        </div>
                         <span>{{ __('Starts at ') . $event->event_starts_at->format('M j, Y') }}</span>
                     </div>
                 </div>

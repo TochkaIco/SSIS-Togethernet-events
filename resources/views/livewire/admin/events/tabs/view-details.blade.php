@@ -21,16 +21,23 @@
                 {{ __('This event is free') }}
             </flux:badge>
         @endif
+
+        @if($event->is_hidden_event)
+                <flux:badge color="red">
+                    {{ __('Hidden Event') }}
+                </flux:badge>
+        @endif
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {{-- Registration Timeline Chart --}}
-        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <h2 class="text-lg font-bold mb-4">{{ __('Registration Timeline') }}</h2>
+    @if(! $event->is_hidden_event)
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {{-- Registration Timeline Chart --}}
+            <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <h2 class="text-lg font-bold mb-4">{{ __('Registration Timeline') }}</h2>
 
-            @if($this->stats['registrations'] > 0)
-                <div
-                    x-data="{
+                @if($this->stats['registrations'] > 0)
+                    <div
+                        x-data="{
                         init() {
                             const times = @js($this->stats['registration_timeline']['times']);
                             const eventStart = @js($this->stats['registration_timeline']['event_start']);
@@ -151,24 +158,24 @@
                             });
                         }
                     }"
-                    class="h-64"
-                >
-                    <canvas id="registrationTimelineChart" x-ref="registrationTimelineChart"></canvas>
-                </div>
-            @else
-                <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
-                    <flux:icon.users class="size-12 mb-4 opacity-20" />
-                    <p>{{ __('No participants yet.') }}</p>
-                </div>
-            @endif
-        </flux:card>
+                        class="h-64"
+                    >
+                        <canvas id="registrationTimelineChart" x-ref="registrationTimelineChart"></canvas>
+                    </div>
+                @else
+                    <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                        <flux:icon.users class="size-12 mb-4 opacity-20" />
+                        <p>{{ __('No participants yet.') }}</p>
+                    </div>
+                @endif
+            </flux:card>
 
-        {{-- Class Distribution Chart --}}
-        <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-            <h2 class="text-lg font-bold mb-4">{{ __('Class Breakdown') }}</h2>
-            @if($this->stats['registrations'] > 0)
-                <div
-                    x-data="{
+            {{-- Class Distribution Chart --}}
+            <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                <h2 class="text-lg font-bold mb-4">{{ __('Class Breakdown') }}</h2>
+                @if($this->stats['registrations'] > 0)
+                    <div
+                        x-data="{
                         init() {
                             const isMobile = window.innerWidth < 768;
                             const dist = @js($this->stats['class_distribution']);
@@ -212,18 +219,19 @@
                             });
                         }
                     }"
-                    class="h-64"
-                >
-                    <canvas id="eventClassChart" x-ref="eventClassChart"></canvas>
-                </div>
-            @else
-                <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
-                    <flux:icon.users class="size-12 mb-4 opacity-20" />
-                    <p>{{ __('No participants yet.') }}</p>
-                </div>
-            @endif
-        </flux:card>
-    </div>
+                        class="h-64"
+                    >
+                        <canvas id="eventClassChart" x-ref="eventClassChart"></canvas>
+                    </div>
+                @else
+                    <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                        <flux:icon.users class="size-12 mb-4 opacity-20" />
+                        <p>{{ __('No participants yet.') }}</p>
+                    </div>
+                @endif
+            </flux:card>
+        </div>
+    @endif
 
     @if($event->image_path)
         <div class="rounded-lg overflow-hidden mb-6 group relative">

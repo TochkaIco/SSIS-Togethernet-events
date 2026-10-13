@@ -304,6 +304,8 @@
     "Number of periods": "Antal perioder",
     "Enter the number of periods": "Ange antal perioder",
     "Period": "Period",
+    "Hidden Event (no registrations)": "Dold evenemang (inga anmälningar)",
+    "Hidden Event": "Dold evenemang",
     "Allow external domains (e.g. @gmail.com)": "Tillåt externa domäner (t.ex. @gmail.com)",
     "N/A": "Saknas",
     "Select Period": "Välj period",
