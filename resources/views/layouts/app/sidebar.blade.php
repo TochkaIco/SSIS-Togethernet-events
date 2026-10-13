@@ -146,8 +146,6 @@
 
             <flux:spacer />
 
-            <flux:sidebar.item icon="chat-bubble-left" class="cursor-pointer" x-on:click="$flux.modal('feedback-modal').show()">{{ __('Give Feedback') }}</flux:sidebar.item>
-
             @auth
                 <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
             @endauth
