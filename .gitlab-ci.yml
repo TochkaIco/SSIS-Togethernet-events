@@ -194,6 +194,7 @@ code style:
     - cd $ENV_FOLDER
     - yq ".spec.template.spec.containers[0].image = \"$CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA\"" -i $DEPLOYMENT_PATH
     - yq ".spec.template.spec.containers[0].image = \"$CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA\"" -i deployment-togethernet-events-worker.yaml
+    - yq ".spec.template.spec.containers[1].image = \"$CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA\"" -i deployment-togethernet-events-worker.yaml
     - yq ".spec.template.spec.initContainers[0].image = \"$CI_REGISTRY_IMAGE:deploy-$ENV_NAME-$CI_COMMIT_SHA\"" -i $DEPLOYMENT_PATH
     - git diff
     - git add .
