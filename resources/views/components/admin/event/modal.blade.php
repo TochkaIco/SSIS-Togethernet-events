@@ -104,12 +104,12 @@
             />
 
             <flux:checkbox
-                x-data="{ hiddenEvent: {{ old('is_hidden_event', $event->is_hidden_event) ? 'true' : 'false' }} }"
+                x-data="{ isHiddenEvent: {{ old('is_hidden_event', $event->is_hidden_event) ? 'true' : 'false' }} }"
                 label="{{ __('Hidden Event (no registrations)') }}"
                 name="is_hidden_event"
                 class="whitespace-nowrap"
-                ::checked="hiddenEvent"
-                x-on:change="hiddenEvent = $el.checked"
+                ::checked="isHiddenEvent"
+                x-on:change="isHiddenEvent = $el.checked"
             />
 
             {{-- Number of Seats --}}

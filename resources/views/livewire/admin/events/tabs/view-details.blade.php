@@ -235,7 +235,7 @@
 
     @if($event->image_path)
         <div class="rounded-lg overflow-hidden mb-6 group relative">
-            <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="w-full h-auto max-h-128 object-cover">
+            <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="aspect-video w-full h-auto max-h-128 object-cover">
         </div>
     @endif
 

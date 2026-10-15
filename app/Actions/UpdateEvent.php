@@ -20,7 +20,7 @@ class UpdateEvent
     public function handle(array $attributes, Event $event): void
     {
         $data = collect($attributes)->only([
-            'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at', 'allow_external_domains',
+            'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at', 'allow_external_domains', 'is_hidden_event',
         ])->toArray();
 
         // Fallback to existing model values if the fields aren't present in the attributes payload
