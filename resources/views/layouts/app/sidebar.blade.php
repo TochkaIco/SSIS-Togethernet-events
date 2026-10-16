@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
-        @include('partials.head')
+        @php
+            $headData = [];
+            
+            if (isset($title)) $headData['title'] = $title;
+            if (isset($embedDescription)) $headData['embedDescription'] = $embedDescription;
+            if (isset($embedImagePath)) $headData['embedImagePath'] = $embedImagePath;
+        @endphp
+
+        @include('partials.head', $headData)
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="z-50 border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">

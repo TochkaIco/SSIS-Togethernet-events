@@ -1,4 +1,4 @@
-<x-layouts::app.sidebar :title="$title ?? null">
+<x-layouts::app.sidebar :title="$title ?? null" :embedDescription="$embedDescription ?? null" :embedImagePath="$embedImagePath ?? null">
     <flux:main class="flex min-h-screen flex-col transition-opacity opacity-100 duration-650 lg:grow starting:opacity-0">
         {{ $slot }}
 

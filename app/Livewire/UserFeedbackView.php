@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\FeedbackType;
 use App\Models\Feedback;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -55,6 +56,11 @@ class UserFeedbackView extends Component
                 ->when($this->filterResolved, fn ($query) => $query->where('is_finished', false))
                 ->latest()
                 ->paginate(10),
-        ])->title(__('My Feedback'));
+        ])
+            ->title(__('My Feedback'))
+            ->layoutData([
+                'embedDescription' => "Review bug reports and feature requests you've submitted.",
+                'embedImagePath' => null,
+            ]);
     }
 }

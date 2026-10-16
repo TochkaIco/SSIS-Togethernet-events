@@ -13,6 +13,7 @@ use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -242,6 +243,11 @@ class EventShow extends Component
 
         return view('livewire.events.show', [
             'event' => $this->event,
-        ])->title($this->event->title);
+        ])
+            ->title($this->event->title)
+            ->layoutData([
+                'embedDescription' => Str::limit($this->event->description, 65, end: '...', preserveWords: true),
+                'embedImagePath' => $this->event->image_path ?? null,
+            ]);
     }
 }
