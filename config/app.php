@@ -131,6 +131,7 @@ return [
         'jira_url' => env('JIRA_URL', 'https://togethernet.atlassian.net/'),
         'sentry_url' => env('SENTRY_URL', 'https://sentry.ssis.nu/organizations/ssis/'),
         'argocd_url' => env('ARGOCD_URL', 'https://argocd-server-openshift-operators.apps.okd.ssis.nu/applications/'),
+        'pwdsafe_url' => env('PWDSAFE_URL', 'https://pwdsafe.ssis.nu'),
         'maintainer_email' => env('MAINTAINER_EMAIL'),
     ],
 

@@ -45,6 +45,12 @@
                         {{ __('ArgoCD') }}
                     </flux:sidebar.item>
                 @endif
+
+                @if(config('app.dev_info.pwdsafe_url'))
+                    <flux:sidebar.item icon="lock-closed" href="{{ config('app.dev_info.pwdsafe_url') }}" target="_blank">
+                        {{ __('PWDSAFE') }}
+                    </flux:sidebar.item>
+                @endif
             </nav>
         </aside>
 
@@ -66,6 +72,7 @@
                     'jira_url' => config('app.dev_info.jira_url'),
                     'sentry_url' => config('app.dev_info.sentry_url'),
                     'argocd_url' => config('app.dev_info.argocd_url'),
+                    'pwdsafe_url' => config('app.dev_info.pwdsafe_url')
                 ]);
             @endphp
 
@@ -81,6 +88,7 @@
                             'jira_url' => 'Jira',
                             'sentry_url' => 'Sentry',
                             'argocd_url' => 'ArgoCD',
+                            'pwdsafe_url' => 'PWDSAFE'
                         ] as $key => $label)
                             @if(isset($devLinks[$key]))
                                 <option value="{{ $devLinks[$key] }}">{{ __($label) }}</option>
