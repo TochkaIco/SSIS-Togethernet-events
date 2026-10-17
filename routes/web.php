@@ -72,15 +72,16 @@ Route::middleware(['auth', 'verified', 'tos.accepted'])->group(function () {
     });
     Route::get('/admin/config', AppConfigurationPage::class)
         ->middleware('can:configure pages')->name('admin.app.config');
-    Route::get('/admin/feedback', AdminFeedbackView::class)->name('admin.feedback');
+    Route::get('/admin/feedback', AdminFeedbackView::class)
+        ->middleware('role:admin|super-admin|maintainer')->name('admin.feedback');
 
-    Route::get('/admin/logs', AdminGlobalLogs::class)->middleware(['auth', 'can:view global logs'])->name('admin.logs');
+    Route::get('/admin/logs', AdminGlobalLogs::class)->middleware('can:view global logs')->name('admin.logs');
 
     Route::middleware(['auth', 'can:impersonate users'])->group(function () {
         Route::get('/admin/user_impersonation', UserImpersonationPage::class)->name('admin.impersonation-page');
     });
 
-    Route::get('/docs/{page?}', Documentation::class)->middleware(['auth', 'can:dev'])->name('docs');
+    Route::get('/docs/{page?}', Documentation::class)->middleware('can:dev')->name('docs');
 
     Route::get('/tag/{token}', [QrTagController::class, 'confirm'])->name('qr_tag.confirm');
     Route::post('/tag/{token}', [QrTagController::class, 'scan'])->name('qr_tag.scan');
