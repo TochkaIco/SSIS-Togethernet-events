@@ -128,7 +128,7 @@
                                 </flux:badge>
                             @endif
                         </div>
-                        <p class="mt-3 md:mt-5 line-clamp-4 overflow-hidden whitespace-pre-line">{{ html_entity_decode(strip_tags(Str::markdown($event->description)), ENT_QUOTES, 'UTF-8') }}</p>
+                        <p class="mt-3 md:mt-5 line-clamp-4 overflow-hidden whitespace-pre-line">{{ $event->descriptionWithoutTags() }}</p>
                     </div>
                     <div class="mt-auto">
                         <flux:separator class="mt-2" />
@@ -233,7 +233,7 @@
                                     </flux:badge>
                                 @endif
                             </div>
-                            <p class="mt-3 md:mt-5 line-clamp-4 overflow-hidden whitespace-pre-line">{{ html_entity_decode(strip_tags(Str::markdown($event->description)), ENT_QUOTES, 'UTF-8') }}</p>
+                            <p class="mt-3 md:mt-5 line-clamp-4 overflow-hidden whitespace-pre-line">{{ $event->descriptionWithoutTags() }}</p>
                         </div>
                         <div class="mt-auto">
                             <flux:separator class="mt-2" />

@@ -246,7 +246,7 @@ class EventShow extends Component
         ])
             ->title($this->event->title)
             ->layoutData([
-                'embedDescription' => Str::limit($this->event->description, 65, end: '...', preserveWords: true),
+                'embedDescription' => Str::limit($this->event->descriptionWithoutTags(), 65, end: '...', preserveWords: true),
                 'embedImagePath' => $this->event->image_path ?? null,
             ]);
     }

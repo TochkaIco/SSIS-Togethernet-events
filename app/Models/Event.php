@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @method static create(mixed[] $data)
@@ -57,6 +58,11 @@ class Event extends Model
     protected function formattedDescription(): Attribute
     {
         return Attribute::get(fn (mixed $value, array $attributes) => str($attributes['description'])->markdown());
+    }
+
+    public function descriptionWithoutTags(): string
+    {
+        return html_entity_decode(strip_tags(Str::markdown($this->description)), ENT_QUOTES, 'UTF-8');
     }
 
     /**
