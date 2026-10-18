@@ -92,7 +92,7 @@
                                 </flux:label>
                             @endif
                         </div>
-                        <span>{{ __('Starts at ') . $event->event_starts_at->format('M j, Y') }}</span>
+                        <span>{{ __('Starts at ') . $event->event_starts_at->locale(Auth::user()->locale ?? App::getLocale())->translatedFormat('M j, Y') }}</span>
                     </div>
                 </div>
             </flux:card>

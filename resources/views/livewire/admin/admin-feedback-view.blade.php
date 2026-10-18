@@ -68,7 +68,7 @@
                     </flux:table.cell>
 
                     <flux:table.cell class="whitespace-nowrap">
-                        {{ $feedback->created_at->format('M j, Y') }}
+                        {{ $feedback->created_at->locale(Auth::user()->locale ?? App::getLocale())->translatedFormat('M j, Y') }}
                     </flux:table.cell>
 
                     <flux:table.cell align="end">

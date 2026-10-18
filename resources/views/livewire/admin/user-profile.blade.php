@@ -21,7 +21,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <flux:label>{{ __('Created At') }}</flux:label>
-                    <flux:text>{{ $user->created_at->format('M d, Y H:i') }}</flux:text>
+                    <flux:text>{{ $user->created_at->locale(Auth::user()->locale ?? App::getLocale())->translatedFormat('M d, Y H:i') }}</flux:text>
                 </div>
                 <div>
                     <flux:label>{{ __('Last Activity') }}</flux:label>
