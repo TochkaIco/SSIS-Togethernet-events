@@ -78,7 +78,7 @@ class Show extends Component
         $this->meeting->update(['meeting_ends_at' => now()]);
 
         GlobalLog::log('Meeting Finished', 'meeting', ['meeting_id' => $this->meeting->id, 'title' => $this->meeting->title]);
-        GlobalLog::discord_log('blue', 'Meeting Finished', 'meeting', ['meeting_id' => $this->meeting->id, 'title' => $this->meeting->title]);
+        GlobalLog::discord_log('blue', 'Meeting Finished', 'meeting', ['meeting_id', $this->meeting->id, 'title', $this->meeting->title]);
 
         $this->meeting->refresh();
     }
