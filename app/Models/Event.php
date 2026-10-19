@@ -7,6 +7,7 @@ namespace App\Models;
 use App\EventType;
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 /**
  * @method static create(mixed[] $data)
@@ -41,6 +44,7 @@ use Illuminate\Support\Str;
     'allow_external_domains',
     'is_hidden_event',
 ])]
+#[RouteKey('slug')]
 /**
  * @property Carbon $event_starts_at
  * @property Carbon $event_ends_at
@@ -53,7 +57,14 @@ use Illuminate\Support\Str;
 class Event extends Model
 {
     /** @use HasFactory<EventFactory> */
-    use HasFactory;
+    use HasFactory, HasSlug;
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('title')
+            ->saveSlugsTo('slug');
+    }
 
     protected function formattedDescription(): Attribute
     {

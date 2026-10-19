@@ -26,6 +26,7 @@
         "sentry/sentry-laravel": "^4.25",
         "spatie/laravel-backup": "^10.3",
         "spatie/laravel-permission": "^7.2",
+        "spatie/laravel-sluggable": "^4.0",
         "tijsverkoyen/css-to-inline-styles": "^2.4"
     },
     "require-dev": {
