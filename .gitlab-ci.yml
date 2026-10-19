@@ -113,6 +113,8 @@ test:
       - $PLAYWRIGHT_BROWSERS_PATH
   script:
     - for ext in sockets pcntl pdo_mysql ldap; do php -m | grep -iq "^$ext$" || docker-php-ext-install "$ext"; done
+    - apt-get update && apt-get install -y libexif-dev
+    - docker-php-ext-install exif
     - cp -n .env.example .env
     - composer install --no-progress --no-scripts
     - php -r "while(!@fsockopen('mysql', 3306)) { echo 'Waiting for mysql...\n'; sleep(1); }"
@@ -148,6 +150,8 @@ static analysis:
     GIT_DEPTH: 1
   script:
     - for ext in sockets pcntl pdo_mysql ldap; do php -m | grep -iq "^$ext$" || docker-php-ext-install "$ext"; done
+    - apt-get update && apt-get install -y libexif-dev
+    - docker-php-ext-install exif
     - composer install --no-progress --no-scripts
     - ./vendor/bin/phpstan analyse --memory-limit=2G --error-format=gitlab > gl-code-quality-report.json
   artifacts:
@@ -163,6 +167,8 @@ code style:
   variables:
     GIT_DEPTH: 1
   script:
+    - apt-get update && apt-get install -y libexif-dev
+    - docker-php-ext-install exif
     - composer install --no-progress --no-scripts
     - ./vendor/bin/pint --test
 
