@@ -23,7 +23,8 @@ return new class extends Migration
         });
 
         Event::all()->each(function ($event) {
-            $event->save();
+            $event->generateSlug();
+            $event->saveQuietly();
         });
 
         Schema::table('events', function (Blueprint $table) {

@@ -22,8 +22,9 @@ return new class extends Migration
             $table->string('slug')->nullable()->after('title');
         });
 
-        Meeting::all()->each(function ($event) {
-            $event->save();
+        Meeting::all()->each(function ($meeting) {
+            $meeting->generateSlug();
+            $meeting->saveQuietly();
         });
 
         Schema::table('meetings', function (Blueprint $table) {
