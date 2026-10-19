@@ -98,7 +98,7 @@
                             </div>
                         @else
                             <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                                <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
+                                <img src="{{ asset('images/togethernet-feature.webp') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                             </div>
                         @endif
 
@@ -203,7 +203,7 @@
                                 </div>
                             @else
                                 <div class="mb-2 md:mb-3 -mx-6 -mt-6 rounded-t-lg overflow-hidden">
-                                    <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
+                                    <img src="{{ asset('images/togethernet-feature.webp') }}" alt="{{ __('Image') }}" class="w-full h-36 md:h-60 object-cover mb-2">
                                 </div>
                             @endif
 

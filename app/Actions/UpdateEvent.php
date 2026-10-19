@@ -11,6 +11,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Spatie\Image\Enums\Fit;
+use Spatie\Image\Image;
 
 class UpdateEvent
 {
@@ -68,7 +70,17 @@ class UpdateEvent
             if ($event->image_path && Storage::disk('public')->exists($event->image_path)) {
                 Storage::disk('public')->delete($event->image_path);
             }
-            $data['image_path'] = $attributes['image']->store('events', 'public');
+            // Store original then create webp version
+            $originalPath = $attributes['image']->store('events', 'public');
+            $originalFull = Storage::disk('public')->path($originalPath);
+            $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
+            Image::load($originalFull)
+                ->fit(Fit::Max, 800, 600)
+                ->format('webp')
+                ->save(Storage::disk('public')->path($webpPath));
+            // Delete original upload
+            Storage::disk('public')->delete($originalPath);
+            $data['image_path'] = $webpPath;
         }
 
         DB::transaction(function () use ($event, $data, $attributes, $periodsChanged) {

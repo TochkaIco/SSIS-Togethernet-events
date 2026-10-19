@@ -118,7 +118,7 @@
             </div>
         @else
             <div class="rounded-lg overflow-hidden mb-6 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
-                <img src="{{ asset('images/togethernet-feature.jpg') }}" alt="{{ __('Image') }}" class="aspect-video w-full h-auto max-h-128 object-cover">
+                <img src="{{ asset('images/togethernet-feature.webp') }}" alt="{{ __('Image') }}" class="aspect-video w-full h-auto max-h-128 object-cover">
             </div>
         @endif
 

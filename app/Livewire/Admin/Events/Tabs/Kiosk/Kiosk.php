@@ -20,6 +20,8 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Spatie\Image\Enums\Fit;
+use Spatie\Image\Image;
 
 class Kiosk extends Component
 {
@@ -227,7 +229,17 @@ class Kiosk extends Component
         ]);
 
         if ($this->image) {
-            $this->imagePath = $this->image->store('kiosk', 'public');
+            // Store original then convert to webp
+            $originalPath = $this->image->store('kiosk', 'public');
+            $originalFull = Storage::disk('public')->path($originalPath);
+            $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
+            Image::load($originalFull)
+                ->fit(Fit::Max, 800, 600)
+                ->format('webp')
+                ->save(Storage::disk('public')->path($webpPath));
+            // Delete original
+            Storage::disk('public')->delete($originalPath);
+            $this->imagePath = $webpPath;
         }
 
         if ($this->editingArticleId) {

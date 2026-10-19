@@ -17,6 +17,8 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Spatie\Image\Enums\Fit;
+use Spatie\Image\Image;
 
 class Index extends Component
 {
@@ -104,7 +106,17 @@ class Index extends Component
 
         $path = null;
         if ($this->completionMethod === 'check' && $this->receiptPhoto) {
-            $path = $this->receiptPhoto->store('pant_receipts', 'public');
+            // Store original receipt photo
+            $originalPath = $this->receiptPhoto->store('pant_receipts', 'public');
+            $originalFull = Storage::disk('public')->path($originalPath);
+            $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
+            Image::load($originalFull)
+                ->fit(Fit::Max, 800, 600)
+                ->format('webp')
+                ->save(Storage::disk('public')->path($webpPath));
+            // Delete original upload
+            Storage::disk('public')->delete($originalPath);
+            $path = $webpPath;
         }
 
         $userIds = $this->completedBy;

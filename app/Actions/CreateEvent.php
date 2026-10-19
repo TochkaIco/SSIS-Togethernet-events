@@ -9,6 +9,9 @@ use App\Models\Event;
 use App\Models\GlobalLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Image\Enums\Fit;
+use Spatie\Image\Image;
 
 class CreateEvent
 {
@@ -44,7 +47,17 @@ class CreateEvent
         }
 
         if ($attributes['image'] ?? false) {
-            $data['image_path'] = $attributes['image']->store('events', 'public');
+            $originalPath = $attributes['image']->store('events', 'public');
+            // Generate webp version, resize to max 800x600
+            $originalFull = Storage::disk('public')->path($originalPath);
+            $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
+            Image::load($originalFull)
+                ->fit(Fit::Max, 800, 600)
+                ->format('webp')
+                ->save(Storage::disk('public')->path($webpPath));
+            // Delete original to keep only webp
+            Storage::disk('public')->delete($originalPath);
+            $data['image_path'] = $webpPath;
         }
 
         DB::transaction(function () use ($data, $attributes) {

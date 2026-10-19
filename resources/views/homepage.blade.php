@@ -4,11 +4,12 @@
             <flux:card size="none" class="transition-all duration-300 lg:p-0.5 shadow-lg hover:-translate-y-1 hover:shadow-2xl staged-card" style="animation-delay: 0ms;">
                 <div x-data="{
                         images: [
-                            '/images/togethernet-feature.jpg',
-                            '/images/monochrome-feature.jpg',
-                            '/images/lan-feature.jpg',
-                            '/images/lan-feature1.jpg',
-                            '/images/karaoke-feature.jpg'
+                            '/images/togethernet-feature.webp',
+                            '/images/monochrome-feature.webp',
+                            '/images/lan-feature.webp',
+                            '/images/lan-feature1.webp',
+                            '/images/karaoke-feature.webp',
+                            '/images/karaoke-feature1.webp'
                         ],
                         active: 0
                     }"
