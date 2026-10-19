@@ -75,7 +75,7 @@ class UpdateEvent
             $originalFull = Storage::disk('public')->path($originalPath);
             $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
             Image::load($originalFull)
-                ->fit(Fit::Max, 800, 600)
+                ->fit(Fit::Crop, 1200, 900)
                 ->format('webp')
                 ->save(Storage::disk('public')->path($webpPath));
             // Delete original upload
