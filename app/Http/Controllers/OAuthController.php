@@ -91,7 +91,6 @@ class OAuthController extends Controller
         }
         $user->update(
             [
-                'email' => $oauthUser->getEmail(),
                 'profile_picture' => $avatar,
                 "{$provider}_id" => $oauthUser->getId(),
                 "{$provider}_token" => $oauthUser->token,
