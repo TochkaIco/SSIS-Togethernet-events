@@ -76,11 +76,22 @@ class OAuthController extends Controller
             $this->validateGoogleHd($oauthUser);
         }
 
-        $user = User::updateOrCreate(
-            ['email' => $oauthUser->getEmail()],
-            [
+        $user = User::where('email', $oauthUser->getEmail())->first();
+
+        if (! $user) {
+            $user = User::create([
                 'name' => $name,
+                'email' => $oauthUser->getEmail(),
                 'class' => $class,
+                'profile_picture' => $avatar,
+                "{$provider}_id" => $oauthUser->getId(),
+                "{$provider}_token" => $oauthUser->token,
+                "{$provider}_refresh_token" => $oauthUser->refreshToken,
+            ]);
+        }
+        $user->update(
+            [
+                'email' => $oauthUser->getEmail(),
                 'profile_picture' => $avatar,
                 "{$provider}_id" => $oauthUser->getId(),
                 "{$provider}_token" => $oauthUser->token,
