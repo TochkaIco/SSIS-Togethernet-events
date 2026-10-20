@@ -36,7 +36,7 @@ class SitemapController
 
         // Add URLs for each specific event
         foreach (Event::where('display_starts_at', '<', now())->get() as $event) {
-            $urls[] = route('event.show', ['event' => $event->id]);
+            $urls[] = route('event.show', ['event' => $event->slug]);
         }
 
         $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
