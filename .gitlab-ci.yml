@@ -24,6 +24,12 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   PLAYWRIGHT_BROWSERS_PATH: $CI_PROJECT_DIR/pw-browsers
   COMPOSER_CACHE_DIR: $CI_PROJECT_DIR/.composer-cache
+  DOCKER_NO_CACHE:
+    value: "false"
+    options:
+      - "false"
+      - "true"
+    description: "Set to true to bypass cache and force pull a fresh base image."
 
 # Global cache for Composer downloads & NPM node_modules
 cache:
@@ -41,7 +47,7 @@ Build:
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG || true
     - docker pull $CI_REGISTRY_IMAGE:latest || true
-    - docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+    - docker build --pull --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
@@ -53,7 +59,7 @@ Build without cache:
     variables:
       - $DOCKER_NO_CACHE
   script:
-    - docker build --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker build --pull --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
 Push latest:
