@@ -32,7 +32,7 @@
                     </template>
                 </div>
                 <div class="p-4 pt-3 md:p-6 md:pt-5">
-                    <flux:heading size="xl" class="mb-2 flex flex-wrap items-center gap-x-2 text-2xl md:text-3xl lg:col-span-2">
+                    <flux:heading level="1" size="xl" class="mb-2 flex flex-wrap items-center gap-x-2 text-2xl md:text-3xl lg:col-span-2">
                         <span>{{ __('Welcome to') }}</span>
                         <x-svg.app-logo.text.light class="hidden h-[1em] translate-y-0.75 w-auto dark:block" />
                         <x-svg.app-logo.text.dark class="h-[1em] w-auto translate-y-0.75 dark:hidden" />

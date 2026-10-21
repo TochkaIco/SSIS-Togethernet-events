@@ -2,12 +2,12 @@
 @use('Illuminate\Support\Str')
 <x-layouts::app :title="__('FAQ')">
     <div class="mx-auto grid max-w-5xl justify-center gap-12 p-4 md:p-6 grid-cols-1">
-        <div class="flex flex-wrap items-center justify-center gap-x-2 text-4xl lg:col-span-2">
+        <flux:heading level="1" size="xl" class="text-4xl flex flex-wrap items-center justify-center gap-x-2 lg:col-span-2">
             <span>{{ __('Welcome to') }}</span>
             <x-svg.app-logo.text.light class="hidden h-[1em] translate-y-0.75 w-auto dark:block" />
             <x-svg.app-logo.text.dark class="h-[1em] w-auto translate-y-0.75 dark:hidden" />
             <span>{{ __('FAQ') }}</span>
-        </div>
+        </flux:heading>
         <div class="flex flex-col gap-6">
             <x-faq.question>
                 {{ __('How do I join Togethernet\'s Discord server?') }}

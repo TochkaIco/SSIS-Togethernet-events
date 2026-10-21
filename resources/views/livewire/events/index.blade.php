@@ -1,5 +1,5 @@
 <div>
-    <flux:text class="text-4xl font-bold text-center mb-6">{{ __("Togethernet's Events") }}</flux:text>
+    <flux:heading level="1" size="xl" class="text-4xl font-bold text-center mb-6">{{ __("Togethernet's Events") }}</flux:heading>
 
     {{-- Filters --}}
     <div class="flex flex-col md:flex-row gap-4 mb-8 max-w-3xl mx-auto">
