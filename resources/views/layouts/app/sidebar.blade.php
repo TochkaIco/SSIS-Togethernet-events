@@ -3,7 +3,7 @@
     <head>
         @php
             $headData = [];
-            
+
             if (isset($title)) $headData['title'] = $title;
             if (isset($embedDescription)) $headData['embedDescription'] = $embedDescription;
             if (isset($embedImagePath)) $headData['embedImagePath'] = $embedImagePath;
@@ -30,6 +30,10 @@
 
                     <flux:sidebar.item icon="question-mark-circle" :href="route('faq')" :current="request()->routeIs('faq*')">
                         {{ __('FAQ') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="information-circle" :href="route('about')" :current="request()->routeIs('about*')">
+                        {{ __('About Us') }}
                     </flux:sidebar.item>
 
                     @if(auth()->user() && auth()->user()->feedback()->exists())

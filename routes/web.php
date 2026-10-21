@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\QrTagController;
 use App\Http\Controllers\SitemapController;
+use App\Livewire\AboutPage;
 use App\Livewire\AcceptTerms;
 use App\Livewire\Admin\AdminFeedbackView;
 use App\Livewire\Admin\AdminGlobalLogs;
@@ -30,6 +31,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'homepage')->name('home');
 Route::view('/faq', 'faq')->name('faq');
+Route::get('/about', AboutPage::class)->name('about');
 Route::view('/legal', 'legal')->name('legal');
 
 // Sitemap route
