@@ -199,7 +199,10 @@ code style:
     - when: manual
       allow_failure: true
   needs:
-    - Build
+    - job: Build
+      optional: true
+    - job: Build without cache
+      optional: true
   script:
     - eval $(ssh-agent -s)
     - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
