@@ -244,7 +244,7 @@
 
                         <div class="space-y-4">
                             @forelse($event->qrTagLeaderboard() as $index => $leader)
-                                <div class="flex items-center gap-4 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                <div class="flex items-center gap-2 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
                                     <div @class([
                                     'size-8 flex items-center justify-center rounded-full font-bold text-white shrink-0',
                                     'bg-yellow-500' => $index === 0,
