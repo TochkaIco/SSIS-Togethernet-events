@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM php:8.5-apache-trixie
+FROM gitregistry.ssis.nu/ssis/php-images:8.5-apache-trixie
 ENV DEBIAN_FRONTEND=noninteractive
 RUN sed -i '/debian-security/!s/deb.debian.org/ftp.se.debian.org/g' /etc/apt/sources.list.d/debian.sources || sed -i '/debian-security/!s/deb.debian.org/ftp.se.debian.org/g' /etc/apt/sources.list
 
