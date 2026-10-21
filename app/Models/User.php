@@ -213,8 +213,6 @@ class User extends Authenticatable
         $this->sessions()->delete();
         $this->syncRoles([]);
         $this->syncPermissions([]);
-        // Delete related meeting attendance records even if they didn't attend
-        $this->meetingAttendances()->delete();
         $this->delete();
     }
 

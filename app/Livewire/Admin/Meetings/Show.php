@@ -86,6 +86,9 @@ class Show extends Component
     public function updatedAttendance($value, $key): void
     {
         $this->authorize('take attendance');
+        if (! $this->meeting->isUpdatableAttendance()) {
+            abort(403, 'This action is no longer available.');
+        }
 
         MeetingAttendant::updateOrCreate(
             ['meeting_id' => $this->meeting->id, 'attendant_id' => $key],
@@ -106,7 +109,7 @@ class Show extends Component
     {
         if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
             abort(403);
-        } elseif (Carbon::now()->greaterThan(Carbon::parse($this->meeting->meeting_starts_at)->addMinutes(20))) {
+        } elseif (Carbon::parse($this->meeting->meeting_starts_at)->addMinutes(20) > now()) {
             abort(403, 'This action is no longer available.');
         }
 

@@ -228,7 +228,7 @@
 
                 <div class="space-y-1 max-h-250 overflow-y-auto pr-2 custom-scrollbar">
                     @foreach($users as $user)
-                        @php $canTakeAttendance = auth()->user()->hasPermissionTo('take attendance'); @endphp
+                        @php $canTakeAttendance = $meeting->canTakeAttendance(auth()->user()); @endphp
                         <div
                             wire:key="user-row-{{ $user->id }}"
                             @if($canTakeAttendance)
