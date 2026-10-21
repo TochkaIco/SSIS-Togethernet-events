@@ -43,7 +43,7 @@
         <div class="flex flex-col justify-center items-center md:grid md:grid-cols-2 gap-6 mt-6 px-6">
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/full/full.svg" :alt="__('logo')">
+                    <img src="/logos/full/full.svg" alt="logotype">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
                     <a href="/logos/full/full.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
@@ -59,7 +59,7 @@
             </div>
             <div>
                 <div class="flex justify-center">
-                    <img src="/logos/full/full_black.svg" :alt="__('logo')">
+                    <img src="/logos/full/full_black.svg" alt="logotype">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
                     <a href="/logos/full/full_black.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
@@ -75,7 +75,7 @@
             </div>
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/full/full_white_black.png" class="w-85" :alt="__('logo')">
+                    <img src="/logos/full/full_white_black.png" class="w-85" alt="logotype">
                 </div>
                 <div class="flex justify-center items-center">
                     <a href="/logos/full/full_white_black.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
@@ -90,7 +90,7 @@
         <div class="flex flex-col justify-center items-center md:grid md:grid-cols-2 gap-6 mt-6 px-6">
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/small/small.svg" :alt="__('logo')">
+                    <img src="/logos/small/small.svg" alt="logotype">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
                     <a href="/logos/small/small.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
@@ -106,7 +106,7 @@
             </div>
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/small/small_black.svg" :alt="__('logo')">
+                    <img src="/logos/small/small_black.svg" alt="logotype">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
                     <a href="/logos/small/small_black.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
@@ -126,7 +126,7 @@
         <div class="flex flex-col justify-center items-center md:grid md:grid-cols-3 gap-6 mt-6 px-6">
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/full/full_pixelated.png" :alt="__('logo')" class="w-85">
+                    <img src="/logos/full/full_pixelated.png" alt="logotype" class="w-85">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
                     <a href="/logos/full/full_pixelated.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
@@ -137,7 +137,7 @@
             </div>
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/small/small_pixelated.png" :alt="__('logo')" class="w-12">
+                    <img src="/logos/small/small_pixelated.png" alt="logotype" class="w-12">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
                     <a href="/logos/small/small_pixelated.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
@@ -148,7 +148,7 @@
             </div>
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/small/small_pixelated_black.png" :alt="__('logo')" class="w-12">
+                    <img src="/logos/small/small_pixelated_black.png" alt="logotype" class="w-12">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
                     <a href="/logos/small/small_pixelated_black.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
@@ -163,7 +163,7 @@
         <div class="flex flex-col justify-center items-center md:grid md:grid-cols-3 gap-6 mt-6 px-6">
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/old/old_logo.png" :alt="__('logo')" class="size-20">
+                    <img src="/logos/old/old_logo.png" alt="logotype" class="size-20">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
                     <a href="/logos/old/old_logo.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
