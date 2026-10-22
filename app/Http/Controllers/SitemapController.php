@@ -15,7 +15,7 @@ class SitemapController
     {
         $routes = Route::getRoutes();
         $urls = [];
-        $publicNames = ['home', 'faq', 'legal', 'events', 'event.show'];
+        $publicNames = ['home', 'faq', 'legal', 'events', 'event.show', 'about'];
         foreach ($routes->getRoutes() as $route) {
             // Only consider GET routes with a name and no required parameters
             if (! in_array('GET', $route->methods())) {
