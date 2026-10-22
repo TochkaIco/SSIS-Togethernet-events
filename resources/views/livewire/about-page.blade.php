@@ -159,14 +159,41 @@
             </div>
         </div>
 
-        <flux:heading level="3" size="l" class="mt-6">{{ __('Old Logos') }}</flux:heading>
+        <flux:heading level="3" size="l" class="mt-6">{{ __('Other') }}</flux:heading>
         <div class="flex flex-col justify-center items-center md:grid md:grid-cols-3 gap-6 mt-6 px-6">
             <div class="space-y-2">
                 <div class="flex justify-center">
-                    <img src="/logos/old/old_logo.png" alt="logotype" class="size-20">
+                    <img src="/logos/other/old_logo.png" alt="logotype" class="w-20">
                 </div>
                 <div class="flex justify-center items-center space-x-6 md:space-x-10">
-                    <a href="/logos/old/old_logo.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
+                    <a href="/logos/other/old_logo.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
+                        <flux:text>{{ __('PNG') }}</flux:text>
+                        <flux:icon icon="arrow-down-tray" />
+                    </a>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <div class="flex justify-center">
+                    <img src="/logos/other/tognet_full.png" alt="logotype" class="w-65">
+                </div>
+                <div class="flex justify-center items-center space-x-6 md:space-x-10">
+                    <a href="/logos/other/tognet_full.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
+                        <flux:text>{{ __('PNG') }}</flux:text>
+                        <flux:icon icon="arrow-down-tray" />
+                    </a>
+                    <flux:separator vertical />
+                    <a href="/logos/other/tognet_full.svg" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
+                        <flux:text>{{ __('SVG') }}</flux:text>
+                        <flux:icon icon="arrow-down-tray" />
+                    </a>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <div class="flex justify-center">
+                    <img src="/logos/other/tognet_small.png" alt="logotype" class="w-20">
+                </div>
+                <div class="flex justify-center items-center space-x-6 md:space-x-10">
+                    <a href="/logos/other/tognet_small.png" download="togethernet.svg" class="flex flex-col items-center hover:text-orange-300">
                         <flux:text>{{ __('PNG') }}</flux:text>
                         <flux:icon icon="arrow-down-tray" />
                     </a>
