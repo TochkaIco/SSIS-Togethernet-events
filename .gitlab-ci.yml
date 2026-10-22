@@ -41,9 +41,10 @@ Build:
   stage: build
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
-  except:
-    variables:
-      - $DOCKER_NO_CACHE
+  rules:
+    - if: '$DOCKER_NO_CACHE == "true"'
+      when: never
+    - when: on_success
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG || true
     - docker pull $CI_REGISTRY_IMAGE:latest || true
@@ -55,9 +56,9 @@ Build without cache:
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
   stage: build
-  only:
-    variables:
-      - $DOCKER_NO_CACHE
+  rules:
+    - if: '$DOCKER_NO_CACHE == "true"'
+    - when: never
   script:
     - docker build --pull --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
