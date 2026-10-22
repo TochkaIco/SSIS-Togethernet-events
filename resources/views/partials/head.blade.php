@@ -1,3 +1,4 @@
+@props(['embedDescription' => null, 'embedImagePath' => null])
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="description" content="{{ filled($embedDescription ?? null) ? $embedDescription : "En studentdriven förening som håller olika evenemang för SSIS elever. Togethernet är mest känd för våra LAN, men det alltid finns något som händer!" }}">
