@@ -123,6 +123,7 @@
         </div>
 
         <flux:heading level="3" size="l" class="mt-6">{{ __('Pixelated') }}</flux:heading>
+        <flux:text>{{ __('You may need to use crisp-edges css property since a few of the pixelated logos are low resolution. You can read more at') . ' ' }}<a href="https://www.w3schools.com/cssref/css3_pr_image-rendering.php" class="underline hover:text-orange-300">w3schools.com/cssref/css3_pr_image-rendering.php</a></flux:text>
         <div class="flex flex-col justify-center items-center md:grid md:grid-cols-3 gap-6 mt-6 px-6">
             <div class="space-y-2">
                 <div class="flex justify-center">
