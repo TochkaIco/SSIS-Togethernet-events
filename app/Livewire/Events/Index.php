@@ -144,6 +144,10 @@ class Index extends Component
     {
         return view('livewire.events.index', [
             'events' => $this->events,
-        ])->title(__('Events'));
+        ])
+            ->title(__('Events'))
+            ->layoutData([
+                'embedDescription' => 'Gå igenom Togethernets olika evenemang som hållas under läsåren.',
+            ]);
     }
 }
