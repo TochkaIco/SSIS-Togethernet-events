@@ -31,6 +31,7 @@ use Spatie\Sluggable\SlugOptions;
     'description',
     'event_type',
     'image_path',
+    'meta_image_path',
     'num_of_seats',
     'paid_entry',
     'entry_fee',

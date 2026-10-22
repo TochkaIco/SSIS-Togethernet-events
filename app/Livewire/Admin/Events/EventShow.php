@@ -32,8 +32,14 @@ class EventShow extends Component
         $this->authorize('edit articles');
 
         if ($this->event->image_path) {
-            Storage::disk('public')->delete($this->event->image_path);
+            if (Storage::disk('public')->exists($this->event->image_path)) {
+                Storage::disk('public')->delete($this->event->image_path);
+            }
             $this->event->update(['image_path' => null]);
+            if (Storage::disk('public')->exists($this->event->meta_image_path)) {
+                Storage::disk('public')->delete($this->event->meta_image_path);
+            }
+            $this->event->update(['meta_image_path' => null]);
             $this->event->refresh();
             Flux::toast(__('Image removed successfully.'), variant: 'success');
         } else {

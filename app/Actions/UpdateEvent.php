@@ -69,8 +69,11 @@ class UpdateEvent
         if ($attributes['image'] ?? false) {
             if ($event->image_path && Storage::disk('public')->exists($event->image_path)) {
                 Storage::disk('public')->delete($event->image_path);
+                if (Storage::disk('public')->exists($event->meta_image_path)) {
+                    Storage::disk('public')->delete($event->meta_image_path);
+                }
             }
-            // Store original then create webp version
+            // Store the main version of the image
             $originalPath = $attributes['image']->store('events', 'public');
             $originalFull = Storage::disk('public')->path($originalPath);
             $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
@@ -78,9 +81,16 @@ class UpdateEvent
                 ->fit(Fit::Crop, 1200, 900)
                 ->format('webp')
                 ->save(Storage::disk('public')->path($webpPath));
+            $data['image_path'] = $webpPath;
+            // Store the meta image used in embeds
+            $pngPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.png';
+            Image::load($originalFull)
+                ->fit(Fit::Crop, 1200, 630)
+                ->format('png')
+                ->save(Storage::disk('public')->path($pngPath));
+            $data['meta_image_path'] = $pngPath;
             // Delete original upload
             Storage::disk('public')->delete($originalPath);
-            $data['image_path'] = $webpPath;
         }
 
         DB::transaction(function () use ($event, $data, $attributes, $periodsChanged) {

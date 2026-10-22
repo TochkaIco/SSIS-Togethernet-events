@@ -47,17 +47,24 @@ class CreateEvent
         }
 
         if ($attributes['image'] ?? false) {
+            // Store the main version of the image
             $originalPath = $attributes['image']->store('events', 'public');
-            // Generate webp version, resize to max 800x600
             $originalFull = Storage::disk('public')->path($originalPath);
             $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
             Image::load($originalFull)
                 ->fit(Fit::Crop, 1200, 900)
                 ->format('webp')
                 ->save(Storage::disk('public')->path($webpPath));
-            // Delete original to keep only webp
-            Storage::disk('public')->delete($originalPath);
             $data['image_path'] = $webpPath;
+            // Store the meta image used in embeds
+            $pngPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.png';
+            Image::load($originalFull)
+                ->fit(Fit::Crop, 1200, 630)
+                ->format('png')
+                ->save(Storage::disk('public')->path($pngPath));
+            $data['meta_image_path'] = $pngPath;
+            // Delete original upload
+            Storage::disk('public')->delete($originalPath);
         }
 
         DB::transaction(function () use ($data, $attributes) {
