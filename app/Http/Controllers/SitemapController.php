@@ -35,7 +35,7 @@ class SitemapController
         }
 
         // Add URLs for each specific event
-        foreach (Event::where('display_starts_at', '<', now())->get() as $event) {
+        foreach (Event::where('display_starts_at', '<', now())->where('is_hidden_event', false)->get() as $event) {
             $urls[] = route('event.show', ['event' => $event->slug]);
         }
 
