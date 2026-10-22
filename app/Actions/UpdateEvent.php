@@ -69,7 +69,7 @@ class UpdateEvent
         if ($attributes['image'] ?? false) {
             if ($event->image_path && Storage::disk('public')->exists($event->image_path)) {
                 Storage::disk('public')->delete($event->image_path);
-                if (Storage::disk('public')->exists($event->meta_image_path)) {
+                if ($event->meta_image_path && Storage::disk('public')->exists($event->meta_image_path)) {
                     Storage::disk('public')->delete($event->meta_image_path);
                 }
             }

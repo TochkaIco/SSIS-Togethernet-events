@@ -36,7 +36,7 @@ class EventShow extends Component
                 Storage::disk('public')->delete($this->event->image_path);
             }
             $this->event->update(['image_path' => null]);
-            if (Storage::disk('public')->exists($this->event->meta_image_path)) {
+            if ($this->event->meta_image_path && Storage::disk('public')->exists($this->event->meta_image_path)) {
                 Storage::disk('public')->delete($this->event->meta_image_path);
             }
             $this->event->update(['meta_image_path' => null]);
