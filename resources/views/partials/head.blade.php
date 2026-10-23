@@ -7,13 +7,13 @@
 <meta property="og:site_name" content="Togethernet">
 <meta property="og:title" content="{{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}">
 <meta property="og:description" content="{{ filled($embedDescription ?? null) ? $embedDescription : "En studentdriven förening som håller olika evenemang för SSIS elever. Togethernet är mest känd för våra LAN, men det alltid finns något som händer!" }}">
-<meta property="og:image" content="{{ asset($embedImagePath ? 'storage/' . $embedImagePath : 'images/togethernet-feature.jpg') }}">
+<meta property="og:image" content="{{ asset(filled($embedImagePath ?? null) ? 'storage/' . $embedImagePath : 'images/togethernet-feature.jpg') }}">
 <meta property="og:url" content="{{ config('app.url') }}">
 
-<meta name="twitter:card" content="{{ asset($embedImagePath ? 'storage/' . $embedImagePath : 'images/togethernet-feature.jpg') }}">
+<meta name="twitter:card" content="{{ asset(filled($embedImagePath ?? null) ? 'storage/' . $embedImagePath : 'images/togethernet-feature.jpg') }}">
 <meta name="twitter:title" content="{{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}">
 <meta name="twitter:description" content="{{ filled($embedDescription ?? null) ? $embedDescription : "En studentdriven förening som håller olika evenemang för SSIS elever. Togethernet är mest känd för våra LAN, men det alltid finns något som händer!" }}">
-<meta name="twitter:image" content="{{ asset($embedImagePath ? 'storage/' . $embedImagePath : 'images/togethernet-feature.jpg') }}">
+<meta name="twitter:image" content="{{ asset(filled($embedImagePath ?? null) ? 'storage/' . $embedImagePath : 'images/togethernet-feature.jpg') }}">
 
 <title>
     {{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}
