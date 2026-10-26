@@ -57,14 +57,6 @@ use Spatie\Sluggable\SlugOptions;
  */
 class Event extends Model
 {
-    /**
-     * Get the checklist associated with the event.
-     */
-    public function checklist()
-    {
-        return $this->hasOne(EventChecklist::class);
-    }
-
     /** @use HasFactory<EventFactory> */
     use HasFactory, HasSlug;
 
@@ -190,6 +182,14 @@ class Event extends Model
     public function kiosk(): HasOne
     {
         return $this->hasOne(EventKiosk::class, 'event_id');
+    }
+
+    /**
+     * @return HasOne<EventChecklist, $this>
+     */
+    public function checklist(): HasOne
+    {
+        return $this->hasOne(EventChecklist::class, 'event_id');
     }
 
     public function eventPeriods(): Collection

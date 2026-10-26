@@ -27,11 +27,39 @@
                 <flux:icon icon="check" class="size-16 text-muted-foreground" />
                 <p class="text-muted-foreground text-lg">{{ __('No checklist configured for this event.') }}</p>
                 @can('manage event checklists')
-                    <flux:button variant="primary" wire:click="editChecklist" class="cursor-pointer">
-                        {{ __('Create Checklist') }}
-                    </flux:button>
+                    <div class="flex space-x-3">
+                        <flux:button variant="primary" wire:click="editChecklist" class="cursor-pointer">
+                            {{ __('Create Checklist') }}
+                        </flux:button>
+                        <flux:button variant="primary" wire:click="openImportModal" class="cursor-pointer"><flux:icon icon="arrow-path" /></flux:button>
+                    </div>
                 @endcan
             </div>
         @endif
     @endif
+
+    <flux:modal name="import-modal" wire:model="showImportModal" class="max-w-sm w-full">
+        <form wire:submit="importFromEvent">
+            <flux:heading size="lg">{{ __('Import from Event') }}</flux:heading>
+            <flux:subheading>{{ __('Copy the checklist from another event.') }}</flux:subheading>
+            <flux:separator class="my-4" />
+            <flux:field>
+                <flux:label>{{ __('Source Event') }}</flux:label>
+                <flux:select wire:model="importEventId" required>
+                    <flux:select.option value="">{{ __('Select an event...') }}</flux:select.option>
+                    @foreach($availableEvents as $event)
+                        <flux:select.option value="{{ $event->id }}">{{ $event->title }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="importEventId" />
+            </flux:field>
+            <flux:separator class="my-4" />
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+                <flux:button type="submit" variant="primary" class="cursor-pointer">{{ __('Import') }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
 </div>
