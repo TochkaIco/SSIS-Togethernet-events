@@ -58,7 +58,7 @@ class UserFeedbackView extends Component
         ])
             ->title(__('My Feedback'))
             ->layoutData([
-                'embedDescription' => "Review bug reports and feature requests you've submitted.",
+                'embedDescription' => 'Gå igenom bugg och feature reports du har skickat in.',
                 'embedImagePath' => null,
             ]);
     }
