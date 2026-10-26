@@ -87,11 +87,9 @@
                                             </flux:sidebar.item>
                                         @endif
                                     @endcan
-                                    @can('manage event checklists')
-                                        <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'checklist'])" :current="request('tab') === 'checklist'" wire:navigate>
-                                            {{ __('Checklist') }}
-                                        </flux:sidebar.item>
-                                    @endcan
+                                    <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'checklist'])" :current="request('tab') === 'checklist'" wire:navigate>
+                                        {{ __('Checklist') }}
+                                    </flux:sidebar.item>
                                 </flux:sidebar.group>
                             @endif
 

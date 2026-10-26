@@ -1,26 +1,40 @@
 <div>
     @if($editing)
-        <div>
-            <textarea wire:model.defer="itemsText" rows="5" class="w-full p-2 border rounded" placeholder="Enter each checklist item on a new line (Markdown supported)"></textarea>
-            <div class="mt-4 flex space-x-2">
-                <flux:button wire:click="saveChecklist" class="cursor-pointer">{{ __('Save') }}</flux:button>
-                <flux:button variant="ghost" wire:click="cancelEdit" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+        @can('manage event checklists')
+            <div>
+                <flux:textarea rows="16" wire:model.defer="itemsText" class="w-full p-2 border rounded" placeholder="Enter each checklist item on a new line (Markdown supported)"></flux:textarea>
+                <div class="mt-4 flex space-x-2">
+                    <flux:button wire:click="saveChecklist" class="cursor-pointer">{{ __('Save') }}</flux:button>
+                    <flux:button variant="ghost" wire:click="cancelEdit" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                </div>
             </div>
-        </div>
+        @endcan
     @else
         @if(count($items))
-            <div class="flex flex-col md:flex-row justify-start md:justify-between space-y-6">
+            <div class="flex flex-col md:flex-row justify-start md:justify-between">
                 <div class="space-y-2">
-                    @foreach($items as $index => $item)
-                        <div class="flex items-center">
-                            <input type="checkbox" id="check-{{ $index }}" wire:click="toggle({{ $index }})" {{ $checked[$index] ? 'checked' : '' }} class="h-4 w-4 rounded cursor-pointer">
-                            <label for="check-{{ $index }}" class="ml-2">
-                                {!! \Illuminate\Support\Str::markdown($item) !!}
-                            </label>
-                        </div>
+                    @foreach($renderedItems as $item)
+                        @if($item['type'] === 'header')
+                            <flux:heading size="xl" class="mt-4">
+                                {!! \Illuminate\Support\Str::markdown($item['text']) !!}
+                            </flux:heading>
+                        @elseif($item['type'] === 'checkbox')
+                            <div class="flex items-center">
+                                <input type="checkbox" id="check-{{ $item['index'] }}" wire:click="toggle({{ $item['index'] }})" {{ $item['checked'] ? 'checked' : '' }} class="h-4 w-4 rounded cursor-pointer" @cannot('manage event checklists') disabled @endcannot>
+                                <label for="check-{{ $item['index'] }}" class="ml-2 {{ $item['checked'] ? 'line-through text-muted-foreground' : '' }}">
+                                    {!! \Illuminate\Support\Str::markdown($item['text']) !!}
+                                </label>
+                            </div>
+                        @else
+                            <div class="ml-6">
+                                {!! \Illuminate\Support\Str::markdown($item['text']) !!}
+                            </div>
+                        @endif
                     @endforeach
                 </div>
-                <flux:button icon="pencil-square" wire:click="editChecklist" class="cursor-pointer">{{ __('Edit Checklist') }}</flux:button>
+                @can('manage event checklists')
+                    <flux:button icon="pencil-square" wire:click="editChecklist" class="cursor-pointer">{{ __('Edit Checklist') }}</flux:button>
+                @endcan
             </div>
         @else
             <div class="flex flex-col items-center justify-center py-16 gap-6">

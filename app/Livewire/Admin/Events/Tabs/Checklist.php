@@ -7,7 +7,9 @@ use App\Models\EventChecklist;
 use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Checklist extends Component
@@ -34,7 +36,6 @@ class Checklist extends Component
 
     public function mount(Event $event): void
     {
-        $this->authorize('manage event checklists');
         $this->event = $event;
         $this->checklist = $event->checklist;
         if ($this->checklist instanceof EventChecklist && is_array($this->checklist->items)) {
@@ -71,24 +72,58 @@ class Checklist extends Component
 
     public function editChecklist(): void
     {
+        $this->authorize('manage event checklists');
+
         $this->editing = true;
         $this->itemsText = implode("\n", $this->items);
     }
 
     public function cancelEdit(): void
     {
+        $this->authorize('manage event checklists');
+
         $this->editing = false;
         $this->itemsText = implode("\n", $this->items);
     }
 
     public function toggle(int $index): void
     {
+        $this->authorize('manage event checklists');
+
         $this->checked[$index] = ! ($this->checked[$index] ?? false);
         $this->saveChecklist();
     }
 
+    #[Computed]
+    public function renderedItems(): array
+    {
+        $render = [];
+        foreach ($this->items as $index => $item) {
+            $trimmed = trim($item);
+            $isHeader = Str::startsWith($trimmed, '#');
+            $isCheckbox = Str::startsWith($trimmed, '- ');
+            if ($isHeader) {
+                $render[] = ['type' => 'header', 'text' => $item];
+            } elseif ($isCheckbox) {
+                $displayText = ltrim($trimmed, '- ');
+                $render[] = [
+                    'type' => 'checkbox',
+                    'text' => $displayText,
+                    'checked' => $this->checked[$index] ?? false,
+                    'index' => $index,
+                ];
+            } else {
+                $render[] = ['type' => 'text', 'text' => $item];
+            }
+        }
+
+        return $render;
+    }
+
     public function saveChecklist(): void
     {
+        $this->authorize('manage event checklists');
+
         $data = [];
         foreach ($this->items as $index => $text) {
             $data[$index] = [
@@ -107,12 +142,14 @@ class Checklist extends Component
         $this->itemsText = implode("\n", $this->items);
         $this->editing = false;
 
-        GlobalLog::log('Event checklist Created', 'checklist', ['event_id' => $this->event->id]);
-        GlobalLog::discord_log('blue', 'Event checklist Created', 'checklist', ['event_id' => $this->event->id]);
+        GlobalLog::log('Event checklist Saved', 'checklist', ['event_id' => $this->event->id]);
+        GlobalLog::discord_log('blue', 'Event checklist Saved', 'checklist', ['event_id' => $this->event->id]);
     }
 
     public function openImportModal(): void
     {
+        $this->authorize('manage event checklists');
+
         $this->reset(['importEventId']);
         $this->showImportModal = true;
     }
@@ -122,6 +159,8 @@ class Checklist extends Component
      */
     public function importFromEvent(): void
     {
+        $this->authorize('manage event checklists');
+
         $sourceEvent = Event::findOrFail($this->importEventId);
         $currentEvent = $this->event;
 
@@ -145,6 +184,7 @@ class Checklist extends Component
 
         return view('livewire.admin.events.tabs.checklist', [
             'availableEvents' => $availableEvents,
+            'renderedItems' => $this->renderedItems,
         ]);
     }
 }
