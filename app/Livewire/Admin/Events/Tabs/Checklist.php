@@ -184,7 +184,7 @@ class Checklist extends Component
 
         return view('livewire.admin.events.tabs.checklist', [
             'availableEvents' => $availableEvents,
-            'renderedItems' => $this->renderedItems,
+            'renderedItems' => $this->renderedItems(),
         ]);
     }
 }
