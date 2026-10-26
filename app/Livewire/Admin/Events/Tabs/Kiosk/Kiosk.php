@@ -672,7 +672,6 @@ class Kiosk extends Component
 
         $availableEvents = Event::where('id', '!=', $this->event->id)
             ->whereHas('kiosk')
-            ->orderBy('title')
             ->get();
 
         return view('livewire.admin.events.tabs.kiosk.kiosk', [
