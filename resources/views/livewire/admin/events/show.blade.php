@@ -109,6 +109,8 @@
             @endcan
         @elseif($tab === 'kiosk' && $event->event_type !== \App\EventType::QR_TAG)
             <livewire:admin.events.tabs.kiosk.kiosk :event="$event" :key="'kiosk-'.$event->id" />
+        @elseif($tab === 'checklist')
+            <livewire:admin.events.tabs.checklist :event="$event" :key="'checklist-'.$event->id" />
         @else
             <livewire:admin.events.tabs.view-details :event="$event" :key="'view-'.$event->id" />
         @endif

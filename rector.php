@@ -7,7 +7,7 @@ use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedCallRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnUnionTypeRector;
 use Rector\TypeDeclaration\Rector\Closure\AddClosureVoidReturnTypeWhereNoReturnRector;
-use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
+use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 use RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector;
 
 return RectorConfig::configure()
@@ -27,7 +27,7 @@ return RectorConfig::configure()
         AddClosureVoidReturnTypeWhereNoReturnRector::class,
         ReturnTypeFromStrictTypedCallRector::class,
         ReturnUnionTypeRector::class,
-        DeclareStrictTypesRector::class => [
+        SafeDeclareStrictTypesRector::class => [
             __DIR__.'/resources/views',
         ],
         AddArrowFunctionReturnTypeRector::class,
@@ -42,7 +42,7 @@ return RectorConfig::configure()
         earlyReturn: true,
     )
     ->withRules([
-        DeclareStrictTypesRector::class,
+        //
     ]);
 //    ->withTypeCoverageLevel(0)
 //    ->withDeadCodeLevel(0)

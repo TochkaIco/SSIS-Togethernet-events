@@ -57,6 +57,14 @@ use Spatie\Sluggable\SlugOptions;
  */
 class Event extends Model
 {
+    /**
+     * Get the checklist associated with the event.
+     */
+    public function checklist()
+    {
+        return $this->hasOne(EventChecklist::class);
+    }
+
     /** @use HasFactory<EventFactory> */
     use HasFactory, HasSlug;
 
