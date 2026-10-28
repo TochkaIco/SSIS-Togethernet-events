@@ -379,6 +379,6 @@ class Index extends Component
             'pastAlerts' => $pastAlerts,
             'usersList' => $usersList,
             'hasIncomplete' => $hasIncomplete,
-        ]);
+        ])->title('Panten');
     }
 }

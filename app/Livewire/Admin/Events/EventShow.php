@@ -52,6 +52,6 @@ class EventShow extends Component
     {
         return view('livewire.admin.events.show', [
             'event' => $this->event,
-        ])->title($this->event->title);
+        ])->title($this->event->title.' · '.__('Admin Events'));
     }
 }

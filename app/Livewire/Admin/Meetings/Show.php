@@ -10,6 +10,7 @@ use App\Models\MeetingAttendant;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -156,6 +157,6 @@ class Show extends Component
             'users' => $users,
             'allClasses' => $allClasses,
             'attendedUserIds' => $attendedUserIds,
-        ])->layout('layouts.app', ['title' => __('Meeting Details')]);
+        ])->layout('layouts.app', ['title' => Str::limit($this->meeting->title, 28).' · '.__('Meeting Details')]);
     }
 }

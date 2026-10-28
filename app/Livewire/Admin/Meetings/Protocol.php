@@ -10,6 +10,7 @@ use App\Models\Meeting;
 use Carbon\Carbon;
 use Flux\Flux;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -65,6 +66,6 @@ class Protocol extends Component
     public function render(): Factory|\Illuminate\Contracts\View\View|View
     {
         return view('livewire.admin.meetings.protocol')
-            ->layout('layouts.app', ['title' => __('Edit Protocol')]);
+            ->layout('layouts.app', ['title' => Str::limit($this->meeting->title, 28).' · '.__('Edit Protocol')]);
     }
 }
