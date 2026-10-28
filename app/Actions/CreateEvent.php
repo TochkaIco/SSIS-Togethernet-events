@@ -70,9 +70,6 @@ class CreateEvent
         DB::transaction(function () use ($data, $attributes) {
             $event = Event::create($data);
 
-            GlobalLog::log('Event Created', 'event', ['event_id' => $event->id, 'title' => $event->title]);
-            GlobalLog::discord_log('green', 'Event Created', 'event', ['event_id', $event->id, 'title', $event->title]);
-
             if ($attributes['one_hour_periods'] ?? false) {
                 $currentStart = Carbon::parse($data['event_starts_at']);
                 $numPeriods = (int) ($attributes['one_hour_periods_number'] ?? 1);
@@ -107,6 +104,9 @@ class CreateEvent
                     'number' => 1,
                 ]);
             }
+
+            GlobalLog::log('Event Created', 'event', ['event_id' => $event->id, 'title' => $event->title]);
+            GlobalLog::discord_log('green', 'Event Created', 'event', ['event_id', $event->id, 'title', $event->title]);
         });
     }
 }

@@ -9,6 +9,10 @@
 <meta property="og:description" content="{{ filled($embedDescription ?? null) ? $embedDescription : "En studentdriven förening som håller olika evenemang för SSIS elever. Togethernet är mest känd för våra LAN, men det alltid finns något som händer!" }}">
 <meta property="og:image" content="{{ asset(filled($embedImagePath ?? null) ? 'storage/' . $embedImagePath : 'images/togethernet-feature.jpg') }}">
 <meta property="og:url" content="{{ config('app.url') }}">
+@if(filled($embedImagePath))
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+@endif
 
 <meta name="twitter:card" content="{{ asset(filled($embedImagePath ?? null) ? 'storage/' . $embedImagePath : 'images/togethernet-feature.jpg') }}">
 <meta name="twitter:title" content="{{ filled($title ?? null) ? $title.' · '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}">

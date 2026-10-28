@@ -96,9 +96,6 @@ class UpdateEvent
         DB::transaction(function () use ($event, $data, $attributes, $periodsChanged) {
             $event->update($data);
 
-            GlobalLog::log('Event Updated', 'event', ['event_id' => $event->id, 'title' => $event->title]);
-            GlobalLog::discord_log('green', 'Event Updated', 'event', ['event_id', $event->id, 'title', $event->title]);
-
             if ($attributes['one_hour_periods'] ?? false) {
                 if ($periodsChanged) {
                     $numPeriods = (int) ($attributes['one_hour_periods_number'] ?? 1);
@@ -141,6 +138,9 @@ class UpdateEvent
                     ]
                 );
             }
+
+            GlobalLog::log('Event Updated', 'event', ['event_id' => $event->id, 'title' => $event->title]);
+            GlobalLog::discord_log('green', 'Event Updated', 'event', ['event_id', $event->id, 'title', $event->title]);
 
             // Process waiting list in case seats were added
             (new ProcessWaitingList)->handle($event);
