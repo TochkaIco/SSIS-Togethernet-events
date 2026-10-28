@@ -28,7 +28,7 @@
 
         <flux:table.rows>
             @foreach ($feedbacks as $feedback)
-                <flux:table.row :key="$feedback->id">
+                <flux:table.row :key="'feedback-'.$feedback->id">
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
                             @if($feedback->user)
@@ -77,6 +77,7 @@
 
                             <flux:menu>
                                 <flux:menu.item class="cursor-pointer" icon="eye" wire:click="openUserFeedbackModal({{ $feedback }})">{{ __('View Details') }}</flux:menu.item>
+                                <flux:menu.item class="cursor-pointer" icon="pencil" wire:click="openUserUpdateFeedbackModal({{ $feedback }})">{{ __('Edit Feedback') }}</flux:menu.item>
                                 @if($feedback->is_finished)
                                     <flux:menu.item class="cursor-pointer" icon="arrow-path" wire:click="markAsUnresolved({{ $feedback->id }})">{{ __('Mark as Unresolved') }}</flux:menu.item>
                                 @else
@@ -158,6 +159,7 @@
                                     <flux:button class="cursor-pointer" variant="ghost" size="xs" icon="x-mark" wire:click="markAsRejected({{ $feedback->id }})">{{ __('Not Implementing') }}</flux:button>
                                 @endif
 
+                                    <flux:button class="cursor-pointer sm:ml-auto" variant="ghost" size="xs" icon="pencil" wire:click="openUserUpdateFeedbackModal({{ $feedback }})" />
                                 <flux:button class="cursor-pointer sm:ml-auto" variant="ghost" size="xs" icon="trash" wire:click="confirmDelete({{ $feedback->id }})" />
                             </div>
 
@@ -170,7 +172,86 @@
 
     <flux:pagination :paginator="$feedbacks" scroll-to class="mt-3" />
 
-    <flux:modal name="feedback-modal-admin" class="md:w-md space-y-6" background-blur>
+    <flux:modal name="feedback-view-modal-admin" class="md:w-md space-y-6" background-blur>
+        <div>
+            <flux:heading size="lg">{{ __('Edit Feedback') }}</flux:heading>
+            @if($feedback_user = $this->selected_feedback?->user)
+                <flux:subheading>
+                    <div class="flex items-center gap-2 mt-2">
+                        <flux:avatar :src="$feedback_user->profile_picture" :initials="$feedback_user->initials()" size="xs" />
+                        {{ $feedback_user->name }}
+                    </div>
+                </flux:subheading>
+            @else
+                <flux:subheading>
+                    <div class="flex items-center gap-2 mt-2 text-zinc-500 italic">
+                        <flux:avatar size="xs" />
+                        {{ __('Guest') }}
+                    </div>
+                </flux:subheading>
+            @endif
+        </div>
+
+        <flux:radio.group wire:model="feedback_type" variant="segmented" class="w-full" disabled>
+            @foreach(\App\FeedbackType::cases() as $case)
+                <flux:radio :value="$case->value" :label="$case->label()" />
+            @endforeach
+        </flux:radio.group>
+
+        <flux:card size="sm">
+            <flux:text>{{ $feedback_comment }}</flux:text>
+        </flux:card>
+
+        @if($this->feedback_replies)
+            <flux:field>
+                <flux:separator text="{{ __('Replies') }}" class="-mt-4" />
+
+                <flux:card size="sm">
+                    @foreach($this->feedback_replies as $replyInstance)
+                        <div class="flex justify-between items-center">
+                            @if($replyInstance['user_type'] == 'admin')
+                                <div class="flex items-center gap-2 mt-2 text-zinc-500 italic">
+                                    <flux:avatar size="xs" circle />
+                                    {{ __('Admin') }}
+                                </div>
+                            @else
+                                <div class="flex items-center gap-2 mt-2">
+                                    <flux:avatar :src="$feedback_user->profile_picture" :initials="$feedback_user->initials()" size="xs" circle />
+                                    {{ $feedback_user->name }}
+                                </div>
+                            @endif
+
+                            <flux:text class="mt-1 italic">{{ Carbon\Carbon::parse($replyInstance['timestamp'])->format('d M, Y, H:i') }}</flux:text>
+                        </div>
+                        <div class="flex space-x-1">
+                            <flux:subheading class="font-semibold">{{ __('Message') . ':' }}</flux:subheading>
+                            <flux:text>{{ $replyInstance['reply'] }}</flux:text>
+                        </div>
+                    @endforeach
+                </flux:card>
+            </flux:field>
+        @endif
+
+        <flux:field>
+            <flux:textarea
+                label="{{ __('Your reply') }}"
+                wire:model.live="feedback_reply"
+                rows="auto"
+                :placeholder="__('Describe the resolution of this ticket or just leave a reply...')"
+                variant="filled"
+                required
+            />
+        </flux:field>
+
+        <div class="flex gap-2 justify-end">
+            <flux:modal.close>
+                <flux:button variant="ghost">{{ __('Close') }}</flux:button>
+            </flux:modal.close>
+            <flux:button wire:click="replyToFeedback" :disabled="!$feedback_reply" variant="primary">{{ __('Reply') }}</flux:button>
+        </div>
+    </flux:modal>
+
+    <flux:modal name="feedback-update-modal-admin" class="md:w-md space-y-6" background-blur>
         <div>
             <flux:heading size="lg">{{ __('Edit Feedback') }}</flux:heading>
             @if($feedback_user = $this->selected_feedback?->user)
@@ -199,7 +280,7 @@
         <flux:field>
             <flux:textarea
                 wire:model="feedback_comment"
-                rows="4"
+                rows="auto"
                 variant="filled"
             />
         </flux:field>
@@ -209,6 +290,66 @@
                 <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
             </flux:modal.close>
             <flux:button wire:click="updateFeedback" variant="primary">{{ __('Save Changes') }}</flux:button>
+        </div>
+    </flux:modal>
+
+    <flux:modal name="feedback-reply-admin" class="md:w-md space-y-6" background-blur>
+        <div>
+            <flux:heading size="lg">{{ __('Extra Messages') }}</flux:heading>
+            @if($feedback_user = $this->selected_feedback?->user)
+                <flux:subheading>
+                    <div class="flex items-center gap-2 mt-2">
+                        <flux:avatar :src="$feedback_user->profile_picture" :initials="$feedback_user->initials()" size="xs" />
+                        {{ $feedback_user->name }}
+                    </div>
+                </flux:subheading>
+            @else
+                <flux:subheading>
+                    <div class="flex items-center gap-2 mt-2 text-zinc-500 italic">
+                        <flux:avatar size="xs" />
+                        {{ __('Guest') }}
+                    </div>
+                </flux:subheading>
+            @endif
+        </div>
+
+        <flux:radio.group wire:model="feedback_type" variant="segmented" class="w-full" disabled>
+            @foreach(\App\FeedbackType::cases() as $case)
+                <flux:radio :value="$case->value" :label="$case->label()" />
+            @endforeach
+        </flux:radio.group>
+
+        <flux:field>
+            <flux:textarea
+                wire:model="feedback_comment"
+                rows="2"
+                variant="filled"
+                disabled
+            />
+        </flux:field>
+
+        <flux:field x-data="{ leaveAReply: false }">
+            <flux:checkbox
+                x-model="leaveAReply"
+                label="{{ __('Leave a reply') }}"
+                name="leave_a_reply"
+                class="whitespace-nowrap"
+            />
+
+            <flux:textarea
+                wire:model="feedback_reply"
+                rows="auto"
+                :placeholder="__('Describe the resolution of this ticket or just leave a reply...')"
+                variant="filled"
+                x-show="leaveAReply"
+            />
+        </flux:field>
+
+        <div class="flex gap-2 justify-end">
+            <flux:modal.close>
+                <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+            </flux:modal.close>
+            <flux:button wire:click="leaveFeedbackReplyOnStatusUpdate({{ $selected_feedback }})" variant="primary">{{ __('Send') }}</flux:button>
         </div>
     </flux:modal>
 

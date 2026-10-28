@@ -90,7 +90,7 @@
                     name="description"
                     data-test="description-field"
                     placeholder="{{ __('Describe your event...') }}"
-                    rows="4"
+                    rows="auto"
                 >{{ old('description', $event->description) }}</flux:textarea>
             </div>
 

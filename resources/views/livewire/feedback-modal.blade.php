@@ -13,7 +13,8 @@
                 <flux:textarea
                     wire:model="comment"
                     :placeholder="__('Describe the problem, suggested changes or functions you wish to see...')"
-                    rows="4"
+                    rows="auto"
+                    autofocus
                     variant="filled"
                 />
                 <flux:error name="comment" />

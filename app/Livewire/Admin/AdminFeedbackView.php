@@ -25,6 +25,10 @@ class AdminFeedbackView extends Component
 
     public string $feedback_comment = '';
 
+    public string $feedback_reply = '';
+
+    public array $feedback_replies = [];
+
     public string $feedback_type = FeedbackType::FEATURE->value;
 
     public ?Feedback $selected_feedback = null;
@@ -41,12 +45,77 @@ class AdminFeedbackView extends Component
         $this->resetPage();
     }
 
+    public function replyToFeedback(): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        if ($this->feedback_reply) {
+            $replies = $this->selected_feedback->replies ?? [];
+
+            $replies[] = [
+                'user_type' => 'admin',
+                'reply' => $this->feedback_reply,
+                'timestamp' => now(),
+            ];
+
+            $this->selected_feedback->update([
+                'replies' => $replies,
+            ]);
+
+            if ($this->selected_feedback->is_finished) {
+                $this->selected_feedback->update([
+                    'is_finished' => false,
+                ]);
+
+                Flux::toast(__('Feedback reply added. You may need to reload the page to see it.'), variant: 'success');
+                GlobalLog::log('Admin replied to a closed feedback ticket, the ticket has been re-opened', 'feedback', ['feedback_id' => $this->selected_feedback->id, 'reply' => $this->feedback_reply]);
+                GlobalLog::discord_log('yellow', 'Admin replied to a closed feedback ticket, the ticket has been re-opened', 'feedback', ['feedback_id', $this->selected_feedback->id, 'reply', $this->feedback_reply]);
+            } else {
+                Flux::toast(__('Feedback reply added. You may need to reload the page to see it.'), variant: 'success');
+                GlobalLog::log('Admin replied to an open feedback ticket', 'feedback', ['feedback_id' => $this->selected_feedback->id, 'reply' => $this->feedback_reply]);
+                GlobalLog::discord_log('green', 'Admin replied to an open feedback ticket', 'feedback', ['feedback_id', $this->selected_feedback->id, 'reply', $this->feedback_reply]);
+            }
+        }
+    }
+
+    public function leaveFeedbackReplyOnStatusUpdate(Feedback $feedback): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        $this->modal('feedback-reply-admin')->close();
+
+        if ($this->feedback_reply) {
+            $replies = $feedback->replies ?? [];
+
+            $replies[] = [
+                'user_type' => 'admin',
+                'reply' => $this->feedback_reply,
+                'timestamp' => now(),
+            ];
+
+            $feedback->update([
+                'replies' => $replies,
+            ]);
+
+            Flux::toast(__('Feedback reply added.'), variant: 'success');
+            GlobalLog::log('Admin replied to feedback', 'feedback', ['feedback_id' => $feedback->id, 'reply' => $this->feedback_reply]);
+            GlobalLog::discord_log('green', 'Admin replied to feedback', 'feedback', ['feedback_id', $feedback->id, 'reply', $this->feedback_reply]);
+        }
+    }
+
     public function markAsResolved($feedbackId): void
     {
         if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
             abort(403);
         }
+        $this->modal('feedback-modal-admin')->close();
+
         $feedback = Feedback::findOrFail($feedbackId);
+
         $feedback->update([
             'is_finished' => true,
             'is_rejected' => false,
@@ -55,9 +124,23 @@ class AdminFeedbackView extends Component
         GlobalLog::log('Feedback marked as resolved', 'feedback', ['feedback_id' => $feedback->id]);
         GlobalLog::discord_log('green', 'Feedback marked as resolved', 'feedback', ['feedback_id', $feedback->id, 'type', $feedback->type->label(), 'comment', Str::limit($feedback->comment, 245, '...')]);
 
-        $this->modal('feedback-modal-admin')->close();
-
         Flux::toast(__('Feedback marked as resolved.'), variant: 'success');
+
+        $this->openFeedbackReplyModal($feedback);
+    }
+
+    public function openFeedbackReplyModal(Feedback $feedback): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        $this->selected_feedback = $feedback;
+        $this->feedback_comment = $feedback->comment;
+        $this->feedback_type = $feedback->type->value;
+        $this->feedback_reply = '';
+
+        $this->modal('feedback-reply-admin')->show();
     }
 
     public function markAsUnresolved($feedbackId): void
@@ -106,8 +189,23 @@ class AdminFeedbackView extends Component
 
         $this->selected_feedback = $feedback;
         $this->feedback_comment = $feedback->comment;
+        $this->feedback_reply = '';
+        $this->feedback_replies = $feedback->replies ?? [];
         $this->feedback_type = $feedback->type->value;
-        $this->modal('feedback-modal-admin')->show();
+        $this->modal('feedback-view-modal-admin')->show();
+    }
+
+    public function openUserUpdateFeedbackModal(Feedback $feedback): void
+    {
+        if (! auth()->user()->hasAnyRole(['admin', 'super-admin', 'maintainer'])) {
+            abort(403);
+        }
+
+        $this->selected_feedback = $feedback;
+        $this->feedback_comment = $feedback->comment;
+        $this->feedback_replies = $feedback->replies ?? [];
+        $this->feedback_type = $feedback->type->value;
+        $this->modal('feedback-update-modal-admin')->show();
     }
 
     public function updateFeedback(): void

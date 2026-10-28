@@ -2,7 +2,12 @@
     @if($editing)
         @can('manage event checklists')
             <div>
-                <flux:textarea rows="16" wire:model.defer="itemsText" class="w-full p-2 border rounded" placeholder="Enter each checklist item on a new line (Markdown supported)"></flux:textarea>
+                <flux:textarea
+                    rows="auto"
+                    wire:model.defer="itemsText"
+                    class="w-full p-2 border rounded"
+                    placeholder="Enter each checklist item on a new line (Markdown supported)"
+                />
                 <div class="mt-4 flex space-x-2">
                     <flux:button wire:click="saveChecklist" class="cursor-pointer">{{ __('Save') }}</flux:button>
                     <flux:button variant="ghost" wire:click="cancelEdit" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
