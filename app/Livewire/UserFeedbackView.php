@@ -26,6 +26,12 @@ class UserFeedbackView extends Component
     #[Url(history: true)]
     public $search = '';
 
+    #[Url]
+    public string $sortBy = 'created_at';
+
+    #[Url]
+    public string $sortDirection = 'desc';
+
     public $image;
 
     public $feedback_image_path;
@@ -49,6 +55,24 @@ class UserFeedbackView extends Component
         if (! Auth::user()->feedback()->exists()) {
             $this->redirect(route('home'));
         }
+    }
+
+    public function sort(string $column): void
+    {
+        $allowedColumns = ['created_at', 'updated_at'];
+
+        if (! in_array($column, $allowedColumns, true)) {
+            return;
+        }
+
+        if ($this->sortBy === $column) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $column;
+            $this->sortDirection = 'desc';
+        }
+
+        $this->resetPage();
     }
 
     public function replyToFeedback(): void
@@ -84,6 +108,7 @@ class UserFeedbackView extends Component
 
             $this->selected_feedback->update([
                 'replies' => $replies,
+                'updated_at' => now(),
             ]);
 
             $this->reset('feedback_reply', 'image');

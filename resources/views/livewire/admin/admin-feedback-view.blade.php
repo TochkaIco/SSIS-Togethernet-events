@@ -22,7 +22,8 @@
             <flux:table.column>{{ __('Type') }}</flux:table.column>
             <flux:table.column>{{ __('Comment') }}</flux:table.column>
             <flux:table.column>{{ __('Status') }}</flux:table.column>
-            <flux:table.column>{{ __('Date') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'created_at'" :direction="$sortDirection" wire:click="sort('created_at')">{{ __('Created At') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'updated_at'" :direction="$sortDirection" wire:click="sort('updated_at')">{{ __('Updated At') }}</flux:table.column>
             <flux:table.column align="end">{{ __('Actions') }}</flux:table.column>
         </flux:table.columns>
 
@@ -68,7 +69,11 @@
                     </flux:table.cell>
 
                     <flux:table.cell class="whitespace-nowrap">
-                        {{ $feedback->created_at->locale(Auth::user()->locale ?? App::getLocale())->translatedFormat('M j, Y') }}
+                        {{ $feedback->created_at->locale(Auth::user()->locale ?? App::getLocale())->translatedFormat('M j, Y, H:i') }}
+                    </flux:table.cell>
+
+                    <flux:table.cell class="whitespace-nowrap">
+                        {{ $feedback->updated_at->locale(Auth::user()->locale ?? App::getLocale())->translatedFormat('M j, Y, H:i') }}
                     </flux:table.cell>
 
                     <flux:table.cell align="end">

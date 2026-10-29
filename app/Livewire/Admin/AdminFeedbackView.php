@@ -27,6 +27,12 @@ class AdminFeedbackView extends Component
     #[Url(history: true)]
     public $search = '';
 
+    #[Url]
+    public string $sortBy = 'created_at';
+
+    #[Url]
+    public string $sortDirection = 'desc';
+
     public bool $filterResolved = false;
 
     public string $feedback_comment = '';
@@ -52,6 +58,24 @@ class AdminFeedbackView extends Component
 
     public function updatingFilterResolved(): void
     {
+        $this->resetPage();
+    }
+
+    public function sort(string $column): void
+    {
+        $allowedColumns = ['created_at', 'updated_at'];
+
+        if (! in_array($column, $allowedColumns, true)) {
+            return;
+        }
+
+        if ($this->sortBy === $column) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $column;
+            $this->sortDirection = 'desc';
+        }
+
         $this->resetPage();
     }
 
@@ -92,6 +116,7 @@ class AdminFeedbackView extends Component
 
             $this->selected_feedback->update([
                 'replies' => $replies,
+                'updated_at' => now(),
             ]);
 
             if ($this->selected_feedback->is_finished) {
@@ -151,6 +176,7 @@ class AdminFeedbackView extends Component
 
             $feedback->update([
                 'replies' => $replies,
+                'updated_at' => now(),
             ]);
 
             Flux::toast(__('Feedback reply added.'), variant: 'success');
@@ -173,6 +199,7 @@ class AdminFeedbackView extends Component
         $feedback->update([
             'is_finished' => true,
             'is_rejected' => false,
+            'updated_at' => now(),
         ]);
 
         GlobalLog::log('Feedback marked as resolved', 'feedback', ['feedback_id' => $feedback->id]);
@@ -207,6 +234,7 @@ class AdminFeedbackView extends Component
         $feedback->update([
             'is_finished' => false,
             'is_rejected' => false,
+            'updated_at' => now(),
         ]);
 
         GlobalLog::log('Feedback marked as unresolved', 'feedback', ['feedback_id' => $feedback->id]);
@@ -226,6 +254,7 @@ class AdminFeedbackView extends Component
         $feedback->update([
             'is_finished' => true,
             'is_rejected' => true,
+            'updated_at' => now(),
         ]);
 
         GlobalLog::log('Feedback marked as rejected', 'feedback', ['feedback_id' => $feedback->id]);
@@ -278,6 +307,7 @@ class AdminFeedbackView extends Component
         $this->selected_feedback->update([
             'comment' => $this->feedback_comment,
             'type' => $this->feedback_type,
+            'updated_at' => now(),
         ]);
 
         GlobalLog::log('User feedback updated by admin', 'feedback', ['feedback_id' => $this->selected_feedback->id]);
@@ -323,6 +353,7 @@ class AdminFeedbackView extends Component
                 ->with('user')
                 ->when($this->search, fn ($query) => $query->where('comment', 'like', '%'.$this->search.'%'))
                 ->when($this->filterResolved, fn ($query) => $query->where('is_finished', false))
+                ->orderBy($this->sortBy, $this->sortDirection)
                 ->latest()
                 ->paginate(10),
         ]);
