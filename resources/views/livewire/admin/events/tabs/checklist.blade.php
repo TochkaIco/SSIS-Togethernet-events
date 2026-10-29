@@ -8,9 +8,9 @@
                     class="w-full p-2 border rounded"
                     placeholder="Enter each checklist item on a new line (Markdown supported)"
                 />
-                <div class="mt-4 flex space-x-2">
-                    <flux:button wire:click="saveChecklist" class="cursor-pointer">{{ __('Save') }}</flux:button>
+                <div class="mt-4 flex justify-end space-x-2">
                     <flux:button variant="ghost" wire:click="cancelEdit" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                    <flux:button variant="primary" wire:click="saveChecklist" class="cursor-pointer">{{ __('Save') }}</flux:button>
                 </div>
             </div>
         @endcan

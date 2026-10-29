@@ -263,7 +263,7 @@
                         <div class="mt-1 space-y-3">
                             @if($receiptPhoto)
                                 <div class="relative w-full max-h-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                                    <img src="{{ $receiptPhoto->temporaryUrl() }}" class="w-full h-auto object-cover" />
+                                    <img src="{{ $receiptPhoto->temporaryUrl() }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
                                 </div>
                             @endif
                             <input type="file" wire:model="receiptPhoto" accept="image/*" class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-zinc-800 file:text-orange-700 dark:file:text-zinc-200 hover:file:bg-orange-100 dark:hover:file:bg-zinc-700 cursor-pointer" />
@@ -295,7 +295,7 @@
 
             @if($viewingPhotoPath)
                 <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                    <img src="{{ asset('storage/' . $viewingPhotoPath) }}" class="w-full h-auto object-contain max-h-[30rem]" />
+                    <img src="{{ asset('storage/' . $viewingPhotoPath) }}" class="w-full h-auto object-contain max-h-[30rem]"  alt="{{ __('Image') }}"/>
                 </div>
             @endif
 
