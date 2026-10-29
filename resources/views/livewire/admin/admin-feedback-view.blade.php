@@ -28,7 +28,7 @@
 
         <flux:table.rows>
             @foreach ($feedbacks as $feedback)
-                <flux:table.row :key="'feedback-'.$feedback->id">
+                <flux:table.row :key="'feedback-'.$feedback->id" class="hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors group">
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
                             @if($feedback->user)
@@ -174,7 +174,7 @@
 
     <flux:modal name="feedback-view-modal-admin" class="md:w-md space-y-6" background-blur>
         <div>
-            <flux:heading size="lg">{{ __('Edit Feedback') }}</flux:heading>
+            <flux:heading size="lg">{{ __('View Feedback') }}</flux:heading>
             @if($feedback_user = $this->selected_feedback?->user)
                 <flux:subheading>
                     <div class="flex items-center gap-2 mt-2">
@@ -192,15 +192,28 @@
             @endif
         </div>
 
-        <flux:radio.group wire:model="feedback_type" variant="segmented" class="w-full" disabled>
-            @foreach(\App\FeedbackType::cases() as $case)
-                <flux:radio :value="$case->value" :label="$case->label()" />
-            @endforeach
-        </flux:radio.group>
+        <details class="group space-y-6" open>
+            <summary>{{ __('Feedback Details') }}</summary>
+            <flux:radio.group wire:model="feedback_type" variant="segmented" class="w-full" disabled>
+                @foreach(\App\FeedbackType::cases() as $case)
+                    <flux:radio :value="$case->value" :label="$case->label()" />
+                @endforeach
+            </flux:radio.group>
 
-        <flux:card size="sm">
-            <flux:text>{{ $feedback_comment }}</flux:text>
-        </flux:card>
+            <flux:card size="sm">
+                <flux:text>{{ $feedback_comment }}</flux:text>
+            </flux:card>
+
+            @if($feedback_image_path)
+                <flux:field>
+                    <div class="relative w-full max-h-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                        <a  href="{{ asset('storage/'.$feedback_image_path) }}" download="feedback_image">
+                            <img src="{{ asset('storage/'.$feedback_image_path) }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
+                        </a>
+                    </div>
+                </flux:field>
+            @endif
+        </details>
 
         @if($this->feedback_replies)
             <flux:field>
@@ -227,6 +240,13 @@
                             <flux:subheading class="font-semibold">{{ __('Message') . ':' }}</flux:subheading>
                             <flux:text>{{ $replyInstance['reply'] }}</flux:text>
                         </div>
+                        @if($replyInstance['image_path'] ?? false)
+                            <div class="relative max-h-40 max-w-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                                <a  href="{{ asset('storage/'.$replyInstance['image_path']) }}" download="feedback_image">
+                                    <img src="{{ asset('storage/'.$replyInstance['image_path']) }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
+                                </a>
+                            </div>
+                        @endif
                     @endforeach
                 </flux:card>
             </flux:field>
@@ -241,6 +261,28 @@
                 variant="filled"
                 required
             />
+        </flux:field>
+
+        <flux:field>
+            <div class="mt-1 space-y-3">
+                @if($image)
+                    <div class="relative w-full max-h-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                        <img src="{{ $image->temporaryUrl() }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
+                    </div>
+                    <flux:button
+                        type="button"
+                        variant="danger"
+                        size="sm"
+                        wire:click.prevent="clearFeedbackImage"
+                        data-test="remove-image-button"
+                        class="w-full mt-2 cursor-pointer"
+                    >
+                        {{ __('Remove Image') }}
+                    </flux:button>
+                @endif
+                <input type="file" wire:model="image" accept="image/*" class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-zinc-800 file:text-orange-700 dark:file:text-zinc-200 hover:file:bg-orange-100 dark:hover:file:bg-zinc-700 cursor-pointer" />
+            </div>
+            <flux:error name="image" />
         </flux:field>
 
         <div class="flex gap-2 justify-end">
@@ -328,6 +370,16 @@
             />
         </flux:field>
 
+        @if($feedback_image_path)
+            <flux:field>
+                <div class="relative max-h-40 max-w-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                    <a  href="{{ asset('storage/'.$feedback_image_path) }}" download="feedback_image">
+                        <img src="{{ asset('storage/'.$feedback_image_path) }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
+                    </a>
+                </div>
+            </flux:field>
+        @endif
+
         <flux:field x-data="{ leaveAReply: false }">
             <flux:checkbox
                 x-model="leaveAReply"
@@ -343,6 +395,28 @@
                 variant="filled"
                 x-show="leaveAReply"
             />
+        </flux:field>
+
+        <flux:field>
+            <div class="mt-1 space-y-3">
+                @if($image)
+                    <div class="relative w-full max-h-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                        <img src="{{ $image->temporaryUrl() }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
+                    </div>
+                    <flux:button
+                        type="button"
+                        variant="danger"
+                        size="sm"
+                        wire:click.prevent="clearFeedbackImage"
+                        data-test="remove-image-button"
+                        class="w-full mt-2 cursor-pointer"
+                    >
+                        {{ __('Remove Image') }}
+                    </flux:button>
+                @endif
+                <input type="file" wire:model="image" accept="image/*" class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-zinc-800 file:text-orange-700 dark:file:text-zinc-200 hover:file:bg-orange-100 dark:hover:file:bg-zinc-700 cursor-pointer" />
+            </div>
+            <flux:error name="image" />
         </flux:field>
 
         <div class="flex gap-2 justify-end">

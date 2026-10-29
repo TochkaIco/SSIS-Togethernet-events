@@ -20,6 +20,28 @@
                 <flux:error name="comment" />
             </flux:field>
 
+            <flux:field>
+                <div class="mt-1 space-y-3">
+                    @if($image)
+                        <div class="relative w-full max-h-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                            <img src="{{ $image->temporaryUrl() }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
+                        </div>
+                        <flux:button
+                            type="button"
+                            variant="danger"
+                            size="sm"
+                            wire:click.prevent="clearFeedbackImage"
+                            data-test="remove-image-button"
+                            class="w-full mt-2 cursor-pointer"
+                        >
+                            {{ __('Remove Image') }}
+                        </flux:button>
+                    @endif
+                    <input type="file" wire:model="image" accept="image/*" class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-zinc-800 file:text-orange-700 dark:file:text-zinc-200 hover:file:bg-orange-100 dark:hover:file:bg-zinc-700 cursor-pointer" />
+                </div>
+                <flux:error name="image" />
+            </flux:field>
+
             @auth
                 <flux:checkbox wire:model="anonymous" :label="__('Send anonymously')" />
             @endauth

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['type', 'comment', 'replies', 'is_finished', 'is_rejected', 'user_id'])]
+#[Fillable(['type', 'comment', 'image_path', 'replies', 'is_finished', 'is_rejected', 'user_id'])]
 /**
  * @property FeedbackType $type
  */

@@ -8,15 +8,21 @@ use App\FeedbackType;
 use App\Models\Feedback;
 use App\Models\GlobalLog;
 use Flux\Flux;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Spatie\Image\Enums\Fit;
+use Spatie\Image\Exceptions\CouldNotLoadImage;
+use Spatie\Image\Image;
 
 class AdminFeedbackView extends Component
 {
-    use WithPagination;
+    use WithFileUploads, WithPagination;
 
     #[Url(history: true)]
     public $search = '';
@@ -24,6 +30,10 @@ class AdminFeedbackView extends Component
     public bool $filterResolved = false;
 
     public string $feedback_comment = '';
+
+    public $image;
+
+    public $feedback_image_path;
 
     public string $feedback_reply = '';
 
@@ -54,9 +64,29 @@ class AdminFeedbackView extends Component
         if ($this->feedback_reply) {
             $replies = $this->selected_feedback->replies ?? [];
 
+            if ($this->image) {
+                $originalPath = $this->image->store('feedback', 'public');
+                $originalFull = Storage::disk('public')->path($originalPath);
+                $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
+                try {
+                    Image::load($originalFull)
+                        ->fit(Fit::Max, 1200, 900)
+                        ->format('webp')
+                        ->save(Storage::disk('public')->path($webpPath));
+
+                    $feedback_reply_image_path = $webpPath;
+                } catch (CouldNotLoadImage $e) {
+                    Flux::toast(__('Could not load your image. Try again...').$e, variant: 'error');
+                }
+
+                // Delete original upload
+                Storage::disk('public')->delete($originalPath);
+            }
+
             $replies[] = [
                 'user_type' => 'admin',
                 'reply' => $this->feedback_reply,
+                'image_path' => $feedback_reply_image_path ?? '',
                 'timestamp' => now(),
             ];
 
@@ -77,6 +107,8 @@ class AdminFeedbackView extends Component
                 GlobalLog::log('Admin replied to an open feedback ticket', 'feedback', ['feedback_id' => $this->selected_feedback->id, 'reply' => $this->feedback_reply]);
                 GlobalLog::discord_log('green', 'Admin replied to an open feedback ticket', 'feedback', ['feedback_id', $this->selected_feedback->id, 'reply', $this->feedback_reply]);
             }
+
+            $this->reset('feedback_reply', 'image');
         }
     }
 
@@ -91,9 +123,29 @@ class AdminFeedbackView extends Component
         if ($this->feedback_reply) {
             $replies = $feedback->replies ?? [];
 
+            if ($this->image) {
+                $originalPath = $this->image->store('feedback', 'public');
+                $originalFull = Storage::disk('public')->path($originalPath);
+                $webpPath = pathinfo($originalPath, PATHINFO_DIRNAME).'/'.pathinfo($originalPath, PATHINFO_FILENAME).'.webp';
+                try {
+                    Image::load($originalFull)
+                        ->fit(Fit::Max, 1200, 900)
+                        ->format('webp')
+                        ->save(Storage::disk('public')->path($webpPath));
+
+                    $feedback_reply_image_path = $webpPath;
+                } catch (CouldNotLoadImage $e) {
+                    Flux::toast(__('Could not load your image. Try again...').$e, variant: 'error');
+                }
+
+                // Delete original upload
+                Storage::disk('public')->delete($originalPath);
+            }
+
             $replies[] = [
                 'user_type' => 'admin',
                 'reply' => $this->feedback_reply,
+                'image_path' => $feedback_reply_image_path ?? '',
                 'timestamp' => now(),
             ];
 
@@ -104,6 +156,8 @@ class AdminFeedbackView extends Component
             Flux::toast(__('Feedback reply added.'), variant: 'success');
             GlobalLog::log('Admin replied to feedback', 'feedback', ['feedback_id' => $feedback->id, 'reply' => $this->feedback_reply]);
             GlobalLog::discord_log('green', 'Admin replied to feedback', 'feedback', ['feedback_id', $feedback->id, 'reply', $this->feedback_reply]);
+
+            $this->reset('feedback_reply', 'image');
         }
     }
 
@@ -137,6 +191,7 @@ class AdminFeedbackView extends Component
 
         $this->selected_feedback = $feedback;
         $this->feedback_comment = $feedback->comment;
+        $this->feedback_image_path = $feedback->image_path ?? null;
         $this->feedback_type = $feedback->type->value;
         $this->feedback_reply = '';
 
@@ -189,6 +244,7 @@ class AdminFeedbackView extends Component
 
         $this->selected_feedback = $feedback;
         $this->feedback_comment = $feedback->comment;
+        $this->feedback_image_path = $feedback->image_path ?? null;
         $this->feedback_reply = '';
         $this->feedback_replies = $feedback->replies ?? [];
         $this->feedback_type = $feedback->type->value;
@@ -260,7 +316,7 @@ class AdminFeedbackView extends Component
     }
 
     #[Layout('layouts.app', ['title' => 'Admin Feedback'])]
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.admin-feedback-view', [
             'feedbacks' => Feedback::query()
