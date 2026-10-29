@@ -380,50 +380,50 @@
             </flux:field>
         @endif
 
-        <flux:field x-data="{ leaveAReply: false }">
-            <flux:checkbox
-                x-model="leaveAReply"
-                label="{{ __('Leave a reply') }}"
-                name="leave_a_reply"
-                class="whitespace-nowrap"
-            />
+        <div x-data="{ leaveAReply: false }">
+            <flux:field>
+                <flux:checkbox
+                    x-model="leaveAReply"
+                    label="{{ __('Leave a reply') }}"
+                    name="leave_a_reply"
+                    class="whitespace-nowrap"
+                />
 
-            <flux:textarea
-                wire:model="feedback_reply"
-                rows="auto"
-                :placeholder="__('Describe the resolution of this ticket or just leave a reply...')"
-                variant="filled"
-                x-show="leaveAReply"
-            />
-        </flux:field>
+                <flux:textarea
+                    wire:model.live="feedback_reply"
+                    rows="auto"
+                    :placeholder="__('Describe the resolution of this ticket or just leave a reply...')"
+                    variant="filled"
+                    x-show="leaveAReply"
+                />
 
-        <flux:field>
-            <div class="mt-1 space-y-3">
-                @if($image)
-                    <div class="relative w-full max-h-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                        <img src="{{ $image->temporaryUrl() }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
-                    </div>
-                    <flux:button
-                        type="button"
-                        variant="danger"
-                        size="sm"
-                        wire:click.prevent="clearFeedbackImage"
-                        data-test="remove-image-button"
-                        class="w-full mt-2 cursor-pointer"
-                    >
-                        {{ __('Remove Image') }}
-                    </flux:button>
-                @endif
-                <input type="file" wire:model="image" accept="image/*" class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-zinc-800 file:text-orange-700 dark:file:text-zinc-200 hover:file:bg-orange-100 dark:hover:file:bg-zinc-700 cursor-pointer" />
+                <div class="mt-1 space-y-3" x-show="leaveAReply">
+                    @if($image)
+                        <div class="relative w-full max-h-40 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                            <img src="{{ $image->temporaryUrl() }}" class="w-full h-auto object-cover" alt="{{ __('Image') }}" />
+                        </div>
+                        <flux:button
+                            type="button"
+                            variant="danger"
+                            size="sm"
+                            wire:click.prevent="clearFeedbackImage"
+                            data-test="remove-image-button"
+                            class="w-full mt-2 cursor-pointer"
+                        >
+                            {{ __('Remove Image') }}
+                        </flux:button>
+                    @endif
+                    <input type="file" wire:model="image" accept="image/*" class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-zinc-800 file:text-orange-700 dark:file:text-zinc-200 hover:file:bg-orange-100 dark:hover:file:bg-zinc-700 cursor-pointer" />
+                    <flux:error name="image" />
+                </div>
+            </flux:field>
+
+            <div class="flex gap-2 justify-end">
+                <flux:modal.close>
+                    <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+                <flux:button wire:click="leaveFeedbackReplyOnStatusUpdate({{ $selected_feedback }})" :disabled="!$feedback_reply" variant="primary">{{ __('Send') }}</flux:button>
             </div>
-            <flux:error name="image" />
-        </flux:field>
-
-        <div class="flex gap-2 justify-end">
-            <flux:modal.close>
-                <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
-            </flux:modal.close>
-            <flux:button wire:click="leaveFeedbackReplyOnStatusUpdate({{ $selected_feedback }})" variant="primary">{{ __('Send') }}</flux:button>
         </div>
     </flux:modal>
 

@@ -51,7 +51,7 @@
                 <flux:modal.close>
                     <flux:button class="cursor-pointer" variant="ghost">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
-                <flux:button class="cursor-pointer" type="submit" variant="primary">{{ __('Submit') }}</flux:button>
+                <flux:button class="cursor-pointer" type="submit" variant="primary">{{ __('Send') }}</flux:button>
             </div>
         </form>
     </flux:modal>
