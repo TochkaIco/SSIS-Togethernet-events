@@ -229,16 +229,16 @@
             </div>
         @elseif($subTab === 'sell')
             <div class="space-y-6">
-                <div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+                <div class="flex flex-col sm:flex-row gap-4 justify-between md:items-center">
                     <h3 class="font-semibold text-lg">{{ __('Select Items') }}</h3>
-                    <div class="w-full sm:w-64 flex-col space-y-3 md:flex-row md:space-x-3">
-                        <flux:select wire:model.live="selectedSellCategoryId">
+                    <div class="w-fit flex flex-col md:flex-row space-y-3 md:space-x-3">
+                        <flux:select class="md:min-w-38" wire:model.live="selectedSellCategoryId">
                             <flux:select.option value="">{{ __('All Categories') }}</flux:select.option>
                             @foreach($sellCategories as $category)
                                 <flux:select.option value="{{ $category->id }}">{{ $category->name }}</flux:select.option>
                             @endforeach
                         </flux:select>
-                        <flux:select wire:model.live="selectedSellArticlesGroup">
+                        <flux:select class="md:min-w-32" wire:model.live="selectedSellArticlesGroup">
                             <flux:select.option value="">{{ __('All Articles') }}</flux:select.option>
                             <flux:select.option value="in-stock">{{ __('In Stock') }}</flux:select.option>
                             <flux:select.option value="out-of-stock">{{ __('Out Of Stock') }}</flux:select.option>
