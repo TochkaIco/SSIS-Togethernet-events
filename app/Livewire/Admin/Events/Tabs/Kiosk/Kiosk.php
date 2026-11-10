@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -79,6 +80,8 @@ class Kiosk extends Component
     public ?int $deletingPurchaseId = null;
 
     public ?int $selectedSellCategoryId = null;
+
+    public string $selectedSellArticlesGroup = '';
 
     protected $listeners = [
         'refreshKiosk' => '$refresh',
@@ -651,7 +654,7 @@ class Kiosk extends Component
         $this->modal('swish-management-modal')->close();
     }
 
-    public function render()
+    public function render(): View
     {
         $kiosk = $this->event->kiosk;
 
@@ -661,6 +664,8 @@ class Kiosk extends Component
 
         $articles = $kiosk?->articles()
             ->when($this->selectedSellCategoryId, fn ($query) => $query->where('category_id', $this->selectedSellCategoryId))
+            ->when($this->selectedSellArticlesGroup === 'in-stock', fn ($query) => $query->where('amount', '>', 0))
+            ->when($this->selectedSellArticlesGroup === 'out-of-stock', fn ($query) => $query->where('amount', '=', 0))
             ->get() ?? collect();
 
         $purchases = $kiosk?->purchases()

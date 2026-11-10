@@ -66,7 +66,7 @@ class GlobalLog extends Model
         }
 
         $pairs = array_map(
-            fn ($chunk) => implode(' => ', $chunk),
+            fn (array $chunk) => implode(' => ', $chunk),
             array_chunk($details, 2)
         );
         $strDetails = Arr::join($pairs, ', ');

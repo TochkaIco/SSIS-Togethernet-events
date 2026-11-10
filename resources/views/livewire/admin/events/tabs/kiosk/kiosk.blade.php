@@ -56,15 +56,32 @@
 
         @if($subTab === 'articles')
             <div class="space-y-4">
-                <div class="flex justify-end space-x-3">
-                    @can('manage kiosk')
-                        <flux:button icon="plus" wire:click="openArticleModal" class="cursor-pointer">
-                            {{ __('Add Article') }}
-                        </flux:button>
-                        <flux:button wire:click="openSwishManagementModal" class="cursor-pointer">
-                            <x-icons.swish />
-                        </flux:button>
-                    @endcan
+                <div class="flex flex-col-reverse md:flex-row justify-between items-center">
+                    <div class="w-full md:w-auto flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-3 mt-6 md:mt-0">
+                        <flux:select class="min-w-38" wire:model.live="selectedSellCategoryId">
+                            <flux:select.option value="">{{ __('All Categories') }}</flux:select.option>
+                            @foreach($sellCategories as $category)
+                                <flux:select.option value="{{ $category->id }}">{{ $category->name }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+
+                        <flux:select class="min-w-32" wire:model.live="selectedSellArticlesGroup">
+                            <flux:select.option value="">{{ __('All Articles') }}</flux:select.option>
+                            <flux:select.option value="in-stock">{{ __('In Stock') }}</flux:select.option>
+                            <flux:select.option value="out-of-stock">{{ __('Out Of Stock') }}</flux:select.option>
+                        </flux:select>
+                    </div>
+
+                    <div class="flex items-center justify-between md:justify-end space-x-3 w-full md:w-auto">
+                        @can('manage kiosk')
+                            <flux:button icon="plus" wire:click="openArticleModal" class="cursor-pointer w-full md:w-auto">
+                                {{ __('Add Article') }}
+                            </flux:button>
+                            <flux:button wire:click="openSwishManagementModal" class="cursor-pointer">
+                                <x-icons.swish />
+                            </flux:button>
+                        @endcan
+                    </div>
                 </div>
 
                 @if($articles->isEmpty())
@@ -214,12 +231,17 @@
             <div class="space-y-6">
                 <div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
                     <h3 class="font-semibold text-lg">{{ __('Select Items') }}</h3>
-                    <div class="w-full sm:w-64">
+                    <div class="w-full sm:w-64 flex-col space-y-3 md:flex-row md:space-x-3">
                         <flux:select wire:model.live="selectedSellCategoryId">
                             <flux:select.option value="">{{ __('All Categories') }}</flux:select.option>
                             @foreach($sellCategories as $category)
                                 <flux:select.option value="{{ $category->id }}">{{ $category->name }}</flux:select.option>
                             @endforeach
+                        </flux:select>
+                        <flux:select wire:model.live="selectedSellArticlesGroup">
+                            <flux:select.option value="">{{ __('All Articles') }}</flux:select.option>
+                            <flux:select.option value="in-stock">{{ __('In Stock') }}</flux:select.option>
+                            <flux:select.option value="out-of-stock">{{ __('Out Of Stock') }}</flux:select.option>
                         </flux:select>
                     </div>
                 </div>
@@ -228,7 +250,7 @@
                     <div class="lg:col-span-2">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @forelse($articles as $article)
-                                <div class="relative border-2 border-accent-content/5 rounded-lg p-4 h-44 flex flex-col justify-between overflow-hidden group {{ $article->amount === 0 ? 'opacity-25 blur-xs' : 'transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl' }}">
+                                <div class="relative border-2 border-accent-content/5 rounded-lg p-4 h-44 flex flex-col justify-between overflow-hidden group {{ $article->amount < 1 && $selectedSellArticlesGroup !== 'out-of-stock' ? 'opacity-25 blur-xs' : 'transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl' }}">
                                     @if($article->image_url)
                                         <div class="absolute inset-0 z-0">
                                             <img src="{{ $article->image_url }}" alt="{{ $article->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
