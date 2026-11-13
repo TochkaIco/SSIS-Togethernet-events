@@ -175,7 +175,7 @@ class Kiosk extends Component
             if ($article) {
                 $this->articleName = $article->name;
                 $this->articleCategoryId = $article->category_id;
-                $this->articleCost = $article->cost;
+                $this->articleCost = (string) $article->cost;
                 $this->articleAmount = $article->amount;
                 $this->articleImageUrl = $article->image_url ?? '';
                 $this->imagePath = $article->image_path ?? '';
