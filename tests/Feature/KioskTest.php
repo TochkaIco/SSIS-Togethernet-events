@@ -61,7 +61,7 @@ it('correctly imports kiosk from another event including images', function () {
     $sourceArticle = $sourceKiosk->articles()->create([
         'name' => 'Source Article',
         'category_id' => $sourceCategory->id,
-        'cost' => 15,
+        'cost' => 15.00,
         'amount' => 50,
         'image_path' => $sourceImagePath,
     ]);
@@ -82,7 +82,7 @@ it('correctly imports kiosk from another event including images', function () {
 
     $destArticle = $destKiosk->articles->first();
     expect($destArticle->name)->toBe('Source Article');
-    expect($destArticle->cost)->toBe(15);
+    expect((float) $destArticle->cost)->toBe(15.00);
     expect($destArticle->image_path)->not->toBeNull();
     expect($destArticle->image_path)->not->toBe($sourceImagePath); // Should be a new UUID
     expect($destArticle->image_path)->toStartWith('kiosk/');

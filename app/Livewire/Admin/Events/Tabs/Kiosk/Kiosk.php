@@ -59,7 +59,7 @@ class Kiosk extends Component
 
     public ?int $articleCategoryId = null;
 
-    public int $articleCost = 0;
+    public string $articleCost = '0';
 
     public int $articleAmount = 0;
 
@@ -213,6 +213,8 @@ class Kiosk extends Component
             return;
         }
 
+        $normalizedCost = (float) str_replace(',', '.', $this->articleCost);
+
         $this->validate([
             'articleName' => 'required|string|max:255',
             'articleCategoryId' => [
@@ -221,7 +223,7 @@ class Kiosk extends Component
                     $query->where('kiosk_id', $kiosk->id);
                 }),
             ],
-            'articleCost' => 'required|integer|min:0',
+            'articleCost' => 'required|numeric|min:0',
             'articleAmount' => 'required|integer|min:0',
             'articleImageUrl' => 'nullable|url|string|max:500',
             'image' => [
@@ -255,7 +257,7 @@ class Kiosk extends Component
             $article->update([
                 'name' => $this->articleName,
                 'category_id' => $this->articleCategoryId,
-                'cost' => $this->articleCost,
+                'cost' => $normalizedCost,
                 'amount' => $this->articleAmount,
                 'image_url' => $this->articleImageUrl ?: null,
                 'image_path' => $this->imagePath ?: null,

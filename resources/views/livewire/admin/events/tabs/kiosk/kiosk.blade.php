@@ -111,7 +111,7 @@
                                             <span class="text-xs {{ $article->image_url ? 'text-zinc-300' : 'text-muted-foreground' }}">{{ $article->category->name }}</span>
                                         @endif
                                     </div>
-                                    <span class="font-bold text-xl">{{ number_format($article->cost) }} kr</span>
+                                    <span class="font-bold text-xl">{{ number_format($article->cost, decimals: 2) }} kr</span>
                                 </div>
 
                                 <div class="relative z-10 flex justify-between items-center text-sm">
@@ -204,7 +204,7 @@
                                     <flux:table.cell>{{ $purchase->created_at->format('d/m/Y H:i') }}</flux:table.cell>
                                     <flux:table.cell>{{ $purchase->operator?->name ?? '—' }}</flux:table.cell>
                                     <flux:table.cell>{{ $purchase->items->sum('amount') }}</flux:table.cell>
-                                    <flux:table.cell>{{ number_format($purchase->cost) }} kr</flux:table.cell>
+                                    <flux:table.cell>{{ number_format($purchase->cost, decimals: 2) }} kr</flux:table.cell>
                                     <flux:table.cell align="end">
                                         <div class="flex gap-x-1 justify-end">
                                             <flux:button size="xs" class="cursor-pointer" icon="eye" variant="ghost" wire:click="viewPurchase({{ $purchase->id }})" />
@@ -270,7 +270,7 @@
                                                 <span class="text-xs {{ $article->image_url ? 'text-zinc-300' : 'text-muted-foreground' }}">{{ $article->category->name }}</span>
                                             @endif
                                         </div>
-                                        <span class="font-bold text-xl">{{ number_format($article->cost) }} kr</span>
+                                        <span class="font-bold text-xl">{{ number_format($article->cost, decimals: 2) }} kr</span>
                                     </div>
 
                                     <div class="relative z-10 flex justify-between items-center text-sm">
@@ -314,7 +314,7 @@
                                         <span class="text-sm text-muted-foreground"> x {{ $quantity }}</span>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="font-medium">{{ number_format(($article?->cost ?? 0) * $quantity) }} kr</span>
+                                        <span class="font-medium">{{ number_format(($article?->cost ?? 0) * $quantity, decimals: 2) }} kr</span>
                                         <flux:button size="xs" class="cursor-pointer" variant="ghost" wire:click="$set('cart.{{ $articleId }}', 0)">
                                             <flux:icon.x-mark class="size-3" />
                                         </flux:button>
@@ -329,7 +329,7 @@
                             <flux:separator />
                             <div class="flex justify-between items-center">
                                 <span class="font-semibold">{{ __('Total') }}</span>
-                                <span class="font-bold text-xl">{{ number_format($cartTotal) }} kr</span>
+                                <span class="font-bold text-xl">{{ number_format($cartTotal, decimals: 2) }} kr</span>
                             </div>
                             <flux:button
                                 variant="primary"
@@ -541,7 +541,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <flux:field>
                         <flux:label>{{ __('Price (kr)') }}</flux:label>
-                        <flux:input type="number" wire:model="articleCost" min="0" required />
+                        <flux:input type="number" step="0.01" wire:model="articleCost" min="0" required />
                         <flux:error name="articleCost" />
                     </flux:field>
                     <flux:field>
@@ -696,14 +696,14 @@
                         @foreach($purchase->items as $item)
                             <div class="flex justify-between text-sm py-1">
                                 <span>{{ $item->article?->name ?? 'Deleted article' }} x {{ $item->amount }}</span>
-                                <span class="font-medium">{{ number_format($item->cost) }} kr</span>
+                                <span class="font-medium">{{ number_format($item->cost, decimals: 2) }} kr</span>
                             </div>
                         @endforeach
                     </div>
                     <flux:separator />
                     <div class="flex justify-between items-center">
                         <span class="font-semibold">{{ __('Total') }}</span>
-                        <span class="font-bold text-xl">{{ number_format($purchase->cost) }} kr</span>
+                        <span class="font-bold text-xl">{{ number_format($purchase->cost, decimals: 2) }} kr</span>
                     </div>
                 </div>
             @endif

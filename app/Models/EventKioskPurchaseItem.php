@@ -36,7 +36,7 @@ class EventKioskPurchaseItem extends Model
     {
         return [
             'amount' => 'integer',
-            'cost' => 'integer',
+            'cost' => 'decimal:2',
         ];
     }
 }

@@ -40,7 +40,7 @@ class EventKioskPurchase extends Model
     protected function casts(): array
     {
         return [
-            'cost' => 'integer',
+            'cost' => 'decimal:2',
         ];
     }
 }

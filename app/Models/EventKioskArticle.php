@@ -41,7 +41,7 @@ class EventKioskArticle extends Model
     protected function casts(): array
     {
         return [
-            'cost' => 'integer',
+            'cost' => 'decimal:2',
             'amount' => 'integer',
         ];
     }
