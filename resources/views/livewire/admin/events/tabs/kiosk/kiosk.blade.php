@@ -368,7 +368,7 @@
                             <flux:icon.archive-box variant="outline" class="size-6" />
                             <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Items Sold') }}</span>
                         </div>
-                        <div class="text-3xl mt-1 font-bold">{{ array_sum($this->stats['top_articles']['quantities']) }}</div>
+                        <div class="text-3xl mt-1 font-bold">{{ $this->stats['articles_sold'] }}</div>
                     </flux:card>
                 </div>
 

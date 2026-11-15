@@ -121,7 +121,17 @@ class Kiosk extends Component
             ->selectRaw('event_kiosk_articles.name as article_name, SUM(event_kiosk_purchase_items.amount) as total_quantity, SUM(event_kiosk_purchase_items.cost) as total_revenue')
             ->groupBy('event_kiosk_articles.name')
             ->orderByDesc('total_quantity')
+            ->take(10)
             ->get();
+
+        $articlesSold = DB::table('event_kiosk_purchase_items')
+            ->join('event_kiosk_purchases', 'event_kiosk_purchase_items.purchase_id', '=', 'event_kiosk_purchases.id')
+            ->where('event_kiosk_purchases.kiosk_id', $kiosk->id)
+            ->selectRaw('SUM(event_kiosk_purchase_items.amount) as total_quantity')
+            ->groupBy('event_kiosk_purchase_items.article_id')
+            ->pluck('total_quantity')
+            ->map(fn ($t) => (int) $t)
+            ->toArray();
 
         $start = Carbon::parse($this->event->event_starts_at);
         $end = Carbon::parse($this->event->event_ends_at);
@@ -165,6 +175,7 @@ class Kiosk extends Component
                 'quantities' => $topSellingArticles->pluck('total_quantity')->map(fn ($t) => (int) $t)->toArray(),
                 'revenues' => $topSellingArticles->pluck('total_revenue')->map(fn ($t) => (int) $t)->toArray(),
             ],
+            'articles_sold' => array_sum($articlesSold),
             'hourly_sales' => [
                 'labels' => $hourlySales->pluck('hour')->toArray(),
                 'data' => $hourlySales->pluck('total')->map(fn ($t) => (int) $t)->toArray(),
