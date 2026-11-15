@@ -606,7 +606,9 @@ class Kiosk extends Component
     {
         $this->authorize('manage kiosk');
 
-        $this->cartTotal = ((float) EventKioskPurchase::find($purchaseId)->cost) ?? 0.00;
+        $purchase = EventKioskPurchase::find($purchaseId);
+        $this->cartTotal = (float) ($purchase->cost ?? 0.00);
+
         $this->swishQrCodeData = $this->event->kiosk->getSwishQrCode($this->cartTotal);
 
         if ($this->swishQrCodeData !== '' && $this->swishQrCodeData !== '0') {

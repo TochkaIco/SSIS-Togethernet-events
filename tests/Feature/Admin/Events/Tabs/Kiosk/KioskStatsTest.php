@@ -12,7 +12,10 @@ use Carbon\Carbon;
 use Livewire\Livewire;
 
 it('calculates kiosk statistics correctly', function () {
-    $event = Event::factory()->create();
+    $event = Event::factory()->create([
+        'event_starts_at' => now(),
+        'event_ends_at' => now()->addDay(),
+    ]);
     $kiosk = new EventKiosk;
     $kiosk->event_id = $event->id;
     $kiosk->save();
@@ -44,7 +47,7 @@ it('calculates kiosk statistics correctly', function () {
         'kiosk_id' => $kiosk->id,
         'operator_id' => $user->id,
         'cost' => 35,
-        'created_at' => Carbon::today()->setHour(10)->setMinute(0)->setSecond(0),
+        'created_at' => Carbon::now()->addHours(10)->setMinute(0)->setSecond(0),
     ])->save();
 
     EventKioskPurchaseItem::create([
@@ -66,7 +69,7 @@ it('calculates kiosk statistics correctly', function () {
         'kiosk_id' => $kiosk->id,
         'operator_id' => $user->id,
         'cost' => 15,
-        'created_at' => Carbon::today()->setHour(11)->setMinute(0)->setSecond(0),
+        'created_at' => Carbon::now()->addHours(11)->setMinute(0)->setSecond(0),
     ])->save();
 
     EventKioskPurchaseItem::create([
