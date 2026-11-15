@@ -121,7 +121,6 @@ class Kiosk extends Component
             ->selectRaw('event_kiosk_articles.name as article_name, SUM(event_kiosk_purchase_items.amount) as total_quantity, SUM(event_kiosk_purchase_items.cost) as total_revenue')
             ->groupBy('event_kiosk_articles.name')
             ->orderByDesc('total_quantity')
-            ->take(10)
             ->get();
 
         $start = Carbon::parse($this->event->event_starts_at);
