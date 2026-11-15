@@ -44,6 +44,7 @@
                 <flux:table.column>{{ __('Period') }}</flux:table.column>
             @endif
             <flux:table.column>{{ __('Type') }}</flux:table.column>
+            <flux:table.column>{{ __('Seating') }}</flux:table.column>
             @if($event->paid_entry === 1)
                 <flux:table.column>{{ __('Paid') }}</flux:table.column>
             @endif
@@ -55,7 +56,7 @@
             @forelse ($participants as $participant)
                 <flux:table.row :key="'part-'.$participant->id" class="hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors group">
                     {{-- Pagination-aware Index --}}
-                    <flux:table.cell class="text-center">
+                    <flux:table.cell align="center">
                         {{ $participants->firstItem() + $loop->index }}
                     </flux:table.cell>
 
@@ -120,7 +121,7 @@
                                     icon="chevron-double-down"
                                     size="xs"
                                     :disabled="$event->hasFinishedOverAnHourAgo()"
-                                    :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
+                                    :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                                 />
                                 <flux:badge size="sm" color="orange">{{ __('Worker') }}</flux:badge>
                             </div>
@@ -132,16 +133,45 @@
                                     icon="chevron-double-up"
                                     size="xs"
                                     :disabled="$event->hasFinishedOverAnHourAgo()"
-                                    :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
+                                    :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
                                 />
                                 <span class="text-xs">{{ __('Attendee') }}</span>
                             </div>
                         @endif
                     </flux:table.cell>
 
+                    {{-- Seating Controls --}}
+                    <flux:table.cell>
+                        @if($this->participantHasASeat($participant->id))
+                            <div class="flex items-center space-x-1">
+                                <flux:button
+                                    wire:click="toggleIsWithoutSeatPlace({{ $participant->id }})"
+                                    variant="ghost"
+                                    icon="chevron-double-down"
+                                    size="xs"
+                                    :disabled="$event->hasFinishedOverAnHourAgo()"
+                                    :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Move to participants without a seat place'"
+                                />
+                                <flux:badge size="sm" color="green">{{ __('Seat available') }}</flux:badge>
+                            </div>
+                        @else
+                            <div class="flex items-center space-x-1">
+                                <flux:button
+                                    wire:click="toggleIsWithoutSeatPlace({{ $participant->id }})"
+                                    variant="ghost"
+                                    icon="chevron-double-up"
+                                    size="xs"
+                                    :disabled="$event->hasFinishedOverAnHourAgo()"
+                                    :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Move to participants with a seat place'"
+                                />
+                                <flux:badge size="sm" color="red">{{ __('Seat unavailable') }}</flux:badge>
+                            </div>
+                        @endif
+                    </flux:table.cell>
+
                     {{-- Payment Toggle --}}
                     @if($event->paid_entry === 1)
-                        <flux:table.cell>
+                        <flux:table.cell align="center">
                             <flux:checkbox
                                 wire:change="togglePaid({{ $participant->id }})"
                                 :checked="(bool) $participant->has_paid"
@@ -152,7 +182,7 @@
                     @endif
 
                     {{-- Arrival Toggle --}}
-                    <flux:table.cell>
+                    <flux:table.cell align="center">
                         <flux:checkbox
                             wire:change="toggleArrived({{ $participant->id }})"
                             :checked="(bool) $participant->has_arrived"

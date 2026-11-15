@@ -45,7 +45,9 @@ use Illuminate\Support\Str;
     'event_id',
     'event_period_id',
     'in_waitinglist',
-    'is_disabled',
+    'is_without_seat_place',
+    'seat_location', // for LANs
+    'is_disabled', // for qr-tag
     'has_paid',
     'has_arrived',
     'is_working',

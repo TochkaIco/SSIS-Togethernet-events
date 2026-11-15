@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -85,6 +86,7 @@ class Participants extends Component
         ]);
 
         Flux::toast(__('Payment status updated.'), variant: 'success');
+        GlobalLog::log('Participant\'s payment status updated', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'has_paid' => $registration->has_paid]);
     }
 
     /**
@@ -107,6 +109,30 @@ class Participants extends Component
         ]);
 
         Flux::toast(__('Arrival status updated.'), variant: 'success');
+        GlobalLog::log('Toggled arrival on participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'has_arrived' => $registration->has_arrived]);
+    }
+
+    /**
+     * Toggle the 'is_without_seat_place' status on the registration.
+     */
+    public function toggleIsWithoutSeatPlace(int $registrationId): void
+    {
+        $this->authorize('manage users');
+
+        if ($this->event->hasFinishedOverAnHourAgo()) {
+            Flux::toast(__('The event has already ended..'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        $registration->update([
+            'is_without_seat_place' => ! $registration->is_without_seat_place,
+        ]);
+
+        Flux::toast(__('Seat place status updated.'), variant: 'success');
+        GlobalLog::log('Disabled seat places for participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'seating is disabled' => $registration->is_without_seat_place]);
     }
 
     /**
@@ -132,8 +158,8 @@ class Participants extends Component
 
         $registration->toggleDisabled();
 
-        GlobalLog::log('Event participant has been enabled/disabled by an admin', 'user', ['target_user_id' => $registration->user_id]);
         Flux::toast(__('User status updated.'), variant: 'success');
+        GlobalLog::log('Event participant has been enabled/disabled by an admin', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'is_disabled' => $registration->is_disabled]);
     }
 
     /**
@@ -166,6 +192,14 @@ class Participants extends Component
         $processAction->handle($this->event, $periodId);
 
         Flux::toast(__('Moved to waiting list.'), variant: 'success');
+        GlobalLog::log('Moved participant to waiting list', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id]);
+    }
+
+    public function participantHasASeat(int $registrationId): bool
+    {
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        return ! $registration->is_without_seat_place;
     }
 
     public function participantIsWorking(int $registrationId): bool
@@ -200,6 +234,7 @@ class Participants extends Component
         ]);
 
         Flux::toast(__('Worker status updated.'), variant: 'success');
+        GlobalLog::log('Worker status updated for event participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'is_working' => $registration->is_working]);
     }
 
     public function changePeriod(int $registrationId, ProcessWaitingList $processAction): void
@@ -230,12 +265,13 @@ class Participants extends Component
         }
 
         Flux::toast(__('Period updated.'), variant: 'success');
+        GlobalLog::log('Event period updated for a participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'selected_period' => $registration->event_period_id]);
     }
 
     /**
      * Render the component with filtered results.
      */
-    public function render()
+    public function render(): View
     {
         $query = $this->event->participants()
             ->with('user')
