@@ -9,6 +9,8 @@ use App\Models\EventKioskArticle;
 use App\Models\EventKioskCategory;
 use App\Models\EventKioskPurchase;
 use App\Models\GlobalLog;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Flux\Flux;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -122,12 +124,35 @@ class Kiosk extends Component
             ->take(10)
             ->get();
 
-        $hourlySales = DB::table('event_kiosk_purchases')
+        $start = Carbon::parse($this->event->event_starts_at);
+        $end = Carbon::parse($this->event->event_ends_at);
+
+        $period = CarbonPeriod::create(
+            $start->copy()->startOfHour(),
+            '1 hour',
+            $end->copy()->startOfHour()
+        );
+
+        $eventHours = [];
+        foreach ($period as $date) {
+            $eventHours[] = $date->format('Y-m-d H:00');
+        }
+
+        $rawHourlySales = DB::table('event_kiosk_purchases')
             ->where('kiosk_id', $kiosk->id)
-            ->selectRaw('DATE_FORMAT(created_at, "%H:00") as hour, SUM(cost) as total')
+            ->whereBetween('created_at', [$start, $end])
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m-%d %H:00") as hour, SUM(cost) as total')
             ->groupBy('hour')
             ->orderBy('hour')
-            ->get();
+            ->get()
+            ->keyBy('hour');
+
+        $hourlySales = collect($eventHours)->map(function ($hour) use ($rawHourlySales): array {
+            return [
+                'hour' => Carbon::parse($hour)->format('H:00'),
+                'total' => $rawHourlySales->get($hour)->total ?? 0,
+            ];
+        });
 
         return [
             'total_revenue' => (int) $totalRevenue,
