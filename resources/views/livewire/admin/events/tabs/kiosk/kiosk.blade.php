@@ -352,7 +352,7 @@
                             <flux:icon.banknotes variant="outline" class="size-6" />
                             <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Total Revenue') }}</span>
                         </div>
-                        <div class="text-3xl mt-1 font-bold">{{ number_format($this->stats['total_revenue']) }} kr</div>
+                        <div class="text-3xl mt-1 font-bold">{{ $this->stats['total_revenue'] }} kr</div>
                     </flux:card>
 
                     <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">

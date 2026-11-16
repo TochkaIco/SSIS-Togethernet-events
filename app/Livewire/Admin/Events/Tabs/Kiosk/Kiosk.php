@@ -164,7 +164,7 @@ class Kiosk extends Component
         });
 
         return [
-            'total_revenue' => (int) $totalRevenue,
+            'total_revenue' => $totalRevenue,
             'category_distribution' => [
                 'labels' => $salesByCategory->pluck('category_name')->toArray(),
                 'data' => $salesByCategory->pluck('total')->map(fn ($t) => (int) $t)->toArray(),
