@@ -140,6 +140,26 @@
                 <flux:error name="display_starts_at" />
             </flux:field>
 
+            <flux:field
+                x-show="event_type === '{{ App\EventType::LAN->value }}'"
+                x-cloak
+                class="w-full"
+                x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="opacity-0 transform scale-65"
+                x-transition:enter-end="opacity-100 transform scale-100"
+            >
+                <flux:label>{{ __('Seat Booking Starts At') }} *</flux:label>
+                <flux:input
+                    type="datetime-local"
+                    name="seat_booking_starts_at"
+                    data-test="seat_booking_starts_at-field"
+                    placeholder="{{ __('When can participants start booking seats?') }}"
+                    :value="old('seat_booking_starts_at', $event->seat_booking_starts_at?->format('Y-m-d\TH:i'))"
+                    x-bind:required="event_type === '{{ App\EventType::LAN->value }}'"
+                />
+                <flux:error name="seat_booking_starts_at" />
+            </flux:field>
+
             <div x-data="{ isPaid: {{ old('paid_entry', $event->paid_entry) ? 'true' : 'false' }} }"
                  class="flex flex-col md:flex-row md:items-center gap-4 w-full">
 

@@ -7,6 +7,13 @@
                     {{ $event->num_of_seats }}
                 </flux:badge>
             </div>
+
+            <div class="flex items-center gap-2">
+                <span class="font-medium text-muted-foreground">{{ __('Participants').':' }}</span>
+                <flux:badge color="orange" size="sm">
+                    {{ $event->participantsCount() }}
+                </flux:badge>
+            </div>
         @endif
 
         @if($event->paid_entry===1)

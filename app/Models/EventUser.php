@@ -32,6 +32,8 @@ use Illuminate\Support\Str;
  * @property bool $has_paid
  * @property bool $has_arrived
  * @property bool $is_working
+ * @property bool $is_without_seat_place
+ * @property string|null $seat_location
  * @property string|null $qr_tag_token
  * @property int|null $qr_tag_target_user_id
  * @property Carbon|null $qr_tag_tagged_at
@@ -69,6 +71,7 @@ class EventUser extends Model
         return [
             'in_waitinglist' => 'boolean',
             'is_disabled' => 'boolean',
+            'is_without_seat_place' => 'boolean',
             'has_paid' => 'boolean',
             'has_arrived' => 'boolean',
             'event_id' => 'integer',

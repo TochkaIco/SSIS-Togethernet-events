@@ -39,6 +39,7 @@ use Spatie\Sluggable\SlugOptions;
     'interval_length',
     'one_hour_periods_number',
     'display_starts_at',
+    'seat_booking_starts_at',
     'event_starts_at',
     'event_ends_at',
     'links',
@@ -50,6 +51,7 @@ use Spatie\Sluggable\SlugOptions;
  * @property Carbon $event_starts_at
  * @property Carbon $event_ends_at
  * @property Carbon $display_starts_at
+ * @property Carbon|null $seat_booking_starts_at
  */
 /**
  * @property Carbon $created_at
@@ -123,6 +125,14 @@ class Event extends Model
     /**
      * @return HasMany<EventUser, $this>
      */
+    public function seatedParticipants(): HasMany
+    {
+        return $this->participants()->where('is_without_seat_place', false);
+    }
+
+    /**
+     * @return HasMany<EventUser, $this>
+     */
     public function waitingList(): HasMany
     {
         return $this->registrations()->where('in_waitinglist', true);
@@ -135,6 +145,9 @@ class Event extends Model
             ->first();
     }
 
+    /**
+     * Number of participants who are eligible for (and holding) a seat place.
+     */
     public function seatsTaken(?int $periodId = null): int
     {
         if ($periodId !== null) {
@@ -143,6 +156,14 @@ class Event extends Model
             return $period ? $period->seatsTaken() : 0;
         }
 
+        return $this->seatedParticipants()->count();
+    }
+
+    /**
+     * Total number of participants, including those without a seat place.
+     */
+    public function participantsCount(): int
+    {
         return $this->participants()->count();
     }
 
@@ -311,6 +332,7 @@ class Event extends Model
             'one_hour_periods_number' => 'integer',
             'interval_length' => 'integer',
             'display_starts_at' => 'datetime',
+            'seat_booking_starts_at' => 'datetime',
             'event_starts_at' => 'datetime',
             'event_ends_at' => 'datetime',
             'allow_external_domains' => 'boolean',

@@ -29,6 +29,7 @@ class EventRequest extends FormRequest
             'allow_external_domains' => $this->boolean('allow_external_domains'),
             'is_hidden_event' => $this->boolean('is_hidden_event'),
             'links' => empty($this->links) ? [] : $this->links,
+            'seat_booking_starts_at' => $this->input('seat_booking_starts_at') ?: null,
         ]);
     }
 
@@ -58,6 +59,11 @@ class EventRequest extends FormRequest
             'interval_length' => ['sometimes', 'required_if:one_hour_periods,true', 'integer', 'min:0'],
 
             'display_starts_at' => ['required', 'date'],
+            'seat_booking_starts_at' => [
+                'nullable',
+                Rule::requiredIf($this->event_type === EventType::LAN->value),
+                'date',
+            ],
             'event_starts_at' => ['sometimes', 'required', 'date'],
             'event_ends_at' => [
                 'sometimes',

@@ -51,6 +51,109 @@ test('qr tag event can be created without seats, title and description', functio
     expect($event->num_of_seats)->toBe(1000000);
 });
 
+test('lan event requires a seat booking start time on creation', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('create articles');
+
+    $response = $this->actingAs($user)->post(route('admin.event.store'), [
+        'title' => 'LAN Night',
+        'description' => 'A LAN party',
+        'event_type' => EventType::LAN->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
+        'display_starts_at' => now()->format('Y-m-d H:i:s'),
+        'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
+        'event_ends_at' => now()->addDays(2)->format('Y-m-d H:i:s'),
+    ]);
+
+    $response->assertSessionHasErrors('seat_booking_starts_at');
+    $this->assertDatabaseMissing('events', ['title' => 'LAN Night']);
+});
+
+test('lan event can be created with a seat booking start time', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('create articles');
+
+    $seatBookingStart = now()->format('Y-m-d H:i:s');
+
+    $response = $this->actingAs($user)->post(route('admin.event.store'), [
+        'title' => 'LAN Night',
+        'description' => 'A LAN party',
+        'event_type' => EventType::LAN->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
+        'display_starts_at' => now()->subDay()->format('Y-m-d H:i:s'),
+        'seat_booking_starts_at' => $seatBookingStart,
+        'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
+        'event_ends_at' => now()->addDays(2)->format('Y-m-d H:i:s'),
+    ]);
+
+    $response->assertRedirect(route('admin.events'));
+    $this->assertDatabaseHas('events', [
+        'title' => 'LAN Night',
+        'event_type' => EventType::LAN->value,
+        'seat_booking_starts_at' => $seatBookingStart,
+    ]);
+});
+
+test('changing an event type to lan requires a seat booking start time', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('create articles');
+    $user->givePermissionTo('edit articles');
+
+    $event = Event::factory()->create([
+        'event_type' => EventType::KARAOKE,
+    ]);
+
+    $response = $this->actingAs($user)->patch(route('admin.event.update', $event), [
+        'title' => 'Now a LAN',
+        'description' => 'A LAN party',
+        'event_type' => EventType::LAN->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
+        'display_starts_at' => now()->format('Y-m-d H:i:s'),
+        'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
+        'event_ends_at' => now()->addDay()->addHours(2)->format('Y-m-d H:i:s'),
+    ]);
+
+    $response->assertSessionHasErrors('seat_booking_starts_at');
+    $this->assertDatabaseMissing('events', [
+        'id' => $event->id,
+        'event_type' => EventType::LAN->value,
+    ]);
+});
+
+test('lan event can be updated with a seat booking start time', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('create articles');
+    $user->givePermissionTo('edit articles');
+
+    $event = Event::factory()->create([
+        'event_type' => EventType::KARAOKE,
+    ]);
+
+    $seatBookingStart = now()->format('Y-m-d H:i:s');
+
+    $response = $this->actingAs($user)->patch(route('admin.event.update', $event), [
+        'title' => 'Now a LAN',
+        'description' => 'A LAN party',
+        'event_type' => EventType::LAN->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
+        'display_starts_at' => now()->format('Y-m-d H:i:s'),
+        'seat_booking_starts_at' => $seatBookingStart,
+        'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
+        'event_ends_at' => now()->addDay()->addHours(2)->format('Y-m-d H:i:s'),
+    ]);
+
+    $response->assertSessionHasNoErrors();
+    $this->assertDatabaseHas('events', [
+        'id' => $event->id,
+        'event_type' => EventType::LAN->value,
+        'seat_booking_starts_at' => $seatBookingStart,
+    ]);
+});
+
 test('qr tag event title updates when start date changes', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('create articles');
