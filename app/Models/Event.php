@@ -232,6 +232,33 @@ class Event extends Model
         return $this->event_starts_at > now();
     }
 
+    public function isLan(): bool
+    {
+        return $this->event_type === EventType::LAN;
+    }
+
+    /**
+     * Check whether the event does not require a payment to attend.
+     */
+    public function isFree(): bool
+    {
+        return ! $this->paid_entry;
+    }
+
+    /**
+     * Check whether seat booking is open for this event.
+     *
+     * If no seat booking start date is set, booking is always open.
+     */
+    public function seatBookingOpen(): bool
+    {
+        if ($this->seat_booking_starts_at === null) {
+            return true;
+        }
+
+        return $this->seat_booking_starts_at <= now();
+    }
+
     /**
      * Check if the given user is allowed to register for this event.
      */

@@ -160,6 +160,35 @@ class EventUser extends Model
     }
 
     /**
+     * Check if the participant is allowed to book a seat for this event.
+     *
+     * Seats can only be booked for LAN events, the participant has to be
+     * a confirmed participant (not on the waiting list) with a seat place
+     * (i.e. not set as without a seat place) and has to have paid, unless
+     * the event does not require a payment.
+     */
+    public function canBookSeat(): bool
+    {
+        if ($this->in_waitinglist) {
+            return false;
+        }
+
+        if ($this->is_without_seat_place) {
+            return false;
+        }
+
+        if (! $this->event->isLan()) {
+            return false;
+        }
+
+        if ($this->event->isFree()) {
+            return true;
+        }
+
+        return $this->has_paid;
+    }
+
+    /**
      * @param  Builder<EventUser>  $query
      */
     #[Scope]

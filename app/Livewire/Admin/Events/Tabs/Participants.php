@@ -7,6 +7,7 @@ namespace App\Livewire\Admin\Events\Tabs;
 use App\Actions\ProcessWaitingList;
 use App\EventType;
 use App\Models\Event;
+use App\Models\EventUser;
 use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,6 +36,8 @@ class Participants extends Component
     public array $participantPeriods = [];
 
     public string $filterClassGroup = '';
+
+    public ?int $seatBookingRegistrationId = null;
 
     /**
      * Keep the UI state in the URL for easy sharing/reloading.
@@ -133,6 +136,117 @@ class Participants extends Component
 
         Flux::toast(__('Seat place status updated.'), variant: 'success');
         GlobalLog::log('Disabled seat places for participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'seating is disabled' => $registration->is_without_seat_place]);
+    }
+
+    /**
+     * Open the seat booking modal for the given participant (LAN events only).
+     */
+    public function openSeatBookingModal(int $registrationId): void
+    {
+        $this->authorize('manage users');
+
+        if (! $this->event->isLan()) {
+            Flux::toast(__('Seat booking is only available for LAN events.'), variant: 'danger');
+
+            return;
+        }
+
+        if ($this->event->hasFinishedOverAnHourAgo()) {
+            Flux::toast(__('The event has already ended.'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        if (! $registration->canBookSeat()) {
+            Flux::toast(__('This participant is not allowed to book a seat.'), variant: 'danger');
+
+            return;
+        }
+
+        $this->seatBookingRegistrationId = $registrationId;
+        $this->modal('seat-booking-modal')->show();
+    }
+
+    /**
+     * Book a seat place for a participant on the LAN seating chart.
+     */
+    public function bookSeat(int $registrationId, string $seatLocation): void
+    {
+        $this->authorize('manage users');
+
+        if (! $this->event->isLan()) {
+            Flux::toast(__('Seat booking is only available for LAN events.'), variant: 'danger');
+
+            return;
+        }
+
+        if ($this->event->hasFinishedOverAnHourAgo()) {
+            Flux::toast(__('The event has already ended.'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        if (! $registration->canBookSeat()) {
+            Flux::toast(__('This participant is not allowed to book a seat.'), variant: 'danger');
+
+            return;
+        }
+
+        $registration->update([
+            'seat_location' => $seatLocation,
+        ]);
+
+        Flux::toast(__('Seat booked.'), variant: 'success');
+        GlobalLog::log('Seat place booked for participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'seat_location' => $registration->seat_location]);
+        $this->modal('seat-booking-modal')->close();
+    }
+
+    /**
+     * Remove a participant from the event. Only participants without a seat place can be removed.
+     */
+    public function removeParticipantFromEvent(int $registrationId, ProcessWaitingList $processAction): void
+    {
+        $this->authorize('manage users');
+
+        if ($this->event->hasFinishedOverAnHourAgo()) {
+            Flux::toast(__('The event has already ended.'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        if (! $registration->is_without_seat_place) {
+            Flux::toast(__('Only participants without a seat place can be removed from the event.'), variant: 'danger');
+
+            return;
+        }
+
+        $periodId = $registration->event_period_id;
+        $targetUserId = $registration->user_id;
+
+        $registration->delete();
+
+        $processAction->handle($this->event, $periodId);
+
+        Flux::toast(__('Participant has been removed from the event.'), variant: 'success');
+        GlobalLog::log('Participant removed from event', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $targetUserId]);
+    }
+
+    /**
+     * The participant the seat booking modal is open for.
+     */
+    public function seatBookingParticipant(): ?EventUser
+    {
+        if ($this->seatBookingRegistrationId === null) {
+            return null;
+        }
+
+        return $this->event->registrations()->with('user')->find($this->seatBookingRegistrationId);
     }
 
     /**

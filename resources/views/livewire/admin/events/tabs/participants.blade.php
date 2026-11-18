@@ -142,8 +142,8 @@
 
                     {{-- Seating Controls --}}
                     <flux:table.cell>
-                        @if($this->participantHasASeat($participant->id))
-                            <div class="flex items-center space-x-1">
+                        <div class="flex items-center space-x-1">
+                            @if($this->participantHasASeat($participant->id))
                                 <flux:button
                                     wire:click="toggleIsWithoutSeatPlace({{ $participant->id }})"
                                     variant="ghost"
@@ -153,9 +153,7 @@
                                     :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Move to participants without a seat place'"
                                 />
                                 <flux:badge size="sm" color="green">{{ __('Seat available') }}</flux:badge>
-                            </div>
-                        @else
-                            <div class="flex items-center space-x-1">
+                            @else
                                 <flux:button
                                     wire:click="toggleIsWithoutSeatPlace({{ $participant->id }})"
                                     variant="ghost"
@@ -165,8 +163,22 @@
                                     :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Move to participants with a seat place'"
                                 />
                                 <flux:badge size="sm" color="red">{{ __('Seat unavailable') }}</flux:badge>
-                            </div>
-                        @endif
+                            @endif
+
+                            @if($event->isLan() && ! $participant->is_without_seat_place)
+                                <flux:button
+                                    wire:click="openSeatBookingModal({{ $participant->id }})"
+                                    variant="ghost"
+                                    icon="map-pin"
+                                    size="xs"
+                                    class="cursor-pointer"
+                                    :disabled="$event->hasFinishedOverAnHourAgo()"
+                                    :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Book a seat on the seating chart'"
+                                >
+                                    {{ __('Book seat') }}
+                                </flux:button>
+                            @endif
+                        </div>
                     </flux:table.cell>
 
                     {{-- Payment Toggle --}}
@@ -216,6 +228,18 @@
                                         :tooltip="!$event->isFinished() ? 'The event is finished' : null"
                                     >
                                         {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
+                                    </flux:menu.item>
+                                @endif
+
+                                @if($participant->is_without_seat_place)
+                                    <flux:menu.item
+                                        wire:click="removeParticipantFromEvent({{ $participant->id }})"
+                                        icon="trash"
+                                        class="cursor-pointer"
+                                        :disabled="$event->hasFinishedOverAnHourAgo()"
+                                        :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Remove the participant from this event'"
+                                    >
+                                        {{ __('Remove from event') }}
                                     </flux:menu.item>
                                 @endif
                             </flux:menu>
@@ -290,6 +314,18 @@
                                         {{ $participant->is_disabled ? __('Enable Player') : __('Disable Player') }}
                                     </flux:menu.item>
                                 @endif
+
+                                @if($participant->is_without_seat_place)
+                                    <flux:menu.item
+                                        wire:click="removeParticipantFromEvent({{ $participant->id }})"
+                                        icon="trash"
+                                        class="cursor-pointer"
+                                        :disabled="$event->hasFinishedOverAnHourAgo()"
+                                        :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Remove the participant from this event'"
+                                    >
+                                        {{ __('Remove from event') }}
+                                    </flux:menu.item>
+                                @endif
                             </flux:menu>
                         </flux:dropdown>
                     </div>
@@ -336,6 +372,33 @@
                             @endif
                         </div>
                     </div>
+
+                    @if($event->isLan())
+                        <div class="col-span-2 space-y-1">
+                            <flux:label class="text-xs font-medium uppercase tracking-wider">{{ __('Seating') }}</flux:label>
+                            <div class="flex items-center space-x-1">
+                                @if($this->participantHasASeat($participant->id))
+                                    <flux:badge size="sm" color="green">{{ __('Seat available') }}</flux:badge>
+                                @else
+                                    <flux:badge size="sm" color="red">{{ __('Seat unavailable') }}</flux:badge>
+                                @endif
+
+                                @if(! $participant->is_without_seat_place)
+                                    <flux:button
+                                        wire:click="openSeatBookingModal({{ $participant->id }})"
+                                        variant="ghost"
+                                        icon="map-pin"
+                                        size="sm"
+                                        class="cursor-pointer"
+                                        :disabled="$event->hasFinishedOverAnHourAgo()"
+                                        :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Book a seat on the seating chart'"
+                                    >
+                                        {{ __('Book seat') }}
+                                    </flux:button>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
 
                     @if($event->one_hour_periods)
                         <div class="col-span-2 space-y-1">
@@ -393,5 +456,27 @@
     </div>
 
     <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
+
+    {{-- Seat Booking Modal (LAN events) --}}
+    <flux:modal name="seat-booking-modal" class="min-w-[22rem]">
+        @if(($seatBookingParticipant = $this->seatBookingParticipant()) && $seatBookingParticipant->user)
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Book a seat') }}</flux:heading>
+                    <flux:text class="mt-2">
+                        {{ __('Reserve a seat place for :name on the seating chart.', ['name' => $seatBookingParticipant->user->name]) }}
+                    </flux:text>
+                </div>
+
+                <flux:separator />
+
+                <flux:text>
+                    {{ $seatBookingParticipant->seat_location
+                        ? __('Currently booked seat place: :location', ['location' => $seatBookingParticipant->seat_location])
+                        : __('No seat place is booked yet for this participant.') }}
+                </flux:text>
+            </div>
+        @endif
+    </flux:modal>
     @endhaspermission
 </div>

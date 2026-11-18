@@ -171,6 +171,62 @@ class EventShow extends Component
         GlobalLog::log('User registered to an event', 'user', ['event_id' => $event->id]);
     }
 
+    public function openSeatBookingModal()
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if (! $this->event->isLan()) {
+            Flux::toast(text: __('Seat booking is only available for LAN events.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->registration();
+
+        if (! $registration instanceof EventUser) {
+            Flux::toast(text: __('You are not registered for this event.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        if (! $registration->canBookSeat() || ! $this->event->seatBookingOpen()) {
+            Flux::toast(text: __('You are not allowed to book a seat for this event.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $this->modal('seat-booking-modal')->show();
+    }
+
+    public function bookSeat(string $seatLocation)
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if ($this->event->isFinished()) {
+            Flux::toast(text: __('The event has already ended..'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->registration();
+
+        if (! $registration instanceof EventUser || ! $registration->canBookSeat() || ! $this->event->seatBookingOpen()) {
+            Flux::toast(text: __('You are not allowed to book a seat for this event.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $registration->update(['seat_location' => $seatLocation]);
+
+        Flux::toast(text: __('Seat booked.'), heading: __('Success'), variant: 'success');
+        $this->modal('seat-booking-modal')->close();
+        GlobalLog::log('User booked a seat place for an event', 'user', ['event_id' => $this->event->id]);
+    }
+
     public function openQrTagTokenModal()
     {
         // Validations
