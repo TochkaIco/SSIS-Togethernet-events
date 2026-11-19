@@ -25,7 +25,7 @@ variables:
   PLAYWRIGHT_BROWSERS_PATH: $CI_PROJECT_DIR/pw-browsers
   COMPOSER_CACHE_DIR: $CI_PROJECT_DIR/.composer-cache
   DOCKER_NO_CACHE:
-    value: "false"
+    value: "true"
     options:
       - "false"
       - "true"
