@@ -86,7 +86,7 @@ it('calculates kiosk statistics correctly', function () {
 
     $stats = $component->get('stats');
 
-    expect($stats['total_revenue'])->toBe("50.00");
+    expect($stats['total_revenue'])->toBe('50.00');
 
     // Category distribution
     expect($stats['category_distribution']['labels'])->toContain('Drinks', 'Snacks');

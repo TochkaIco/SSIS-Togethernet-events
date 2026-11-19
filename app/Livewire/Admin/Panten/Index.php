@@ -368,7 +368,10 @@ class Index extends Component
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        $usersList = User::notAnonymized()->orderBy('name')->get();
+        $usersList = User::notAnonymized()
+            ->whereHas('roles', fn ($q) => $q->where('name', 'tog-member'))
+            ->orderBy('name')
+            ->get();
 
         return view('livewire.admin.panten.index', [
             'totalSek' => $totalSek,
