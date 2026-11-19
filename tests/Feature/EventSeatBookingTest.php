@@ -189,22 +189,54 @@ test('seat booking is not open before the start date', function () {
     expect($event->seatBookingOpen())->toBeFalse();
 });
 
-test('booking a different seat moves the seat_location to the new seat', function () {
+test('a participant can change their booked seat to another free seat place', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
     $event = makeLanEventForBooking();
     $registration = EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true]);
 
-    Livewire::test(EventShow::class, ['event' => $event])
-        ->call('bookSeat', 'A1-1')
+    $component = Livewire::test(EventShow::class, ['event' => $event])
+        ->call('selectSeat', 'A1-1')
+        ->call('saveSeatBooking')
         ->assertHasNoErrors();
     expect($registration->refresh()->seat_location)->toBe('A1-1');
 
-    Livewire::test(EventShow::class, ['event' => $event])
-        ->call('bookSeat', 'B2-1')
+    $component->call('selectSeat', 'B2-1')
+        ->call('saveSeatBooking')
         ->assertHasNoErrors();
+
+    expect($registration->refresh()->seat_location)->toBe('B2-1')
+        ->and($event->registrations()->where('seat_location', 'A1-1')->count())->toBe(0);
+});
+
+test('a participant cannot change their seat to a seat place another participant already holds', function () {
+    $other = User::factory()->create();
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $event = makeLanEventForBooking();
+    EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $other->id, 'has_paid' => true, 'seat_location' => 'A1-1']);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true, 'seat_location' => 'B2-1']);
+
+    Livewire::test(EventShow::class, ['event' => $event])
+        ->call('selectSeat', 'A1-1')
+        ->call('saveSeatBooking')
+        ->assertHasNoErrors();
+
     expect($registration->refresh()->seat_location)->toBe('B2-1');
+});
+
+test('a participant with a booked seat sees a view seat button', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $event = makeLanEventForBooking();
+    EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true, 'seat_location' => 'A1-1']);
+
+    $this->get(route('event.show', $event))
+        ->assertOk()
+        ->assertSee('View Seat');
 });
 
 test('unregistering a user deletes their seat booking', function () {
@@ -223,4 +255,81 @@ test('unregistering a user deletes their seat booking', function () {
 
     expect($event->registrations()->count())->toBe(0)
         ->and(EventUser::find($registration->id))->toBeNull();
+});
+
+test('a participant can book a seat by selecting it on the seating chart and sees their own seat labelled', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $event = makeLanEventForBooking();
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true]);
+
+    $component = Livewire::test(EventShow::class, ['event' => $event])
+        ->call('selectSeat', 'A1-1')
+        ->assertHasNoErrors()
+        ->assertSet('selectedSeatLocation', 'A1-1');
+
+    expect($registration->refresh()->seat_location)->toBeNull();
+
+    $component->call('saveSeatBooking')
+        ->assertHasNoErrors()
+        ->assertSee(substr($user->email, 0, 6));
+
+    expect($registration->refresh()->seat_location)->toBe('A1-1');
+});
+
+test('a participant cannot book a seat that another participant already holds and never sees their email', function () {
+    $other = User::factory()->create();
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $event = makeLanEventForBooking();
+    EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $other->id, 'has_paid' => true, 'seat_location' => 'A1-1']);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true]);
+
+    $component = Livewire::test(EventShow::class, ['event' => $event])
+        ->call('openSeatBookingModal')
+        ->assertDontSee(substr($other->email, 0, 6));
+
+    $component->call('selectSeat', 'A1-1')->call('saveSeatBooking')->assertHasNoErrors();
+
+    expect($registration->refresh()->seat_location)->toBeNull();
+});
+
+test('a participant can reselect their own already booked seat', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $event = makeLanEventForBooking();
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true, 'seat_location' => 'A1-1']);
+
+    Livewire::test(EventShow::class, ['event' => $event])
+        ->call('selectSeat', 'A1-1')
+        ->call('saveSeatBooking')
+        ->assertHasNoErrors();
+
+    expect($registration->refresh()->seat_location)->toBe('A1-1');
+});
+
+test('a paid participant sees the seating chart on the public event page and books a seat from it', function () {
+    $user = User::factory()->create();
+    $event = makeLanEventForBooking();
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true]);
+
+    $this->actingAs($user)
+        ->get(route('event.show', $event))
+        ->assertOk()
+        ->assertSee('Save seat place')
+        // The click handler must carry a quoted seat id, otherwise the inline JS is invalid and the click dies silently.
+        ->assertSee("selectSeat('A1-1')", false);
+
+    $component = Livewire::test(EventShow::class, ['event' => $event])
+        ->call('openSeatBookingModal')
+        ->assertHasNoErrors();
+
+    $component->call('selectSeat', 'A3-1')
+        ->call('saveSeatBooking')
+        ->assertHasNoErrors();
+
+    expect($registration->refresh()->seat_location)->toBe('A3-1');
 });

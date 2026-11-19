@@ -99,14 +99,23 @@
                                     @endif
                                 </div>
 
-                                @if($event->isLan() && $this->registration->canBookSeat() && $event->seatBookingOpen())
+                                @if($event->isLan() && $this->registration->canBookSeat() && $event->seatBookingOpen() && !$this->registration()->seat_location)
                                     <flux:button
                                         icon="map-pin"
                                         variant="primary"
                                         wire:click="openSeatBookingModal"
                                         class="cursor-pointer w-full sm:w-auto"
                                     >
-                                        {{ __('Book seat') }}
+                                        {{ __('Book Seat') }}
+                                    </flux:button>
+                                @elseif($event->isLan() && $this->registration->canBookSeat() && $event->seatBookingOpen() && $this->registration()->seat_location)
+                                    <flux:button
+                                        icon="map-pin"
+                                        variant="primary"
+                                        wire:click="openSeatBookingModal"
+                                        class="cursor-pointer w-full sm:w-auto"
+                                    >
+                                        {{ __('View Seat') }}
                                     </flux:button>
                                 @elseif($event->isLan() && $this->registration->canBookSeat())
                                     <flux:tooltip
@@ -441,7 +450,7 @@
     </flux:modal>
 
     {{-- Seat Booking Modal (LAN events) --}}
-    <flux:modal name="seat-booking-modal" class="min-w-[22rem] md:min-w-[50rem] w-full h-full">
+    <flux:modal name="seat-booking-modal" class="w-full md:min-w-170">
         @if($this->registration())
             <div class="space-y-6">
                 <div>
@@ -453,13 +462,39 @@
 
                 <flux:separator />
 
-                <flux:text color="orange">
-                    {{ $this->registration()->seat_location
-                        ? __('Currently booked seat place: :location', ['location' => $this->registration()->seat_location])
-                        : __('No seat place is booked yet.') }}
-                </flux:text>
+                <x-events.lan-seating-chart
+                    :event="$event"
+                    :show-participant-emails="false"
+                    :own-registration-id="$this->registration()?->id"
+                    :is-disabled="$event->isFinished()"
+                    :selected-seat-id="$this->selectedSeatLocation"
+                />
 
-                <x-events.lan-seating-chart :event="$event" />
+                <div class="flex justify-between items-center">
+                    <flux:text color="orange">
+                        {{ $this->registration()->seat_location
+                            ? __('Currently booked seat place: :location. You can move to any other free seat place.', ['location' => $this->registration()->seat_location])
+                            : __('No seat place is booked yet.') }}
+                    </flux:text>
+
+                    <div class="flex gap-2">
+                        <flux:button
+                            variant="ghost"
+                            class="cursor-pointer"
+                        >
+                            <flux:modal.close>{{ __('Close') }}</flux:modal.close>
+                        </flux:button>
+
+                        <flux:button
+                            variant="primary"
+                            class="cursor-pointer"
+                            wire:click="saveSeatBooking"
+                            :disabled="$this->selectedSeatLocation === null"
+                        >
+                            {{ __('Save seat place') }}
+                        </flux:button>
+                    </div>
+                </div>
             </div>
         @endif
     </flux:modal>

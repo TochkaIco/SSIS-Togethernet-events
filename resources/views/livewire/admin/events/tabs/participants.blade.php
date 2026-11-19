@@ -165,7 +165,7 @@
                                 <flux:badge size="sm" color="red">{{ __('Seat unavailable') }}</flux:badge>
                             @endif
 
-                            @if($event->isLan() && ! $participant->is_without_seat_place)
+                            @if($event->isLan() && ! $participant->is_without_seat_place && ! $participant->seat_location)
                                 <flux:button
                                     wire:click="openSeatBookingModal({{ $participant->id }})"
                                     variant="ghost"
@@ -175,8 +175,21 @@
                                     :disabled="$event->hasFinishedOverAnHourAgo()"
                                     :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Book a seat on the seating chart'"
                                 >
-                                    {{ __('Book seat') }}
+                                    {{ __('Book Seat') }}
                                 </flux:button>
+
+                            @elseif($event->isLan() && ! $participant->is_without_seat_place && $participant->seat_location)
+                                    <flux:button
+                                        wire:click="openSeatBookingModal({{ $participant->id }})"
+                                        variant="ghost"
+                                        icon="map-pin"
+                                        size="xs"
+                                        class="cursor-pointer"
+                                        :disabled="$event->hasFinishedOverAnHourAgo()"
+                                        :tooltip="$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : 'Book a seat on the seating chart'"
+                                    >
+                                        {{ __('View Seat') }}
+                                    </flux:button>
                             @endif
                         </div>
                     </flux:table.cell>
@@ -233,7 +246,7 @@
 
                                 @if($participant->is_without_seat_place)
                                     <flux:menu.item
-                                        wire:click="removeParticipantFromEvent({{ $participant->id }})"
+                                        wire:click="confirmRemoveParticipant({{ $participant->id }})"
                                         icon="trash"
                                         class="cursor-pointer"
                                         :disabled="$event->hasFinishedOverAnHourAgo()"
@@ -317,7 +330,7 @@
 
                                 @if($participant->is_without_seat_place)
                                     <flux:menu.item
-                                        wire:click="removeParticipantFromEvent({{ $participant->id }})"
+                                        wire:click="confirmRemoveParticipant({{ $participant->id }})"
                                         icon="trash"
                                         class="cursor-pointer"
                                         :disabled="$event->hasFinishedOverAnHourAgo()"
@@ -458,7 +471,7 @@
     <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
 
     {{-- Seat Booking Modal (LAN events) --}}
-    <flux:modal name="seat-booking-modal" class="min-w-170">
+    <flux:modal name="seat-booking-modal" class="w-full md:min-w-170">
         @if(($seatBookingParticipant = $this->seatBookingParticipant()) && $seatBookingParticipant->user)
             <div class="space-y-6">
                 <div>
@@ -470,13 +483,60 @@
 
                 <flux:separator />
 
-                <flux:text color="orange">
-                    {{ $seatBookingParticipant->seat_location
-                        ? __('Currently booked seat place: :location', ['location' => $seatBookingParticipant->seat_location])
-                        : __('No seat place is booked yet for this participant.') }}
-                </flux:text>
+                <x-events.lan-seating-chart
+                    :event="$event"
+                    :is-disabled="$event->hasFinishedOverAnHourAgo()"
+                    :own-registration-id="$seatBookingParticipant->id"
+                    :selected-seat-id="$this->selectedSeatLocation"
+                />
 
-                <x-events.lan-seating-chart :event="$event" />
+                <div class="flex justify-between items-center">
+                    <flux:text color="orange">
+                        {{ $seatBookingParticipant->seat_location
+                            ? __('Currently booked seat place: :location', ['location' => $seatBookingParticipant->seat_location])
+                            : __('No seat place is booked yet for this participant.') }}
+                    </flux:text>
+
+                    <div class="flex gap-2">
+                        <flux:button
+                            variant="ghost"
+                            class="cursor-pointer"
+                        >
+                            <flux:modal.close>{{ __('Close') }}</flux:modal.close>
+                        </flux:button>
+
+                        <flux:button
+                            variant="primary"
+                            class="cursor-pointer"
+                            wire:click="saveSeatBooking"
+                            :disabled="$this->selectedSeatLocation === null"
+                        >
+                            {{ __('Save seat place') }}
+                        </flux:button>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </flux:modal>
+
+    {{-- Remove Participant Confirmation Modal --}}
+    <flux:modal name="remove-participant-confirmation" class="min-w-[22rem]">
+        @if($participantToRemove = $this->participantToRemove())
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Remove participant from event?') }}</flux:heading>
+                    <flux:text class="mt-2">
+                        {{ __('You are about to remove :name from this event. This action cannot be reversed.', ['name' => $participantToRemove->user->name]) }}
+                    </flux:text>
+                </div>
+
+                <div class="flex gap-2">
+                    <flux:spacer />
+                    <flux:modal.close>
+                        <flux:button variant="ghost" class="cursor-pointer">{{ __('Cancel') }}</flux:button>
+                    </flux:modal.close>
+                    <flux:button variant="danger" class="cursor-pointer" wire:click="removeParticipantFromEvent({{ $participantToRemove->id }})">{{ __('Remove from event') }}</flux:button>
+                </div>
             </div>
         @endif
     </flux:modal>

@@ -191,6 +191,130 @@ test('admin cannot open the seat booking modal for a participant without a seat 
     expect($component->instance()->seatBookingRegistrationId)->toBeNull();
 });
 
+test('admin can book a seat for a participant by selecting it on the seating chart', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $event = Event::factory()->create(['event_type' => EventType::LAN->value]);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true]);
+
+    $component = Livewire::test(Participants::class, ['event' => $event])
+        ->call('openSeatBookingModal', $registration->id)
+        ->call('selectSeat', 'A1-1')
+        ->assertHasNoErrors()
+        ->assertSet('selectedSeatLocation', 'A1-1');
+
+    expect($registration->refresh()->seat_location)->toBeNull();
+
+    $component->call('saveSeatBooking')
+        ->assertHasNoErrors();
+
+    expect($registration->refresh()->seat_location)->toBe('A1-1');
+});
+
+test('selecting a seat only marks it as selected until the save button is pressed', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $event = Event::factory()->create(['event_type' => EventType::LAN->value]);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true]);
+
+    Livewire::test(Participants::class, ['event' => $event])
+        ->call('saveSeatBooking')
+        ->assertHasNoErrors();
+
+    expect($registration->refresh()->seat_location)->toBeNull();
+});
+
+test('selecting a seat does nothing when no seat booking modal is open', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $event = Event::factory()->create(['event_type' => EventType::LAN->value]);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true]);
+
+    Livewire::test(Participants::class, ['event' => $event])
+        ->call('selectSeat', 'A1-1')
+        ->assertHasNoErrors()
+        ->assertSet('selectedSeatLocation', null);
+
+    expect($registration->refresh()->seat_location)->toBeNull();
+});
+
+test('admin cannot book a seat another participant already holds', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $event = Event::factory()->create(['event_type' => EventType::LAN->value]);
+    $previousOccupant = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true, 'seat_location' => 'A1-1']);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true]);
+
+    $component = Livewire::test(Participants::class, ['event' => $event])
+        ->call('openSeatBookingModal', $registration->id)
+        ->call('selectSeat', 'A1-1')
+        ->assertHasNoErrors();
+
+    $component->call('saveSeatBooking')
+        ->assertHasNoErrors();
+
+    expect($registration->refresh()->seat_location)->toBeNull()
+        ->and($previousOccupant->refresh()->seat_location)->toBe('A1-1');
+});
+
+test('moving a participant to without a seat place removes their seat from the seating chart', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $event = Event::factory()->create(['event_type' => EventType::LAN->value]);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true, 'seat_location' => 'B2-1']);
+
+    Livewire::test(Participants::class, ['event' => $event])
+        ->call('toggleIsWithoutSeatPlace', $registration->id)
+        ->assertHasNoErrors();
+
+    expect($registration->refresh()->is_without_seat_place)->toBeTrue()
+        ->and($registration->seat_location)->toBeNull();
+});
+
+test('restoring a seat place for a participant without a booked seat leaves the seat location unset', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $event = Event::factory()->create(['event_type' => EventType::LAN->value]);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true, 'seat_location' => 'B2-1']);
+
+    Livewire::test(Participants::class, ['event' => $event])
+        ->call('toggleIsWithoutSeatPlace', $registration->id)
+        ->call('toggleIsWithoutSeatPlace', $registration->id)
+        ->assertHasNoErrors();
+
+    expect($registration->refresh()->is_without_seat_place)->toBeFalse()
+        ->and($registration->seat_location)->toBeNull();
+});
+
+test('confirming a participant removal opens the confirmation modal for that participant', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin);
+
+    $event = Event::factory()->create();
+    $registration = EventUser::factory()->withoutSeatPlace()->create(['event_id' => $event->id]);
+
+    $component = Livewire::test(Participants::class, ['event' => $event])
+        ->call('confirmRemoveParticipant', $registration->id)
+        ->assertSet('registrationIdToRemove', $registration->id)
+        ->assertSee('Remove participant from event?')
+        ->assertSee($registration->user->name);
+
+    $component->assertDispatched('modal-show', name: 'remove-participant-confirmation', scope: $component->instance()->getId());
+});
+
 test('admin can remove a participant without a seat place from the event', function () {
     $admin = User::factory()->create();
     $admin->assignRole('admin');
