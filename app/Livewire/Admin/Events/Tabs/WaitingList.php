@@ -14,7 +14,7 @@ class WaitingList extends Component
 
     public function moveToParticipants($registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->isFinished()) {
             Flux::toast(__('The event has already ended.'), variant: 'danger');
@@ -32,7 +32,7 @@ class WaitingList extends Component
 
     public function viewUserProfile($registrationId)
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         $registration = $this->event->registrations()->with('user')->findOrFail($registrationId);
 

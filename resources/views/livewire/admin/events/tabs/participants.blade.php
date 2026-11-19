@@ -1,5 +1,5 @@
 <div>
-    @haspermission('manage users')
+    @haspermission('manage participants')
     {{-- Header & Search --}}
     <div class="flex flex-col lg:flex-row gap-4 m-1 mb-6 lg:items-end">
         <flux:input

@@ -1,4 +1,5 @@
 <div class="max-w-full overflow-x-hidden">
+    @haspermission('manage participants')
     <flux:table class="hidden md:table">
         <flux:table.columns>
             <flux:table.column>{{ __('Name') }}</flux:table.column>
@@ -125,4 +126,5 @@
             </div>
         @endforelse
     </div>
+    @endhaspermission
 </div>

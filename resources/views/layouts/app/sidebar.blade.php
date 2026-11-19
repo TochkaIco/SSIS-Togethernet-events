@@ -63,7 +63,7 @@
                                     <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'view'])" :current="request('tab', 'view') === 'view'" wire:navigate>
                                         {{ __('View') }}
                                     </flux:sidebar.item>
-                                    @can('manage users')
+                                    @can('manage participants')
                                         <flux:sidebar.item :href="route('admin.event.show', ['event' => $event, 'tab' => 'participants'])" :current="request('tab') === 'participants'" wire:navigate>
                                             {{ __('Participants') }}
                                         </flux:sidebar.item>

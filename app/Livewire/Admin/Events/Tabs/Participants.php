@@ -78,7 +78,7 @@ class Participants extends Component
      */
     public function togglePaid(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -101,7 +101,7 @@ class Participants extends Component
      */
     public function toggleArrived(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -124,7 +124,7 @@ class Participants extends Component
      */
     public function toggleIsWithoutSeatPlace(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -151,7 +151,7 @@ class Participants extends Component
      */
     public function openSeatBookingModal(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if (! $this->event->isLan()) {
             Flux::toast(__('Seat booking is only available for LAN events.'), variant: 'danger');
@@ -183,7 +183,7 @@ class Participants extends Component
      */
     public function bookSeat(int $registrationId, string $seatLocation): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if (! $this->event->isLan()) {
             Flux::toast(__('Seat booking is only available for LAN events.'), variant: 'danger');
@@ -264,7 +264,7 @@ class Participants extends Component
      */
     public function confirmRemoveParticipant(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         $this->registrationIdToRemove = $registrationId;
         $this->modal('remove-participant-confirmation')->show();
@@ -275,7 +275,7 @@ class Participants extends Component
      */
     public function removeParticipantFromEvent(int $registrationId, ProcessWaitingList $processAction): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended.'), variant: 'danger');
@@ -333,7 +333,7 @@ class Participants extends Component
      */
     public function toggleDisabled(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->isFinished()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -360,7 +360,7 @@ class Participants extends Component
      */
     public function moveToWaitingList(int $registrationId, ProcessWaitingList $processAction): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->isFinished()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -404,7 +404,7 @@ class Participants extends Component
 
     public function viewUserProfile(int $registrationId)
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         $registration = $this->event->registrations()->with('user')->findOrFail($registrationId);
 
@@ -413,7 +413,7 @@ class Participants extends Component
 
     public function updateParticipantWorkingStatus(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -432,7 +432,7 @@ class Participants extends Component
 
     public function changePeriod(int $registrationId, ProcessWaitingList $processAction): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->isFinished()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
