@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\EventType;
 use App\Models\Event;
+use App\Models\EventUser;
 use App\Models\GlobalLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -66,6 +67,14 @@ class UpdateEvent
             $data['event_ends_at'] = $startTime->addHours($hoursToAdd)->addMinutes($totalIntervalLength);
         }
 
+        if ($data['event_type'] === EventType::LAN->value) {
+            $rowLengths = array_key_exists('seating_rows', $attributes)
+                ? $attributes['seating_rows']
+                : $event->currentSeatingRowLengths();
+
+            $data['seating_settings'] = Event::makeSeatingSettings($rowLengths);
+        }
+
         if ($attributes['image'] ?? false) {
             if ($event->image_path && Storage::disk('public')->exists($event->image_path)) {
                 Storage::disk('public')->delete($event->image_path);
@@ -95,6 +104,31 @@ class UpdateEvent
 
         DB::transaction(function () use ($event, $data, $attributes, $periodsChanged) {
             $event->update($data);
+
+            if ($data['seating_settings'] ?? null) {
+                // Release the seats of participants whose seat was removed by the new layout.
+                $validSeatIds = collect($data['seating_settings']['rows'])
+                    ->flatten(2)
+                    ->pluck('seat')
+                    ->all();
+
+                $event->registrations()
+                    ->whereNotNull('seat_location')
+                    ->whereNotIn('seat_location', $validSeatIds)
+                    ->get()
+                    ->each(function (EventUser $registration) use ($event) {
+                        $previousSeat = $registration->seat_location;
+
+                        $registration->update(['seat_location' => null]);
+
+                        GlobalLog::log('Seat freed because it was removed from the seating layout', 'user', [
+                            'event_id' => $event->id,
+                            'event_title' => $event->slug,
+                            'target_user_id' => $registration->user_id,
+                            'seat_location' => $previousSeat,
+                        ]);
+                    });
+            }
 
             if ($attributes['one_hour_periods'] ?? false) {
                 if ($periodsChanged) {

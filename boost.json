@@ -8,7 +8,10 @@
     "mcp": true,
     "nightwatch": false,
     "packages": [
-        "spatie/laravel-permission"
+        "spatie/laravel-permission",
+        "spatie/laravel-backup",
+        "spatie/laravel-sluggable",
+        "fruitcake/laravel-debugbar"
     ],
     "sail": true,
     "skills": [
@@ -21,6 +24,9 @@
         "fluxui-development",
         "livewire-development",
         "tailwindcss-development",
-        "laravel-permission-development"
+        "laravel-backup",
+        "laravel-permission-development",
+        "sluggable-development",
+        "debug-using-debugbar"
     ]
 }

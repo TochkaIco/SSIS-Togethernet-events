@@ -721,6 +721,8 @@
     "Seat booking is only available for LAN events.": "Platsbokning är endast tillgänglig för LAN-evenemang.",
     "This participant is not allowed to book a seat.": "Deltagaren har inte rätt att boka en plats.",
     "Seat booked.": "Platsen är bokad.",
+    "Seating Layout": "Sittplatslayout",
+    "Each of the 5 rows consists of table cells with :seats seats each. Choose how many cells each row should have.": "Var och en av de 5 raderna består av tabellceller med :seats sittplatser vardera. Välj hur många celler varje rad ska ha.",
     "Remove from event": "Ta bort från evenemanget",
     "Participant has been removed from the event.": "Deltagaren har tagits bort från evenemanget.",
     "Only participants without a seat place can be removed from the event.": "Endast deltagare utan plats kan tas bort från evenemanget.",

@@ -16,5 +16,13 @@ parameters:
     ignoreErrors:
         - identifier: missingType.generics
         - identifier: trait.unused
+        # Larastan types the AsArrayObject cast (seating_settings) as the raw JSON column type,
+        # so it can't see the array offsets or the is_array() guard on it.
+        -
+            path: app/Models/Event.php
+            identifier: nullCoalesce.offset
+        -
+            path: app/Models/Event.php
+            identifier: function.alreadyNarrowedType
         - message: '#Call to an undefined method (PHPUnit\\Framework\\TestCase|Pest\\PendingCalls\\TestCall)::(get|post|put|patch|delete|actingAs|actingAsGuest|withSession|visit|fill|click|press|assertSee|assertOk|assertRedirect|assertStatus|assertSessionHasNoErrors|browse|seed|assertDatabaseHas|assertDatabaseMissing|skipUnlessFortifyFeature)\(\)#'
         - message: '#Access to an undefined property PHPUnit\\Framework\\TestCase::\$app#'

@@ -2,6 +2,7 @@
 
 use App\EventType;
 use App\Models\Event;
+use App\Models\EventUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -68,6 +69,143 @@ test('lan event requires a seat booking start time on creation', function () {
 
     $response->assertSessionHasErrors('seat_booking_starts_at');
     $this->assertDatabaseMissing('events', ['title' => 'LAN Night']);
+});
+
+test('lan event stores the seating layout selected from the row lengths', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('create articles');
+
+    $response = $this->actingAs($user)->post(route('admin.event.store'), [
+        'title' => 'LAN Night',
+        'description' => 'A LAN party',
+        'event_type' => EventType::LAN->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
+        'display_starts_at' => now()->subDay()->format('Y-m-d H:i:s'),
+        'seat_booking_starts_at' => now()->format('Y-m-d H:i:s'),
+        'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
+        'event_ends_at' => now()->addDays(2)->format('Y-m-d H:i:s'),
+        'seating_rows' => ['9', '10', '8', '10', '10'],
+    ]);
+
+    $response->assertRedirect(route('admin.events'));
+
+    $event = Event::where('title', 'LAN Night')->first();
+    $rows = $event->seatingRows();
+
+    expect($rows)->toHaveCount(5)
+        ->and(count($rows[0]))->toBe(9)
+        ->and(count($rows[1]))->toBe(10)
+        ->and(count($rows[2]))->toBe(8)
+        ->and(count($rows[3]))->toBe(10)
+        ->and(count($rows[4]))->toBe(10);
+
+    foreach ($rows as $row) {
+        foreach ($row as $cell) {
+            expect($cell)->toHaveCount(2);
+        }
+    }
+
+    expect($rows[0][0][0]['seat'])->toBe('A1-1')
+        ->and($rows[0][0][1]['seat'])->toBe('A1-2')
+        ->and(count($rows[0][0][0]))->toBe(1)
+        ->and($rows[4][9][1]['seat'])->toBe('E10-2');
+});
+
+test('non lan event does not store a seating layout', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('create articles');
+
+    $response = $this->actingAs($user)->post(route('admin.event.store'), [
+        'title' => 'Karaoke Night',
+        'description' => 'A karaoke night',
+        'event_type' => EventType::KARAOKE->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
+        'display_starts_at' => now()->format('Y-m-d H:i:s'),
+        'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
+        'event_ends_at' => now()->addDay()->addHours(2)->format('Y-m-d H:i:s'),
+    ]);
+
+    $response->assertRedirect(route('admin.events'));
+
+    expect(Event::where('title', 'Karaoke Night')->first()->seating_settings)->toBeNull();
+});
+
+test('reseating a layout keeps the seat_location of participants whose seat still exists', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('create articles');
+    $user->givePermissionTo('edit articles');
+
+    $event = Event::factory()->create([
+        'event_type' => EventType::LAN->value,
+        'display_starts_at' => now()->subDay(),
+        'seat_booking_starts_at' => now()->subHour(),
+        'seating_settings' => Event::makeSeatingSettings([4, 4, 4, 4, 4]),
+    ]);
+
+    $participant = User::factory()->create();
+    $registration = EventUser::factory()->create([
+        'event_id' => $event->id,
+        'user_id' => $participant->id,
+        'seat_location' => 'A3-1',
+    ]);
+
+    $response = $this->actingAs($user)->patch(route('admin.event.update', $event), [
+        'title' => $event->title,
+        'description' => $event->description,
+        'event_type' => EventType::LAN->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
+        'display_starts_at' => now()->format('Y-m-d H:i:s'),
+        'seat_booking_starts_at' => now()->format('Y-m-d H:i:s'),
+        'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
+        'event_ends_at' => now()->addDays(2)->format('Y-m-d H:i:s'),
+        'seating_rows' => ['10', '10', '10', '10', '10'],
+    ]);
+
+    $response->assertSessionHasNoErrors();
+
+    $event->refresh();
+    expect(count($event->seatingRows()[0]))->toBe(10)
+        ->and($registration->refresh()->seat_location)->toBe('A3-1');
+});
+
+test('seats removed by the new seating layout free the seat of their participant', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('create articles');
+    $user->givePermissionTo('edit articles');
+
+    $event = Event::factory()->create([
+        'event_type' => EventType::LAN->value,
+        'display_starts_at' => now()->subDay(),
+        'seat_booking_starts_at' => now()->subHour(),
+        'seating_settings' => Event::makeSeatingSettings([4, 4, 4, 4, 4]),
+    ]);
+
+    $participant = User::factory()->create();
+    $registration = EventUser::factory()->create([
+        'event_id' => $event->id,
+        'user_id' => $participant->id,
+        'seat_location' => 'A4-1',
+    ]);
+
+    $response = $this->actingAs($user)->patch(route('admin.event.update', $event), [
+        'title' => $event->title,
+        'description' => $event->description,
+        'event_type' => EventType::LAN->value,
+        'num_of_seats' => '20',
+        'paid_entry' => '0',
+        'display_starts_at' => now()->format('Y-m-d H:i:s'),
+        'seat_booking_starts_at' => now()->format('Y-m-d H:i:s'),
+        'event_starts_at' => now()->addDay()->format('Y-m-d H:i:s'),
+        'event_ends_at' => now()->addDays(2)->format('Y-m-d H:i:s'),
+        'seating_rows' => ['2', '2', '2', '2', '2'],
+    ]);
+
+    $response->assertSessionHasNoErrors();
+
+    expect($registration->refresh()->seat_location)->toBeNull();
 });
 
 test('lan event can be created with a seat booking start time', function () {

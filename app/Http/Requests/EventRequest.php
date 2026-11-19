@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\EventType;
+use App\Models\Event;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -64,6 +65,8 @@ class EventRequest extends FormRequest
                 Rule::requiredIf($this->event_type === EventType::LAN->value),
                 'date',
             ],
+            'seating_rows' => ['sometimes', 'array', 'size:'.Event::SEATING_ROW_COUNT],
+            'seating_rows.*' => ['integer', 'min:1', 'max:20'],
             'event_starts_at' => ['sometimes', 'required', 'date'],
             'event_ends_at' => [
                 'sometimes',

@@ -9,6 +9,7 @@ use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Casts\ArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,7 @@ use Spatie\Sluggable\SlugOptions;
     'image_path',
     'meta_image_path',
     'num_of_seats',
+    'seating_settings',
     'paid_entry',
     'entry_fee',
     'one_hour_periods',
@@ -56,11 +58,30 @@ use Spatie\Sluggable\SlugOptions;
 /**
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property ArrayObject<string, mixed>|null $seating_settings
  */
 class Event extends Model
 {
     /** @use HasFactory<EventFactory> */
     use HasFactory, HasSlug;
+
+    protected function casts(): array
+    {
+        return [
+            'event_type' => EventType::class,
+            'links' => AsArrayObject::class,
+            'one_hour_periods' => 'boolean',
+            'one_hour_periods_number' => 'integer',
+            'interval_length' => 'integer',
+            'display_starts_at' => 'datetime',
+            'seat_booking_starts_at' => 'datetime',
+            'seating_settings' => AsArrayObject::class,
+            'event_starts_at' => 'datetime',
+            'event_ends_at' => 'datetime',
+            'allow_external_domains' => 'boolean',
+            'is_hidden_event' => 'boolean',
+        ];
+    }
 
     public function getSlugOptions(): SlugOptions
     {
@@ -259,6 +280,94 @@ class Event extends Model
         return $this->seat_booking_starts_at <= now();
     }
 
+    public const int SEATING_ROW_COUNT = 5;
+
+    public const int SEATS_PER_TABLE_CELL = 2;
+
+    public const int DEFAULT_SEATS_PER_ROW = 10;
+
+    /**
+     * Letter used to identify each of the 5 seating rows.
+     *
+     * @return list<string>
+     */
+    public static function seatingRowLetters(): array
+    {
+        return ['A', 'B', 'C', 'D', 'E'];
+    }
+
+    /**
+     * Default number of table cells for each of the 5 rows.
+     *
+     * @return list<int>
+     */
+    public static function defaultSeatingRowLengths(): array
+    {
+        return array_fill(0, self::SEATING_ROW_COUNT, self::DEFAULT_SEATS_PER_ROW);
+    }
+
+    /**
+     * The seating layout stored on the event, as 5 rows of table cells.
+     *
+     * Occupancy is not stored here; seats are taken by participants whose
+     * event_users.seat_location matches the seat id.
+     *
+     * @return list<list<list<array{seat: string}>>>
+     */
+    public function seatingRows(): array
+    {
+        $settings = $this->seating_settings;
+
+        if (! $settings) {
+            return [];
+        }
+
+        $rows = $settings['rows'] ?? [];
+
+        return is_array($rows) ? $rows : [];
+    }
+
+    /**
+     * Number of table cells currently configured for each of the 5 rows.
+     *
+     * @return list<int>
+     */
+    public function currentSeatingRowLengths(): array
+    {
+        $lengths = collect($this->seatingRows())
+            ->map(fn (array $row) => count($row))
+            ->values();
+
+        return $lengths->isNotEmpty() ? $lengths->all() : self::defaultSeatingRowLengths();
+    }
+
+    /**
+     * Build the seating settings payload from the wanted number of table cells per row.
+     *
+     * @param  list<int>  $rowLengths  Number of table cells for each of the 5 rows.
+     * @return array{rows: list<list<list<array{seat: string}>>>}
+     */
+    public static function makeSeatingSettings(array $rowLengths): array
+    {
+        $rows = [];
+
+        foreach (self::seatingRowLetters() as $index => $letter) {
+            $cells = [];
+            $numberOfCells = max(0, (int) ($rowLengths[$index] ?? 0));
+
+            for ($cellNumber = 1; $cellNumber <= $numberOfCells; $cellNumber++) {
+                $cells[] = [
+                    ['seat' => "{$letter}{$cellNumber}-1"],
+                    ['seat' => "{$letter}{$cellNumber}-2"],
+                ];
+            }
+
+            $rows[] = $cells;
+        }
+
+        return ['rows' => $rows];
+    }
+
     /**
      * Check if the given user is allowed to register for this event.
      */
@@ -348,22 +457,5 @@ class Event extends Model
     protected function search($query, string $search)
     {
         return $query->where('title', 'like', '%'.$search.'%');
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'event_type' => EventType::class,
-            'links' => AsArrayObject::class,
-            'one_hour_periods' => 'boolean',
-            'one_hour_periods_number' => 'integer',
-            'interval_length' => 'integer',
-            'display_starts_at' => 'datetime',
-            'seat_booking_starts_at' => 'datetime',
-            'event_starts_at' => 'datetime',
-            'event_ends_at' => 'datetime',
-            'allow_external_domains' => 'boolean',
-            'is_hidden_event' => 'boolean',
-        ];
     }
 }

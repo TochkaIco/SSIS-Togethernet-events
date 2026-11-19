@@ -458,7 +458,7 @@
     <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
 
     {{-- Seat Booking Modal (LAN events) --}}
-    <flux:modal name="seat-booking-modal" class="min-w-[22rem]">
+    <flux:modal name="seat-booking-modal" class="min-w-170">
         @if(($seatBookingParticipant = $this->seatBookingParticipant()) && $seatBookingParticipant->user)
             <div class="space-y-6">
                 <div>
@@ -470,11 +470,13 @@
 
                 <flux:separator />
 
-                <flux:text>
+                <flux:text color="orange">
                     {{ $seatBookingParticipant->seat_location
                         ? __('Currently booked seat place: :location', ['location' => $seatBookingParticipant->seat_location])
                         : __('No seat place is booked yet for this participant.') }}
                 </flux:text>
+
+                <x-events.lan-seating-chart :event="$event" />
             </div>
         @endif
     </flux:modal>

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Actions\UnregisterUserFromEvent;
 use App\EventType;
 use App\Livewire\Events\EventShow;
 use App\Models\Event;
@@ -16,6 +17,7 @@ function makeLanEventForBooking(array $overrides = []): Event
         'display_starts_at' => now()->subDay(),
         'event_starts_at' => now()->addDay(),
         'event_ends_at' => now()->addDays(2),
+        'seating_settings' => Event::makeSeatingSettings([4, 4, 4, 4, 4]),
     ], $overrides));
 }
 
@@ -185,4 +187,40 @@ test('seat booking is not open before the start date', function () {
     $event = Event::factory()->create(['seat_booking_starts_at' => now()->addHour()]);
 
     expect($event->seatBookingOpen())->toBeFalse();
+});
+
+test('booking a different seat moves the seat_location to the new seat', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $event = makeLanEventForBooking();
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true]);
+
+    Livewire::test(EventShow::class, ['event' => $event])
+        ->call('bookSeat', 'A1-1')
+        ->assertHasNoErrors();
+    expect($registration->refresh()->seat_location)->toBe('A1-1');
+
+    Livewire::test(EventShow::class, ['event' => $event])
+        ->call('bookSeat', 'B2-1')
+        ->assertHasNoErrors();
+    expect($registration->refresh()->seat_location)->toBe('B2-1');
+});
+
+test('unregistering a user deletes their seat booking', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $event = makeLanEventForBooking();
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'user_id' => $user->id, 'has_paid' => true]);
+
+    Livewire::test(EventShow::class, ['event' => $event])
+        ->call('bookSeat', 'A1-1')
+        ->assertHasNoErrors();
+    expect($registration->refresh()->seat_location)->toBe('A1-1');
+
+    (new UnregisterUserFromEvent)->handle($user, $event);
+
+    expect($event->registrations()->count())->toBe(0)
+        ->and(EventUser::find($registration->id))->toBeNull();
 });

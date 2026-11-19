@@ -1,5 +1,13 @@
 @props(['event' => new \App\Models\Event()])
 
+@php
+    $seatingRowsInput = collect(old('seating_rows', $event->currentSeatingRowLengths()))
+        ->map(fn ($length) => (int) $length)
+        ->slice(0, \App\Models\Event::SEATING_ROW_COUNT)
+        ->values()
+        ->all();
+@endphp
+
 <flux:modal
     :name="$event->exists ? 'edit-event' : 'create-event'"
     class="max-w-2xl w-full"
@@ -21,6 +29,7 @@
             links: @js(old('links', $event->links ?? [])),
             hasImage: false,
             canEditCritical: {{ $event->canEditCriticalFields() ? 'true' : 'false' }},
+            seatingRows: @js($seatingRowsInput),
         }"
         action="{{ $event->exists ? route('admin.event.update', $event) : route('admin.event.store') }}"
         method="post"
@@ -120,8 +129,9 @@
                     data-test="num_of_seats-field"
                     type="number"
                     min="1"
+                    ::disabled="!canEditCritical"
                     placeholder="{{ __('Enter the number of seats available for this event') }}"
-                    required
+                    ::required="canEditCritical"
                     :value="old('num_of_seats', $event->num_of_seats)"
                 />
             </template>
@@ -159,6 +169,55 @@
                 />
                 <flux:error name="seat_booking_starts_at" />
             </flux:field>
+
+            {{-- Seating Layout (LAN events) --}}
+            <template x-if="event_type === '{{ App\EventType::LAN->value }}'">
+                <div class="w-full">
+                    <flux:field>
+                        <flux:label>{{ __('Seating Layout').'*' }}</flux:label>
+                        <flux:text class="text-sm text-slate-600 dark:text-slate-400">
+                            {{ __('Each of the 5 rows consists of table cells with :seats seats each. Choose how many cells each row should have.', ['seats' => \App\Models\Event::SEATS_PER_TABLE_CELL]) }}
+                        </flux:text>
+
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-3">
+                            @foreach(\App\Models\Event::seatingRowLetters() as $seatingRow => $letter)
+                                <flux:input
+                                    :label="__('Row :row', ['row' => $letter])"
+                                    type="number"
+                                    min="1"
+                                    max="20"
+                                    name="seating_rows[]"
+                                    ::disabled="!canEditCritical"
+                                    x-model.number="seatingRows[{{ $seatingRow }}]"
+                                    data-test="seating-row-{{ strtolower($letter) }}-field"
+                                    required
+                                />
+                            @endforeach
+                        </div>
+                    </flux:field>
+
+                    <div class="mt-6">
+                        <flux:label>{{ __('Preview') }}</flux:label>
+
+                        <div class="relative w-full h-80 overflow-hidden rounded-xl bg-slate-200/70 dark:bg-slate-900/70">
+                            <div class="scale-50 absolute top-4 left-16 pointer-events-none">
+                                <template x-for="(rowCount, rowIndex) in seatingRows" :key="rowIndex">
+                                    <div class="absolute top-0 left-0 origin-top-left flex transition-transform duration-300 bg-slate-600 rounded-r"
+                                         :style="'transform: rotate(' + ((rowIndex - 2) * 22.5 + 45) + 'deg) translate(' + (190 + rowIndex * 12) + 'px, 0px);'">
+                                        <template x-for="cellIndex in rowCount" :key="cellIndex">
+                                            <div class="border border-zinc-700 m-[1px] flex flex-col">
+                                                <span class="h-8 w-8 bg-zinc-600 flex items-center justify-center overflow-hidden text-[10px] text-zinc-300" x-text="'ABCDE'.charAt(rowIndex) + cellIndex + '-1'"></span>
+                                                <span class="h-8 w-8 bg-zinc-600 flex items-center justify-center overflow-hidden text-[10px] text-zinc-300" x-text="'ABCDE'.charAt(rowIndex) + cellIndex + '-2'"></span>
+                                            </div>
+                                        </template>
+                                        <span class="flex -rotate-90 items-center ml-2 mr-2 text-sm font-semibold text-slate-300" x-text="'ABCDE'.charAt(rowIndex)"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
 
             <div x-data="{ isPaid: {{ old('paid_entry', $event->paid_entry) ? 'true' : 'false' }} }"
                  class="flex flex-col md:flex-row md:items-center gap-4 w-full">

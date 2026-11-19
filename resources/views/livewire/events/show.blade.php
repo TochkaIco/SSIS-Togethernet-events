@@ -441,7 +441,7 @@
     </flux:modal>
 
     {{-- Seat Booking Modal (LAN events) --}}
-    <flux:modal name="seat-booking-modal" class="min-w-[22rem]">
+    <flux:modal name="seat-booking-modal" class="min-w-[22rem] md:min-w-[50rem] w-full h-full">
         @if($this->registration())
             <div class="space-y-6">
                 <div>
@@ -453,11 +453,13 @@
 
                 <flux:separator />
 
-                <flux:text>
+                <flux:text color="orange">
                     {{ $this->registration()->seat_location
                         ? __('Currently booked seat place: :location', ['location' => $this->registration()->seat_location])
                         : __('No seat place is booked yet.') }}
                 </flux:text>
+
+                <x-events.lan-seating-chart :event="$event" />
             </div>
         @endif
     </flux:modal>

@@ -46,6 +46,14 @@ class CreateEvent
             $data['event_ends_at'] = $startTime->addHours($hoursToAdd)->addMinutes($totalIntervalLength);
         }
 
+        if ($data['event_type'] === EventType::LAN->value) {
+            $rowLengths = array_key_exists('seating_rows', $attributes)
+                ? $attributes['seating_rows']
+                : Event::defaultSeatingRowLengths();
+
+            $data['seating_settings'] = Event::makeSeatingSettings($rowLengths);
+        }
+
         if ($attributes['image'] ?? false) {
             // Store the main version of the image
             $originalPath = $attributes['image']->store('events', 'public');
