@@ -49,6 +49,9 @@
                 <flux:table.column>{{ __('Paid') }}</flux:table.column>
             @endif
             <flux:table.column>{{ __('Arrived') }}</flux:table.column>
+            @if($event->event_type === App\EventType::LAN)
+                <flux:table.column>{{ __('Patch Received') }}</flux:table.column>
+            @endif
             <flux:table.column align="end">{{ __('Actions') }}</flux:table.column>
         </flux:table.columns>
 
@@ -213,6 +216,14 @@
                             :checked="(bool) $participant->has_arrived"
                             :disabled="$event->hasFinishedOverAnHourAgo()"
                             :tooltip="!$event->hasFinishedOverAnHourAgo() ? 'The event is finished' : null"
+                        />
+                    </flux:table.cell>
+
+                    {{-- Patch Received Toggle --}}
+                    <flux:table.cell align="center">
+                        <flux:checkbox
+                            wire:change="togglePatchReceived({{ $participant->id }})"
+                            :checked="(bool) $participant->patch_received"
                         />
                     </flux:table.cell>
 
@@ -448,6 +459,15 @@
                             </div>
                         @endif
 
+                        @if($event->event_type === App\EventType::LAN)
+                                <div class="flex items-center gap-2">
+                                    <flux:checkbox
+                                        wire:change="togglePatchReceived({{ $participant->id }})"
+                                        :checked="(bool) $participant->patch_received"
+                                        :label="__('Patch Received')"
+                                    />
+                                </div>
+                        @endif
                         <div class="flex items-center gap-2">
                             <flux:checkbox
                                 wire:change="toggleArrived({{ $participant->id }})"

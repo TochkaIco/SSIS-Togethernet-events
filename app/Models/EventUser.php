@@ -55,6 +55,7 @@ use Illuminate\Support\Str;
     'is_disabled', // for qr-tag
     'has_paid',
     'has_arrived',
+    'patch_received', // for LANs
     'paid_at',
     'arrived_at',
     'seat_booked_at',

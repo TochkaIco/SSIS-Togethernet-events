@@ -125,6 +125,22 @@ class Participants extends Component
         GlobalLog::log('Toggled arrival on participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'has_arrived' => $registration->has_arrived]);
     }
 
+    public function togglePatchReceived(int $registrationId): void
+    {
+        $this->authorize('manage participants');
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        $patchReceived = ! $registration->patch_received;
+
+        $registration->update([
+            'patch_received' => $patchReceived,
+        ]);
+
+        Flux::toast(__('Updated the status of participant receiving the event patch.'), variant: 'success');
+        GlobalLog::log('Toggled patch_recieved on participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'has_arrived' => $registration->has_arrived]);
+    }
+
     /**
      * Toggle the 'is_without_seat_place' status on the registration.
      */
