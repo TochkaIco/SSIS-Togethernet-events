@@ -134,6 +134,7 @@ class QrTagController extends Controller
             // Successful tag
             $victimRegistration->update([
                 'has_arrived' => true,
+                'arrived_at' => $victimRegistration->arrived_at ?? now(),
                 'qr_tag_tagged_at' => now(),
                 'qr_tag_tagged_by_user_id' => Auth::id(),
                 'qr_tag_target_user_id' => null,
@@ -149,6 +150,7 @@ class QrTagController extends Controller
 
             $assassinRegistration->update([
                 'has_arrived' => true,
+                'arrived_at' => $assassinRegistration->arrived_at ?? now(),
                 'qr_tag_target_user_id' => $newTargetId,
             ]);
 

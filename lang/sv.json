@@ -740,5 +740,15 @@
     "Book seat (not open yet)": "Boka plats (inte öppen än)",
     "You are not allowed to book a seat for this event.": "Du har inte rätt att boka en plats för detta evenemang.",
     "Reserve a seat place for yourself on the seating chart below.": "Reservera en plats för dig själv i platskartan nedan.",
-    "No seat place is booked yet.": "Ingen plats har ännu bokats."
+    "No seat place is booked yet.": "Ingen plats har ännu bokats.",
+    "With seats:": "Med plats:",
+    "Without seats:": "Utan plats:",
+    "Total Earnings": "Total intäkt",
+    "Entry Fee Earnings": "Intäkt från entréavgift",
+    "Kiosk Earnings": "Intäkt från kiosk",
+    "Payment Timeline": "Betalningstidslinje",
+    "Arrival Timeline": "Ankomsttidslinje",
+    "Seat Booking Timeline": "Platsbokningstidslinje",
+    "Seat booked": "Plats bokat",
+    "Seating Chart": "Platskarta"
 }

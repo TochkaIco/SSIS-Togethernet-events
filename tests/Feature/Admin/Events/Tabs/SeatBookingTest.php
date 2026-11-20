@@ -110,7 +110,8 @@ test('admin can book a seat for a paid participant of a lan event', function () 
         ->assertHasNoErrors();
 
     expect($registration->refresh()->seat_location)->toBe('A12')
-        ->and($registration->is_without_seat_place)->toBeFalse();
+        ->and($registration->is_without_seat_place)->toBeFalse()
+        ->and($registration->seat_booked_at)->not->toBeNull();
 });
 
 test('admin can book a seat for any participant of a free lan event', function () {
@@ -271,14 +272,15 @@ test('moving a participant to without a seat place removes their seat from the s
     $this->actingAs($admin);
 
     $event = Event::factory()->create(['event_type' => EventType::LAN->value]);
-    $registration = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true, 'seat_location' => 'B2-1']);
+    $registration = EventUser::factory()->create(['event_id' => $event->id, 'has_paid' => true, 'seat_location' => 'B2-1', 'seat_booked_at' => now()->subHour()]);
 
     Livewire::test(Participants::class, ['event' => $event])
         ->call('toggleIsWithoutSeatPlace', $registration->id)
         ->assertHasNoErrors();
 
     expect($registration->refresh()->is_without_seat_place)->toBeTrue()
-        ->and($registration->seat_location)->toBeNull();
+        ->and($registration->seat_location)->toBeNull()
+        ->and($registration->seat_booked_at)->toBeNull();
 });
 
 test('restoring a seat place for a participant without a booked seat leaves the seat location unset', function () {

@@ -34,6 +34,9 @@ use Illuminate\Support\Str;
  * @property bool $is_working
  * @property bool $is_without_seat_place
  * @property string|null $seat_location
+ * @property Carbon|null $paid_at
+ * @property Carbon|null $arrived_at
+ * @property Carbon|null $seat_booked_at
  * @property string|null $qr_tag_token
  * @property int|null $qr_tag_target_user_id
  * @property Carbon|null $qr_tag_tagged_at
@@ -52,6 +55,9 @@ use Illuminate\Support\Str;
     'is_disabled', // for qr-tag
     'has_paid',
     'has_arrived',
+    'paid_at',
+    'arrived_at',
+    'seat_booked_at',
     'is_working',
     'qr_tag_token',
     'qr_tag_target_user_id',
@@ -78,6 +84,9 @@ class EventUser extends Model
             'user_id' => 'integer',
             'event_period_id' => 'integer',
             'is_working' => 'boolean',
+            'paid_at' => 'datetime',
+            'arrived_at' => 'datetime',
+            'seat_booked_at' => 'datetime',
             'qr_tag_target_user_id' => 'integer',
             'qr_tag_tagged_by_user_id' => 'integer',
             'qr_tag_tagged_at' => 'datetime',

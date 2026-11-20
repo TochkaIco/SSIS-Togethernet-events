@@ -76,6 +76,7 @@ class QrTag extends Component
             'qr_tag_tagged_by_user_id' => null,
             'qr_tag_count' => 0,
             'has_arrived' => false,
+            'arrived_at' => null,
         ]);
 
         QrTagLog::create([

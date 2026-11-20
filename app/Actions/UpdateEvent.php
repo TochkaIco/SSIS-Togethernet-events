@@ -119,7 +119,7 @@ class UpdateEvent
                     ->each(function (EventUser $registration) use ($event) {
                         $previousSeat = $registration->seat_location;
 
-                        $registration->update(['seat_location' => null]);
+                        $registration->update(['seat_location' => null, 'seat_booked_at' => null]);
 
                         GlobalLog::log('Seat freed because it was removed from the seating layout', 'user', [
                             'event_id' => $event->id,

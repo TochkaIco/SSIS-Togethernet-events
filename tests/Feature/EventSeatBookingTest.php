@@ -37,7 +37,8 @@ test('a paid participant of a lan event can open the seat booking modal and book
         ->call('bookSeat', 'A4')
         ->assertHasNoErrors();
 
-    expect($registration->refresh()->seat_location)->toBe('A4');
+    expect($registration->refresh()->seat_location)->toBe('A4')
+        ->and($registration->seat_booked_at)->not->toBeNull();
 });
 
 test('a participant of a free lan event can book a seat without paying', function () {

@@ -88,8 +88,11 @@ class Participants extends Component
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
+        $hasPaid = ! $registration->has_paid;
+
         $registration->update([
-            'has_paid' => ! $registration->has_paid,
+            'has_paid' => $hasPaid,
+            'paid_at' => $hasPaid ? now() : null,
         ]);
 
         Flux::toast(__('Payment status updated.'), variant: 'success');
@@ -111,8 +114,11 @@ class Participants extends Component
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
+        $hasArrived = ! $registration->has_arrived;
+
         $registration->update([
-            'has_arrived' => ! $registration->has_arrived,
+            'has_arrived' => $hasArrived,
+            'arrived_at' => $hasArrived ? now() : null,
         ]);
 
         Flux::toast(__('Arrival status updated.'), variant: 'success');
@@ -140,6 +146,7 @@ class Participants extends Component
             'is_without_seat_place' => $withoutSeatPlace,
             // A participant without a seat place can no longer hold a seat on the chart.
             'seat_location' => $withoutSeatPlace ? null : $registration->seat_location,
+            'seat_booked_at' => $withoutSeatPlace ? null : $registration->seat_booked_at,
         ]);
 
         Flux::toast(__('Seat place status updated.'), variant: 'success');
@@ -224,6 +231,7 @@ class Participants extends Component
 
         $registration->update([
             'seat_location' => $seatLocation,
+            'seat_booked_at' => now(),
         ]);
 
         Flux::toast(__('Seat booked.'), variant: 'success');

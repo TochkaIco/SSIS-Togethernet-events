@@ -238,7 +238,10 @@ class EventShow extends Component
 
         $previousSeatLocation = $registration->seat_location;
 
-        $registration->update(['seat_location' => $seatLocation]);
+        $registration->update([
+            'seat_location' => $seatLocation,
+            'seat_booked_at' => now(),
+        ]);
 
         Flux::toast(text: $isSeatChange ? __('Seat changed.') : __('Seat booked.'), heading: __('Success'), variant: 'success');
         $this->reset('selectedSeatLocation');
