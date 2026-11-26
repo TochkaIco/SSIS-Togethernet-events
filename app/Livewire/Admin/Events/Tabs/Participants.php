@@ -7,6 +7,7 @@ namespace App\Livewire\Admin\Events\Tabs;
 use App\Actions\ProcessWaitingList;
 use App\EventType;
 use App\Models\Event;
+use App\Models\EventUser;
 use App\Models\GlobalLog;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,6 +36,12 @@ class Participants extends Component
     public array $participantPeriods = [];
 
     public string $filterClassGroup = '';
+
+    public ?int $seatBookingRegistrationId = null;
+
+    public ?string $selectedSeatLocation = null;
+
+    public ?int $registrationIdToRemove = null;
 
     /**
      * Keep the UI state in the URL for easy sharing/reloading.
@@ -71,7 +78,7 @@ class Participants extends Component
      */
     public function togglePaid(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -81,8 +88,11 @@ class Participants extends Component
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
+        $hasPaid = ! $registration->has_paid;
+
         $registration->update([
-            'has_paid' => ! $registration->has_paid,
+            'has_paid' => $hasPaid,
+            'paid_at' => $hasPaid ? now() : null,
         ]);
 
         Flux::toast(__('Payment status updated.'), variant: 'success');
@@ -94,7 +104,7 @@ class Participants extends Component
      */
     public function toggleArrived(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -104,12 +114,31 @@ class Participants extends Component
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
+        $hasArrived = ! $registration->has_arrived;
+
         $registration->update([
-            'has_arrived' => ! $registration->has_arrived,
+            'has_arrived' => $hasArrived,
+            'arrived_at' => $hasArrived ? now() : null,
         ]);
 
         Flux::toast(__('Arrival status updated.'), variant: 'success');
         GlobalLog::log('Toggled arrival on participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'has_arrived' => $registration->has_arrived]);
+    }
+
+    public function togglePatchReceived(int $registrationId): void
+    {
+        $this->authorize('manage participants');
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        $patchReceived = ! $registration->patch_received;
+
+        $registration->update([
+            'patch_received' => $patchReceived,
+        ]);
+
+        Flux::toast(__('Updated the status of participant receiving the event patch.'), variant: 'success');
+        GlobalLog::log('Toggled patch_recieved on participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'has_arrived' => $registration->has_arrived]);
     }
 
     /**
@@ -117,7 +146,7 @@ class Participants extends Component
      */
     public function toggleIsWithoutSeatPlace(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -127,12 +156,200 @@ class Participants extends Component
 
         $registration = $this->event->registrations()->findOrFail($registrationId);
 
+        $withoutSeatPlace = ! $registration->is_without_seat_place;
+
         $registration->update([
-            'is_without_seat_place' => ! $registration->is_without_seat_place,
+            'is_without_seat_place' => $withoutSeatPlace,
+            // A participant without a seat place can no longer hold a seat on the chart.
+            'seat_location' => $withoutSeatPlace ? null : $registration->seat_location,
+            'seat_booked_at' => $withoutSeatPlace ? null : $registration->seat_booked_at,
         ]);
 
         Flux::toast(__('Seat place status updated.'), variant: 'success');
-        GlobalLog::log('Disabled seat places for participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'seating is disabled' => $registration->is_without_seat_place]);
+        GlobalLog::log('Disabled seat places for participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'seating is disabled' => $registration->is_without_seat_place, 'seat_location' => $registration->seat_location]);
+    }
+
+    /**
+     * Open the seat booking modal for the given participant (LAN events only).
+     */
+    public function openSeatBookingModal(int $registrationId): void
+    {
+        $this->authorize('manage participants');
+
+        if (! $this->event->isLan()) {
+            Flux::toast(__('Seat booking is only available for LAN events.'), variant: 'danger');
+
+            return;
+        }
+
+        if ($this->event->hasFinishedOverAnHourAgo()) {
+            Flux::toast(__('The event has already ended.'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        if (! $registration->canBookSeat()) {
+            Flux::toast(__('This participant is not allowed to book a seat.'), variant: 'danger');
+
+            return;
+        }
+
+        $this->seatBookingRegistrationId = $registrationId;
+        $this->reset('selectedSeatLocation');
+        $this->modal('seat-booking-modal')->show();
+    }
+
+    /**
+     * Book a seat place for a participant on the LAN seating chart.
+     */
+    public function bookSeat(int $registrationId, string $seatLocation): void
+    {
+        $this->authorize('manage participants');
+
+        if (! $this->event->isLan()) {
+            Flux::toast(__('Seat booking is only available for LAN events.'), variant: 'danger');
+
+            return;
+        }
+
+        if ($this->event->hasFinishedOverAnHourAgo()) {
+            Flux::toast(__('The event has already ended.'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        if (! $registration->canBookSeat()) {
+            Flux::toast(__('This participant is not allowed to book a seat.'), variant: 'danger');
+
+            return;
+        }
+
+        if ($registration->seat_location !== null && $registration->seat_location !== $seatLocation) {
+            $registration->update([
+                'seat_location' => null,
+            ]);
+        }
+
+        $alreadyTaken = $this->event->registrations()
+            ->where('seat_location', $seatLocation)
+            ->where('id', '!=', $registration->id)
+            ->exists();
+
+        if ($alreadyTaken) {
+            Flux::toast(__('This seat place is already taken by another participant.'), variant: 'danger');
+
+            return;
+        }
+
+        $registration->update([
+            'seat_location' => $seatLocation,
+            'seat_booked_at' => now(),
+        ]);
+
+        Flux::toast(__('Seat booked.'), variant: 'success');
+        GlobalLog::log('Seat place booked for participant', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $registration->user_id, 'seat_location' => $registration->seat_location]);
+        $this->reset('selectedSeatLocation');
+        $this->modal('seat-booking-modal')->close();
+    }
+
+    /**
+     * Select a seat on the seating chart for the participant the seat booking modal is open for.
+     *
+     * This only marks the seat as selected in the UI; the seat is only booked
+     * when the save button is pressed.
+     */
+    public function selectSeat(string $seatLocation): void
+    {
+        if ($this->seatBookingRegistrationId === null) {
+            return;
+        }
+
+        $this->selectedSeatLocation = $seatLocation;
+    }
+
+    /**
+     * Book the seat selected on the seating chart for the participant the seat booking modal is open for.
+     */
+    public function saveSeatBooking(): void
+    {
+        if ($this->selectedSeatLocation === null || $this->seatBookingRegistrationId === null) {
+            return;
+        }
+
+        $this->bookSeat($this->seatBookingRegistrationId, $this->selectedSeatLocation);
+    }
+
+    /**
+     * Open the confirmation modal before removing a participant from the event.
+     */
+    public function confirmRemoveParticipant(int $registrationId): void
+    {
+        $this->authorize('manage participants');
+
+        $this->registrationIdToRemove = $registrationId;
+        $this->modal('remove-participant-confirmation')->show();
+    }
+
+    /**
+     * Remove a participant from the event. Only participants without a seat place can be removed.
+     */
+    public function removeParticipantFromEvent(int $registrationId, ProcessWaitingList $processAction): void
+    {
+        $this->authorize('manage participants');
+
+        if ($this->event->hasFinishedOverAnHourAgo()) {
+            Flux::toast(__('The event has already ended.'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->event->registrations()->findOrFail($registrationId);
+
+        if (! $registration->is_without_seat_place) {
+            Flux::toast(__('Only participants without a seat place can be removed from the event.'), variant: 'danger');
+
+            return;
+        }
+
+        $periodId = $registration->event_period_id;
+        $targetUserId = $registration->user_id;
+
+        $registration->delete();
+
+        $processAction->handle($this->event, $periodId);
+
+        Flux::toast(__('Participant has been removed from the event.'), variant: 'success');
+        GlobalLog::log('Participant removed from event', 'user', ['event_id' => $registration->event->id, 'event_title' => $registration->event->slug, 'target_user_id' => $targetUserId]);
+
+        $this->modal('remove-participant-confirmation')->close();
+    }
+
+    /**
+     * The participant the seat booking modal is open for.
+     */
+    public function seatBookingParticipant(): ?EventUser
+    {
+        if ($this->seatBookingRegistrationId === null) {
+            return null;
+        }
+
+        return $this->event->registrations()->with('user')->find($this->seatBookingRegistrationId);
+    }
+
+    /**
+     * The participant the remove-from-event confirmation modal is open for.
+     */
+    public function participantToRemove(): ?EventUser
+    {
+        if ($this->registrationIdToRemove === null) {
+            return null;
+        }
+
+        return $this->event->registrations()->with('user')->find($this->registrationIdToRemove);
     }
 
     /**
@@ -140,7 +357,7 @@ class Participants extends Component
      */
     public function toggleDisabled(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->isFinished()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -167,7 +384,7 @@ class Participants extends Component
      */
     public function moveToWaitingList(int $registrationId, ProcessWaitingList $processAction): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->isFinished()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -211,7 +428,7 @@ class Participants extends Component
 
     public function viewUserProfile(int $registrationId)
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         $registration = $this->event->registrations()->with('user')->findOrFail($registrationId);
 
@@ -220,7 +437,7 @@ class Participants extends Component
 
     public function updateParticipantWorkingStatus(int $registrationId): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->hasFinishedOverAnHourAgo()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');
@@ -239,7 +456,7 @@ class Participants extends Component
 
     public function changePeriod(int $registrationId, ProcessWaitingList $processAction): void
     {
-        $this->authorize('manage users');
+        $this->authorize('manage participants');
 
         if ($this->event->isFinished()) {
             Flux::toast(__('The event has already ended..'), variant: 'danger');

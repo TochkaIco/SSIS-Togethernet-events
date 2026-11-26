@@ -56,7 +56,10 @@ class EventPeriod extends Model
             return 0;
         }
 
-        return $this->registrations()->participants()->count();
+        return $this->registrations()
+            ->participants()
+            ->where('is_without_seat_place', false)
+            ->count();
     }
 
     public function seatsLeft(): int

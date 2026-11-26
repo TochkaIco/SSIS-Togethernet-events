@@ -21,7 +21,7 @@ class CreateEvent
     public function handle(array $attributes): void
     {
         $data = collect($attributes)->only([
-            'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'event_starts_at', 'event_ends_at', 'allow_external_domains', 'is_hidden_event',
+            'title', 'description', 'event_type', 'num_of_seats', 'paid_entry', 'entry_fee', 'one_hour_periods', 'interval_length', 'one_hour_periods_number', 'links', 'display_starts_at', 'seat_booking_starts_at', 'event_starts_at', 'event_ends_at', 'allow_external_domains', 'is_hidden_event',
         ])->toArray();
 
         if ($data['event_type'] === EventType::QR_TAG->value) {
@@ -44,6 +44,14 @@ class CreateEvent
             $totalIntervalLength = (int) ($attributes['interval_length'] ?? 0) * (max(0, (int) ($attributes['one_hour_periods_number'] ?? 1) - 1));
 
             $data['event_ends_at'] = $startTime->addHours($hoursToAdd)->addMinutes($totalIntervalLength);
+        }
+
+        if ($data['event_type'] === EventType::LAN->value) {
+            $rowLengths = array_key_exists('seating_rows', $attributes)
+                ? $attributes['seating_rows']
+                : Event::defaultSeatingRowLengths();
+
+            $data['seating_settings'] = Event::makeSeatingSettings($rowLengths);
         }
 
         if ($attributes['image'] ?? false) {

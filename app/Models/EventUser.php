@@ -32,6 +32,11 @@ use Illuminate\Support\Str;
  * @property bool $has_paid
  * @property bool $has_arrived
  * @property bool $is_working
+ * @property bool $is_without_seat_place
+ * @property string|null $seat_location
+ * @property Carbon|null $paid_at
+ * @property Carbon|null $arrived_at
+ * @property Carbon|null $seat_booked_at
  * @property string|null $qr_tag_token
  * @property int|null $qr_tag_target_user_id
  * @property Carbon|null $qr_tag_tagged_at
@@ -50,6 +55,10 @@ use Illuminate\Support\Str;
     'is_disabled', // for qr-tag
     'has_paid',
     'has_arrived',
+    'patch_received', // for LANs
+    'paid_at',
+    'arrived_at',
+    'seat_booked_at',
     'is_working',
     'qr_tag_token',
     'qr_tag_target_user_id',
@@ -69,12 +78,16 @@ class EventUser extends Model
         return [
             'in_waitinglist' => 'boolean',
             'is_disabled' => 'boolean',
+            'is_without_seat_place' => 'boolean',
             'has_paid' => 'boolean',
             'has_arrived' => 'boolean',
             'event_id' => 'integer',
             'user_id' => 'integer',
             'event_period_id' => 'integer',
             'is_working' => 'boolean',
+            'paid_at' => 'datetime',
+            'arrived_at' => 'datetime',
+            'seat_booked_at' => 'datetime',
             'qr_tag_target_user_id' => 'integer',
             'qr_tag_tagged_by_user_id' => 'integer',
             'qr_tag_tagged_at' => 'datetime',
@@ -154,6 +167,35 @@ class EventUser extends Model
             ->participants()
             ->where('qr_tag_count', '>', $this->qr_tag_count)
             ->count() + 1;
+    }
+
+    /**
+     * Check if the participant is allowed to book a seat for this event.
+     *
+     * Seats can only be booked for LAN events, the participant has to be
+     * a confirmed participant (not on the waiting list) with a seat place
+     * (i.e. not set as without a seat place) and has to have paid, unless
+     * the event does not require a payment.
+     */
+    public function canBookSeat(): bool
+    {
+        if ($this->in_waitinglist) {
+            return false;
+        }
+
+        if ($this->is_without_seat_place) {
+            return false;
+        }
+
+        if (! $this->event->isLan()) {
+            return false;
+        }
+
+        if ($this->event->isFree()) {
+            return true;
+        }
+
+        return $this->has_paid;
     }
 
     /**

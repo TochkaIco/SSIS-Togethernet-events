@@ -27,6 +27,8 @@ class EventShow extends Component
 
     public ?int $eventIdToUnregister = null;
 
+    public ?string $selectedSeatLocation = null;
+
     #[Url]
     public string $tab = 'view';
 
@@ -169,6 +171,105 @@ class EventShow extends Component
         }
 
         GlobalLog::log('User registered to an event', 'user', ['event_id' => $event->id]);
+    }
+
+    public function openSeatBookingModal()
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if (! $this->event->isLan()) {
+            Flux::toast(text: __('Seat booking is only available for LAN events.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->registration();
+
+        if (! $registration instanceof EventUser) {
+            Flux::toast(text: __('You are not registered for this event.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        if (! $registration->canBookSeat() || ! $this->event->seatBookingOpen()) {
+            Flux::toast(text: __('You are not allowed to book a seat for this event.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $this->reset('selectedSeatLocation');
+        $this->modal('seat-booking-modal')->show();
+    }
+
+    public function bookSeat(string $seatLocation)
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if ($this->event->isFinished()) {
+            Flux::toast(text: __('The event has already ended.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $registration = $this->registration();
+
+        if (! $registration instanceof EventUser || ! $registration->canBookSeat() || ! $this->event->seatBookingOpen()) {
+            Flux::toast(text: __('You are not allowed to book a seat for this event.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $isSeatChange = $registration->seat_location !== null && $registration->seat_location !== $seatLocation;
+
+        $alreadyTakenByAnother = $this->event->registrations()
+            ->where('seat_location', $seatLocation)
+            ->where('id', '!=', $registration->id)
+            ->exists();
+
+        if ($alreadyTakenByAnother) {
+            Flux::toast(text: __('This seat has already been taken.'), heading: __('Error'), variant: 'danger');
+
+            return;
+        }
+
+        $previousSeatLocation = $registration->seat_location;
+
+        $registration->update([
+            'seat_location' => $seatLocation,
+            'seat_booked_at' => now(),
+        ]);
+
+        Flux::toast(text: $isSeatChange ? __('Seat changed.') : __('Seat booked.'), heading: __('Success'), variant: 'success');
+        $this->reset('selectedSeatLocation');
+        $this->modal('seat-booking-modal')->close();
+        GlobalLog::log('User booked a seat place for an event', 'user', ['event_id' => $this->event->id, 'seat_changed' => $isSeatChange, 'from' => $previousSeatLocation, 'to' => $seatLocation]);
+    }
+
+    /**
+     * Select a seat on the seating chart for the authenticated user.
+     *
+     * This only marks the seat as selected in the UI; the seat is only booked
+     * when the save button is pressed.
+     */
+    public function selectSeat(string $seatLocation): void
+    {
+        $this->selectedSeatLocation = $seatLocation;
+    }
+
+    /**
+     * Book the seat selected on the seating chart for the authenticated user.
+     */
+    public function saveSeatBooking(): void
+    {
+        if ($this->selectedSeatLocation === null) {
+            return;
+        }
+
+        $this->bookSeat($this->selectedSeatLocation);
     }
 
     public function openQrTagTokenModal()

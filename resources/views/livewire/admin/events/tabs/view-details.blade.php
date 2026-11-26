@@ -7,6 +7,27 @@
                     {{ $event->num_of_seats }}
                 </flux:badge>
             </div>
+
+            <div class="flex items-center gap-2">
+                <span class="font-medium text-muted-foreground">{{ __('Participants').':' }}</span>
+                <flux:badge color="orange" size="sm">
+                    {{ $event->participantsCount() }}
+                </flux:badge>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="font-medium text-muted-foreground">{{ __('With seats:') }}</span>
+                <flux:badge color="orange" size="sm">
+                    {{ $this->stats['seat_counts']['with_seat'] }}
+                </flux:badge>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="font-medium text-muted-foreground">{{ __('Without seats:') }}</span>
+                <flux:badge color="orange" size="sm">
+                    {{ $this->stats['seat_counts']['without_seat'] }}
+                </flux:badge>
+            </div>
         @endif
 
         @if($event->paid_entry===1)
@@ -27,6 +48,32 @@
                     {{ __('Hidden Event') }}
                 </flux:badge>
         @endif
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <div class="flex items-center gap-3">
+                <flux:icon.banknotes variant="outline" class="size-6" />
+                <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Total Earnings') }}</span>
+            </div>
+            <div class="text-3xl mt-1 font-bold">{{ number_format($this->stats['earnings']['total'], 2) }} kr</div>
+        </flux:card>
+
+        <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <div class="flex items-center gap-3">
+                <flux:icon.ticket variant="outline" class="size-6" />
+                <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Entry Fee Earnings') }}</span>
+            </div>
+            <div class="text-3xl mt-1 font-bold">{{ number_format($this->stats['earnings']['entry_fee'], 2) }} kr</div>
+        </flux:card>
+
+        <flux:card class="flex flex-col gap-2 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+            <div class="flex items-center gap-3">
+                <flux:icon.shopping-cart variant="outline" class="size-6" />
+                <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('Kiosk Earnings') }}</span>
+            </div>
+            <div class="text-3xl mt-1 font-bold">{{ number_format($this->stats['earnings']['kiosk'], 2) }} kr</div>
+        </flux:card>
     </div>
 
     @if(! $event->is_hidden_event)
@@ -231,6 +278,137 @@
                 @endif
             </flux:card>
         </div>
+
+        @if($this->stats['registrations'] > 0 && count($this->stats['status_timelines']) > 0)
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+                x-data="{
+                init() {
+                    const anchors = @js($this->stats['timeline_anchors']);
+                    const charts = @js($this->stats['status_timelines']);
+
+                    charts.forEach(chart => {
+                        const dataPoints = [{ x: anchors.display_starts_at, y: 0 }];
+
+                        let count = 0;
+                        chart.times.forEach(t => {
+                            count++;
+                            dataPoints.push({ x: t, y: count });
+                        });
+
+                        const lastTime = chart.times[chart.times.length - 1] || anchors.display_starts_at;
+                        if (anchors.event_ends_at > lastTime) {
+                            dataPoints.push({ x: anchors.event_ends_at, y: count });
+                        }
+
+                        new Chart(this.$refs[chart.id], {
+                            type: 'line',
+                            data: {
+                                datasets: [{
+                                    label: chart.series_label,
+                                    data: dataPoints,
+                                    borderColor: chart.color,
+                                    backgroundColor: chart.background,
+                                    borderWidth: 2,
+                                    fill: true,
+                                    stepped: true,
+                                    pointRadius: chart.times.length > 50 ? 0 : 3,
+                                    pointHoverRadius: 5,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        type: 'linear',
+                                        min: anchors.display_starts_at,
+                                        max: anchors.event_ends_at,
+                                        ticks: {
+                                            callback: function(value) {
+                                                const date = new Date(value);
+                                                return date.toLocaleDateString(undefined, {
+                                                    month: 'short',
+                                                    day: 'numeric'
+                                                });
+                                            },
+                                            maxRotation: 45,
+                                            minRotation: 0,
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: '{{ __('Date') }}'
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            precision: 0
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: '{{ __('Total') }}'
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            title: function(context) {
+                                                return new Date(context[0].raw.x).toLocaleString();
+                                            },
+                                            label: function(context) {
+                                                return `${chart.series_label}: ${context.raw.y}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: [{
+                                id: 'verticalLine',
+                                afterDraw: (chartInstance) => {
+                                    const xAxis = chartInstance.scales.x;
+                                    const yAxis = chartInstance.scales.y;
+                                    if (anchors.event_start >= xAxis.min && anchors.event_start <= xAxis.max) {
+                                        const xPixel = xAxis.getPixelForValue(anchors.event_start);
+                                        const ctx = chartInstance.ctx;
+                                        ctx.save();
+                                        ctx.beginPath();
+                                        ctx.moveTo(xPixel, yAxis.top);
+                                        ctx.lineTo(xPixel, yAxis.bottom);
+                                        ctx.lineWidth = 2;
+                                        ctx.strokeStyle = '#ef4444';
+                                        ctx.setLineDash([5, 5]);
+                                        ctx.stroke();
+                                        ctx.restore();
+                                    }
+                                }
+                            }]
+                        });
+                    });
+                }
+            }"
+            >
+                @foreach($this->stats['status_timelines'] as $chart)
+                    <flux:card class="transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
+                        <h2 class="text-lg font-bold mb-4">{{ $chart['label'] }}</h2>
+                        <div class="h-64">
+                            <canvas id="{{ $chart['id'] }}" x-ref="{{ $chart['id'] }}"></canvas>
+                        </div>
+                    </flux:card>
+                @endforeach
+            </div>
+        @endif
+
+        @if($this->stats['registrations'] > 0 && $event->isLan() && count($event->seatingRows()) > 0)
+            <flux:card class="mb-8">
+                <h2 class="text-lg font-bold mb-4">{{ __('Seating Chart') }}</h2>
+                <x-events.lan-seating-chart :event="$event" :is-disabled="true" />
+            </flux:card>
+        @endif
     @endif
 
     @if($event->image_path)

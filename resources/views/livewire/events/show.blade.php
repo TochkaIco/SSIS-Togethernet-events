@@ -6,13 +6,52 @@
         </flux:breadcrumbs>
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex flex-col md:flex-row items-start md:items-center space-y-1 md:space-x-3">
-                <h1 class="font-bold text-2xl sm:text-3xl wrap-break-word min-w-0 flex-1">{{ $event->title }}</h1>
-                @if($event->isFinished())
-                    <flux:badge size="sm" icon="flag" class="cursor-default bg-red-500/40! border-zinc-500/20 px-3 py-1 justify-center shrink-0">
-                        {{ __('Event Finished') }}
-                    </flux:badge>
-                @endif
+            <div class="flex flex-col items-start space-y-3">
+                <div>
+                    <h1 class="font-bold text-3xl wrap-break-word min-w-0 flex-1">{{ $event->title }}</h1>
+                    @if($event->isFinished())
+                        <flux:badge size="sm" icon="flag" class="cursor-default bg-red-500/40! border-zinc-500/20 px-3 py-1 justify-center shrink-0">
+                            {{ __('Event Finished') }}
+                        </flux:badge>
+                    @endif
+                </div>
+
+                <div class="flex flex-col md:flex-row md:space-x-3 space-y-3 md:space-y-0 mb-6">
+                    @if($event->event_type !== \App\EventType::QR_TAG)
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
+                            <flux:badge color="orange" size="sm">
+                                @if($event->one_hour_periods)
+                                    {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
+                                @else
+                                    {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
+                                @endif
+                            </flux:badge>
+                        </div>
+                    @endif
+
+                    @if($event->paid_entry===1)
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
+                            <flux:badge color="orange" size="sm">
+                                {{ $event->entry_fee }} kr
+                            </flux:badge>
+                        </div>
+                    @else
+                        <flux:badge color="orange">
+                            {{ __('This event is free') }}
+                        </flux:badge>
+                    @endif
+
+                    @if($event->seat_booking_starts_at && ! $event->seatBookingOpen())
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-muted-foreground">{{ __('Seat booking starts at:') }}</span>
+                            <flux:badge color="orange" size="sm">
+                                {{ $event->seat_booking_starts_at->format('M j, H:i') }}
+                            </flux:badge>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <div class="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
@@ -60,6 +99,33 @@
                                     @endif
                                 </div>
 
+                                @if($event->isLan() && $this->registration->canBookSeat() && $event->seatBookingOpen() && !$this->registration()->seat_location)
+                                    <flux:button
+                                        icon="map-pin"
+                                        variant="primary"
+                                        wire:click="openSeatBookingModal"
+                                        class="cursor-pointer w-full sm:w-auto"
+                                    >
+                                        {{ __('Book Seat') }}
+                                    </flux:button>
+                                @elseif($event->isLan() && $this->registration->canBookSeat() && $event->seatBookingOpen() && $this->registration()->seat_location)
+                                    <flux:button
+                                        icon="map-pin"
+                                        variant="primary"
+                                        wire:click="openSeatBookingModal"
+                                        class="cursor-pointer w-full sm:w-auto"
+                                    >
+                                        {{ __('View Seat') }}
+                                    </flux:button>
+                                @elseif($event->isLan() && $this->registration->canBookSeat())
+                                    <flux:tooltip
+                                        :content="__('Seat booking opens at :date.', ['date' => $event->seat_booking_starts_at?->format('M j, Y, H:i')])"
+                                        class="w-full sm:w-auto"
+                                    >
+                                        <flux:button icon="map-pin" disabled class="cursor-not-allowed w-full sm:w-auto">{{ __('Book seat (not open yet)') }}</flux:button>
+                                    </flux:tooltip>
+                                @endif
+
                                 @if($event->canUnregister())
                                     <flux:modal.trigger name="unregister-confirmation" class="flex justify-stretch sm:justify-end w-full">
                                         <flux:button
@@ -84,34 +150,6 @@
         </div>
     </div>
     <div class="mt-6">
-        <div class="flex flex-col md:flex-row md:space-x-3 space-y-3 md:space-y-0 mb-6">
-            @if($event->event_type !== \App\EventType::QR_TAG)
-                <div class="flex items-center gap-2">
-                    <span class="font-medium text-muted-foreground">{{ __('Number of Seats:') }}</span>
-                    <flux:badge color="orange" size="sm">
-                        @if($event->one_hour_periods)
-                            {{ $event->seatsTaken() }} / {{ $event->num_of_seats * ($event->one_hour_periods_number ?? 1) }}
-                        @else
-                            {{ $event->seatsTaken() }} / {{ $event->num_of_seats }}
-                        @endif
-                    </flux:badge>
-                </div>
-            @endif
-
-            @if($event->paid_entry===1)
-                <div class="flex items-center gap-2">
-                    <span class="font-medium text-muted-foreground">{{ __('Entrance Fee:') }}</span>
-                    <flux:badge color="orange" size="sm">
-                        {{ $event->entry_fee }} kr
-                    </flux:badge>
-                </div>
-            @else
-                <flux:badge color="orange">
-                    {{ __('This event is free') }}
-                </flux:badge>
-            @endif
-        </div>
-
         @if($event->image_path)
             <div class="rounded-lg overflow-hidden mb-6 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:shadow-2xl">
                 <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ __('Image') }}" class="aspect-video w-full h-auto max-h-128 object-cover">
@@ -410,6 +448,57 @@
             </div>
         </div>
     </flux:modal>
+
+    {{-- Seat Booking Modal (LAN events) --}}
+    <flux:modal name="seat-booking-modal" class="w-full md:min-w-170">
+        @if($this->registration())
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">{{ __('Book a seat') }}</flux:heading>
+                    <flux:text class="mt-2">
+                        {{ __('Reserve a seat place for yourself on the seating chart below.') }}
+                    </flux:text>
+                </div>
+
+                <flux:separator />
+
+                <x-events.lan-seating-chart
+                    :event="$event"
+                    :show-participant-emails="false"
+                    :own-registration-id="$this->registration()?->id"
+                    :is-disabled="$event->isFinished()"
+                    :selected-seat-id="$this->selectedSeatLocation"
+                />
+
+                <div class="flex justify-between items-center">
+                    <flux:text color="orange">
+                        {{ $this->registration()->seat_location
+                            ? __('Currently booked seat place: :location. You can move to any other free seat place.', ['location' => $this->registration()->seat_location])
+                            : __('No seat place is booked yet.') }}
+                    </flux:text>
+
+                    <div class="flex gap-2">
+                        <flux:button
+                            variant="ghost"
+                            class="cursor-pointer"
+                        >
+                            <flux:modal.close>{{ __('Close') }}</flux:modal.close>
+                        </flux:button>
+
+                        <flux:button
+                            variant="primary"
+                            class="cursor-pointer"
+                            wire:click="saveSeatBooking"
+                            :disabled="$this->selectedSeatLocation === null"
+                        >
+                            {{ __('Save seat place') }}
+                        </flux:button>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </flux:modal>
+
     @if($this->registration())
         <flux:modal name="qr-tag-token-modal" class="min-w-[22rem]">
             <div class="space-y-6">

@@ -52,4 +52,14 @@ class EventUserFactory extends Factory
             'has_paid' => true,
         ]);
     }
+
+    /**
+     * State for participants who do not need a seat place.
+     */
+    public function withoutSeatPlace(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_without_seat_place' => true,
+        ]);
+    }
 }
