@@ -450,7 +450,7 @@
     </flux:modal>
 
     {{-- Seat Booking Modal (LAN events) --}}
-    <flux:modal name="seat-booking-modal" class="w-full md:min-w-170">
+    <flux:modal name="seat-booking-modal" class="w-full md:min-w-190">
         @if($this->registration())
             <div class="space-y-6">
                 <div>

@@ -491,7 +491,7 @@
     <flux:pagination :paginator="$participants" scroll-to class="mt-3" />
 
     {{-- Seat Booking Modal (LAN events) --}}
-    <flux:modal name="seat-booking-modal" class="w-full md:min-w-170">
+    <flux:modal name="seat-booking-modal" class="w-full md:min-w-190">
         @if(($seatBookingParticipant = $this->seatBookingParticipant()) && $seatBookingParticipant->user)
             <div class="space-y-6">
                 <div>
